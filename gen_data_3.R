@@ -17,27 +17,28 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape4 = 1.1802, scale4 = 940.1141,
            shape5 = 1.3311, scale5 = 836.1123)
 
-generate_data <- function(theta, n, p, tau) {
+generate_data <- function(theta, n, p) {
 
     shape <- theta[seq(1, length(theta), 2)]
     scale <- theta[seq(2, length(theta), 2)]
     m <- length(shape)
     comp_times <- matrix(nrow = n, ncol = m)
 
-    for (j in 1:m)
+    for (j in 1:m) {
         comp_times[, j] <- rweibull(
             n = n,
             shape = shape[j],
             scale = scale[j])
+    }
     comp_times <- md_encode_matrix(comp_times, "t")
 
     comp_times %>%
-        md_series_lifetime_right_censoring(tau) %>%
+        md_series_lifetime_right_censoring() %>%
         md_bernoulli_cand_c1_c2_c3(p) %>%
         md_cand_sampler()
 }
 
-fit.wei.series.md.c1.c2.c2 <- function(df, theta0, tau, maxit = 10000) {
+fit.wei.series.md.c1.c2.c2 <- function(df, theta0, maxit = 10000) {
 
     stats::optim(
         par = theta0,
@@ -48,7 +49,7 @@ fit.wei.series.md.c1.c2.c2 <- function(df, theta0, tau, maxit = 10000) {
                 control = list(
                     candset = "x",
                     lifetime = "t",
-                    right_censoring_indicator = "delta"))
+                    right_censoring_indicator = NULL))
         },
         hessian = TRUE,
         method = "Nelder-Mead",
@@ -66,49 +67,43 @@ fit.wei.series.md.c1.c2.c2 <- function(df, theta0, tau, maxit = 10000) {
             abstol = 1e-6))
 }
 
-ns <- c(50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 300, 400, 500, 1000)
+ns <- c(30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 300, 400, 500, 1000)
 ps <- c(0, .1, .2, .3, .4, .5)
-taus <- c(NULL, 1)
-R <- 200
+
+q.99 <- qwei_series(p = .99, scales = scale, shapes = shape)
+q.95 <- qwei_series(p = .95, scales = scale, shapes = shape)
+q.75 <- qwei_series(p = .75, scales = scale, shapes = shape)
+q.5 <- qwei_series(p = .5, scales = scale, shapes = shape)
+
+taus <- c(q.99, q.95, q.75, q.5, q.5)
+R <- 1000
 
 # store results in a data frame, storing a list of `mle` objects along with the
 # simulation parametrs (n, p, tau) used to generate the data.
-results <- tibble(
-    n = integer(),
-    p = double(),
-    tau = double(),
-    mle = list())
-
 for (n in ns) {
     for (p in ps) {
         for (tau in taus) {
-            results <- results %>%
-                add_row(
-                    n = n,
-                    p = p,
-                    tau = tau,
-                    mle = list())
-            cat("n =", n, "p =", p, "tau =", tau, "\n")
+            mles <- list()
+            cat("n =", n, "p =", p, "tau = ", tau, "\n")
             for (r in 1:R) {
 
                 df <- generate_data(
                     theta = theta,
                     n = n,
-                    p = p,
-                    tau = tau)
+                    p = p)
 
                 sol <- fit.wei.series.md.c1.c2.c2(
                     df = df,
-                    theta0 = theta))
+                    theta0 = theta)
                 theta.mle <- mle_numerical(sol)
 
                 cat("r = ", r, ": ", params(theta.mle), "\n")
-                results[[nrow(results), "mle"]][[r]] <- theta.mle
+                mles[[r]] <- theta.mle
             }
 
             # save results to disk for each scenario
             saveRDS(
-                results,
+                list(n = n, p = p, tau = tau, mles = mles),
                 file = paste0(
                     "./results/results_",
                     n,

@@ -23,24 +23,28 @@ NULL
 #' @param t0 initial guess, default is 1
 #' @export
 qwei_series <- Vectorize(function(p,scales,shapes,eps=1e-3,t0=1) {
-    stopifnot(m==length(shapes))
+    stopifnot(length(scales) == length(shapes))
     stopifnot(all(shapes > 0))
     stopifnot(all(scales > 0))
 
+    if (any(p < 0) || any(p >= 1)) {
+        stop("p must be in [0,1)")
+    }
+
     t1 <- NULL
-    repeat
-    {
+    repeat {
         alpha <- 1
-        repeat
-        {
+        repeat {
             t1 <- t0 - alpha * (sum((t0/scales)^shapes) + log(1-p)) /
                 sum(shapes*t0^(shapes-1)/scales^shapes)
-            if (t1 > 0)
+            if (!is.nan(t1) && t1 > 0) {
                 break
+            }
             alpha <- alpha / 2
         }
-        if (abs(t1-t0) < eps)
+        if (abs(t1 - t0) < eps) {
             break
+        }
         t0 <- t1
     }
     t1
