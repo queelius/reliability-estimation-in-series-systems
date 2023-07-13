@@ -17,6 +17,9 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape4 = 1.1802, scale4 = 940.1141,
            shape5 = 1.3311, scale5 = 836.1123)
 
+shapes <- theta[seq(1, length(theta), 2)]
+scales <- theta[seq(2, length(theta), 2)]
+
 generate_data <- function(theta, n, p) {
 
     shape <- theta[seq(1, length(theta), 2)]
@@ -67,51 +70,72 @@ fit.wei.series.md.c1.c2.c2 <- function(df, theta0, maxit = 10000) {
             abstol = 1e-6))
 }
 
-ns <- c(30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 300, 400, 500, 1000)
-ps <- c(0, .1, .2, .3, .4, .5)
-
-q.99 <- qwei_series(p = .99, scales = scale, shapes = shape)
-q.95 <- qwei_series(p = .95, scales = scale, shapes = shape)
-q.75 <- qwei_series(p = .75, scales = scale, shapes = shape)
-q.5 <- qwei_series(p = .5, scales = scale, shapes = shape)
-
-taus <- c(q.99, q.95, q.75, q.5, q.5)
+ns <- c(30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200)
+ps <- c(0, .1, .2, .3)
+qs <- c(.99, .95, .75, .5)
 R <- 1000
 
-# store results in a data frame, storing a list of `mle` objects along with the
-# simulation parametrs (n, p, tau) used to generate the data.
 for (n in ns) {
     for (p in ps) {
-        for (tau in taus) {
+        if (n == 30 && p == 0) {
+            next
+        }
+        if (n == 30 && p == .1) {
+            next
+        }
+        for (q in qs) {
             mles <- list()
-            cat("n =", n, "p =", p, "tau = ", tau, "\n")
+            problems <- list()
+            tau <- qwei_series(p = q, scales = scales, shapes = shapes)
+            cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
             for (r in 1:R) {
+                result <- tryCatch({
+                    df <- generate_data(
+                        theta = theta,
+                        n = n,
+                        p = p)
 
-                df <- generate_data(
-                    theta = theta,
-                    n = n,
-                    p = p)
+                    sol <- fit.wei.series.md.c1.c2.c2(
+                        df = df,
+                        theta0 = theta)
+                    theta.mle <- mle_numerical(sol)
 
-                sol <- fit.wei.series.md.c1.c2.c2(
-                    df = df,
-                    theta0 = theta)
-                theta.mle <- mle_numerical(sol)
-
-                cat("r = ", r, ": ", params(theta.mle), "\n")
-                mles[[r]] <- theta.mle
+                    cat("r = ", r, ": ", params(theta.mle), "\n")
+                    mles <- append(mles, list(theta.mle))
+                }, error = function(e) {
+                    cat("Error at iteration", r, ":", e, "\n")
+                    problems <- append(problems, list(list(
+                        error = e, n = n, p = p, q = q, tau = tau, df = df)))
+                })
             }
 
             # save results to disk for each scenario
-            saveRDS(
-                list(n = n, p = p, tau = tau, mles = mles),
-                file = paste0(
-                    "./results/results_",
-                    n,
-                    "_",
-                    p,
-                    "_",
-                    tau,
-                    ".rds"))
+            if (length(mles) != 0) {
+                saveRDS(
+                    list(n = n, p = p, q = q, tau = tau, mles = mles),
+                    file = paste0(
+                        "./results/results_",
+                        n,
+                        "_",
+                        p,
+                        "_",
+                        q,
+                        ".rds"))
+            }
+
+            # save problems to disk for each scenario
+            if (length(problems) != 0) {
+                saveRDS(
+                    problems,
+                    file = paste0(
+                        "./problems/problems_",
+                        n,
+                        "_",
+                        p,
+                        "_",
+                        q,
+                        ".rds"))
+            }
         }
     }
 }

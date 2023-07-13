@@ -1049,7 +1049,7 @@ work better in practice.\footnote{For example, one approach may be more
 computationally efficient.}
 The R code for iterative methods is in Appendix C.
 
-## Properties of the MLE
+## Properties of the MLE {#sec:mle_properties}
 According to @bain, if certain regularity conditions are satisfied, then
 solutions of the maximum likelihood equation \eqref{eq:mle_eq} have the
 following desirable properties:
@@ -1555,6 +1555,65 @@ either negligible (on the distribution of component lifetimes) or are more or le
 constant. Then, our task is to use our likelihood model to find the best fit using
 maximum likelihood estimation.
 
+## Estimates of bias, variance, and coverage probability {#sec:acc_prec}
+The primary purpose of the simulation study is to anlyze the performance of The
+MLE under different scenarios. We will use the following measures to quantify
+the performance of the MLE.
+
+### Bias
+A measure of the accuracy of $\v{\hat\theta}$ is the bias, which is defined as
+$$
+\operatorname{b}(\v{\hat\theta}) = E(\v{\hat\theta}) - \v\theta.
+$$
+We cannot analytically derive the bias, so we estimate the bias using the empirical
+sampling distribution,
+$$
+\hat{\operatorname{b}}(\v{\hat\theta}) =
+    E_{\hat{\v\theta} \sim \text{data}}(\v{\hat\theta}) - \v\theta.
+$$
+
+### Variance
+We estimate the precision of $\v{\hat\theta}$ with the variance-covariance matrix,
+$$
+\operatorname{Var}(\v{\hat\theta}) =
+    E\bigl(
+        (\hat{\v\theta} - E(\hat{\v\theta}))
+        (\hat{\v\theta} - E(\hat{\v\theta}))'
+    \bigr),
+$$
+which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
+the expectation is taken with respect to the empirical sampling distribution.
+We will principally use the diagonal elements of the variance-covariance matrix,
+which are the variances of the individual components of $\v{\hat\theta}$.
+
+### Coverage probability
+We will use the inverse of the observed Fisher information matrix (FIM), which was
+defined in Section \ref{sec:mle_properties}, to construct $95\%$-confidence intervals
+for $\v\theta$ to compute the coverage probability of the MLE for each scenario. A
+confidence interval is said to be *well-calibrated* if the coverage probability is
+close to the nominal level, $95\%$.
+
+We want the coverage probability to be close to the nominal level, $95\%$, because if
+the coverage probability is too low, then we will be too confident in the precision
+and accuracy of the MLE, and if the coverage probability is too high, then we will
+not be confident enough in the precision and accuracy of the MLE.
+
+### Mean squared error
+The mean squared error, $\operatorname{MSE}$, is a measure of
+estimator error that incorporates both the bias and the variance, and is defined as
+$$
+\operatorname{MSE}(\v{\hat\theta}) =
+    E\bigl((\v{\hat\theta} - \v\theta)(\v{\hat\theta} - \v\theta)'\bigr) =
+    \operatorname{Var}(\v{\hat\theta}) +
+    \operatorname{b}(\v{\hat\theta})\operatorname{b}(\v{\hat\theta})',
+$$
+which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
+expectation is with respect to the empirical sampling distribution. The diagonal
+elements of the MSE matrix are the mean squared errors of the individual components
+of $\v{\hat\theta}$. Asymptotically, the MSE is equal to the variance, but for
+finite $n$, the MSE is a more informative measure of estimator error than the
+variance alone.
+
 ## Bernoulli candidate set model
 
 In our simulation study, we must generate data that satisfies the masking
@@ -1614,103 +1673,101 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape5 = 1.3311, scale5 = 836.1123)
 ```
 
+
+In order to make the simulation study representative of real-world scenarios, we
+must choose parameter values that are realistic. We base our parameters on the
+data from [@Huairu-2013], which includes a study of the reliability of a series system
+with three Weibull components parameterized by $\v\theta$ with shape parameters
+given by
+$$
+    k_1 = `r theta["shape1"]`,
+    k_2 = `r theta["shape2"]`,
+    k_3 = `r theta["shape3"]`,
+$$
+and scale parameters given by
+$$
+    \lambda_1 = `r theta["scale1"]`,
+    \lambda_2 = `r theta["scale2"]`,
+    \lambda_3 = `r theta["scale3"]`.
+$$
+
+In our Bernoulli candidate set model, we estimated that with around probability
+$p = 0.215$ for including each non-failed component in the candidate set and with
+a right-censoring time of $\tau = \infty$, we seem to reproduce their reported data.
+
+Our approach is to extend this to a five component Weibull series system, and then
+we vary the sample size $n$, the Bernoulli masking probability $p$ of including each
+non-failed component in the candidate set, and the right-censoring time $\tau$. We
+then analyze the performance of the MLE under these various scenarios.
+
+The true parameter value $\v\theta$ of the five component Weibull series system
+has shape parameters given by
+$$
+    k_1 = `r theta["shape1"]`,
+    k_2 = `r theta["shape2"]`,
+    k_3 = `r theta["shape3"]`,
+    k_4 = `r theta["shape4"]`,
+    k_5 = `r theta["shape5"]`
+$$
+and scale parameters given by
+$$
+    \lambda_1 = `r theta["scale1"]`,
+    \lambda_2 = `r theta["scale2"]`,
+    \lambda_3 = `r theta["scale3"]`,
+    \lambda_4 = `r theta["scale4"]`,
+    \lambda_5 = `r theta["scale5"]`.
+$$
+
 Here is an outline of the simulation study analysis:
 
 1. Set up simulation parameters:
+
+    - Set a seed value for simulation study reproducibility. All of the code
+      will be written in R, and so we will use the `set.seed` function to set
+      the seed value. The data we generate for our simulation study can be reproduced
+      by anyone with the same seed value and R code.
    
-    - The true parameter value $\v\theta$ for the Weibull series system
-    (5 components) has shape parameters given by
-    $$
-        k_1 = `r theta["shape1"]`,
-        k_2 = `r theta["shape2"]`,
-        k_3 = `r theta["shape3"]`,
-        k_4 = `r theta["shape4"]`,
-        k_5 = `r theta["shape5"]`
-    $$
-    and scale parameters given by
-    $$
-        \lambda_1 = `r theta["scale1"]`,
-        \lambda_2 = `r theta["scale2"]`,
-        \lambda_3 = `r theta["scale3"]`,
-        \lambda_4 = `r theta["scale4"]`,
-        \lambda_5 = `r theta["scale5"]`.
-    $$
-
-    - We generate MLEs for a range of sample sizes from $n = 10$ to $n = 200$.
+    - Generate a range of sample sizes $n$ from $n = 30$ to $n = 200$.
      
-    - We generate MLEs for a range of probabilities from $p = 0$ (no masking)
-      to $p = 0.3$ (significant masking) for including each non-failed
-      component in the candidate set using the Bernoulli candidate set model.
+    - Generate a range of Bernoulli masking probabilities from $p = 0$
+      (no masking the component cause of failure) to $p = 0.4$ (significant masking)
+      for including each non-failed component in the candidate set using the
+      Bernoulli candidate set model.
 
-    - We use only two separate right-censoring times, $\tau$ set to $\infty$ (no
-      right censoring) to and $\tau$ set to the $0.75$-quantile of the Weibull series
-      system.
+    - Generate a range of right-censoring times $\tau$ based on quantiles for the
+      Weibull series system, from the 50th quantile ($50\%$ of the observations
+      are expected to be right-censored) to the 99th quantile (only $1\%$ of the
+      observations are expected to be right-censored).
 
-2. For each scenario (combination of $n$, $p$, and $\tau$), we generate $R = 200$
-   data sets.
+2. Generate $R = 1000$ data sets for each scenario (combination of $n$, $p$, and
+   $\tau$).
 
-3. We estimate the parameters for each replication, giving us $R$ estimates of the
+3. Estimate the parameters for each replication, giving us $R$ estimates of the
    parameters for each scenario. We use these replicates as an empirical estimate of
    the sampling distribution of the MLE for each scenario.
    
-4. Using the empirical sampling distributions, we estimate the bias, variance, MSE,
-   and coverage probability of the MLE for each scenario.
+4. Using the empirical sampling distribution of the MLE, estimate various 
+   performance measures of the MLE, like bias, variance, MSE, and coverage
+   probability for each scenario.
 
-6. We analyze and visualize the results, e.g., by plotting the bias, variance, MSE,
-   and coverage probability as a function of $n$ and $p$ for each $\tau$. 
+5. Analyze and visualize the results, e.g., by plotting the bias, variance, MSE,
+   and coverage probability as a function of $n$ for different combinations of $p$
+   and $\tau$. 
 
    We then interpret the results and discuss the performance of the MLE estimator
    under various conditions. We expect that as $n \to \infty$, the bias and MSE
    will go to $0$ and the coverage probability will go to $0.95$ (when
    constructing $95\%$ confidence intervals). Of course, we do not expect these
    results to hold for finite $n$, but we would like to see how the bias, MSE, and
-   coverage probability change as a function of $n$ and $p$ for each $\tau$.
+   coverage probability change as we vary $n$, $p$, and $\tau$.
 
-## Estimates of bias, variance, and coverage probability {#sec:acc_prec}
-A measure of the accuracy of $\v{\hat\theta}$ is the bias, which is defined as
-$$
-\operatorname{b}(\v{\hat\theta}) = E(\v{\hat\theta}) - \v\theta.
-$$
-We cannot analytically derive the bias, so we estimate the bias using the empirical
-sampling distribution,
-$$
-\hat{\operatorname{b}}(\v{\hat\theta}) =
-    E_{\hat{\v\theta} \sim \text{data}}(\v{\hat\theta}) - \v\theta.
-$$
+6. Analyze cases where the MLE does not converge, e.g., when $n$ is small and $p$
+   is large. We would like to see if there is a pattern in the cases where the MLE
+   does not converge.
 
-We estimate the precision of $\v{\hat\theta}$ with the variance-covariance matrix,
-$$
-\operatorname{Var}(\v{\hat\theta}) =
-    E\bigl(
-        (\hat{\v\theta} - E(\hat{\v\theta}))
-        (\hat{\v\theta} - E(\hat{\v\theta}))'
-    \bigr),
-$$
-which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
-the expectation is taken with respect to the empirical sampling distribution.
-We will principally use the diagonal elements of the variance-covariance matrix,
-which are the variances of the individual components of $\v{\hat\theta}$.
+## Simulation study results
 
-We will use the inverse of the observed Fisher information matrix (FIM), which was
-defined in Section \ref{}, to construct $95\%$-confidence intervals for $\v\theta$
-to compute the coverage probability of the MLE for each scenario. A confidence
-interval is said to be *well-calibrated* if the coverage probability is close to
-the nominal level, $95\%$.
-
-The mean squared error, $\operatorname{MSE}$, is a measure of
-estimator error that incorporates both the bias and the variance, and is defined as
-$$
-\operatorname{MSE}(\v{\hat\theta}) =
-    E\bigl((\v{\hat\theta} - \v\theta)(\v{\hat\theta} - \v\theta)'\bigr) =
-    \operatorname{Var}(\v{\hat\theta}) +
-    \operatorname{b}(\v{\hat\theta})\operatorname{b}(\v{\hat\theta})',
-$$
-which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
-expectation is with respect to the empirical sampling distribution. The diagonal
-elements of the MSE matrix are the mean squared errors of the individual components
-of $\v{\hat\theta}$. Asymptotically, the MSE is equal to the variance, but for
-finite $n$, the MSE is a more informative measure of estimator error than the
-variance alone.
+Results here
 
 ## Bootstrapping the sampling distribution of the MLE {#sec:boot}
 
@@ -1728,10 +1785,9 @@ distribution of candidate sets, this non-parametric form is ideal, since we can
 simply resample from the original data to approximate its empirical sampling
 distribution of the MLE.
 
-Since the asymptotic distribution of the MLE
-may not be achieved for finite $n$, the bootstrap method is a useful tool for
-estimating the sampling distribution of the MLE for finite $n$, in particular, for
-estimating the confidence intervals of the MLE.
-
-
-
+We use the Weibull series data in [@Huairu-2013] to illustrate the bootstrap method.
+It's a real-world data set. We can estimate the sampling distribution of the MLE
+using the bootstrap method, and compare these results to the asymptotic theory.
+We expect that since the sample size is relatively small, the bootstrap method
+will give us a better estimate of the sampling distribution of the MLE than the
+asymptotic theory.
