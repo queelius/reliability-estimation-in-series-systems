@@ -1,0 +1,1737 @@
+---
+title: "Estimating the reliability of components in a series systems from masked failure data"
+author: "Alex Towell"
+abstract: "We estimate the reliability of series systems from masked failure data consisting of right-censored system lifetimes and masked component cause of failures. Under a minimal set of conditions that permit us to ignore how the component cause of failures are masked, we estimate the sampling distribution of the MLE in a variety of situations. We find that as long as the masking does not always include a particular component as a potential cause of failure whenever another component is also a potential cause, the MLE is unique and consistent. However, this is often not a realistic situation in industrial settings. For example, a system may be repaired by replacing an entire circuit board consisting of multiple components, in which case whenever one of the components on that circuit board fails, all of the components on the circuit board are potential component causes of failure. In this case, we have a non-unique MLE, which provides less information about the reliability of the series system and its components."
+output:
+    pdf_document:
+        toc: yes
+        toc_depth: 2
+        number_sections: true
+        extra_dependencies: ["graphicx","amsthm","amsmath","natbib","tikz"]
+        df_print: kable
+        keep_tex: true
+indent: true
+bibliography: refs.bib
+csl: the-annals-of-statistics.csl
+---
+
+\newcommand{\T}{T}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{condition}{Condition}
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\numberwithin{equation}{section}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(md.tools)
+library(algebraic.mle)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(glue)
+```
+
+Introduction
+============
+Accurate reliability specifications of components of a multi-component system,
+such as mean time to failure (MTTF), can be quite valuable.
+For instance, such information may be used to help identify the component cause
+of system failure.
+However, this information is often not available, or if it is available, it may
+not be very accurate.
+In this case, we may try to estimate the reliability of each component from
+system failure data.
+
+We are interested in estimating the reliability of  *series systems*.
+In a series system, the system fails whenever any of its components fail.
+The famous statistician George Box once opined that all models are wrong, but some
+are useful, meaning that a theoretical model of real phenomenon is
+incapable of representing its exact behaviour, but it may still be useful.
+Indeed, sometimes it is even more useful, since a simplified model is more
+understandable and only includes the most salient features.
+
+Since many real-world systems are greatly impaired whenever a set of
+its *critical* components fail, the series system model is often a very *useful*
+approximation of its internal structure.
+For example, people in a particular experiment may be regarded as series systems
+where the components are some relevant set of vital organs. This model is
+often a very useful abstraction that averages over many complicated, unobserved
+details that may only have a small effect on an average person's lifespan.
+
+In this paper, the experimental unit is a particular type of series system that
+consists of $m$ components and we seek to estimate the reliability of the
+components from *masked data* where we observe only partial information about
+the system, e.g., the component lifetimes are masked (not observed in the sample).
+
+We imagine that we conduct an experiment where we obtain the lifetimes
+of the $m$ components, which has a sample space $(0,\infty)^m$.
+An observed result is called an *outcome* of the experiment, e.g.,
+$(1.2,0.5,1.1)$.
+However, we assume that this data is masked in the following ways:
+
+1. The experiments may be right-censored, which means that the experiment or
+   observation may be suspended before the system fails.
+
+2. We can only observe the lifetime of the component with the minimum
+   lifetime. This constraint is imposed by the fact that the system
+   is arranged in series and thus stops working whenever one of the components
+   fails.
+   
+3. It may not be easy or possible to identify the failed component. We consider
+   the case where we can only observe a set of components that includes the
+   failed component. We refer to this set of components as the candidate set.\footnote{
+   If the candidate set has only a single component, then we know the exact
+   component cause of failure.}
+   
+   This constraint may be due to a variety of reasons.
+   A canonical example is given by supposing that when the series system fails,
+   it is repaired by simultaneously replacing some subset of the components,
+   thus preventing isolating the specific failed component.
+   
+We take a random sample of $n$ such experiments, where the right-censored
+system lifetimes are i.i.d. when conditioned on the right-censoring time, but
+the candidate sets are assumed to be independent but not necessarily
+identically distributed.
+In later sections, we consider a set of realistic conditions that allow us to
+ignore the distribution of candidate sets, which allows us to construct a
+reduced likelihood function for the masked failure data. Finally, we find the
+MLE $\hat{\v\theta}$ that maximizes the reduced likelihood function, which is
+the same MLE for "full" likelihood function where we know the distribution of
+candidate sets.
+
+Statistical model {#sec:statmod}
+===============================
+Consider a system with $m$ components, indexed by $1,2,\ldots,m$.
+Each component only has two possible states, *failed* and *functioning*.
+The state of the system also only has two possible states, *failed*
+and *functioning*.
+The lifetime of a system is the elapsed time from when the new, functioning
+system is put into operation until it fails for the *first time*.
+We are not interested in what happens to a system after it fails, e.g., we do
+not consider repairing systems and putting them back into operation under
+further observation.
+
+A system that is in a functioning state if and only if at least $k$
+of the $m$ components are in a functioning state is denoted a $k$-out-of-$m$
+system.
+We narrow our scope to $m$-out-of-$m$ systems, also known as *series systems*
+(with $m$ components).
+A series system is functioning if and only if every component is functioning.
+Consequently, in a series system, precisely one component is the cause of
+failure.
+
+Our sample consists of lifetime data for i.i.d. series systems.
+Since the component lifetimes are subject to chance variations, we denote the
+lifetime of the $j$\textsuperscript{th} component of the $i$\textsuperscript{th}
+system by the random variable $T_{i j}$.
+We assume that the $m$ component lifetimes, $T_{i 1},\ldots,T_{i m}$, are
+statistically independent and non-identical.
+In a series system, whenever any component fails, the system fails.
+Thus, the lifetime of the $i$\textsuperscript{th} system, $\T_i$, is given by
+the component with the smallest lifetime,
+$$
+    \T_i = \min\bigr\{T_{i 1},T_{i 2}, \ldots, T_{i m} \bigr\}.
+$$
+
+We assume that the component lifetimes may be adequately modeled by some
+parametric probability distribution.
+In what follows, matrices and vectors are denoted in boldface, e.g., $\v{x}$ is
+a vector.
+The $i$\textsuperscript{th} column and $(i,j)$-th element of a matrix $\v{A}$
+is denoted respectively by $\v{A_j}$ and $\v{A}_{i j}$.
+We let $\v{\theta_j}$ denote the parameter vector of the $j\textsuperscript{th}$
+component, and each $\v{\theta_j}$ for $j=1,\ldots,m$ may be different sizes.
+We define the parameter vector of the entire series system by
+$$
+    \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
+$$
+
+The cumulative distribution function (cdf) for a random varible $T$ is given by
+\begin{equation}
+ F_T(t) = \Pr\{T \leq t\},
+\end{equation}
+where $\Pr\{T \in E\}$ denotes the probability that a random variable $T$
+realizes a value in $E$.
+If a random variable $X$ is discrete, then its probability mass function (pmf) $f_X$
+is given by$f_X(x) = \Pr\{X = x\}$.
+The probability density function (pdf) for a continuous random varible $T$ is
+given by
+\begin{equation}
+f_T(t) = \frac{d}{dt} F_T(t).
+\end{equation}
+
+If a random variable $T$ has a parametric distribution indexed by a
+parameter vector $\v\beta$, we denote its pdf by $f_T(t;\v\beta)$ and likewise
+for other distribution functions, e.g., the $i$\textsuperscript{th} series
+system has a cdf denoted by $F_{\T_i}(t;\v{\theta})$.
+In the case of the lifetime distribution functions of components, we subscript
+the distribution functions by component index instead of the symbol for the
+random variable, e.g., the cdf of the $j$\textsuperscript{th} component for the
+$i$-th system is denoted by $F_j(t;\v{\theta_j})$ instead of
+$F_{T_{i j}}(t;\v{\theta_j})$.
+If it is clear from the context which random variable a distribution
+function is for, we may drop the subscripts, e.g., $F(t)$ instead of $F_T(t)$.
+Finally, as an abuse of notation, we often write a function as $f(t)$ when we
+really mean that $f$ is a function of variable $t$.
+
+There are two particularly important functions in survival analysis, the
+survival function and the hazard function.
+\begin{definition}
+The survival function, $R_T(t)$, of a random lifetime $T$ is the
+probability that it realizes a value larger than some specified duration of time $t$,
+\begin{equation}
+\begin{split}
+R_T(t) &= \Pr\{T > t\}\\
+     &= 1 - F_T(t).
+\end{split}
+\end{equation}
+In other words, $R_T(t)$ denotes the probability that $T$ survives longer than
+$t$.
+\end{definition}
+
+The hazard function is a bit more subtle. For a random lifetime $T$, the
+probability that a failure occurs between $t$ and $\Delta t$ given that no
+failure occurs before time $t$ is given by
+$$
+\Pr\{T \leq t+\Delta t|T > t\} = \frac{\Pr\{t < T < t+\Delta t\}}{\Pr\{T > t\}}.
+$$
+The *failure rate* is given by the above divided by the length of the time
+interval, $\Delta t$:
+$$
+\frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}} =
+    \frac{R_T(t) - R(t+\Delta t)}{R_T(t)}.
+$$
+\begin{definition}
+\label{def:failure_rate}
+The hazard function $h_T(t)$ for a continuous random variable $T$ is the
+instantaneous failure rate at time $t$, which is given by
+\begin{equation}
+\label{eq:failure_rate}
+\begin{split}
+h_T(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}}\\
+       &= \frac{f_T(t)}{R_T(t)}.
+\end{split}
+\end{equation}
+\end{definition}
+
+Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
+Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
+$$
+f_X(x) = \int_{\mathcal{Y}} f_{X,Y}(x,y) dy,
+$$
+where $\mathcal{Y}$ is the support of $Y$. (If $Y$ is discrete, replace
+the integration with a summation over $\mathcal{Y}$.)
+
+The conditional pdf of $Y$ given $X=x$, $f_{Y|X}(y|x)$, is defined as
+$$
+f_{X|Y}(y|x) = \frac{f_{X,Y}(x,y)}{f_X(x)}.
+$$
+We may generalize all of the above to more than two random variables, e.g.,
+the joint pdf of $X_1,\ldots,X_m$ is denoted by $f(x_1,\ldots,x_m)$.
+
+## Masked data {#sec:data}
+The object of interest is the (unknown) parameter value $\v\theta$. 
+To estimate this $\v\theta$, we need *data*.
+Generally, we encounter three types of life data in this context: exact lifetimes,
+interval lifetimes (in which a lifetime is known to have occurred
+between two points in time), and right censored lifetimes (in which
+we only know that a lifetime is greater than some point in time, e.g.,
+the experiment was terminated or suspended before the system failed).
+
+In this paper, we limit our focus to right censored lifetimes.
+We consider a sample of $n$ i.i.d. series systems, each of
+which is put into operation at some time and and observed until either it fails
+or is right-censored.
+
+We denote the right-censoring time of the $i$\textsuperscript{th} system by
+$\tau_i$. Whether it is right-censored is a random variable defined as
+\begin{equation}
+    \delta_i = 1_{\T_i < \tau_i}
+\end{equation}
+where $1_{\text{condition}}$ is an indicator function that outputs $1$ if
+*condition* is true and $0$ otherwise.
+Here, $\delta_i = 1$ indicates the event of interest, a system failure, was
+observed.
+The right-censored time of the $i$\textsuperscript{th} system, $S_i$, is given by
+\begin{equation}
+    S_i = \min\{\tau_i, \T_i\}.
+\end{equation}
+
+In addition to the above, we also have masked data about the component cause
+of failure in the form of candidate sets.
+A candidate set consists of some subset of component indices that plausibly
+contain the index of the failed component.
+The sample space of candidate sets are all subsets of $\{1,\ldots,m\}$, thus
+there are $2^m$ possible outcomes in the sample space.
+
+Let's define the candidate set corresponding to the $i$\textsuperscript{th}
+system as $c_i$.
+Since the data generating process for candidate sets may be subject to chance
+variations, we model it as a random set $\mathcal{C}_i$.
+We may also represent the candidate set $\mathcal{C}_i$ as a random Boolean
+vector $X_{i 1},\ldots,X_{i m}$ where $X_{i j}=1$ denotes that the
+$j$\textsuperscript{th} component index is
+in the candidate set for the $i$\textsuperscript{th} system.
+
+When we refer to the sequence $a_1,\ldots,a_k$, we use the notation
+$\{a_i\}_{i \leq k}$. If it is clear from the context, we may also use $\{a_i\}$.
+Our random sample of masked data is give by
+\begin{equation}
+\label{eq:masked_dgp}
+    \{(S_i,\delta_i,\mathcal{C}_i)\}_{i \leq n},
+\end{equation}
+where $\mathcal{C}_i$ is the random candidate set, $S_i$ is the right-censored
+lifetime, and $\delta_i$ is the indicator for right-censoring for
+the $i$\textsuperscript{th} series system. The masked data generation process
+for the sample in \eqref{eq:masked_dgp} is illustrated by Figure \ref{fig:figureone}.
+
+\begin{figure}[h]
+\centering{
+\resizebox{0.5\textwidth}{!}{\input{./image/dep_model.tex}}}
+\caption{This figure showcases a dependency graph of the generative model for
+$(S_i,\delta_i,\mathcal{C}_i)$. The elements in green are observed in the sample,
+while the elements in red are unobserved (latent). We see that $\mathcal{C}_i$ is
+related to both the unobserved component lifetimes $T_{i 1},\ldots,T_{i m}$ and
+other unknown and unobserved covariates, like ambient temperature or the
+particular diagnostician who generated the candidate set. These two complications
+for $\mathcal{C}_i$ are why seek a way to construct a reduced likelihood function
+in later sections that is not a function of the distribution of $\mathcal{C}_i$.}
+\label{fig:figureone}
+\end{figure}
+
+An example of masked data for exact, right-censored system failure times with
+candidate sets that mask the component cause of failure can be seen in Table 1
+for a series system with $3$ components (also known as an $3$-out-of-$3$ system).
+
+System | Right-censored time ($S_i$) | Right censored ($\delta_i$) | Candidate set ($C_i$) |
+------ | --------------------------- | --------------------------- | --------------------- |
+   1   | $4.3$                       | 1                           | $\{1,2\}$             |
+   2   | $1.3$                       | 1                           | $\{2\}$               |
+   3   | $5.4$                       | 0                           | $\emptyset$           |
+   4   | $2.6$                       | 1                           | $\{2,3\}$             |
+   5   | $3.7$                       | 1                           | $\{1,2,3\}$           |
+   6   | $10$                        | 0                           | $\emptyset$           |
+
+: Right-censored lifetime data with masked component cause of failure. The 
+$3$\textsuperscript{rd} system is right-censored ($\delta_3 = 1$) with a right-censoring time of $s_3 = \tau_3 = 5.4$. The candidate set for the $3$\textsuperscript{rd} system is the empty set ($c_3 = \emptyset$), which indicates that the system has no failed components (therefore there cannot be a plausible subset of the components that contains the failed component).
+
+Series system lifetime {#sec:ttf}
+=================================
+
+The previous section served as an introduction to key concepts in reliability
+theory: the reliability function, the probability density function (pdf), and the hazard function.
+Here, we dive deeper into these concepts and provide mathematical derivations for the metrics specific to series systems.
+These are not purely theoretical explorations; these derivations are crucial
+in applying Maximum Likelihood Estimation to our masked data model.
+
+We begin with the reliability function of the series system, as given by the following theorem.
+\begin{theorem}
+\label{thm:sys_reliability_function}
+The series system has a reliability function given by
+\begin{equation}
+\label{eq:sys_reliability_function}
+  R(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+\end{equation}
+\end{theorem}
+\begin{proof}
+The reliability function is defined as
+$$
+  R(t;\v\theta) = \Pr\{\T_i > t\}
+$$
+which may be rewritten as
+$$
+  R(t;\v\theta) = \Pr\{\min\{T_{i 1},\ldots,T_{i m}\} > t\}.
+$$
+For the minimum to be larger than $t$, every component must be larger than $t$,
+$$
+  R(t;\v\theta) = \Pr\{T_{i 1} > t,\ldots,T_{i m} > t\}.
+$$
+Since the component lifetimes are independent, by the product rule the above may
+be rewritten as
+$$
+  R(t;\v\theta) = \Pr\{T_{i 1} > t\} \times \cdots \times \Pr\{T_{i m} > t\}.
+$$
+By definition, $R_j(t;\v\theta) = \Pr\{T_{i j} > t\}$.
+Performing this substitution obtains the result
+$$
+  R(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+$$
+\end{proof}
+
+Theorem \ref{thm:sys_reliability_function} shows that the system's overall reliability is the product of the reliabilities of its individual components. This property is inherent to series systems and will be used in the subsequent derivations.
+
+Next, we turn our attention to the pdf of the system lifetime, described in the following theorem.
+\begin{theorem}
+\label{thm:sys_pdf}
+The series system has a pdf given by
+\begin{equation}
+\label{eq:sys_pdf}
+f(t;\v\theta) = \sum_{j=1}^m f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k\neq j}}^m R_k(t;\v{\theta_j}).
+\end{equation}
+\end{theorem}
+\begin{proof}
+By definition, the pdf may be written as
+$$
+    f(t;\v\theta) = -\frac{d}{dt} \prod_{j=1}^m R_j(t;\v{\theta_j}).
+$$
+By the product rule, this may be rewritten as
+\begin{align*}
+  f(t;\v\theta)
+    &= -\frac{d}{dt} R_1(t;\v{\theta_1})\prod_{j=2}^m R_j(t;\v{\theta_j}) -
+      R_1(t;\v{\theta_1}) \frac{d}{dt} \prod_{j=2}^m R_j(t;\v{\theta_j})\\
+    &= f_1(t;\v\theta) \prod_{j=2}^m R_j(t;\v{\theta_j}) -
+      R_1(t;\v{\theta_1}) \frac{d}{dt} \prod_{j=2}^m R_j(t;\v{\theta_j}).
+\end{align*}
+Recursively applying the product rule $m-1$ times results in
+$$
+f(t;\v\theta) = \sum_{j=1}^{m-1} f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k}) -
+    \prod_{j=1}^{m-1} R_j(t;\v{\theta_j}) \frac{d}{dt} R_m(t;\v{\theta_m}),
+$$
+which simplifies to
+$$
+f(t;\v\theta)= \sum_{j=1}^m f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k}).
+$$
+\end{proof}
+Theorem \ref{thm:sys_pdf} shows the pdf of the system lifetime as a function of the pdfs and reliabilities of its components.
+
+We continue with the hazard function of the system lifetime, defined in the next theorem.
+\begin{theorem}
+\label{thm:sys_failure_rate}
+The series system has a hazard function given by
+\begin{equation}
+\label{eq:sys_failure_rate}
+  h(t;\v\theta) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
+\end{equation}
+\end{theorem}
+\begin{proof}
+The $i$\textsuperscript{th} series system lifetime has a hazard function defined as
+$$
+  h(t;\v\theta) = \frac{f_{\T_i}(t;\v\theta)}{R_{\T_i}(t;\v\theta)}.
+$$
+Plugging in expressions for these functions results in
+$$
+  h(t;\v\theta) = \frac{\sum_{j=1}^m f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k})}
+      {\prod_{j=1}^m R_j(t;\v{\theta_j})},
+$$
+which can be simplified to
+\begin{align*}
+h_{T_i}(t;\v\theta)
+    &= \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})}\\
+    &= \sum_{j=1}^m h_j(t;\v{\theta_j}).
+\end{align*}
+\end{proof}
+
+Theorem \ref{thm:sys_failure_rate} reveals that the system's hazard function is the sum of the hazard functions of its components.
+
+By definition, the hazard function is the ratio of the pdf to the reliability
+function,
+$$
+h(t;\v\theta) = \frac{f(t;\v\theta)}{R(t;\v\theta)},
+$$
+and we can rearrange this to get
+\begin{equation}
+\label{eq:sys_pdf_2}
+\begin{split}
+f(t;\v\theta) &= h(t;\v\theta) R(t;\v\theta)\\
+              &= \biggl\{\sum_{j=1}^m h_j(t;\v{\theta_j})\biggr\}
+                 \biggl\{ \prod_{j=1}^m R_j(t;\v{\theta_j}) \biggr\},
+\end{split}
+\end{equation}
+which we sometimes find to be a more convenient form than Equation \eqref{eq:sys_pdf}.
+
+In this section, we derived the mathematical forms for the system's reliability function, pdf, and hazard function. Next, we build upon these concepts to derive distributions related to the component cause of failure.
+
+## Component cause of failure {#sec:comp_cause}
+Whenver a series system fails, precisely one of the components failed to cause
+the system failure.
+We model the component cause of the series system failure as a random variable.
+\begin{definition}
+The component cause of failure of the $i$\textsuperscript{th} series system is
+denoted by the random variable $K_i$ whose support is given by $\{1,\ldots,m\}$.
+For example, $K_i=j$ indicates that the component indexed by $j$ failed first, i.e.,
+$$
+    T_{i j} < T_{i j'}
+$$
+for every $j'$ in the support of $K_i$ except for $j$.
+Since we have series systems, $K_i$ is unique.
+\end{definition}
+Note that a more succinct way to define $K_i$ is given by
+$$
+K_i = \operatorname{argmin}_j \bigl\{ T_{i j} : j \in \{1,\ldots,m\}\bigr\}.
+$$
+
+The system lifetime and the component cause of failure has a joint distribution
+given by the following theorem.
+\begin{theorem}
+\label{thm:f_k_and_t}
+The joint pdf of the component cause of failure $K_i$ and series system lifetime
+$\T_i$ is given by
+\begin{equation}
+\label{eq:f_k_and_t}
+  f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) R_{\T_i}(t;\v\theta),
+\end{equation}
+where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th}
+component and $R_{\T_i}(t;\v\theta)$ is the reliability function of the series
+system.
+\end{theorem}
+\begin{proof}
+Consider a $3$-out-of-$3$ system.
+By the assumption that component lifetimes are mutually independent,
+the joint pdf of $T_{i 1},T_{i 2},T_{i 3}$ is given by
+$$
+    f(t_1,t_2,t_3;\v\theta) = \prod_{j=1}^{3} f_j(t;\v{\theta_j}).
+$$
+The first component is the cause of failure at time $t$ if $K_i = 1$ and
+$T_i = t$, which may be rephrased as the likelihood that $T_{i 1} = t$,
+$T_{i 2} > t$, and $T_{i 3} > t$. Thus,
+\begin{align*}
+f_{K_i,T_i}(j;\v\theta) 
+    &= \int_t^{\infty} \int_t^{\infty}
+        f_1(t;\v{\theta_1}) f_2(t_2;\v{\theta_2}) f_3(t_3;\v{\theta_3})
+        dt_3 dt_2\\
+     &= \int_t^{\infty} f_1(t;\v{\theta_1}) f_2(t_2;\v{\theta_2})
+        R_3(t;\v{\theta_3}) dt_2\\
+     &= f_1(t;\v{\theta_1}) R_2(t;\v{\theta_2}) R_3(t_1;\v{\theta_3}).
+\end{align*}
+Since $h_1(t;\v{\theta_1}) = f_1(t;\v{\theta_1}) / R_1(t;\v{\theta_1})$,
+$$
+f_1(t;\v{\theta_1}) = h_1(t;\v{\theta_1}) R_1(t;\v{\theta_1}).
+$$
+Making this substitution into the above expression for $f_{K_i,T_i}(j,t;\v\theta)$
+yields
+\begin{align*}
+f_{K_i,T_i}(j,t;\v\theta)
+    &= h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l})\\
+    &= h_1(t;\v{\theta_1}) R(t;\v{\theta}).
+\end{align*}
+Generalizing from this completes the proof.
+\end{proof}
+
+Likelihood Model for Masked Data {#sec:like_model}
+==================================================
+
+The likelihood is a function that quantifies the plausibility of observed data given
+specific parameter values, denoted here as $\v\theta$. In our model, we will
+consider two types of masked data: *right-censored* system lifetime data, which
+obscures the true system lifetime, and *masking of the component cause of failure*,
+where the exact cause of failure is unknown but the system lifetime is precisely
+known. For each type of data, we will derive the *likelihood contributions*.
+
+Given an i.i.d. random sample of masked data
+$$
+\left\{(S_i,\delta_i,\mathcal{C}_i)\right\}_{i \leq n}
+$$
+parameterized by $\v\theta \in \v\Omega$, the joint pdf is given by
+$$
+f\bigl(\{(s_i,\delta_i,\mathcal{C}_i)\}_{i \leq n};\v\theta\bigr)
+    = \prod_{i=1}^n f(s_i,\delta_i,\mathcal{C}_i;\v\theta).
+$$
+The joint pdf computes the likelihood that the observed data,
+$\{s_i,\delta_i,c_i\}_{i \leq n}$, occurs.
+When we fix the data and instead allow the parameter $\v\theta$
+to vary, we obtain what is called the likelihood function,
+$$
+L(\v\theta) = \prod_{i=1}^n L_i(\v\theta)
+$$
+where
+$$
+L_i(\v\theta) = f(s_i,\delta_i,c_i;\v\theta)
+$$
+is the likelihood contribution of the $i$\textsuperscript{th} system.
+
+We present the following theorem for the likelihood contribution model. In subsequent
+subsections, we derive this result for each type of masked data, i.e., right-censored
+system lifetime data $(\delta_i = 0)$, and masking of the component cause of failure
+$(\delta_i = 1)$.
+\begin{theorem}
+\label{thm:likelihood_contribution}
+The likelihood contribution of the $i$-th system is given by
+\begin{equation}
+\label{eq:like}
+L_i(\v\theta) =
+\begin{cases}
+    R_{\T_i}(s_i;\v\theta)                      &\text{ if } \delta_i = 0\\
+    \beta_i R_{\T_i}(s_i;\v\theta)
+        \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1.
+\end{cases}
+\end{equation}
+\end{theorem}
+
+Next, we derive the likelihood contributions for each type of masked data.
+
+## Masked component cause of failure {#sec:candmod}
+Suppose a diagnostician is unable to identify the precise component cause of the
+failure, e.g., due to cost considerations he or she replaced multiple components
+at once, successfully repairing the system but failing to precisely identity
+the failed component.
+In this case, the cause of failure is said to be *masked*.
+
+The unobserved component lifetimes may have many covariates, like ambient
+operating temperature, but the only covariate we observe in our masked data
+model are the system's lifetime and additional masked data in the form of
+a candidate set that is somehow correlated with the unobserved component
+lifetimes.
+
+The ultimate goal of our analysis is to estimate the parameters $\v{\theta}$ that
+maximize the likelihood of our observed data. To achieve this, we first need to
+consider the joint distribution of the continuous system lifetime $\T_i$ and the
+discrete candidate set $\mathcal{C}_i$, which can be written as
+$$
+f_{\T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = f_{\T_i}(t_i;\v{\theta})
+    \Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | \T_i = t_i\},
+$$
+where $f_{\T_i}(t_i;\v{\theta})$ is the pdf $\T_i$ and
+$\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | \T_i = t_i\}$ is the conditional
+pmf of $\mathcal{C}_i$ given $\T_i = t_i$.
+
+We assume we know the pdf $f_{\T_i}(t_i;\v{\theta})$ but we do not know
+$\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | \T_i = t_i\}$, i.e., the data generating
+process for candidate sets is not known.
+However, in order for the masked data $\mathcal{C}_i$ to provide information
+about $\v{\theta}$, $\mathcal{C}_i$ must be correlated with the
+$i$\textsuperscript{th} system in some useful way, in which case the conditional
+distribution of $\mathcal{C}_i$ given $\T_i = t_i$ may be important even though
+the object of statistical interest is the series system rather than the
+candidate sets, which may be statistically problematic, e.g.,
+$\mathcal{C}_1,\mathcal{C}_2,\ldots,\mathcal{C}_n$ may not be identically
+distributed or there may be many important unobserved covariates.
+
+To make this problem tractable, we assume a set of conditions that make it
+unnecessary to estimate the generative processes for candidate sets.
+The most important way in which $\mathcal{C}_i$ is correlated with the
+$i$\textsuperscript{th} system is given by assuming the following condition.
+\begin{condition}
+\label{cond:c_contains_k}
+The candidate set $\mathcal{C}_i$ contains the index of the the failed component, i.e.,
+$$
+\Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1
+$$
+where $K_i$ is the random variable for the failed component index of the
+$i$\textsuperscript{th} system.
+\end{condition}
+Assuming Condition \ref{cond:c_contains_k}, $\mathcal{C}_i$ must contain the
+index of the failed component, but we can say little else about what other
+component indices may appear in $\mathcal{C}_i$.
+
+In order to derive the joint distribution of $\mathcal{C}_i$ and $\T_i$ assuming
+Condition \ref{cond:c_contains_k}, we take the following approach.
+We notice that $\mathcal{C}_i$ and $K_i$ are statistically dependent.
+We denote the conditional pmf of $\mathcal{C}_i$ given $\T_i = t_i$ and
+$K_i = j$ as
+$$
+\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | \T_i = t_i, K_i = j\}.
+$$
+
+Even though $K_i$ is not observable in our masked data model, we can still
+consider the joint distribution of $\T_i$, $K_i$, and $\mathcal{C}_i$.
+By Theorem \ref{thm:f_k_and_t}, the joint pdf of $\T_i$ and $K_i$ is given by
+$$
+f_{\T_i,K_i}(t_i,j;\v{\theta}) = h_j(t_i;\v{\theta_j}) R_{\T_i}(t_i;\v\theta),
+$$
+where $h_j(t_i;\v{\theta_j})$ is the hazard function for the
+$j$\textsuperscript{th} component and $R_{\T_i}(t_i;\v{\theta})$ is the
+reliability function of the system.
+Thus, the joint pdf of $\T_i$, $K_i$, and $\mathcal{C}_i$ may be written as
+\begin{equation}
+\label{eq:joint_pdf_t_k_c}
+\begin{split}
+f_{\T_i,K_i,\mathcal{C}_i}(t_i,j,c_i;\v{\theta})
+    &= f_{\T_i,K_i}(t_i,k;\v{\theta}) \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\}\\
+    &= h_j(t_i;\v{\theta_j}) R_{\T_i}(t_i;\v\theta)
+    \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\}.
+\end{split}
+\end{equation}
+We are going to need the joint pdf of $\T_i$ and $\mathcal{C}_i$, which
+may be obtained by summing over the support $\{1,\ldots,m\}$ of $K_i$ in
+Equation \eqref{eq:joint_pdf_t_k_c},
+$$
+f_{\T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = R_{\T_i}(t_i;\v\theta)
+    \sum_{j=1}^m \biggl\{
+        h_j(t_i;\v{\theta_j}) \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\}
+    \biggr\}.
+$$
+By Condition \ref{cond:c_contains_k},
+$\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\} = 0$ when $K_i = j$ and
+$j \notin c_i$, and so we may rewrite the joint pdf of $T_i$ and
+$\mathcal{C}_i$ as
+\begin{equation}
+\label{eq:part1}
+f_{\T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = R_{\T_i}(t_i;\v\theta)
+    \sum_{j \in c_i} \biggl\{
+        h_j(t_i;\v{\theta_j}) \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\}
+    \biggr\}.
+\end{equation}
+
+When we try to find an MLE of $\v\theta$ (see Section \ref{sec:mle}), we
+solve the simultaneous equations of the MLE and choose a solution
+$\hat{\v\theta}$ that is a maximum for the likelihood function.
+When we do this, we find that $\hat{\v\theta}$ depends on the unknown
+conditional pmf $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\}$.
+So, we are motivated to seek out more conditions (that approximately hold in
+realistic situations) whose MLEs are independent of the pmf
+$\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\}$.
+
+\begin{condition}
+\label{cond:equal_prob_failure_cause}
+Any of the components in the candidate set has an equal probability of being the
+cause of failure.
+That is, for a fixed $j \in c_i$,
+$$
+\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j'\} =
+    \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|\T_i=t_i,K_i=j\}
+$$
+for all $j' \in c_i$.
+\end{condition}
+According to [@Fran-1991], in many industrial problems, masking generally
+occurred due to time constraints and the expense of failure analysis. In this
+setting, Condition \ref{cond:equal_prob_failure_cause} generally holds.
+
+Assuming Conditions \ref{cond:c_contains_k} and
+\ref{cond:equal_prob_failure_cause},
+$\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}$ may be factored out of the
+summation in Equation \eqref{eq:part1}, and thus the joint pdf of $T_i$ and
+$\mathcal{C}_i$ may be rewritten as
+$$
+f_{\T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) =
+    \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\} R_{\T_i}(t_i;\v\theta)
+    \sum_{j \in c_i} h_j(t_i;\v{\theta_j})
+$$
+where $j' \in c_i$.
+
+If $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\}$ is a function of
+$\v{\theta}$, the MLEs are still dependent on the unknown
+$\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\}$.
+This is a more tractable problem, but we are primarily interested in the
+situation where we do not need to know (nor estimate)
+$\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\}$ to find an MLE of
+$\v{\theta}$. The last condition we assume achieves this result.
+\begin{condition}
+\label{cond:masked_indept_theta}
+The masking probabilities conditioned on failure time $\T_i$ and component cause
+of failure $K_i$ are not functions of $\v{\theta}$. In this case, the conditional
+probability of $\mathcal{C}_i$ given $\T_i=t_i$ and $K_i=j'$ is denoted by
+$$
+\beta_i = \Pr\{\mathcal{C}_i=c_i | T_i=t_i, K_i=j'\}
+$$
+where $\beta_i$ is not a function of $\v\theta$.
+\end{condition}
+
+When Conditions \ref{cond:c_contains_k}, \ref{cond:equal_prob_failure_cause},
+and \ref{cond:masked_indept_theta} are satisfied, the joint pdf of $\T_i$ and
+$\mathcal{C_i}$ is given by
+$$
+f_{\T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) =
+    \beta_i R_{\T_i}(t_i;\v\theta)
+    \sum_{j \in c_i} h_j(t_i;\v{\theta_j}).
+$$
+When we fix the sample and allow $\v{\theta}$ to vary, we obtain the
+contribution to the likelihood $L$ from the $i$\textsuperscript{th} observation
+when the system lifetime is exactly known (i.e., $\delta_i = 1$) but the
+component cause of failure is masked by a candidate set $c_i$:
+\begin{equation}
+\label{eq:likelihood_contribution_masked}
+L_i(\v\theta) = R_{\T_i}(t_i;\v\theta) \sum_{j \in c_i} h_j(t_i;\v{\theta_j}).
+\end{equation}
+
+To summarize this result, assuming Conditions \ref{cond:c_contains_k},
+\ref{cond:equal_prob_failure_cause}, and \ref{cond:masked_indept_theta}, 
+if we observe an exact system failure time for the $i$-th system ($\delta_i = 1$),
+but the component that failed is masked by a candidate set $c_i$, then its likelihood
+contribution is given by Equation \eqref{eq:likelihood_contribution_masked}.
+
+### Conditional distribution of $K_i$ given $\T_i$ and $\mathcal{C}_i$
+
+This subsection is not necessary in our likelihood model, but it derives a useful
+result for making predictions about the component cause of failure.
+
+Suppose we have jointly observed a candidate set and a series system
+failure time and we are interested in the probability that a particular component
+is the cause of the observed system failure.
+\begin{theorem}
+Assuming Conditions \ref{cond:c_contains_k} and \ref{cond:equal_prob_failure_cause},
+the conditional probability of $K_i$ given $\mathcal{C}_i = c_i$ and $\T_i = t_i$
+is given by
+\begin{equation}
+\label{eq:cond_prob_k_given_t_and_c}
+\Pr\{K_i = j|\T_i=t_i,\mathcal{C}_i=c_i\} =
+ \frac{h_j(t_i|\v{\theta_j})}{\sum_{l \in c_i} h_l(t_i|\v{\theta_l})} 1_{\{j \in c_i\}}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+The conditional probability $\Pr\{K_i = j|\T_i=t_i,\mathcal{C}_i=c_i\}$ may be
+written as
+$$
+\Pr\{K_i = j|\T_i=t_i,\mathcal{C}_i=c_i\} =
+    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} f_{K_i,\T_i}(j,t_i;\v\theta)}
+    {\sum_{j=1}^m \Pr{}_{\!\v\theta}
+        \{\mathcal{C}_i=c_i|K_i = j,\T_i=t_i\} f_{K_i,\T_i}(j,t_i;\v\theta)}.
+$$
+By Theorem \ref{thm:f_k_and_t},
+$f_{K_i,T_i}(j,t_i;\v\theta) = h_j(t_i;\v\theta)R_{\T_i}(t_i;\v\theta)$.
+We may make this substitution in the above equation and cancel the common
+factors $R_{\T_i}(t_i;\v\theta)$ in the numerator and denominator, yielding
+$$
+\Pr\{K_i = j|\T_i=t_i,\mathcal{C}_i=c_i\} =
+    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v\theta)}
+         {\sum_{j=1}^m \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i=j,\T_i=t_i\} h_j(t_i;\v\theta)}.
+$$
+Assuming Condition \ref{cond:c_contains_k}, we may rewrite the above as
+$$
+\Pr\{K_i = j|\T_i=t_i,\mathcal{C}_i=c_i\}
+    = \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v\theta)}
+        {\sum_{l \in c_i} \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = l,\T_i=t_i\} h_j(t_i;\v\theta)}.
+$$
+Assuming Condition \ref{cond:equal_prob_failure_cause}, we may rewrite the above
+as
+$$
+\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
+    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j',T_i=t_i\} h_j(t_i;\v{\theta_j})}
+    {\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j',T_i=t_i\} {\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}},
+$$
+where $j' \in c_i$.
+Finally, we may cancel the common probability masking factors in the numerator
+and denominator, obtaining the result
+$$
+\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
+    \frac{h_j(t_i;\v{\theta_j})}
+    {\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}.
+$$
+\end{proof}
+
+Frequently, we may not have any information at all about the component cause of
+failure, but we may still want to estimate the probability that a particular
+component is the cause of a system failure at a particular time. In this case,
+we may use the following corollary.
+\begin{corollary}
+The probability that the $j$\textsuperscript{th}
+component is the cause of system failure given only that we know a system failure
+occured at time $t_i$ is given by
+$$
+\Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{j=1}^m h_j(t_i;\v{\theta})}.
+$$
+\end{corollary}
+\begin{proof}
+If we cannot narrow the component cause of failure down to some subset of the
+components, then we let $c_i$ contain all $m$ components, $c_i = \{1,\ldots,m\}$, and
+plug that into Equation \ref{eq:cond_prob_k_given_t_and_c}. The result immediately
+follows.
+\end{proof}
+
+## Right-censored data
+
+As described in Section \ref{sec:data}, we observe realizations of
+$(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{\T_i,\tau_i\}$ is the
+right-censored system lifetime, $\delta_i = 1_{\{\T_i < \tau_i\}}$ is
+the right-censoring indicator, and $\mathcal{C}_i$ is the candidate set.
+
+In the previous section, we discussed the likelihood contribution from an
+observation of a masked component cause of failure, i.e., $\delta_i = 1$. 
+We now derive the likelihood contribution of a *right-censored* observation
+$(\delta_i = 0$) in our masked data model.
+\begin{theorem}
+\label{thm:joint_s_d_c}
+The likelihood contribution of a right-censored observation $(\delta_i = 0)$
+is given by
+\begin{equation}
+L_i(\v\theta) = R_{\T_i}(s_i;\v\theta).
+\end{equation}
+\end{theorem}
+\begin{proof}
+When right-censoring occurs, then $S_i = \tau_i$, and we only know that
+$\T_i > \tau_i$, and so we integrate over all possible values that it may have
+obtained,
+$$
+L_i(\v\theta) = \Pr\!{}_{\v\theta}\{T_i > s_i\}.
+$$
+By definition, this is just the survival or reliability function of the series system
+evaluated at $s_i$,
+$$
+L_i(\v\theta) = R_{\T_i}(s_i;\v\theta).
+$$
+\end{proof}
+
+When we combine the two likelihood contributions, we obtain the likelihood
+contribution for the $i$\textsuperscript{th} system shown in Theorem
+\ref{thm:likelihood_contribution},
+$$
+L_i(\v\theta) =
+\begin{cases}
+    R_{\T_i}(s_i;\v\theta)                      &\text{ if } \delta_i = 0\\
+    \beta_i R_{\T_i}(s_i;\v\theta)
+        \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1.
+\end{cases}
+$$
+
+We use this result in the next section to derive the maximum likelihood
+estimator of $\v\theta$.
+
+Maximum likelihood estimation {#sec:mle}
+========================================
+
+We use maximum likelihood estimation (MLE) to estimate the series system
+parameter vector $\v\theta$ given the masked failure data described in Section
+\ref{sec:data}.
+This is achieved by maximizing the likelihood function $L(\v\theta)$ with
+respect to $\v\theta$ so that, under the assumed model, the observed data is
+most likely.
+The point in the parameter space $\Omega$ that maximizes the likelihood function
+is called the maximum likelihood estimate.
+
+According to @bain, a point $\hat{\v\theta}$ in $\v\Omega$ at which $L(\v\theta)$
+is a maximum is called the *maximum likelhood estimate* (MLE) of $\v\theta$.
+That is, $\hat{\v\theta}$ is a value of $\v\theta$ that satisfies
+\begin{equation}
+\label{eq:mle}
+L(\hat{\v\theta}) = \max_{\v\theta \in \v\Omega} L(\v\theta).
+\end{equation}
+Essentially, the MLE is a point in the parameter space that is a maximum of the
+likelihood of the observed data,
+$$
+\hat{\v\theta} \in \arg\max_{\v\theta \in \v\Omega} L(\v\theta).
+$$
+
+Any point that maximizes the likelihood function also maximizes the log-likelihood
+function.
+Thus, for both computational and analytical reasons, we work with the log-likelihood
+function.
+\begin{theorem}
+\label{thm:loglike_total}
+The log-likelihood function, $\ell(\v\theta)$, is given by
+the log of the likelihood function for our masked data model,
+\begin{equation}
+\label{eq:loglike}
+\ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta)
+\end{equation}
+where
+\begin{equation}
+\ell_i(\v\theta) = 
+\begin{cases}
+\sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) &\text{ if } \delta_i = 0\\
+\sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) +
+    \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \bigr) &\text{ if } \delta_i = 1.
+\end{cases}
+\end{equation}
+\end{theorem}
+\begin{proof}
+The log-likelihood function is just the logarithm of the likelihood function,
+$$
+\ell(\v\theta) = \log L(\v\theta) = \log \prod_{i=1}^n L_i(\v\theta).
+$$
+Since $\log(A \cdot B) = \log(A) + \log(B)$, we may rewrite the log-likelihood
+function as
+$$
+\ell(\v\theta) = \sum_{i=1}^n \log L_i(\v\theta).
+$$
+By Equation \eqref{eq:like}, $L_i$ is given by
+$$
+L_i(\v\theta) =
+\begin{cases}
+R_{\T_i}(s_i;\v\theta) &\text{ if } \delta_i = 0,\\
+R_{\T_i}(s_i;\v\theta)
+    \beta_i \sum_{j\in c_i} h_j(s_i;\v{\theta_j}) &\text{ if } \delta_i = 1.
+\end{cases}
+$$
+
+We now consider these two cases separately, then combine them to obtain the
+result in Theorem \ref{thm:loglike_total}.
+
+\textbf{Case 1}: If the $i$-th system is right-censored, i.e., $\delta_i = 0$, then
+$$
+\ell_i(\v\theta) = \log R_{\T_i}(s_i;\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}).
+$$
+
+\textbf{Case 2}: If the $i$-th system's component cause of failure is masked but the
+failure time is known, i.e., $\delta_i = 1$, then
+\begin{align*}
+\ell_i(\v\theta)
+    &= \log R_{\T_i}(s_i;\v\theta) \beta_i \sum_{j\in c_i} h_j(s_i;\v{\theta_j})\\
+    &= \log R_{\T_i}(s_i;\v\theta) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr).
+\end{align*}
+
+Since $\beta_i$ is not a function of $\v\theta$ (see Condition \ref{cond:masked_indept_theta}),
+$\log \beta_i$ is a constant with respect to $\v\theta$ and so may be ignored in MLE
+(when we solve the maximum likelihood equations, any terms that do not depend on
+$\v\theta$ will be eliminated by the gradient operator).
+Thus, we may rewrite the above equation as
+$$
+\ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) +
+        \log \biggl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
+$$
+\end{proof}
+
+## Solving the maximum likelihood equations {#sec:iterative}
+According to @bain, if $\v\Omega$ is a Cartesian product of $l$ intervals,
+partial derivatives of $L(\v\theta)$ exist, and the MLEs do not occur on the
+boundary of $\v\Omega$, then the MLEs will be solutions of the simultaneous
+equations
+\begin{equation}
+\label{eq:mle_eq}
+\frac{\partial}{\partial \theta_j} \ell(\v\theta) = 0
+\end{equation}
+for $j=1,\ldots,p$ where $p$ is the number of components in $\v\theta$.
+We call these equations the *maximum likelihood equations*.
+If multiple solutions to Equation \eqref{eq:mle_eq} exist, each solution that
+maximizes the likelihood function is a valid MLE.
+
+If there is no closed-form solution to the maximum likelihood equations
+\eqref{eq:mle_eq}, we may use iterative root-finding methods to
+numerically approximate a solution.
+A general approach is, if we have a guess $\v\theta^{(n)}$, take a step in
+a "promising" direction $\v{d}^{(n)}$ to obtain the next guess,
+\begin{equation}
+\label{eq:iterative_update}
+\v\theta^{(n+1)} = \v\theta^{(n)} + \alpha^{(n)} \v{d}^{(n)},
+\end{equation}
+where $\v\theta^{(0)}$ is an initial guess in the parameter space $\Omega$ that is
+sufficiently close to the MLE $\hat{\v\theta}$. In our case, we use the
+parameter vector $\v\theta^{(0)} = \v\theta$ as our initial guess, since we know
+the true value $\v\theta$ in our simulation studies, but if plausible initial
+guesses are not known, then global methods may be used to find a good initial
+guess, like Simulated Annealing.
+
+Assuming that at $\v\theta^{(n)}$, a sufficiently small step in the direction
+$\v{d}^{(n)}$ results in an improvement with respect to the log-likelihood function,
+we say that we *overshoot* if
+$$
+\ell(\v{\theta}^{(n+1)}) < \ell(\v{\theta}^{(n)}).
+$$
+The value $\alpha^{(n)}$ in Equation \eqref{eq:iterative_update} is a positive
+real number chosen by a *line search* method so that we do not overshot, which
+has an optimal value given by
+$$
+\alpha^{(n)} \in \operatorname{argmax}_{\alpha}
+    \ell(\v{\theta}^{(n)} + \alpha \v{d}^{(n)}).
+$$
+However, this may be too computationally expensive to compute, and so we use
+a less optimal but faster method known as *backtracking*.
+In the backtracking line search method, we determine $\alpha^{(n)}$ by initially
+letting $\alpha^{(n)} = 1$ and then, if we overshoot, redo the update
+with $\alpha^{(n)} \gets r \alpha^{(n)}$, $0 < r < 1$, repeating until we
+do not overshoot.
+
+Note that this is not necessarily the best course of action for finding
+global maximums, since depending on our initial guess $\v\theta^{(0)}$, we may
+get stuck in a local maximum.
+There are many other methods that are more likely to find a global maximum,
+such as sometimes moving in a direction that decreases the likelihood of the
+guess. However, for our simulations, we found that we were always able to find
+a global maximum using the iterative method described in Equation \eqref{eq:iterative_update}.
+
+We do as many iterations in Equation \eqref{eq:iterative_update} as necessary to
+satisfy some *stopping condition*, which is usually something simple like the
+distance between $\v\theta^{(n)}$ and $\v\theta^{(n+1)}$ being sufficiently
+small. Under the right conditions, for sufficiently large $n$,
+$\v\theta^{(n)} \approx \hat{\v\theta}$.
+
+Two popular iterative techniques are Newton-Raphson method and gradient ascent,
+which respectively are defined by letting
+$$
+\v{d}^{(n)}_{\text{Newton-Raphson}} = J^{-1}(\v\theta^{(n)}) \nabla \ell(\v\theta^{(n)})
+$$
+and
+$$
+\v{d}^{(n)}_{\text{gradient ascent}} = \nabla \ell(\v\theta^{(n)}),
+$$
+where $J(\v\theta^{(n)})$ and $\nabla \ell(\v\theta^{(n)})$ are respectively
+the observed Fisher information matrix (Hessian of the
+log-likelihood function) and the score (gradient of the log-likelihood
+function), each evaluated at $\v\theta^{(n)}$.
+
+Depending upon the nature of the log-likelihood function, one or the other may
+work better in practice.\footnote{For example, one approach may be more
+computationally efficient.}
+The R code for iterative methods is in Appendix C.
+
+## Properties of the MLE
+According to @bain, if certain regularity conditions are satisfied, then
+solutions of the maximum likelihood equation \eqref{eq:mle_eq} have the
+following desirable properties:
+
+1. $\v{\hat\theta}$ exists and is unique.
+
+2. $\v{\hat\theta}$ is an asymptotically unbiased estimator.
+
+3. $\v{\hat\theta}$ is asymptotically the UMVUE, the uniform minimum variance unbiased
+   estimator.
+   
+4. $\v{\hat\theta}$ is asymptotically normal with a mean $\v\theta$ and a
+   variance-covariance that is the inverse of the Fisher information matrix,
+   whose $(i,j)$-th component is given by
+   $$
+    I(\v\theta)_{i j} = n E_{\v\theta}\biggl(-\frac{\partial^2}{\partial \theta_i \partial \theta_j}
+        \log f(S_i,\delta_i,\mathcal{C}_i;\v\theta)\biggr).
+   $$
+   
+Since it is frequently problematic taking the expectation to derive $I(\theta)$,
+we instead use the *observed* information matrix, which is conditioned on the
+observed data,
+$$
+J(\v\theta)_{i j} = -\frac{\partial}{\partial \theta_i \partial \theta_j}
+    \ell(\v\theta).
+$$
+
+Since we do not know $\v\theta$, we estimate $J(\v\theta)$ with $J(\v{\hat\theta})$.
+Thus, assuming the regularity conditions are satisfied, then approximately,
+$$
+    \hat{\v\theta} \sim \mathcal{N}(\hat{\v\theta},J^{-1}(\hat{\v\theta}))
+$$
+and as the sample size goes to infinity, $\hat{\v\theta}$ converges in
+distribution to $\mathcal{N}(\hat{\v\theta},J^{-1}(\hat{\v\theta}))$.
+
+Components with Weibull distributed lifetimes {#sec:weibull}
+=============================================
+Consider a series system in which the components have Weibull distributed
+lifetimes.
+The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
+lifetime distribution given by
+$$
+    T_{i j} \sim \operatorname{WEI}(\v{\theta_j})
+$$
+where $\v{\theta_j} = (k_j, \lambda_j)$ for $j=1,\ldots,m$.
+Thus, $\v\theta = (\v{\theta_1},\ldots,\v{\theta_m})' = \bigl(k_1,\lambda_1,\ldots,k_m,\lambda_m\bigr)$.
+The random variable $T_{i j}$ has a reliability function, pdf, and hazard function
+given respectively by
+\begin{align}
+    R_j(t;\lambda_j,k_j)
+        &= \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\},\\
+    f_j(t;\lambda_j,k_j)
+        &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
+        \exp\biggl\{-\left(\frac{t}{\lambda_j}\right)^{k_j} \biggr\},\\
+    h_j(t;\lambda_j,k_j) \label{eq:weibull_haz}
+        &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
+\end{align}
+where $t > 0$, $\lambda_j > 0$ is the scale parameter and $k_j > 0$ is the
+shape parameter.
+
+```{r echo=F, message=F, warning=F}
+shape1 <- 3
+scale1 <- 30
+shape2 <- 1
+scale2 <- 50
+shape3 <- 2.5
+scale3 <- 15
+shape4 <- 5
+scale4 <- 20
+shape5 <- 0.25
+scale5 <- 50
+
+funs <- c(
+  paste0("(", shape1, ",", scale1, ")"),
+  paste0("(", shape2, ",", scale2, ")"),
+  paste0("(", shape3, ",", scale3, ")"),
+  paste0("(", shape4, ",", scale4, ")"),
+  paste0("(", shape5, ",", scale5, ")"))
+
+ts <- seq(0,100,by=.1)
+h.wei1 <- Vectorize(function(t) (shape1/scale1)*(t/scale1)^(shape1-1))
+h.wei2 <- Vectorize(function(t) (shape2/scale2)*(t/scale2)^(shape2-1))
+h.wei3 <- Vectorize(function(t) (shape3/scale3)*(t/scale3)^(shape3-1))
+h.wei4 <- Vectorize(function(t) (shape4/scale4)*(t/scale4)^(shape4-1))
+h.wei5 <- Vectorize(function(t) (shape5/scale5)*(t/scale5)^(shape5-1))
+
+df.haz <- data.frame(
+    t=ts,
+    y=c(h.wei1(ts),h.wei2(ts),h.wei3(ts),h.wei4(ts),h.wei5(ts)),
+    fun=rep(funs, each=length(ts)))
+
+R.wei1 <- Vectorize(function(t) exp(-(t/scale1)^shape1))
+f.wei1 <- Vectorize(function(t) shape1/scale1*(t/scale1)^(shape1-1)*
+    exp(-(t/scale1)^shape1))
+R.wei2 <- Vectorize(function(t) exp(-(t/scale2)^shape2))
+f.wei2 <- Vectorize(function(t) shape2/scale2*(t/scale2)^(shape2-1)*
+    exp(-(t/scale2)^shape2))
+R.wei3 <- Vectorize(function(t) exp(-(t/scale3)^shape3))
+f.wei3 <- Vectorize(function(t) shape3/scale3*(t/scale3)^(shape3-1)*
+    exp(-(t/scale3)^shape3))
+R.wei4 <- Vectorize(function(t) exp(-(t/scale4)^shape4))
+f.wei4 <- Vectorize(function(t) shape4/scale4*(t/scale4)^(shape4-1)*
+    exp(-(t/scale4)^shape4))
+R.wei5 <- Vectorize(function(t) exp(-(t/scale5)^shape5))
+f.wei5 <- Vectorize(function(t) shape5/scale5*(t/scale5)^(shape5-1)*
+    exp(-(t/scale5)^shape5))
+df.pdf <- data.frame(
+    t=ts,
+    y=c(f.wei1(ts),f.wei2(ts),f.wei3(ts),f.wei4(ts),f.wei5(ts)),
+    fun=rep(funs, each=length(ts)))
+
+```
+
+
+```{r exp_weib_haz, fig.align="center", fig.cap="Component lifetime plots", warning = FALSE, echo = FALSE}
+caption_text <- glue(
+    "Plots of five different components with Weibull distributed lifetimes. Key observations:\n",
+    "(1) Components with a shape < 1 have decreasing hazards, e.g., component 1.\n",
+    "(2) Components with shapes > 1 have increasing hazards, e.g., components 3, 4, and 5.\n",
+    "(3) Components with shape = 1 have constant hazards, e.g., component 2.\n")
+
+p1 <- ggplot(df.haz, aes(x=t, y=y, color=fun)) +
+    geom_line() +
+    labs(y = "Hazard",
+         x = "Weibull Component Lifetimes") +
+    ylim(0,.75) +
+    xlim(.1,27) +
+    theme_bw() +
+    theme(panel.grid = element_blank(),
+          legend.position="none")
+
+
+p2 <- ggplot(df.pdf,aes(x=t, y=y, color=fun)) +
+    geom_line() +
+    labs(y = "Density",
+         x = "Weibull Component Lifetimes") +
+    ylim(0,.12) +
+    xlim(.1,30) +
+    theme_bw() +
+    theme(panel.grid = element_blank(),
+          legend.position="none")
+
+p3 <- ggplot(df.haz, aes(x=t, y=y, color=fun)) +
+    geom_line() +
+    theme_void() +  # remove all non-legend elements
+    theme(legend.position="bottom") +
+    labs(color = expression(paste("(", k, ",", lambda, ")")))
+
+caption <- textGrob(caption_text, gp=gpar(fontsize=9))
+grid.arrange(
+  arrangeGrob(p1, p2, ncol = 2),
+  p3,
+  bottom = caption,
+  nrow = 3,
+  heights = c(10, 1, 1))
+```
+
+The shape parameter $k$ may be understood in the following way:
+
+- If $k < 1$, then the hazard function decreases with respect to system lifetime,
+which may occur if defective items fail early and are weeded out.
+- If $k > 1$, then the hazard function is increases with respect
+to time, which may occur as a result of an aging process.
+- If $k = 1$, then the failure rate is constant, which means it is exponentially
+distributed.
+
+See Figure \ref{fig:exp_weib_haz} for plots of the hazard and pdf functions of five different
+Weibull distributed components. We will use these plots to illustrate the
+different shapes of the hazard and pdf functions. The first component has a
+shape parameter $k=0.25$, which is less than 1, and so the hazard function
+decreases with respect to time. The second component has a shape parameter
+$k=1$, and so the hazard function is constant. The third, fourth, and fifth
+components have shape parameters $k=2.5$, $k=3$, and $k=5$, respectively, and
+so the hazard functions increase with respect to time.
+
+The lifetime of the series system composed of $m$ Weibull components
+has a reliability function given by
+\begin{equation}
+\label{eq:sys_weibull_reliability_function}
+R(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+\end{equation}
+\begin{proof}
+By Theorem \ref{thm:sys_reliability_function},
+$$
+R(t;\v\theta) = \prod_{j=1}^{m} R_j(t;\lambda_j,k_j).
+$$
+Plugging in the Weibull component reliability functions obtains the result
+\begin{align*}
+R(t;\v\theta)
+    &= \prod_{j=1}^{m} \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}\\
+    &= \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+\end{align*}
+\end{proof}
+
+The Weibull series system's hazard function is given by
+\begin{equation}
+\label{eq:sys_weibull_failure_rate_function}
+h(t;\v\theta) =
+    \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1},
+\end{equation}
+whose proof follows from Theorem \ref{thm:sys_failure_rate}.
+
+```{r series_haz_pdf, cache=T, fig.cap = "System lifetime plots", fig.align = "center", echo=F, warning=F,message=F}
+source("./wei.series.md.c1.c2.c3/R/wei_series.R")
+
+h.series.ts <- hazard_wei_series(ts,
+    scales=c(scale1,scale2,scale3,scale4,scale5),shapes=c(shape1,shape2,shape3,shape4,shape5))
+df.series.haz <- data.frame(t=ts, y=h.series.ts)
+p1 <- ggplot(df.series.haz,aes(x=t, y=y)) +
+    geom_line() +
+    ylim(0,.3) +
+    xlim(0.02,15) +
+    theme_bw() +
+    labs(y = "Hazard",
+         x = "Series System Lifetime") +
+    theme(panel.grid = element_blank())
+
+f.series.ts <- dwei_series(ts,
+    scales=c(scale1,scale2,scale3,scale4,scale5),shapes=c(shape1,shape2,shape3,shape4,shape5))
+
+df.series.f <- data.frame(t=ts, y=f.series.ts)
+p2 <- ggplot(df.series.f,aes(x=t, y=y)) +
+    geom_line() +
+    labs(y = "Density",
+         x = "Series System Lifetime") +
+    ylim(0,.3) +
+    xlim(.1,20) +
+    theme_bw() +
+    theme(panel.grid = element_blank())
+
+caption_text <- glue(
+    "Plots of the hazard function and the pdf of a series system with the previously discussed Weibull\n",
+    "components. Key observations:\n",
+    "(1) The hazard is initially large but decreases to some minimum before increasing again,\n",
+    "exhibiting both a high infant mortality rate and an aging process. This is a pattern we\n",
+    "see in nature (e.g., humans).\n",
+    "(2) The pdf has a rather unusual form, a result of being a combination of Weibull distributions.")
+caption <- textGrob(caption_text, gp=gpar(fontsize=9))
+grid.arrange(
+  arrangeGrob(p1, p2, ncol = 2),
+  bottom = caption,
+  nrow = 2,
+  heights = c(10, 1))
+```
+
+
+In Figure \ref{fig:series_haz_pdf}, we plot the hazard function and the pdf of the
+Weibull series system with the component lifetime parameters considered earlier,
+\begin{align*}
+T_{i 1} &\sim \operatorname{WEI}(3,30)\\
+T_{i 2} &\sim \operatorname{WEI}(2,50)\\
+T_{i 3} &\sim \operatorname{WEI}(0.5,15)\\
+T_{i 4} &\sim \operatorname{WEI}(5,20)\\
+T_{i 5} &\sim \operatorname{WEI}(0.25,50)\\
+\end{align*}
+for the $i$-th series system where $i=1,\ldots,n$. By Theorem \ref{thm:sys_lifetime},
+the series system has a random lifetime given
+by
+$$
+T_i = \operatorname{min}\{T_{i 1},\ldots,T_{i 5}\}.
+$$
+where $\v\theta = (k_1,\lambda_1,\ldots,k_5,\lambda_5)$.
+
+The series system, due to being a mixture of Weibull components with different
+shapes, has both a high infant mortality rate and an aging process,
+which is reflected in the plot of the hazard function. The hazard is
+initially high then decreases to some minimum before increasing again. This
+is a pattern we see in nature, e.g., electronic appliances may fail early due to
+defects, but those that survive the initial period of high failure rate
+can be expected to last for a long time before finally wearing out due to an aging
+process.
+
+The pdf of the series system also appears to be multimodal, where the modes
+correspond to the high infant mortality rate and the aging process.
+
+The pdf of the series system is given by
+\begin{equation}
+\label{eq:sys_weibull_pdf}
+f(t;\v\theta) =
+\biggl\{
+    \sum_{j=1}^m \frac{k_j}{\lambda_j}\left(\frac{t}{\lambda_j}\right)^{k_j-1}
+\biggr\}
+\exp
+\biggl\{
+    -\sum_{j=1}^m \bigl(\frac{t}{\lambda_j}\bigr)^{k_j}
+\biggr\}.
+\end{equation}
+\begin{proof}
+By definition,
+$$
+f(t;\v\theta) = h(t;\v\theta) R(t;\v\theta).
+$$
+Plugging in the failure rate and reliability functions given respectively by
+Equations \eqref{eq:sys_weibull_reliability_function} and
+\eqref{eq:sys_weibull_failure_rate_function} completes the proof.
+\end{proof}
+
+The conditional pmf of $K_i$ given $\T_i$ is given by
+\begin{equation}
+\label{eq:weibull_pmf_k_given_s}
+f(k;\v\theta|t) = \frac{\frac{k_k}{\lambda_k}\bigl(\frac{t}{\lambda_k}\bigr)^{k_k-1}}
+    {\sum_{j=1}^m \frac{k_j}{\lambda_j}\bigl(\frac{t}{\lambda_j}\bigr)^{k_j-1}}.
+\end{equation}
+\begin{proof}
+By Theorem \ref{thm:f_given_s_form_2},
+$$
+f(k;\v\theta|t) = \frac{h_k(t;\v{\theta_k})}{\sum_{j=1}^m h_j(t;\v{\theta_j})}
+$$
+where $h_1,\ldots,h_m$ are the failure rate functions of the $m$ Weibull
+component lifetimes.
+\end{proof}
+
+The joint pdf of $K_i$ and $\T_i$ is given by
+\begin{equation}
+\label{eq:weibull_joint_k_s}
+f(k,t;\v\theta) = \frac{k_k}{\lambda_j}\biggl(\frac{t}{\lambda_k}\biggr)^{k_k-1}
+\exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+\end{equation}
+\begin{proof}
+Plugging in the conditional probability and the marginal probability given
+respectively by Equations \eqref{eq:expo_prob_K_given_S} and
+\eqref{eq:expo_sys_pdf} completes the proof.
+
+By Theorem \ref{thm:f_k_and_t}, the joint pdf of $K_i$ and $\T_i$ is given by
+$$
+f(k,t;\v\theta) = h_k(t;\v{\theta_k}) R_{\T_i}(t;\v\theta)
+$$
+where $R_{T_i}(t;\v\theta)$ is given by Equation
+\eqref{eq:sys_weibull_reliability_function} and $h_k$ is the failure rate
+function of the $k$\textsuperscript{th} Weibull component.
+\end{proof}
+
+
+## Weibull Likelihood Model for Masked Data
+
+In Section \ref{sec:like_model}, we discussed two separate kinds of likelihood
+contributions, masked component cause of failure data (with exact system failure
+times) and right-censored data. The likelihood contribution of the
+$i$\textsuperscript{th} system is given by the following theorem.
+\begin{theorem}
+Let $\delta_i$ be an indicator variable that is 1 if the
+$i$\textsuperscript{th} system fails and 0 (right-censored) otherwise.
+Then the likelihood contribution of the $i$\textsuperscript{th} system is given by
+\begin{equation}
+\label{eq:weibull_likelihood_contribution}
+L_i(\v\theta) =
+\begin{cases}
+    \exp\biggl\{-\sum_{j=1}^{m}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j}\biggr\}
+        \beta_i \sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}
+    & \text{if } \delta_i = 1,\\
+    \exp\bigl\{-\sum_{j=1}^{m}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j}\biggr\} & \text{if } \delta_i = 0.
+\end{cases}
+\end{equation}
+\end{theorem}
+\begin{proof}
+By Theorem \ref{thm:likelihood_contribution}, the likelihood contribution of the
+$i$-th system is given by
+$$
+L_i(\v\theta) =
+\begin{cases}
+    R_{\T_i}(s_i;\v\theta)                      &\text{ if } \delta_i = 0\\
+    \beta_i R_{\T_i}(s_i;\v\theta)
+        \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1.
+\end{cases}
+$$
+By Equation \eqref{eq:sys_weibull_reliability_function}, the system reliability
+function $R_{\T_i}$ is given by
+$$
+R_{\T_i}(t_i;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j}\biggr\}.
+$$
+and by Equation \eqref{eq:weibull_haz}, the Weibull component hazard function $h_j$ is
+given by
+$$
+h_j(t_i;\v{\theta_j}) = \frac{k_j}{\lambda_j}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j-1}.
+$$
+Plugging these into the likelihood contribution function obtains the result.
+\end{proof}
+
+Taking the log of the likelihood contribution function obtains the following result.
+\begin{corollary}
+The log-likelihood contribution of the $i$-th system is given by
+\begin{equation}
+\ell_i(\v\theta) =
+\begin{cases}
+-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j} + \log \biggl\{    
+    \sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}
+\biggr\} & \text{if } \delta_i = 1,\\
+-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j} & \text{if } \delta_i = 0,
+\end{cases}
+\end{equation}
+where we drop any terms that do not depend on $\v\theta$ since they do not
+affect the MLE.
+\end{corollary}
+
+Since the systems are independent, the log-likelihood of the entire sample of $n$
+observations is given by
+\begin{equation}
+\label{eq:weibull_log_likelihood}
+\ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta).
+\end{equation}
+
+## Maximum likelihood estimation
+
+We may find an MLE by solving the maximum likelihood equation \eqref{eq:mle_eq},
+i.e., a point $\v{\hat\theta} = (\hat{k}_1,\hat{\lambda}_1,\ldots,\hat{k}_m,\hat{\lambda}_m)$ satisfying
+$\nabla_{\theta} \ell(\v{\hat\theta}) = \v{0}$, where $\nabla_{\v\theta}$
+is the gradient of the log-likelihood function with respect to $\v\theta$, otherwise
+known as the score.
+
+To solve these ML equations, we use the Newton-Raphson method described in Section
+\ref{sec:iterative}. In order to use the Newton-Raphson method, we need to
+compute the gradient and Hessian of the log-likelihood function.
+
+We analytically derive the gradient of the log-likelihood function (score), since it
+is useful to have for the Newton-Raphson method, but we do not do the same for the
+Hessian of the log-likelihood for the following reasons:
+
+1. The Hessian is not necessarily needed since we often use some faster method to
+approximate the Hessian, e.g., the BFGS method. Technically, we could also
+numerically approximate the gradient too, but the gradient is much easier
+to derive than the Hessian, and moreover, knowing the score precisely also
+enables us to more accurately approximate the Hessian by taking the Jacobian
+of the gradient.
+
+2. The Hessian is more difficult to derive than the score, and so it is more
+likely that we will make a mistake when deriving the Hessian. 
+
+The following theorem derives the score function.
+\begin{theorem}
+\label{thm:weibull_score}
+The score function of the log-likelihood contribution of the $i$-th Weibull series
+system is given by
+\begin{equation}
+\label{eq:weibull_score}
+\nabla \ell_i(\v\theta) = \biggl(
+    \frac{\partial \ell_i(\v\theta)}{\partial k_1},
+    \frac{\partial \ell_i(\v\theta)}{\partial \lambda_1},
+    \cdots, 
+    \frac{\partial \ell_i(\v\theta)}{\partial k_m},
+    \frac{\partial \ell_i(\v\theta)}{\partial \lambda_m} \biggr)',
+\end{equation}
+where
+\begin{equation}
+\frac{\partial \ell_i(\v\theta)}{\partial k_r} = 
+\begin{cases}
+    -\bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r}       
+        \log\bigl(\frac{t_i}{\lambda_r}\bigr) +
+        \frac{\frac{1}{t_i} \bigl(\frac{t_i}{\lambda_r}\bigr)
+            \bigl(1+ k_r \log\bigl(\frac{t_i}{\lambda_r}\bigr)\bigr)}
+            {\sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}}
+            & \text{if } \delta_i = 1 \text{ and } r \in c_i,\\
+    -\bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r}\log\bigl(\frac{t_i}{\lambda_r}\bigr)
+    & \text{if } \delta_i = 0 \text{ or } r \notin c_i\\
+\end{cases}
+\end{equation}
+and 
+\begin{equation}
+\frac{\partial \ell_i(\v\theta)}{\partial \lambda_r} = 
+\begin{cases}
+    \frac{k_r}{\lambda_r} \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r} -
+    \frac{k_r^2 \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r-1}}
+        {\sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}}
+    & \text{if } \delta_i = 1 \text{ and } r \in c_i,\\
+    \frac{k_r}{\lambda_r} \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r}
+    & \text{if } \delta_i = 0 \text{ or } r \notin c_i.
+\end{cases}
+\end{equation}
+\end{theorem}
+
+These results follow from taking the partial derivatives of the log-likelihood
+contribution of the $i$-th system given by Equation
+\eqref{eq:weibull_likelihood_contribution}. The proof is omitted for brevity,
+but the results have been verified by using a very precise numerical
+approximation of the gradient and verifying equality with the analytical
+gradient on different data sets and parameter values.
+
+By the linearity of differentiation, the gradient of a sum of functions is
+the same of their gradients, and so the score function of the entire sample is given
+by
+\begin{equation}
+\label{eq:weibull_series_score}
+\nabla \ell(\v\theta) = \sum_{i=1}^n \nabla \ell_i(\v\theta).
+\end{equation}
+
+
+Simulation study: Weibull series system
+=======================================
+
+In the real world, systems are quite complex:
+
+1. They are not perfect series systems.
+
+2. The components in a system are not independent.
+
+3. The lifetimes of the systems (in the population) are not precisely modeled by
+   any known probability distributions.
+   
+4. The components may depend on many other unobserved factors.
+
+With these caveats in mind, we model the data as coming from a Weibull series
+system of $m = 5$ components, and other factors, like ambient temperature, are
+either negligible (on the distribution of component lifetimes) or are more or less
+constant. Then, our task is to use our likelihood model to find the best fit using
+maximum likelihood estimation.
+
+## Bernoulli candidate set model
+
+In our simulation study, we must generate data that satisfies the masking
+conditions. In other words, we must generate data that satisfies the following
+conditions described in Section \ref{sec:candmod}.
+
+There are many ways to satisfying the masking conditions. We choose the simplest
+method, which we call the *Bernoulli candidate set model*. In this model, each
+non-failed component is included in the candidate set with
+a fixed probability $p$, independently of all other components and independently
+of $\v\theta$, and the failed component is always included in the candidate set.
+
+## Identifiability
+
+When estimating the parameters of latent components, we must be careful to
+ensure that the parameters are identifiable. In other words, we must ensure
+that the likelihood function is maximized at a unique point. If the likelihood
+function is not maximized at a unique point, then the MLE is not unique, and
+a lot of the theory we have developed so far breaks down.
+
+One way in which this problem may arise is if the data is not informative
+enough. For example, if we have a series system with $m$ components, and in the
+sample component $1$ is in the candidate set if and only if component $2$ is in
+candidate set, then we do not have enough information to estimate the
+parameters of component $1$ and component $2$ separately. In this case, we
+could combine these two components into one component, and then we would have $m-1$
+components to estimate instead. We lagely avoid this problem by using the Bernoulli
+candidate set model, but sometimes it may still arise by chance.
+
+## Optimization issue: parameter rescaling {#sec:opt_rescale}
+
+When the parameters under investigation span different orders of magnitude,
+parameter rescaling can significantly improve the performance and reliability of
+optimization algorithms.
+
+Parameter rescaling gives an optimizer a sense of the typical size of each parameter,
+enabling it to adjust its steps accordingly. This is crucial in scenarios like ours,
+where shape and scale parametes are a few orders of magnitude apart. Without
+rescaling, the optimization routine may struggle, taking numerous small steps for
+larger parameters and overshooting for smaller ones.
+
+In the `optim` algorithm in the R package `stats`, we achieve this result by
+assigning a `parscale` vector in line with the parameter magnitudes. It does not
+matter what the values of the `parscale` vector are, only their relative magnitudes.
+It does not need to be very precise, but since we are doing a simulation study,
+we know the true parameter values and can use that information to scale them
+appropriately. We found that this allowed for convergence to MLEs more quickly
+and reliably.
+
+## Simulation study design
+
+```{r sim-study-design, echo = F}
+theta <- c(shape1 = 1.2576, scale1 = 994.3661,
+           shape2 = 1.1635, scale2 = 908.9458,
+           shape3 = 1.1308, scale3 = 840.1141,
+           shape4 = 1.1802, scale4 = 940.1141,
+           shape5 = 1.3311, scale5 = 836.1123)
+```
+
+Here is an outline of the simulation study analysis:
+
+1. Set up simulation parameters:
+   
+    - The true parameter value $\v\theta$ for the Weibull series system
+    (5 components) has shape parameters given by
+    $$
+        k_1 = `r theta["shape1"]`,
+        k_2 = `r theta["shape2"]`,
+        k_3 = `r theta["shape3"]`,
+        k_4 = `r theta["shape4"]`,
+        k_5 = `r theta["shape5"]`
+    $$
+    and scale parameters given by
+    $$
+        \lambda_1 = `r theta["scale1"]`,
+        \lambda_2 = `r theta["scale2"]`,
+        \lambda_3 = `r theta["scale3"]`,
+        \lambda_4 = `r theta["scale4"]`,
+        \lambda_5 = `r theta["scale5"]`.
+    $$
+
+    - We generate MLEs for a range of sample sizes from $n = 10$ to $n = 200$.
+     
+    - We generate MLEs for a range of probabilities from $p = 0$ (no masking)
+      to $p = 0.3$ (significant masking) for including each non-failed
+      component in the candidate set using the Bernoulli candidate set model.
+
+    - We use only two separate right-censoring times, $\tau$ set to $\infty$ (no
+      right censoring) to and $\tau$ set to the $0.75$-quantile of the Weibull series
+      system.
+
+2. For each scenario (combination of $n$, $p$, and $\tau$), we generate $R = 200$
+   data sets.
+
+3. We estimate the parameters for each replication, giving us $R$ estimates of the
+   parameters for each scenario. We use these replicates as an empirical estimate of
+   the sampling distribution of the MLE for each scenario.
+   
+4. Using the empirical sampling distributions, we estimate the bias, variance, MSE,
+   and coverage probability of the MLE for each scenario.
+
+6. We analyze and visualize the results, e.g., by plotting the bias, variance, MSE,
+   and coverage probability as a function of $n$ and $p$ for each $\tau$. 
+
+   We then interpret the results and discuss the performance of the MLE estimator
+   under various conditions. We expect that as $n \to \infty$, the bias and MSE
+   will go to $0$ and the coverage probability will go to $0.95$ (when
+   constructing $95\%$ confidence intervals). Of course, we do not expect these
+   results to hold for finite $n$, but we would like to see how the bias, MSE, and
+   coverage probability change as a function of $n$ and $p$ for each $\tau$.
+
+## Estimates of bias, variance, and coverage probability {#sec:acc_prec}
+A measure of the accuracy of $\v{\hat\theta}$ is the bias, which is defined as
+$$
+\operatorname{b}(\v{\hat\theta}) = E(\v{\hat\theta}) - \v\theta.
+$$
+We cannot analytically derive the bias, so we estimate the bias using the empirical
+sampling distribution,
+$$
+\hat{\operatorname{b}}(\v{\hat\theta}) =
+    E_{\hat{\v\theta} \sim \text{data}}(\v{\hat\theta}) - \v\theta.
+$$
+
+We estimate the precision of $\v{\hat\theta}$ with the variance-covariance matrix,
+$$
+\operatorname{Var}(\v{\hat\theta}) =
+    E\bigl(
+        (\hat{\v\theta} - E(\hat{\v\theta}))
+        (\hat{\v\theta} - E(\hat{\v\theta}))'
+    \bigr),
+$$
+which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
+the expectation is taken with respect to the empirical sampling distribution.
+We will principally use the diagonal elements of the variance-covariance matrix,
+which are the variances of the individual components of $\v{\hat\theta}$.
+
+We will use the inverse of the observed Fisher information matrix (FIM), which was
+defined in Section \ref{}, to construct $95\%$-confidence intervals for $\v\theta$
+to compute the coverage probability of the MLE for each scenario. A confidence
+interval is said to be *well-calibrated* if the coverage probability is close to
+the nominal level, $95\%$.
+
+The mean squared error, $\operatorname{MSE}$, is a measure of
+estimator error that incorporates both the bias and the variance, and is defined as
+$$
+\operatorname{MSE}(\v{\hat\theta}) =
+    E\bigl((\v{\hat\theta} - \v\theta)(\v{\hat\theta} - \v\theta)'\bigr) =
+    \operatorname{Var}(\v{\hat\theta}) +
+    \operatorname{b}(\v{\hat\theta})\operatorname{b}(\v{\hat\theta})',
+$$
+which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
+expectation is with respect to the empirical sampling distribution. The diagonal
+elements of the MSE matrix are the mean squared errors of the individual components
+of $\v{\hat\theta}$. Asymptotically, the MSE is equal to the variance, but for
+finite $n$, the MSE is a more informative measure of estimator error than the
+variance alone.
+
+## Bootstrapping the sampling distribution of the MLE {#sec:boot}
+
+In a real-world scenario, we would not know how to generate the data from the
+underlying data generating process, and so we would not be able to compute the
+empirical sampling distribution of the MLE.
+
+However, we can use the bootstrap method.
+The bootstrap method is a general method for estimating the sampling distribution
+of a statistic, in our case the MLE. The most common form of the bootstrap is the
+non-parametric bootstrap.
+In the non-parametric bootstrap, the random data is created by resampling with
+replacement from the original data. Since we do not know (nor attempt to model) the
+distribution of candidate sets, this non-parametric form is ideal, since we can
+simply resample from the original data to approximate its empirical sampling
+distribution of the MLE.
+
+Since the asymptotic distribution of the MLE
+may not be achieved for finite $n$, the bootstrap method is a useful tool for
+estimating the sampling distribution of the MLE for finite $n$, in particular, for
+estimating the confidence intervals of the MLE.
+
+
+
