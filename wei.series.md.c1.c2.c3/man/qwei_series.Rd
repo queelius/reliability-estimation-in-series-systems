@@ -7,7 +7,7 @@ By definition, the quantile p * 100\% for a strictly monotonically increasing
 cdf F is the value t that satisfies \code{F(t) - p = 0}.
 We solve for t using newton's method.}
 \usage{
-qwei_series(p, scales, shapes, eps = 0.001, t0 = 1)
+qwei_series(p, scales, shapes, eps = 1e-05, t0 = 1)
 }
 \arguments{
 \item{p}{vector of probabilities.}
@@ -18,7 +18,7 @@ components}
 \item{shapes}{vector of weibull shape parameters for weibull lifetime
 components}
 
-\item{eps}{stopping condition, default is 1e-3}
+\item{eps}{stopping condition, default is 1e-5}
 
 \item{t0}{initial guess, default is 1}
 }

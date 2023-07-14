@@ -9,7 +9,7 @@ component lifetimes.}
 md_series_lifetime_right_censoring(
   df,
   tau = NULL,
-  control = list(comp = "t", sys = "t", right_censoring_indicator = "delta")
+  control = list(comp = "t", lifetime = "t", right_censoring_indicator = "delta")
 )
 }
 \arguments{
@@ -22,7 +22,7 @@ md_series_lifetime_right_censoring(
 \itemize{
 \item \code{comp} - component lifetime prefix variable name, defaults to \code{t}, e.g.,
 \verb{t1, t2, t3}.
-\item \code{sys} - system lifetime variable name, defaults to \code{t}
+\item \code{lifetime} - system lifetime variable name, defaults to \code{t}
 \item \code{right_censoring_indicator} - right-censoring indicator variable, defaults
 to \code{delta}
 }}

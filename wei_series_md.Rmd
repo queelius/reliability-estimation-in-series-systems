@@ -1724,22 +1724,21 @@ Here is an outline of the simulation study analysis:
 
     - Set a seed value for simulation study reproducibility. All of the code
       will be written in R, and so we will use the `set.seed` function to set
-      the seed value. The data we generate for our simulation study can be reproduced
-      by anyone with the same seed value and R code.
+      the seed value. to 9484913. The data we generate for our simulation study can
+      be reproduced by anyone with the same seed value and R code.
    
-    - Generate a range of sample sizes $n$ from $n = 30$ to $n = 200$.
+    - Generate a range of sample sizes $n$ from $n = 40$ to $n = 200$.
      
     - Generate a range of Bernoulli masking probabilities from $p = 0$
-      (no masking the component cause of failure) to $p = 0.4$ (significant masking)
+      (no masking the component cause of failure) to $p = 0.3$ (significant masking)
       for including each non-failed component in the candidate set using the
       Bernoulli candidate set model.
 
     - Generate a range of right-censoring times $\tau$ based on quantiles for the
-      Weibull series system, from the 50th quantile ($50\%$ of the observations
-      are expected to be right-censored) to the 99th quantile (only $1\%$ of the
-      observations are expected to be right-censored).
+      Weibull series system, from the 70th quantile ($70\%$ of the observations
+      are expected to be right-censored) to the 100th quantile (no right censoring)).
 
-2. Generate $R = 1000$ data sets for each scenario (combination of $n$, $p$, and
+2. Generate $R = 200$ data sets for each scenario (combination of $n$, $p$, and
    $\tau$).
 
 3. Estimate the parameters for each replication, giving us $R$ estimates of the
@@ -1791,3 +1790,31 @@ using the bootstrap method, and compare these results to the asymptotic theory.
 We expect that since the sample size is relatively small, the bootstrap method
 will give us a better estimate of the sampling distribution of the MLE than the
 asymptotic theory.
+
+### Verification
+
+First, we fit the Weibull series model to the data in [@Huairu-2013] by maximizing
+`loglik_wei_series_md_c1_c2_c3` function in the R package `wei.series.md`. The MLE
+$\hat{\v\theta}$ is in agreement with the MLE reported in [@Huairu-2013], with
+shape and scale parameters given respectively by
+$$
+    \hat{k}_1 = `r theta["shape1"]`,
+    \hat{k}_2 = `r theta["shape2"]`,
+    \hat{k}_3 = `r theta["shape3"]`,
+$$
+and
+$$
+    \hat{\lambda}_1 = `r theta["scale1"]`,
+    \hat{\lambda}_2 = `r theta["scale2"]`,
+    \hat{\lambda}_3 = `r theta["scale3"]`.
+$$
+
+So, now we just resample from the data with replacement, and fit the Weibull series
+model to each bootstrap sample. We do this $B = 1000$ times, giving us $B$ bootstrap
+replicates of the MLE $\hat{\v\theta}^{(1)},\ldots,\hat{\v\theta}^{(B)}$.
+
+We then compute the bias, variance, MSE, and coverage probability of the bootstrap
+replicates, and compare these results to the asymptotic theory.
+
+### Results
+

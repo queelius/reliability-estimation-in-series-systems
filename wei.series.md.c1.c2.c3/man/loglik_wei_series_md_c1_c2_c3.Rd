@@ -6,7 +6,7 @@
 to parameter \code{theta} (shape, scale) for masked data with candidate sets
 that satisfy conditions C1, C2, and C3 and right-censored data.}
 \usage{
-loglik_wei_series_md_c1_c2_c3(df, theta, ..., control = list())
+loglik_wei_series_md_c1_c2_c3(df, theta, control = list())
 }
 \arguments{
 \item{df}{(masked) data frame}
@@ -19,8 +19,9 @@ loglik_wei_series_md_c1_c2_c3(df, theta, ..., control = list())
 defaults to \code{x}, e.g., \verb{x1,...,xm}.
 \item \code{lifetime} system lifetime (optionally right-censored) column name
 \item \code{right_censoring_indicator} right-censoring indicator column name, if
-TRUE, then the system lifetime is right-censored (\emph{not} observed),
-otherwise it is observed.
+TRUE, then the system lifetime is observed, otherwise it is right-censored.
+If there is no right-censoring indicator column by the given name, then the
+system lifetimes are assumed to be observed.
 }}
 }
 \value{

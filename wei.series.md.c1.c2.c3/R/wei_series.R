@@ -19,16 +19,22 @@ NULL
 #'               components
 #' @param shapes vector of weibull shape parameters for weibull lifetime
 #'               components
-#' @param eps stopping condition, default is 1e-3
+#' @param eps stopping condition, default is 1e-5
 #' @param t0 initial guess, default is 1
 #' @export
-qwei_series <- Vectorize(function(p,scales,shapes,eps=1e-3,t0=1) {
+qwei_series <- Vectorize(function(p, scales, shapes, eps=1e-5, t0 = 1) {
     stopifnot(length(scales) == length(shapes))
     stopifnot(all(shapes > 0))
     stopifnot(all(scales > 0))
 
-    if (any(p < 0) || any(p >= 1)) {
-        stop("p must be in [0,1)")
+    if (p < 0 || p > 1) {
+        stop("p must be in [0,1]")
+    }
+    if (p == 0) {
+        return(0)
+    }
+    if (p == 1) {
+        return(Inf)
     }
 
     t1 <- NULL
@@ -48,7 +54,7 @@ qwei_series <- Vectorize(function(p,scales,shapes,eps=1e-3,t0=1) {
         t0 <- t1
     }
     t1
-}, vectorize.args = "p")
+}, vectorize.args="p")
 
 #' Sampler for weibull series.
 #'

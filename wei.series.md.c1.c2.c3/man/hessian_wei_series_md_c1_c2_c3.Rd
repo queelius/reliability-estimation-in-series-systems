@@ -14,17 +14,9 @@ hessian_wei_series_md_c1_c2_c3(df, theta, ..., control = list())
 
 \item{theta}{parameter vector (shape1, scale1, ..., shapem, scalem)}
 
-\item{...}{additional arguments passed to \code{method.args} in \code{grad}}
+\item{...}{additional arguments passed to \code{method.args} in \code{hessian}}
 
-\item{control}{list of control parameters:
-\itemize{
-\item \code{candset} prefix of Boolean matrix encoding of candidate sets,
-defaults to \code{x}, e.g., \verb{x1,...,xm}.
-\item \code{lifetime} system lifetime (optionally right-censored) column name
-\item \code{right_censoring_indicator} right-censoring indicator column name, if
-TRUE, then the system lifetime is right-censored (\emph{not} observed),
-otherwise it is observed.
-}}
+\item{control}{list of control parameters. See \code{loglik_wei_series_md_c1_c2_c3}}
 }
 \value{
 Score with respect to \code{theta} given \code{df}

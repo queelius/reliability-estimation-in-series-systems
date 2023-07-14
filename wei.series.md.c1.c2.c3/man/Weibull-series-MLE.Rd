@@ -2,10 +2,10 @@
 % Please edit documentation in R/md_wei_series_c1_c2_c3.R
 \name{Weibull series MLE}
 \alias{Weibull series MLE}
-\title{Maximum likelihood estimation functions for Weibull series systems
-from masked data.}
+\title{Likelihood model for Weibull series systems from masked data.}
 \description{
-Functions include the log-likelihood, score, and MLE functions.
+Functions include the log-likelihood, score, and hessian of the log-likelihood
+functions.
 }
 \details{
 Masked component data approximately satisfies the following conditions:
@@ -13,6 +13,8 @@ C1: Pr(K in C) = 1
 C2: Pr(C=c | K=j, T=t) = Pr(C=c | K=j', T=t)
 for any j, j' in c.
 C3: masking probabilities are independent of theta
+
+We also include right-censoring of system lifetime data.
 }
 \author{
 Alex Towell
