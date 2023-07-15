@@ -1,28 +1,3 @@
-# in this simulation, we have no right censoring and a bit of masking of component cause
-# of failure (p = 0.1). we want to see how well the estimator
-# performs in this case as a function of sample size, from n = 30 to n = 800.
-# we have R = 100 replicates for each sample size.
-
-library(reshape2)
-library(gridExtra)  # for arranging plots
-library(ggplot2)
-library(tidyverse)
-library(dplyr)
-library(algebraic.mle)
-library(algebraic.dist)
-library(md.tools)
-library(wei.series.md.c1.c2.c3)
-
-
-theta <- c(shape1 = 1.2576, scale1 = 994.3661,
-           shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1141,
-           shape5 = 1.3311, scale5 = 836.1123)
-
-shapes <- theta[seq(1, length(theta), 2)]
-scales <- theta[seq(2, length(theta), 2)]
-
 # let's read in the results from the simulations
 sim2_30_0.1 <- readRDS("results/sim-2/results_30_0.1_1.rds")
 sim2_40_0.1 <- readRDS("results/sim-2/results_40_0.1_1.rds")
@@ -41,52 +16,6 @@ sim2_mles <- list(sim2_30_0.1$mles, sim2_40_0.1$mles, sim2_50_0.1$mles,
     sim2_75_0.1$mles, sim2_100_0.1$mles, sim2_200_0.1$mles, sim2_400_0.1$mles,
     sim2_800_0.1$mles)
 
-
-###################################################
-# COVERAGE PROBABILITIES FOR CONFIDENCE INTERVALS #
-###################################################
-coverage_probs <- list()
-for (i in 1:length(sim2_n)) {
-    counts <- rep(0, length(theta))
-    ci_matrix <- matrix(nrow = length(sim2_mles[[i]]), ncol = length(theta) * 2)
-    for (j in 1:length(sim2_mles[[i]])) {
-        theta.hat <- algebraic.mle::mle_numerical(sim2_mles[[i]][[j]])
-        theta.hat$nobs <- sim2_n[i]
-
-        # this is a m x 2 matrix, where m is the number of parameters
-        ci <- confint(theta.hat, use_t_dist = FALSE)
-
-        if (any(is.na(ci))) {
-            next
-        }
-
-        for (k in 1:length(theta)) {
-            if (theta[k] > ci[k, 1] && theta[k] < ci[k, 2]) {
-                counts[k] <- counts[k] + 1
-            }
-        }
-    }
-    coverage_probs[[i]] <- counts / length(sim2_mles[[i]])
-}
-
-sample_sizes <- c(30, 40, 50, 75, 100, 200, 400, 800)
-
-# Create a data frame
-# Create a data frame
-coverage_df <- data.frame(SampleSize = rep(sample_sizes, each = length(coverage_probs[[1]])),
-                          Coverage = unlist(coverage_probs),
-                          Parameter = rep(seq(length(coverage_probs[[1]])),
-                          times = length(coverage_probs)))
-# Plot, give a title indicating the confidence level and an indicating that this is
-# for simulation parameter p = 0.1
-ggplot(coverage_df, aes(x = SampleSize, y = Coverage, color = factor(Parameter))) +
-  geom_line() + 
-  geom_hline(yintercept = 0.95, linetype = "dashed", color = "red") + # assuming 95% confidence intervals
-  labs(x = "Sample Size", y = "Coverage Probability", color = "Parameter") +
-  theme_minimal() +
-  ggtitle("Coverage Probability for 95% Confidence Intervals, p = 0.1")
-
-ggsave("results/sim-2/coverage_p_0.1.png", width = 6, height = 4)
 
 #############
 # CI WIDTHS #
@@ -186,49 +115,3 @@ plots <- lapply(ci_widths_list, function(df) {
 grid.arrange(grobs = plots, ncol = 2)
 
 
-
-######################
-# BIAS OF ESTIMATORS #
-######################
-
-bias_df <- matrix(NA, nrow = length(sim2_n), ncol = length(theta))
-for (i in 1:length(sim2_n)) {
-    pars <- t(sapply(sim2_mles[[i]], function(x) x$par))
-    bias_df[i,] <- colMeans(pars) - theta
-}
-bias_df <- as.data.frame(bias_df)
-# Load necessary libraries
-
-colnames(bias_df) <- c("shape1", "scale1", "shape2", "scale2", "shape3", "scale3",
-                       "shape4", "scale4", "shape5", "scale5")
-bias_df$SampleSize <- sim2_n
-
-# Melt data frame for ggplot
-bias_df_melted <- melt(bias_df, id.vars = "SampleSize")
-
-# grab only shapes
-bias_df_melted_shapes <- bias_df_melted %>%
-  filter(grepl("shape", variable))
-
-# Plot log y scale
-plot1 <- ggplot(bias_df_melted_shapes, aes(x = SampleSize, y = value, color = variable)) +
-  geom_line() +
-  scale_y_log10() +
-  labs(x = "Sample Size", y = "Bias", color = "Parameter") +
-  theme_minimal()
-
-
-# grab only shapes
-bias_df_melted_scales <- bias_df_melted %>%
-  filter(grepl("scale", variable))
-
-# Plot, but instgead of lines, a scatter plot?
-plot2 <- ggplot(bias_df_melted_scales, aes(x = SampleSize, y = value, color = variable)) +
-  geom_bar(stat = "identity") +
-  #scale_y_log10() +
-  labs(x = "Sample Size", y = "Bias", color = "Parameter") +
-  theme_minimal()
-plot2
-
-plots_bias <- list(plot1, plot2)
-grid.arrange(grobs = plots_bias, ncol = 2)

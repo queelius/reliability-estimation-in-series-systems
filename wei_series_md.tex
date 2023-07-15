@@ -32,6 +32,46 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -1231,15 +1271,16 @@ the score (gradient of the log-likelihood function), each evaluated at
 Depending upon the nature of the log-likelihood function, one or the
 other may work better in
 practice.\footnote{For example, one approach may be more
-computationally efficient.} The R code for iterative methods is in
-Appendix C.
+computationally efficient.}
 
-\hypertarget{properties-of-the-mle}{%
-\subsection{Properties of the MLE}\label{properties-of-the-mle}}
+\hypertarget{sec:mle_properties}{%
+\subsection{Properties of the MLE}\label{sec:mle_properties}}
 
-According to {[}2{]}, if certain regularity conditions are satisfied,
-then solutions of the maximum likelihood equation \eqref{eq:mle_eq} have
-the following desirable properties:
+In this section, we discuss some properties of the MLE that are useful
+for making statistical inferences about the parameter vector
+\(\boldsymbol{\theta}\). According to {[}2{]}, if certain regularity
+conditions are satisfied, then solutions of the maximum likelihood
+equation \eqref{eq:mle_eq} have the following desirable properties:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1265,9 +1306,7 @@ Since it is frequently problematic taking the expectation to derive
 which is conditioned on the observed data, \[
 J(\boldsymbol{\theta})_{i j} = -\frac{\partial}{\partial \theta_i \partial \theta_j}
     \ell(\boldsymbol{\theta}).
-\]
-
-Since we do not know \(\boldsymbol{\theta}\), we estimate
+\] Since we do not know \(\boldsymbol{\theta}\), we estimate
 \(J(\boldsymbol{\theta})\) with \(J(\boldsymbol{\hat\theta})\). Thus,
 assuming the regularity conditions are satisfied, then approximately, \[
     \hat{\boldsymbol{\theta}} \sim \mathcal{N}(\hat{\boldsymbol{\theta}},J^{-1}(\hat{\boldsymbol{\theta}}))
@@ -1652,7 +1691,7 @@ model}\label{bernoulli-candidate-set-model}}
 
 In our simulation study, we must generate data that satisfies the
 masking conditions. In other words, we must generate data that satisfies
-the following conditions described in Section \ref{sec:candmod}.
+the conditions described in Section \ref{sec:candmod}.
 
 There are many ways to satisfying the masking conditions. We choose the
 simplest method, which we call the \emph{Bernoulli candidate set model}.
@@ -1708,57 +1747,71 @@ more quickly and reliably.
 \hypertarget{simulation-study-design}{%
 \subsection{Simulation study design}\label{simulation-study-design}}
 
+In order to make the simulation study representative of real-world
+scenarios, we must choose parameter values that are realistic. We base
+our parameters on the data from {[}3{]}, which includes a study of the
+reliability of a series system with three Weibull components
+parameterized by \(\boldsymbol{\theta}\) with shape parameters given by
+\[
+    k_1 = 1.2576,
+    k_2 = 1.1635,
+    k_3 = 1.1308,
+\] and scale parameters given by \[
+    \lambda_1 = 994.3661,
+    \lambda_2 = 908.9458,
+    \lambda_3 = 840.1141.
+\]
+
+In our Bernoulli candidate set model, we estimated that with around
+probability \(p = 0.215\) for including each non-failed component in the
+candidate set and with a right-censoring time of \(\tau = \infty\), we
+seem to reproduce their reported data.
+
+Our approach is to extend this to a five component Weibull series
+system, and then we vary the sample size \(n\), the Bernoulli masking
+probability \(p\) of including each non-failed component in the
+candidate set, and the right-censoring time \(\tau\). We then analyze
+the performance of the MLE under these various scenarios.
+
+The true parameter value \(\boldsymbol{\theta}\) of the five component
+Weibull series system has shape parameters given by \[
+    k_1 = 1.2576,
+    k_2 = 1.1635,
+    k_3 = 1.1308,
+    k_4 = 1.1802,
+    k_5 = 1.3311
+\] and scale parameters given by \[
+    \lambda_1 = 994.3661,
+    \lambda_2 = 908.9458,
+    \lambda_3 = 840.1141,
+    \lambda_4 = 940.1141,
+    \lambda_5 = 836.1123.
+\]
+
 Here is an outline of the simulation study analysis:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Set up simulation parameters:
-
-  \begin{itemize}
-  \item
-    The true parameter value \(\boldsymbol{\theta}\) for the Weibull
-    series system (5 components) has shape parameters given by \[
-      k_1 = 1.2576,
-      k_2 = 1.1635,
-      k_3 = 1.1308,
-      k_4 = 1.1802,
-      k_5 = 1.3311
-     \] and scale parameters given by \[
-      \lambda_1 = 994.3661,
-      \lambda_2 = 908.9458,
-      \lambda_3 = 840.1141,
-      \lambda_4 = 940.1141,
-      \lambda_5 = 836.1123.
-     \]
-  \item
-    We generate MLEs for a range of sample sizes from \(n = 10\) to
-    \(n = 200\).
-  \item
-    We generate MLEs for a range of probabilities from \(p = 0\) (no
-    masking) to \(p = 0.3\) (significant masking) for including each
-    non-failed component in the candidate set using the Bernoulli
-    candidate set model.
-  \item
-    We use only two separate right-censoring times, \(\tau\) set to
-    \(\infty\) (no right censoring) to and \(\tau\) set to the
-    \(0.75\)-quantile of the Weibull series system.
-  \end{itemize}
+  Set up simulation parameters for various scenarios of interest, such
+  as generating data to examine the relationship between bias and
+  masking probability for different sample sizes and right-censoring
+  times.
 \item
-  For each scenario (combination of \(n\), \(p\), and \(\tau\)), we
-  generate \(R = 200\) data sets.
+  Generate \(R\) data sets for each scenario (some combination of \(n\),
+  \(p\), and \(\tau\)).
 \item
-  We estimate the parameters for each replication, giving us \(R\)
-  estimates of the parameters for each scenario. We use these replicates
-  as an empirical estimate of the sampling distribution of the MLE for
-  each scenario.
+  Estimate the parameters for each data set, giving us \(R\) estimates
+  of the parameters. We use these data sets as an empirical estimate of
+  the sampling distribution of the MLE for each scenario.
 \item
-  Using the empirical sampling distributions, we estimate the bias,
-  variance, MSE, and coverage probability of the MLE for each scenario.
+  Using the empirical sampling distribution of the MLE, estimate various
+  performance measures of the MLE, like bias, variance, MSE, and
+  coverage probability for each scenario.
 \item
-  We analyze and visualize the results, e.g., by plotting the bias,
-  variance, MSE, and coverage probability as a function of \(n\) and
-  \(p\) for each \(\tau\).
+  Analyze and visualize the results, e.g., by plotting the bias,
+  variance, MSE, and coverage probability as a function of \(n\) for
+  different combinations of \(p\) and \(\tau\).
 
   We then interpret the results and discuss the performance of the MLE
   estimator under various conditions. We expect that as
@@ -1766,12 +1819,41 @@ Here is an outline of the simulation study analysis:
   probability will go to \(0.95\) (when constructing \(95\%\) confidence
   intervals). Of course, we do not expect these results to hold for
   finite \(n\), but we would like to see how the bias, MSE, and coverage
-  probability change as a function of \(n\) and \(p\) for each \(\tau\).
+  probability change as we vary \(n\), \(p\), and \(\tau\).
 \end{enumerate}
 
+For how we generate a scenario, see Appendix A.
+
+\hypertarget{verification}{%
+\subsubsection{Verification}\label{verification}}
+
+To verify that our likelihood model is correct, we load the Table 2 data
+from {[}3{]} and fit the Weibull series model to the data to see if we
+can recover the MLE they reported. When we fit the Weibull series model
+to this data by maximizing the likelihood function, we obtain the
+following fit for the shape and scale parameters given respectively by
+\[
+    \hat{k}_1 = 1.2576,
+    \hat{k}_2 = 1.1635,
+    \hat{k}_3 = 1.1308,
+\] and \[
+    \hat{\lambda}_1 = 994.3661,
+    \hat{\lambda}_2 = 908.9458,
+    \hat{\lambda}_3 = 840.1141,
+\] which is in agreement with the MLE they reported. Satisfied that our
+likelihood model is correct, we proceed with the simulation study.
+
 \hypertarget{sec:acc_prec}{%
-\subsection{Estimates of bias, variance, and coverage
-probability}\label{sec:acc_prec}}
+\subsection{Analysis of the MLE}\label{sec:acc_prec}}
+
+The primary purpose of the simulation study is to anlyze the performance
+of the MLE under different scenarios. We will compute the bias,
+variance, MSE, confidence interval widths, and coverage proababilities
+for confidence intervals with respect to a range of scenarios to
+quantify the performance of the MLE under different circumstances.
+
+\hypertarget{bias}{%
+\subsubsection{Bias}\label{bias}}
 
 A measure of the accuracy of \(\boldsymbol{\hat\theta}\) is the bias,
 which is defined as \[
@@ -1782,6 +1864,361 @@ the empirical sampling distribution, \[
     E_{\hat{\boldsymbol{\theta}} \sim \text{data}}(\boldsymbol{\hat\theta}) - \boldsymbol{\theta}.
 \]
 
+\hypertarget{scenario-absolute-bias-vs.-sample-size-with-a-masking-probability-but-no-right-censoring}{%
+\subparagraph*{Scenario: Absolute bias vs.~sample size with a masking
+probability but no
+right-censoring}\label{scenario-absolute-bias-vs.-sample-size-with-a-masking-probability-but-no-right-censoring}}
+\addcontentsline{toc}{subparagraph}{Scenario: Absolute bias vs.~sample
+size with a masking probability but no right-censoring}
+
+In this scenario, we want to see the bias of the MLE as a function of
+the sample size \(n\) from \(n = 30\) to \(n = 800\) for a fixed masking
+probability \(p = 0.2\) and no right-censoring \((\tau = \infty)\).
+Recall that the masking probability is the probability of including each
+non-failed component.
+
+\begin{figure}
+
+{\centering \includegraphics{image/plot-p-0.2-bias-vs-sample-size} 
+
+}
+
+\caption{Bias vs. sample size (masking probability 0.2)}\label{fig:plot-bias-p-0.2-vs-sample-size}
+\end{figure}
+
+In Figure \ref{fig:plot-bias-p-0.2-vs-sample-size}, we plot the absolute
+bias \(|\operatorname{bias}(\hat\theta)|\) on a log scale against the
+sample size. However, because the absolute bias is quite large for small
+sample sizes and small for large sample sizes, we use a log scale.
+Furthermore, we show the absolute bias for the shape and scale
+parameters separately, since the scale parameters are much larger than
+the shape parameters.
+
+Here are some important observations Figure
+\ref{fig:plot-bias-p-0.2-vs-sample-size} reveals:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  For both shape and scale parameters, we see that the absolute bias
+  seems to be decreasing to zero as the sample size increases. This is
+  not surprising since we expect the MLE to be consistent, i.e.,
+  \(\boldsymbol{\hat\theta}\) converges in probability to
+  \(\boldsymbol{\theta}\) as the sample size increases to infinity.
+  Still, it is reassuring to see that the bias seems to be behaving as
+  expected.
+\item
+  For the shape parameters, which are small (the shape parameters have
+  true values a little larger than 1), the bias is relatively large for
+  sample sizes up to \(100\).
+\item
+  For the scale parameters, which are quite large (the scale parameters
+  have true values around 1000). Like with the shape parameters, the
+  bias is relatively large for sample sizes up to \(100\), but seems to
+  stabilize and reach relatively small values after that.
+\end{enumerate}
+
+\hypertarget{scenario-bias-vs.-sample-size-and-masking-probability-and-no-right-censoring}{%
+\subparagraph*{Scenario: Bias vs.~sample size and masking probability
+and no
+right-censoring}\label{scenario-bias-vs.-sample-size-and-masking-probability-and-no-right-censoring}}
+\addcontentsline{toc}{subparagraph}{Scenario: Bias vs.~sample size and
+masking probability and no right-censoring}
+
+Now, we take a larger view and plot the bias (without taking its
+absolute value as we had done previously) against the masking
+probabilities \(p = 0\) (no masking) to \(p = 0.4\) (significant
+masking) for sample sizes 100, 400, and 800.
+
+For the shape parameters, at a sample of size 100, we see significant
+bias and we also see that it is very sensitive to the masking
+probability. See Figure
+\ref{fig:plot-bias-shapes-vs-p-sample-size-100-400-800}. However, for
+sample sizes of 400 and 800, the bias is relatively small and unaffected
+by the masking probability.
+
+\begin{figure}
+
+{\centering \includegraphics{image/plot-bias-shapes-p-vs-sample-size-100-400-800} 
+
+}
+
+\caption{Shape Bias vs. masking probability for sample sizes 100, 400, and 800}\label{fig:plot-bias-shapes-vs-p-sample-size-100-400-800}
+\end{figure}
+
+For the scale parameters, a similar pattern emerges, although we see
+that even for sample size 400, there is evidence that the bias is still
+affected by the masking probability. See Figure
+\ref{fig:plot-bias-scales-vs-p-sample-size-100-400-800}.
+
+The smallest bias, as expected, occurs for sample sizes of \(800\). The
+bias for \(\lambda_1\) (scale parameter 1) at the masking probability
+\(0.3\) is an interesting case, since it jumps up at that point for some
+reason. We used only \(R = 100\) replications, so it is plausible it
+would decrease with more replications. Regardless, the overall trend is
+that the bias decreases as the sample size increases, and its dependence
+on the masking probability is relatively small with sufficiently large
+sample sizes.
+
+\begin{figure}
+
+{\centering \includegraphics{image/plot-bias-scales-p-vs-sample-size-100-400-800} 
+
+}
+
+\caption{Scale Bias vs. masking probability for sample sizes 100, 400, and 800}\label{fig:plot-bias-scales-vs-p-sample-size-100-400-800}
+\end{figure}
+
+\hypertarget{scenario-bias-vs.-right-censoring-time-and-sample-size-with-a-fixed-masking-probability}{%
+\paragraph*{Scenario: Bias vs.~right-censoring time and sample size with
+a fixed masking
+probability}\label{scenario-bias-vs.-right-censoring-time-and-sample-size-with-a-fixed-masking-probability}}
+\addcontentsline{toc}{paragraph}{Scenario: Bias vs.~right-censoring time
+and sample size with a fixed masking probability}
+
+In this scenario, we want to isolate the effect of the right-censoring
+time \(\tau\) on the bias. We fix the masking probability to
+\(p = 0.215\), in line with the masking probability we estimate for the
+Table 2 data set in {[}3{]}.
+
+We plot the bias against the right-censoring time for sample sizes 50,
+150, and 300. See Figure
+\ref{fig:plot-bias-tau-vs-sample-size-50-150-300}. On the \(x\)-axis, we
+report the right-censoring time as a quantile of the Weibull series
+distribution so that we can more clearly see the effect of the
+right-censoring on the bias, e.g., the \(50\%\) quantile is the time at
+which \(50\%\) of the systems are expected to fail.
+
+\begin{figure}
+
+{\centering \includegraphics{image/plot-bias-tau-vs-sample-size-50-150-300} 
+
+}
+
+\caption{Bias vs. right-censoring time and sample sizes 50, 150, and 300}\label{fig:plot-bias-tau-vs-sample-size-50-150-300}
+\end{figure}
+
+A few observations about Figure
+\ref{fig:plot-bias-tau-vs-sample-size-50-150-300}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The bias decreases as the right-censoring time increases. This is
+  expected since we have more information about the system when the
+  right-censoring time is larger.
+\item
+  The bias decreases as the sample size increases, which is also
+  expected since we have more information about the system when the
+  sample size is larger.
+\item
+  The bias is relatively small for sample sizes 150 and 300, but for
+  sample size 50, the bias is quite large, particularly for the shape
+  parameters. This is not surprising since the sample size is quite
+  small, and so we do not expect the MLE to be very accurate.
+\end{enumerate}
+
+\hypertarget{sec:coverage_prob}{%
+\subsubsection{Coverage probability}\label{sec:coverage_prob}}
+
+We will use the inverse of the observed Fisher information matrix (FIM),
+which was defined in Section \ref{sec:mle_properties}, to construct
+\(95\%\)-confidence intervals for \(\boldsymbol{\theta}\) to compute the
+coverage probability of the MLE for each scenario. A confidence interval
+is said to be \emph{well-calibrated} if the coverage probability is
+close to the nominal level, \(95\%\).
+
+We want the coverage probability to be close to the nominal level,
+\(95\%\), because if the coverage probability is too low, then we will
+be too confident in the precision and accuracy of the MLE, and if the
+coverage probability is too high, then we will not be confident enough
+in the precision and accuracy of the MLE.
+
+To estimate the coverage probability, we use the following procedure:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  For a given scenario (say, sample size and masking probability), we
+  generate \(R = 100\) data sets.
+\item
+  We find an MLE for each of \(R\) data sets.
+\item
+  We compute the \(95\%\)-confidence interval for each MLE using the
+  inverse of the observed FIM.
+\item
+  We compute the coverage probability by calculating the proportion of
+  times the true parameter values were contained in computed the
+  \(95\%\)-confidence interval.
+\end{enumerate}
+
+\hypertarget{scenario-coverage-probability-vs.-sample-size-with-a-fixed-masking-probability-and-no-right-censoring}{%
+\paragraph*{Scenario: Coverage probability vs.~sample size with a fixed
+masking probability and no
+right-censoring}\label{scenario-coverage-probability-vs.-sample-size-with-a-fixed-masking-probability-and-no-right-censoring}}
+\addcontentsline{toc}{paragraph}{Scenario: Coverage probability
+vs.~sample size with a fixed masking probability and no right-censoring}
+
+We want to isolate the effect of the coverage probability as a function
+of the sample size \(n\). We fix the masking probability to \(p = 0.2\)
+and without right-censoring \((\tau = \infty)\) and vary the sample size
+from \(n = 30\) to \(n = 800\). See Figure
+\ref{fig:plot-coverage-p-three-vs-sample-size}.
+
+\begin{figure}
+
+{\centering \includegraphics{image/plot-coverage-p_0.3-vs-sample-size} 
+
+}
+
+\caption{Coverage probability vs. sample size for masking probability $0.3$}\label{fig:plot-coverage-p-three-vs-sample-size}
+\end{figure}
+
+Here are some key observations:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  It is immediately obvious that the scale parameters (dashed lines)
+  have a much lower coverage probability than the shape parameters
+  (solid lines), particularly for small sample sizes less than
+  \(n = 200\).
+
+  In general, the scale parameters appear to be more difficult to
+  estimate than the shape parameters.
+\item
+  As the sample size increases, the coverage probability for the shape
+  parameters and scale parameters approaches the nominal level,
+  \(95\%\).
+
+  This suggests that the sampling distribution of the MLE is converging
+  in distribution to a multivariate normal distribution with mean
+  \(\boldsymbol{\theta}\) and variance-covariance given by the inverse
+  of the FIM, consistent with the asymptotic theory.
+\end{enumerate}
+
+\hypertarget{scenario-coverage-probability-vs.-sample-size-and-masking-probability-without-right-censoring}{%
+\paragraph*{Scenario: Coverage probability vs.~sample size and masking
+probability without
+right-censoring}\label{scenario-coverage-probability-vs.-sample-size-and-masking-probability-without-right-censoring}}
+\addcontentsline{toc}{paragraph}{Scenario: Coverage probability
+vs.~sample size and masking probability without right-censoring}
+
+We want to get a larger picture of how the coverage probability depends
+on the sample size \(n\) and masking probability \(p\). We fix the
+right-censoring time to \(\tau = \infty\) and vary the sample size from
+\(n = 30\) to \(n = 800\) and vary the masking probability from
+\(p = 0\) (no masking) to \(p = 0.4\) and then compute the coverage
+probability for each combination of sample size \(n\) and masking
+probability \(p\).
+
+\begin{figure}
+
+{\centering \includegraphics{image/plot-coverage-p-vs-sample-size} 
+
+}
+
+\caption{Coverage probability vs. sample size}\label{fig:plot-coverage-p-vs-sample-size}
+\end{figure}
+
+The results of this analysis are summarized by Figure
+\ref{fig:plot-coverage-p-vs-sample-size}. Here are some key
+observations:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  For sample sizes \(n \leq 100\), the coverage probability for the
+  shape parameters is close to the nominal level, \(95\%\), only for
+  small masking probabilities. However, as the sample size increases,
+  the coverage probability for the shape parameters quickly approaches
+  the nominal level, \(95\%\), for all masking probabilities reported
+  here.
+\item
+  For the scale parameters, the coverage probability is too low for all
+  sample sizes \(n < 200\) for all masking probabilities reported here.
+  For small sample sizes, the confience intervals particularly for the
+  scale parameters, should probably be taken with a grain of salt.
+\end{enumerate}
+
+In Section \ref{sec:boot}, we explore an alternative way to construct
+confidence intervals using the bootstrap method, which is generally a
+more accurate way to compute confidence intervals. Unlike the inverse of
+the observed FIM, it does not assume that the sampling distribution of
+the MLE is asymptotically normal, and so it is more robust to violations
+of this assumption.
+
+\hypertarget{confidence-interval-width}{%
+\subsubsection{Confidence interval
+width}\label{confidence-interval-width}}
+
+We will use the inverse of the observed Fisher information matrix (FIM),
+which was defined in Section \ref{sec:mle_properties}, to construct
+\(95\%\)-confidence intervals for \(\boldsymbol{\theta}\) to compute the
+confidence interval width of the MLE for each scenario. The confidence
+interval width is defined as the difference between the upper and lower
+bounds of the confidence interval.
+
+If the confidence intervals are well-calibrated, a small confidence
+interval width means we are more confident that the true value of
+\(\boldsymbol{\theta}\) is close to the MLE, and a large confidence
+interval width means we are less confident that the true value of
+\(\boldsymbol{\theta}\) is close to the MLE. However, if the confidence
+intervals are not well-calibrated, then the confidence interval width is
+not particularly informative. See Section \ref{ec:coverage_prob} for a
+discussion of well-calibrated confidence intervals, which we assume
+here.
+
+\begin{figure}
+
+{\centering \includegraphics{image/ci-widths} 
+
+}
+
+\caption{Confidence interval widths vs. sample size}\label{fig:plot-ci-width-vs-sample-size}
+\end{figure}
+
+Some key observations:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  For the shape parameters, the confidence interval widths are small,
+  but the true parameter values are also small. For the scale
+  parameters, the confidence interval widths are large, but the true
+  parameter values are also large.
+\item
+  For small sample sizes for every masking probability, the confidence
+  interval widths are extremely variable, and since the coverage
+  probability reported earlier showed they were not well-calibrated, we
+  should not be confident in the MLE for small sample sizes. However,
+  for large sample sizes, the confidence interval widths are relatively
+  stable, and since the coverage probability reported earlier showed
+  they were well-calibrated, we can be confident in the MLE for large
+  sample sizes.
+\item
+  The confidence interval widths decrease at a decreasing rate as the
+  sample size increases. This is expected since the inverse of the
+  observed FIM scales as \(1/n\), and so the confidence interval widths
+  should scale as \(1/\sqrt{n}\).
+
+  On the one hand, this means that as the sample size increases, we see
+  diminishing returns in the precision of the MLE, but on the other
+  hand, the coverage probability is converging to the nominal level,
+  \(95\%\), as the sample size increases, so we can at least gain
+  confidence that the true parameter value is more likely to be within
+  the reported confidence interval at the reported confidence level.
+\item
+  The confidence interval widths are somewhat sensitive to the masking
+  probability. As the masking probability increases, the confidence
+  interval widths increase.
+\end{enumerate}
+
+For the visualization code for the confidence widths, see Appendix C.
+
+\hypertarget{variance}{%
+\subsubsection{Variance}\label{variance}}
+
 We estimate the precision of \(\boldsymbol{\hat\theta}\) with the
 variance-covariance matrix, \[
 \operatorname{Var}(\boldsymbol{\hat\theta}) =
@@ -1791,16 +2228,18 @@ variance-covariance matrix, \[
     \bigr),
 \] which is a \(p\)-by-\(p\) matrix, where \(p\) is the number of
 parameters, and again the the expectation is taken with respect to the
-empirical sampling distribution. We will principally use the diagonal
+empirical sampling distribution. We will only report the diagonal
 elements of the variance-covariance matrix, which are the variances of
 the individual components of \(\boldsymbol{\hat\theta}\).
 
-We will use the inverse of the observed Fisher information matrix (FIM),
-which was defined in Section \ref{}, to construct \(95\%\)-confidence
-intervals for \(\boldsymbol{\theta}\) to compute the coverage
-probability of the MLE for each scenario. A confidence interval is said
-to be \emph{well-calibrated} if the coverage probability is close to the
-nominal level, \(95\%\).
+\begin{quote}
+Dr.~Agustin: I didn't fill out variance and MSE sections. I have the
+data, and most of the code for visualization. Would you like for me to
+include any of these? I'm not sure about how large this paper should be.
+\end{quote}
+
+\hypertarget{mean-squared-error}{%
+\subsubsection{Mean squared error}\label{mean-squared-error}}
 
 The mean squared error, \(\operatorname{MSE}\), is a measure of
 estimator error that incorporates both the bias and the variance, and is
@@ -1811,9 +2250,10 @@ defined as \[
     \operatorname{b}(\boldsymbol{\hat\theta})\operatorname{b}(\boldsymbol{\hat\theta})',
 \] which is a \(p\)-by-\(p\) matrix, where \(p\) is the number of
 parameters, and again the expectation is with respect to the empirical
-sampling distribution. The diagonal elements of the MSE matrix are the
-mean squared errors of the individual components of
-\(\boldsymbol{\hat\theta}\). Asymptotically, the MSE is equal to the
+sampling distribution. We will only report the diagoanl elements of the
+MSE matrix, which are the mean squared errors of the individual
+components of \(\boldsymbol{\hat\theta}\). Assuming the regularity
+conditions for the MLE are met, the MSE converges in probability to the
 variance, but for finite \(n\), the MSE is a more informative measure of
 estimator error than the variance alone.
 
@@ -1835,10 +2275,82 @@ candidate sets, this non-parametric form is ideal, since we can simply
 resample from the original data to approximate its empirical sampling
 distribution of the MLE.
 
-Since the asymptotic distribution of the MLE may not be achieved for
-finite \(n\), the bootstrap method is a useful tool for estimating the
-sampling distribution of the MLE for finite \(n\), in particular, for
-estimating the confidence intervals of the MLE.
+We use the Weibull series data in {[}3{]} to illustrate the bootstrap
+method. It's a real-world data set. We can estimate the sampling
+distribution of the MLE using the bootstrap method, and compare these
+results to the asymptotic theory. We expect that since the sample size
+is relatively small, the bootstrap method will give us a better estimate
+of the sampling distribution of the MLE than the asymptotic theory.
+
+So, now we just resample from the data with replacement, and fit the
+Weibull series model to each bootstrap sample. We do this \(B = 1000\)
+times, giving us \(B\) bootstrap replicates of the MLE
+\(\hat{\boldsymbol{\theta}}^{(1)},\ldots,\hat{\boldsymbol{\theta}}^{(B)}\).
+
+We could then compute the bias, variance, MSE, and coverage probability
+of the bootstrap replicates, and compare these results to the asymptotic
+theory.
+
+Earlier, we observed the inverse FIM provided for to small of a variance
+of the component estimates for the MLE. So, we are going to use the
+bootstrap method to provide better estimates.
+
+We should see that the variance of the bootstrap replicates is larger
+than the variance of the asymptotic theory, which should mitigate the
+earlier problem of the inverse FIM providing too small of a variance of
+the component estimates and thus resulting in poorly calibrated
+confidence intervals.
+
+This is particularly important for small sample sizes before the
+asymptotic theory kicks in.
+
+In Figure \ref{fig:ci-boot-shape}, we show the variance of the shape
+paraemetes for the bootstrap replicates (blue) and the asymptotic theory
+(green) for different sample sizes and differnet masking conditions. For
+small sample sizes, the variance of the bootstrap replicates is larger
+than the variance of the asymptotic theory, but they both converge to
+the same value as the sample size increases.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{wei_series_md_files/figure-latex/ci-boot-shape-1} 
+
+}
+
+\caption{Shape Parameters}\label{fig:ci-boot-shape}
+\end{figure}
+
+In Figure \ref{fig:ci-boot-scale}, we show the variance of the scale
+parameters. Again, we see the same pattern emerge, where the variance of
+the bootstrap replicates is larger than the variance of the asymptotic
+theory for small sample sizes, but they both converge to the same value
+as the sample size increases.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{wei_series_md_files/figure-latex/ci-boot-scale-1} 
+
+}
+
+\caption{Scale Parameters}\label{fig:ci-boot-scale}
+\end{figure}
+
+These corrections to the variance estimates should result in better
+calibrated confidence intervals for small sample sizes.
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+We have developed a likelihood model for series systems with latent
+components and right-censoring. We have provided evidence that, as long
+as certain regularity conditions are met, the MLE is asymptotically
+unbiased and consistent.
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+Please see below for a full list of references.
 
 \hypertarget{refs}{}
 \begin{cslreferences}
@@ -1851,6 +2363,413 @@ reliabilities under partial information on cause of failure.
 \leavevmode\hypertarget{ref-bain}{}%
 {[}2{]} \textsc{Engelhardt}, B. (1992). Introduction to probability and
 mathematical statistics. 294.
+
+\leavevmode\hypertarget{ref-Huairu-2013}{}%
+{[}3{]} \textsc{Guo}, H., \textsc{Niu}, P. and \textsc{Szidarovszky}, F.
+(2013). Estimating component reliabilities from incomplete system
+failure data. \emph{Annual Reliability and Maintainability Symposium
+(RAMS)} 1--6.
 \end{cslreferences}
+
+\hypertarget{appendix}{%
+\section*{Appendix}\label{appendix}}
+\addcontentsline{toc}{section}{Appendix}
+
+\hypertarget{appendix-a-simulation-of-scenarios-using-the-monte-carlo-data-generating-process}{%
+\subsection*{Appendix A: Simulation of scenarios using the Monte-carlo
+data-generating
+process}\label{appendix-a-simulation-of-scenarios-using-the-monte-carlo-data-generating-process}}
+\addcontentsline{toc}{subsection}{Appendix A: Simulation of scenarios
+using the Monte-carlo data-generating process}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# Simulation data generating process for specified scenario \#}
+\CommentTok{\# (n, p, q), where:                                         \#}
+\CommentTok{\#    {-} n is a vector of sample sizes                        \#}
+\CommentTok{\#     {-} n is a vector of sample sizes                       \#}
+\CommentTok{\#     {-} p is a vector of masking probabilities              \#}
+\CommentTok{\#     {-} q is a vector of right{-}censoring quantiles of the   \#}
+\CommentTok{\#       Weibull series distribution.}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\CommentTok{\# here is the R libary we developed for this project}
+\KeywordTok{library}\NormalTok{(wei.series.md.c1.c2.c3) }
+
+\CommentTok{\# for parallel processing}
+\KeywordTok{library}\NormalTok{(parallel)}
+
+\CommentTok{\# you can set a seed for reproducibility of the experimental run}
+\CommentTok{\# however, if you use parallel processing, this simple approach will not work.}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1234}\NormalTok{)}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# Here is an example of how to run a scenario \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\CommentTok{\# set the simulation name to be used in the file names}
+\NormalTok{sim.name \textless{}{-}}\StringTok{ "sim{-}2"}
+\CommentTok{\# set the sample sizes}
+\NormalTok{ns \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{30}\NormalTok{, }\DecValTok{40}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{75}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{, }\DecValTok{800}\NormalTok{)}
+\CommentTok{\# set the masking probabilities}
+\NormalTok{ps \textless{}{-}}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.3}\NormalTok{, }\FloatTok{0.4}\NormalTok{)}
+\CommentTok{\# set the right{-}censoring quantiles}
+\NormalTok{qs \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.5}\NormalTok{, }\FloatTok{0.6}\NormalTok{, }\FloatTok{0.7}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{0.9}\NormalTok{, }\FloatTok{0.95}\NormalTok{)}
+\CommentTok{\# set the number of replicates}
+\NormalTok{R \textless{}{-}}\StringTok{ }\DecValTok{100}
+\CommentTok{\# set the number of CPU cores to use}
+\NormalTok{ncores \textless{}{-}}\StringTok{ }\DecValTok{4}
+
+\CommentTok{\# true parameter values}
+\NormalTok{theta \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DataTypeTok{shape1 =} \FloatTok{1.2576}\NormalTok{, }\DataTypeTok{scale1 =} \FloatTok{994.3661}\NormalTok{,}
+           \DataTypeTok{shape2 =} \FloatTok{1.1635}\NormalTok{, }\DataTypeTok{scale2 =} \FloatTok{908.9458}\NormalTok{,}
+           \DataTypeTok{shape3 =} \FloatTok{1.1308}\NormalTok{, }\DataTypeTok{scale3 =} \FloatTok{840.1141}\NormalTok{,}
+           \DataTypeTok{shape4 =} \FloatTok{1.1802}\NormalTok{, }\DataTypeTok{scale4 =} \FloatTok{940.1141}\NormalTok{,}
+           \DataTypeTok{shape5 =} \FloatTok{1.3311}\NormalTok{, }\DataTypeTok{scale5 =} \FloatTok{836.1123}\NormalTok{)}
+
+\NormalTok{shapes \textless{}{-}}\StringTok{ }\NormalTok{theta[}\KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{length}\NormalTok{(theta), }\DecValTok{2}\NormalTok{)]}
+\NormalTok{scales \textless{}{-}}\StringTok{ }\NormalTok{theta[}\KeywordTok{seq}\NormalTok{(}\DecValTok{2}\NormalTok{, }\KeywordTok{length}\NormalTok{(theta), }\DecValTok{2}\NormalTok{)]}
+
+\CommentTok{\# helps the MLE optimization routine converge more quickly and reliably}
+\CommentTok{\# by scaling the parameters to be of similar magnitude}
+\NormalTok{parscale \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{)}
+
+\NormalTok{sim.run \textless{}{-}}\StringTok{ }\ControlFlowTok{function}\NormalTok{(sim.name, n, p, q, }\DataTypeTok{R =} \DecValTok{1000}\NormalTok{) \{}
+\NormalTok{    mles \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{()}
+\NormalTok{    problems \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{()}
+
+\NormalTok{    tau \textless{}{-}}\StringTok{ }\NormalTok{wei.series.md.c1.c2.c3}\OperatorTok{::}\KeywordTok{qwei\_series}\NormalTok{(}
+        \DataTypeTok{p =}\NormalTok{ q, }\DataTypeTok{scales =}\NormalTok{ scales, }\DataTypeTok{shapes =}\NormalTok{ shapes)}
+
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"n ="}\NormalTok{, n, }\StringTok{", p ="}\NormalTok{, p, }\StringTok{", q = "}\NormalTok{, q, }\StringTok{", tau = "}\NormalTok{, tau, }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+    \ControlFlowTok{for}\NormalTok{ (r }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{R) \{}
+\NormalTok{        result \textless{}{-}}\StringTok{ }\KeywordTok{tryCatch}\NormalTok{(\{}
+
+\NormalTok{            df \textless{}{-}}\StringTok{ }\NormalTok{wei.series.md.c1.c2.c3}\OperatorTok{::}\KeywordTok{generate\_guo\_weibull\_table\_2\_data}\NormalTok{(}
+                \DataTypeTok{shapes =}\NormalTok{ shapes,}
+                \DataTypeTok{scales =}\NormalTok{ scales,}
+                \DataTypeTok{n =}\NormalTok{ n,}
+                \DataTypeTok{p =}\NormalTok{ p,}
+                \DataTypeTok{tau =}\NormalTok{ tau)}
+
+\NormalTok{            sol \textless{}{-}}\StringTok{ }\NormalTok{wei.series.md.c1.c2.c3}\OperatorTok{::}\KeywordTok{mle\_nelder\_wei\_series\_md\_c1\_c2\_c3}\NormalTok{(}
+                \DataTypeTok{df =}\NormalTok{ df,}
+                \DataTypeTok{theta0 =}\NormalTok{ theta,}
+                \DataTypeTok{reltol =} \FloatTok{1e{-}7}\NormalTok{,}
+                \DataTypeTok{parscale =}\NormalTok{ parscale,}
+                \DataTypeTok{maxit =}\NormalTok{ 2000L)}
+\NormalTok{            mles \textless{}{-}}\StringTok{ }\KeywordTok{append}\NormalTok{(mles, }\KeywordTok{list}\NormalTok{(sol))}
+
+            \ControlFlowTok{if}\NormalTok{ (r }\OperatorTok{\%\%}\StringTok{ }\DecValTok{10} \OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{) \{}
+                \KeywordTok{cat}\NormalTok{(}\StringTok{"r = "}\NormalTok{, r, }\StringTok{": "}\NormalTok{, sol}\OperatorTok{$}\NormalTok{par, }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{            \}}
+
+\NormalTok{        \}, }\DataTypeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+            \KeywordTok{cat}\NormalTok{(}\StringTok{"Error at iteration"}\NormalTok{, r, }\StringTok{":"}\NormalTok{)}
+            \KeywordTok{print}\NormalTok{(e)}
+\NormalTok{            problems \textless{}{-}}\StringTok{ }\KeywordTok{append}\NormalTok{(problems, }\KeywordTok{list}\NormalTok{(}\KeywordTok{list}\NormalTok{(}
+                \DataTypeTok{error =}\NormalTok{ e, }\DataTypeTok{n =}\NormalTok{ n, }\DataTypeTok{p =}\NormalTok{ p, }\DataTypeTok{q =}\NormalTok{ q, }\DataTypeTok{tau =}\NormalTok{ tau, }\DataTypeTok{df =}\NormalTok{ df)))}
+\NormalTok{        \})}
+\NormalTok{    \}}
+  
+    \ControlFlowTok{if}\NormalTok{ (}\KeywordTok{length}\NormalTok{(mles) }\OperatorTok{!=}\StringTok{ }\DecValTok{0}\NormalTok{) \{}
+        \KeywordTok{saveRDS}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ n, }\DataTypeTok{p =}\NormalTok{ p, }\DataTypeTok{q =}\NormalTok{ q, }\DataTypeTok{tau =}\NormalTok{ tau, }\DataTypeTok{mles =}\NormalTok{ mles),}
+            \DataTypeTok{file =} \KeywordTok{paste0}\NormalTok{(}\StringTok{"./results/"}\NormalTok{, sim.name, }\StringTok{"/results\_"}\NormalTok{, n, }\StringTok{"\_"}\NormalTok{, p, }\StringTok{"\_"}\NormalTok{, q, }\StringTok{".rds"}\NormalTok{))}
+\NormalTok{    \}}
+
+    \ControlFlowTok{if}\NormalTok{ (}\KeywordTok{length}\NormalTok{(problems) }\OperatorTok{!=}\StringTok{ }\DecValTok{0}\NormalTok{) \{}
+        \KeywordTok{saveRDS}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ n, }\DataTypeTok{p =}\NormalTok{ p, }\DataTypeTok{q =}\NormalTok{ q, }\DataTypeTok{tau =}\NormalTok{ tau, }\DataTypeTok{problems =}\NormalTok{ problems),}
+            \DataTypeTok{file =} \KeywordTok{paste0}\NormalTok{(}\StringTok{"./problems/"}\NormalTok{, sim.name, }\StringTok{"/problems\_"}\NormalTok{, n, }\StringTok{"\_"}\NormalTok{, p, }\StringTok{"\_"}\NormalTok{, q, }\StringTok{".rds"}\NormalTok{))}
+\NormalTok{    \}}
+\NormalTok{\}}
+
+\NormalTok{params \textless{}{-}}\StringTok{ }\KeywordTok{expand.grid}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ ns, }\DataTypeTok{p =}\NormalTok{ ps, }\DataTypeTok{q =}\NormalTok{ qs)}
+\NormalTok{result \textless{}{-}}\StringTok{ }\KeywordTok{mclapply}\NormalTok{(}
+    \DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(params),}
+    \ControlFlowTok{function}\NormalTok{(i) }\KeywordTok{sim.run}\NormalTok{(sim.name, params}\OperatorTok{$}\NormalTok{n[i], params}\OperatorTok{$}\NormalTok{p[i], params}\OperatorTok{$}\NormalTok{q[i], R),}
+    \DataTypeTok{mc.cores =}\NormalTok{ ncores)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{appendix-b-simulation-of-scenarios-using-the-bootstrap-method}{%
+\subsection*{Appendix B: Simulation of scenarios using the Bootstrap
+method}\label{appendix-b-simulation-of-scenarios-using-the-bootstrap-method}}
+\addcontentsline{toc}{subsection}{Appendix B: Simulation of scenarios
+using the Bootstrap method}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# in this scenario, we want to see how we can use the bootstrap}
+\CommentTok{\# method to estimate the confidence intervals more precisely (better calibration}
+\CommentTok{\# of confidence intervals) for small sample sizes.}
+\CommentTok{\# we\textquotesingle{}ll use it to construct a 95\% confidence interval for the estimator. we\textquotesingle{}ll}
+\CommentTok{\# compare this result to the asymptotic theory confidence interval.}
+\CommentTok{\# finally, we\textquotesingle{}ll generate CIs by each method, asymptotic (inverse FIM) and }
+\CommentTok{\# bootstrap (cov), and compare the coverage probabilities.}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\KeywordTok{library}\NormalTok{(boot)}
+\KeywordTok{library}\NormalTok{(parallel)}
+\KeywordTok{library}\NormalTok{(wei.series.md.c1.c2.c3)}
+
+\NormalTok{theta \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DataTypeTok{shape1 =} \FloatTok{1.2576}\NormalTok{, }\DataTypeTok{scale1 =} \FloatTok{994.3661}\NormalTok{,}
+           \DataTypeTok{shape2 =} \FloatTok{1.1635}\NormalTok{, }\DataTypeTok{scale2 =} \FloatTok{908.9458}\NormalTok{,}
+           \DataTypeTok{shape3 =} \FloatTok{1.1308}\NormalTok{, }\DataTypeTok{scale3 =} \FloatTok{840.1141}\NormalTok{,}
+           \DataTypeTok{shape4 =} \FloatTok{1.1802}\NormalTok{, }\DataTypeTok{scale4 =} \FloatTok{940.1141}\NormalTok{,}
+           \DataTypeTok{shape5 =} \FloatTok{1.3311}\NormalTok{, }\DataTypeTok{scale5 =} \FloatTok{836.1123}\NormalTok{)}
+
+\NormalTok{shapes \textless{}{-}}\StringTok{ }\NormalTok{theta[}\KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{length}\NormalTok{(theta), }\DecValTok{2}\NormalTok{)]}
+\NormalTok{scales \textless{}{-}}\StringTok{ }\NormalTok{theta[}\KeywordTok{seq}\NormalTok{(}\DecValTok{2}\NormalTok{, }\KeywordTok{length}\NormalTok{(theta), }\DecValTok{2}\NormalTok{)]}
+
+\CommentTok{\# number of CPU cores to use in bootstrap for parallel processing}
+\NormalTok{ncores \textless{}{-}}\StringTok{ }\DecValTok{4}
+
+\CommentTok{\# helps the MLE optimization routine converge more quickly and reliably}
+\NormalTok{parscale \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1000}\NormalTok{)}
+
+\CommentTok{\#set.seed(134849131)}
+
+\CommentTok{\# sample sizes}
+\NormalTok{ns \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{30}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{)}
+\CommentTok{\# masking probabilities, no masking and 21.5\% masking}
+\NormalTok{ps \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.215}\NormalTok{)}
+\CommentTok{\# quantiles of weibull series distribution, no right{-}censoring and 25\% right{-}censoring}
+\NormalTok{qs \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.75}\NormalTok{)}
+
+\NormalTok{sim.name \textless{}{-}}\StringTok{ "sim{-}1{-}boot"}
+
+\NormalTok{sim.boot.run \textless{}{-}}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n, p, q, }\DataTypeTok{R =} \DecValTok{1000}\NormalTok{) \{}
+
+\NormalTok{    problems \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{()}
+
+\NormalTok{    tau \textless{}{-}}\StringTok{ }\NormalTok{wei.series.md.c1.c2.c3}\OperatorTok{::}\KeywordTok{qwei\_series}\NormalTok{(}
+        \DataTypeTok{p =}\NormalTok{ q, }\DataTypeTok{scales =}\NormalTok{ scales, }\DataTypeTok{shapes =}\NormalTok{ shapes)}
+
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"n ="}\NormalTok{, n, }\StringTok{", p ="}\NormalTok{, p, }\StringTok{", q = "}\NormalTok{, q, }\StringTok{", tau = "}\NormalTok{, tau, }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+  
+\NormalTok{    result \textless{}{-}}\StringTok{ }\KeywordTok{tryCatch}\NormalTok{(\{}
+\NormalTok{        df \textless{}{-}}\StringTok{ }\NormalTok{wei.series.md.c1.c2.c3}\OperatorTok{::}\KeywordTok{generate\_guo\_weibull\_table\_2\_data}\NormalTok{(}
+            \DataTypeTok{shapes =}\NormalTok{ shapes,}
+            \DataTypeTok{scales =}\NormalTok{ scales,}
+            \DataTypeTok{n =}\NormalTok{ n,}
+            \DataTypeTok{p =}\NormalTok{ p,}
+            \DataTypeTok{tau =}\NormalTok{ tau)}
+
+\NormalTok{        sol \textless{}{-}}\StringTok{ }\NormalTok{wei.series.md.c1.c2.c3}\OperatorTok{::}\KeywordTok{mle\_nelder\_wei\_series\_md\_c1\_c2\_c3}\NormalTok{(}
+            \DataTypeTok{df =}\NormalTok{ df,}
+            \DataTypeTok{theta0 =}\NormalTok{ theta,}
+            \DataTypeTok{reltol =} \FloatTok{1e{-}7}\NormalTok{,}
+            \DataTypeTok{parscale =}\NormalTok{ parscale,}
+            \DataTypeTok{maxit =}\NormalTok{ 2000L)}
+
+        \KeywordTok{cat}\NormalTok{(}\StringTok{"mle: "}\NormalTok{, sol}\OperatorTok{$}\NormalTok{par, }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+
+\NormalTok{        sol.boot \textless{}{-}}\StringTok{ }\KeywordTok{boot}\NormalTok{(df, }\ControlFlowTok{function}\NormalTok{(df, i) \{}
+\NormalTok{            sol \textless{}{-}}\StringTok{ }\NormalTok{wei.series.md.c1.c2.c3}\OperatorTok{::}\KeywordTok{mle\_nelder\_wei\_series\_md\_c1\_c2\_c3}\NormalTok{(}
+                \DataTypeTok{df =}\NormalTok{ df[i, ],}
+                \DataTypeTok{theta0 =}\NormalTok{ sol}\OperatorTok{$}\NormalTok{par,}
+                \DataTypeTok{reltol =} \FloatTok{1e{-}7}\NormalTok{,}
+                \DataTypeTok{parscale =}\NormalTok{ parscale,}
+                \DataTypeTok{maxit =}\NormalTok{ 1000L)}
+            \KeywordTok{cat}\NormalTok{(}\StringTok{"boot: "}\NormalTok{, sol}\OperatorTok{$}\NormalTok{par, }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\NormalTok{            sol}\OperatorTok{$}\NormalTok{par}
+\NormalTok{        \}, }\DataTypeTok{ncpus =}\NormalTok{ ncores, }\DataTypeTok{R =}\NormalTok{ R)}
+
+        \KeywordTok{saveRDS}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ n, }\DataTypeTok{p =}\NormalTok{ p, }\DataTypeTok{q =}\NormalTok{ q, }\DataTypeTok{tau =}\NormalTok{ tau, }\DataTypeTok{mle =}\NormalTok{ sol, }\DataTypeTok{mle.boot =}\NormalTok{ sol.boot),}
+            \DataTypeTok{file =} \KeywordTok{paste0}\NormalTok{(}\StringTok{"./results/"}\NormalTok{, sim.name, }\StringTok{"/results\_"}\NormalTok{, n, }\StringTok{"\_"}\NormalTok{, p, }\StringTok{"\_"}\NormalTok{, q, }\StringTok{".rds"}\NormalTok{))}
+
+\NormalTok{        \}, }\DataTypeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+            \KeywordTok{print}\NormalTok{(e)}
+\NormalTok{            problems \textless{}{-}}\StringTok{ }\KeywordTok{append}\NormalTok{(problems, }\KeywordTok{list}\NormalTok{(}\KeywordTok{list}\NormalTok{(}
+                \DataTypeTok{error =}\NormalTok{ e, }\DataTypeTok{n =}\NormalTok{ n, }\DataTypeTok{p =}\NormalTok{ p, }\DataTypeTok{q =}\NormalTok{ q, }\DataTypeTok{tau =}\NormalTok{ tau, }\DataTypeTok{df =}\NormalTok{ df)))}
+\NormalTok{        \})}
+
+    \ControlFlowTok{if}\NormalTok{ (}\KeywordTok{length}\NormalTok{(problems) }\OperatorTok{!=}\StringTok{ }\DecValTok{0}\NormalTok{) \{}
+        \KeywordTok{saveRDS}\NormalTok{(}\KeywordTok{list}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ n, }\DataTypeTok{p =}\NormalTok{ p, }\DataTypeTok{q =}\NormalTok{ q, }\DataTypeTok{tau =}\NormalTok{ tau, }\DataTypeTok{problems =}\NormalTok{ problems),}
+                \DataTypeTok{file =} \KeywordTok{paste0}\NormalTok{(}\StringTok{"./problems/"}\NormalTok{, sim.name, }\StringTok{"/problems\_"}\NormalTok{, n, }\StringTok{"\_"}\NormalTok{, p, }\StringTok{"\_"}\NormalTok{, q, }\StringTok{".rds"}\NormalTok{))}
+\NormalTok{    \}}
+\NormalTok{\}}
+  
+\NormalTok{params \textless{}{-}}\StringTok{ }\KeywordTok{expand.grid}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ ns, }\DataTypeTok{p =}\NormalTok{ ps, }\DataTypeTok{q =}\NormalTok{ qs)}
+\NormalTok{result \textless{}{-}}\StringTok{ }\KeywordTok{mclapply}\NormalTok{(}
+    \DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(params),}
+    \ControlFlowTok{function}\NormalTok{(i) }\KeywordTok{sim.boot.run}\NormalTok{(sim.name, params}\OperatorTok{$}\NormalTok{n[i], params}\OperatorTok{$}\NormalTok{p[i], params}\OperatorTok{$}\NormalTok{q[i]),}
+    \DataTypeTok{mc.cores =}\NormalTok{ ncores)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{appendix-c-confidence-width-visualizations}{%
+\subsection*{Appendix C: Confidence width
+visualizations}\label{appendix-c-confidence-width-visualizations}}
+\addcontentsline{toc}{subsection}{Appendix C: Confidence width
+visualizations}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# we visualize CI width as a function of                          \#}
+\CommentTok{\# masking component cause of failure p from p = 0 to p = 0.4      \#}
+\CommentTok{\# and sample size n. we have R = 100 replicates for each p and n. \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\KeywordTok{library}\NormalTok{(gridExtra)  }\CommentTok{\# for arranging plots}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(algebraic.mle)}
+\KeywordTok{library}\NormalTok{(md.tools)}
+\KeywordTok{library}\NormalTok{(wei.series.md.c1.c2.c3)}
+
+\NormalTok{theta \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DataTypeTok{shape1 =} \FloatTok{1.2576}\NormalTok{, }\DataTypeTok{scale1 =} \FloatTok{994.3661}\NormalTok{,}
+           \DataTypeTok{shape2 =} \FloatTok{1.1635}\NormalTok{, }\DataTypeTok{scale2 =} \FloatTok{908.9458}\NormalTok{,}
+           \DataTypeTok{shape3 =} \FloatTok{1.1308}\NormalTok{, }\DataTypeTok{scale3 =} \FloatTok{840.1141}\NormalTok{,}
+           \DataTypeTok{shape4 =} \FloatTok{1.1802}\NormalTok{, }\DataTypeTok{scale4 =} \FloatTok{940.1141}\NormalTok{,}
+           \DataTypeTok{shape5 =} \FloatTok{1.3311}\NormalTok{, }\DataTypeTok{scale5 =} \FloatTok{836.1123}\NormalTok{)}
+
+\NormalTok{shapes \textless{}{-}}\StringTok{ }\NormalTok{theta[}\KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{, }\KeywordTok{length}\NormalTok{(theta), }\DecValTok{2}\NormalTok{)]}
+\NormalTok{scales \textless{}{-}}\StringTok{ }\NormalTok{theta[}\KeywordTok{seq}\NormalTok{(}\DecValTok{2}\NormalTok{, }\KeywordTok{length}\NormalTok{(theta), }\DecValTok{2}\NormalTok{)]}
+\NormalTok{sim2\_n \textless{}{-}}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{30}\NormalTok{, }\DecValTok{40}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{75}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{400}\NormalTok{, }\DecValTok{800}\NormalTok{)}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# generate CI width function \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\NormalTok{gen\_ci\_width \textless{}{-}}\StringTok{ }\ControlFlowTok{function}\NormalTok{(sim\_p\_mles, sim\_p) \{}
+
+\NormalTok{    ci\_widths \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{()}
+
+    \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(sim\_p)) \{}
+
+\NormalTok{        ci\_widths[[i]] \textless{}{-}}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{nrow =} \KeywordTok{length}\NormalTok{(sim\_p\_mles[[i]]), }\DataTypeTok{ncol =} \KeywordTok{length}\NormalTok{(theta))}
+
+        \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(sim\_p\_mles[[i]])) \{}
+\NormalTok{            theta.hat \textless{}{-}}\StringTok{ }\NormalTok{algebraic.mle}\OperatorTok{::}\KeywordTok{mle\_numerical}\NormalTok{(sim\_p\_mles[[i]][[j]])}
+            \CommentTok{\# this is a m x 2 matrix, where m is the number of parameters}
+\NormalTok{            ci \textless{}{-}}\StringTok{ }\KeywordTok{confint}\NormalTok{(theta.hat, }\DataTypeTok{use\_t\_dist =} \OtherTok{FALSE}\NormalTok{)}
+
+            \ControlFlowTok{if}\NormalTok{ (}\KeywordTok{any}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(ci))) \{}
+                \ControlFlowTok{next}
+\NormalTok{            \}}
+
+\NormalTok{            ci\_widths[[i]][j,] \textless{}{-}}\StringTok{ }\NormalTok{ci[,}\DecValTok{2}\NormalTok{] }\OperatorTok{{-}}\StringTok{ }\NormalTok{ci[,}\DecValTok{1}\NormalTok{]}
+\NormalTok{        \}}
+\NormalTok{    \}}
+
+\NormalTok{    ci\_widths}
+\NormalTok{\}}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# generate CI width plot function \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\NormalTok{gen\_ci\_width\_plot \textless{}{-}}\StringTok{ }\ControlFlowTok{function}\NormalTok{(ci\_widths, sim\_n, p) \{}
+
+\NormalTok{    ci\_widths\_df \textless{}{-}}\StringTok{ }\KeywordTok{do.call}\NormalTok{(rbind, }\KeywordTok{lapply}\NormalTok{(}\KeywordTok{seq\_along}\NormalTok{(ci\_widths), }\ControlFlowTok{function}\NormalTok{(i) \{}
+    \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{SampleSize =} \KeywordTok{rep}\NormalTok{(sim\_n[i], }\KeywordTok{nrow}\NormalTok{(ci\_widths[[i]])),}
+                \DataTypeTok{CI\_Width =} \KeywordTok{as.vector}\NormalTok{(ci\_widths[[i]]),}
+                \DataTypeTok{Parameter =} \KeywordTok{rep}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(ci\_widths[[i]])), }\DataTypeTok{each =} \KeywordTok{nrow}\NormalTok{(ci\_widths[[i]])),}
+                \DataTypeTok{Type =} \KeywordTok{rep}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"Shape"}\NormalTok{, }\StringTok{"Scale"}\NormalTok{), }\DataTypeTok{each =} \KeywordTok{nrow}\NormalTok{(ci\_widths[[i]]), }\DataTypeTok{times =} \KeywordTok{ncol}\NormalTok{(ci\_widths[[i]]) }\OperatorTok{/}\StringTok{ }\DecValTok{2}\NormalTok{))}
+\NormalTok{    \}))}
+
+    \CommentTok{\# Split the data frame based on parameter type (Scale or Shape)}
+\NormalTok{    ci\_widths\_list \textless{}{-}}\StringTok{ }\KeywordTok{split}\NormalTok{(ci\_widths\_df, ci\_widths\_df}\OperatorTok{$}\NormalTok{Type)}
+    \CommentTok{\# Generate a plot for each type, using a log y scale}
+\NormalTok{    plots \textless{}{-}}\StringTok{ }\KeywordTok{lapply}\NormalTok{(ci\_widths\_list, }\ControlFlowTok{function}\NormalTok{(df) \{}
+        \KeywordTok{ggplot}\NormalTok{(df, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ SampleSize, }\DataTypeTok{y =}\NormalTok{ CI\_Width, }\DataTypeTok{color =} \KeywordTok{factor}\NormalTok{(Parameter))) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{geom\_line}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{            }\KeywordTok{scale\_y\_log10}\NormalTok{() }\OperatorTok{+}
+\StringTok{            }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \KeywordTok{paste}\NormalTok{(}\StringTok{"Masking Probability"}\NormalTok{, p),}
+                \DataTypeTok{x =} \StringTok{"Sample Size"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Confidence Interval Width"}\NormalTok{, }\DataTypeTok{color =} \StringTok{"Parameter"}\NormalTok{) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{facet\_wrap}\NormalTok{(}\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{Type, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{) }\OperatorTok{+}
+\StringTok{            }\KeywordTok{theme\_minimal}\NormalTok{()}
+\NormalTok{    \})}
+
+    \CommentTok{\# Arrange the plots in a grid}
+    \KeywordTok{grid.arrange}\NormalTok{(}\DataTypeTok{grobs =}\NormalTok{ plots, }\DataTypeTok{ncol =} \DecValTok{2}\NormalTok{)}
+\NormalTok{\}}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# p = 0.1 \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\NormalTok{sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_30\_0.1\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_40\_0.1\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_50\_0.1\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_75\_0.1\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_100\_0.1\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_200\_0.1\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_400\_0.1\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_800\_0.1\_1.rds"}\NormalTok{)}
+
+\NormalTok{sim2\_p\_}\FloatTok{0.1}\NormalTok{\_mles \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{(sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.1}\OperatorTok{$}\NormalTok{mles)}
+\NormalTok{ci\_width\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width}\NormalTok{(sim2\_p\_}\FloatTok{0.1}\NormalTok{\_mles, sim2\_n)}
+\NormalTok{plts\_p\_}\FloatTok{0.1}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width\_plot}\NormalTok{(ci\_width\_}\FloatTok{0.1}\NormalTok{, sim2\_n, }\FloatTok{0.1}\NormalTok{)}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# p = 0.2 \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\NormalTok{sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_30\_0.2\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_40\_0.2\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_50\_0.2\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_75\_0.2\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_100\_0.2\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_200\_0.2\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_400\_0.2\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_800\_0.2\_1.rds"}\NormalTok{)}
+
+\NormalTok{sim2\_p\_}\FloatTok{0.2}\NormalTok{\_mles \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{(sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.2}\OperatorTok{$}\NormalTok{mles)}
+
+\NormalTok{ci\_width\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width}\NormalTok{(sim2\_p\_}\FloatTok{0.2}\NormalTok{\_mles, sim2\_n)}
+\NormalTok{plts\_p\_}\FloatTok{0.2}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width\_plot}\NormalTok{(ci\_width\_}\FloatTok{0.2}\NormalTok{, sim2\_n, }\FloatTok{0.2}\NormalTok{)}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# p = 0.3 \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\NormalTok{sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_30\_0.3\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_40\_0.3\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_50\_0.3\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_75\_0.3\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_100\_0.3\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_200\_0.3\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_400\_0.3\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_800\_0.3\_1.rds"}\NormalTok{)}
+
+\NormalTok{sim2\_p\_}\FloatTok{0.3}\NormalTok{\_mles \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{(sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.3}\OperatorTok{$}\NormalTok{mles)}
+
+\NormalTok{ci\_width\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width}\NormalTok{(sim2\_p\_}\FloatTok{0.3}\NormalTok{\_mles, sim2\_n)}
+\NormalTok{plts\_p\_}\FloatTok{0.3}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width\_plot}\NormalTok{(ci\_width\_}\FloatTok{0.3}\NormalTok{, sim2\_n, }\FloatTok{0.3}\NormalTok{)}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# p = 0.4 \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#}
+\NormalTok{sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_30\_0.4\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_40\_0.4\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_50\_0.4\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_75\_0.4\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_100\_0.4\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_200\_0.4\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_400\_0.4\_1.rds"}\NormalTok{)}
+\NormalTok{sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"results/sim{-}2/results\_800\_0.4\_1.rds"}\NormalTok{)}
+
+\NormalTok{sim2\_p\_}\FloatTok{0.4}\NormalTok{\_mles \textless{}{-}}\StringTok{ }\KeywordTok{list}\NormalTok{(sim2\_}\DecValTok{30}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{40}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{50}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{75}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{100}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{200}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles, sim2\_}\DecValTok{400}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles,}
+\NormalTok{    sim2\_}\DecValTok{800}\NormalTok{\_}\FloatTok{0.4}\OperatorTok{$}\NormalTok{mles)}
+
+\NormalTok{ci\_width\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width}\NormalTok{(sim2\_p\_}\FloatTok{0.4}\NormalTok{\_mles, sim2\_n)}
+\NormalTok{plts\_p\_}\FloatTok{0.4}\NormalTok{ \textless{}{-}}\StringTok{ }\KeywordTok{gen\_ci\_width\_plot}\NormalTok{(ci\_width\_}\FloatTok{0.4}\NormalTok{, sim2\_n, }\FloatTok{0.4}\NormalTok{)}
+
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\CommentTok{\# plot all together, plts\_p\_0.1 to plts\_p\_0.4 \#}
+\CommentTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\NormalTok{ci\_plots \textless{}{-}}\StringTok{ }\KeywordTok{plot\_grid}\NormalTok{(plts\_p\_}\FloatTok{0.1}\NormalTok{, plts\_p\_}\FloatTok{0.2}\NormalTok{, plts\_p\_}\FloatTok{0.3}\NormalTok{, plts\_p\_}\FloatTok{0.4}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{1}\NormalTok{)}
+\KeywordTok{ggsave}\NormalTok{(}\StringTok{"results/sim{-}2/ci{-}widths.pdf"}\NormalTok{, ci\_plots)}
+\end{Highlighting}
+\end{Shaded}
+
 
 \end{document}

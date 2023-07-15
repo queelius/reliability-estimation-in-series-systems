@@ -32,6 +32,7 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(glue)
+library(png)
 ```
 
 Introduction
@@ -1047,9 +1048,11 @@ function), each evaluated at $\v\theta^{(n)}$.
 Depending upon the nature of the log-likelihood function, one or the other may
 work better in practice.\footnote{For example, one approach may be more
 computationally efficient.}
-The R code for iterative methods is in Appendix C.
 
 ## Properties of the MLE {#sec:mle_properties}
+
+In this section, we discuss some properties of the MLE that are useful for
+making statistical inferences about the parameter vector $\v\theta$.
 According to @bain, if certain regularity conditions are satisfied, then
 solutions of the maximum likelihood equation \eqref{eq:mle_eq} have the
 following desirable properties:
@@ -1076,7 +1079,6 @@ $$
 J(\v\theta)_{i j} = -\frac{\partial}{\partial \theta_i \partial \theta_j}
     \ell(\v\theta).
 $$
-
 Since we do not know $\v\theta$, we estimate $J(\v\theta)$ with $J(\v{\hat\theta})$.
 Thus, assuming the regularity conditions are satisfied, then approximately,
 $$
@@ -1555,69 +1557,10 @@ either negligible (on the distribution of component lifetimes) or are more or le
 constant. Then, our task is to use our likelihood model to find the best fit using
 maximum likelihood estimation.
 
-## Estimates of bias, variance, and coverage probability {#sec:acc_prec}
-The primary purpose of the simulation study is to anlyze the performance of The
-MLE under different scenarios. We will use the following measures to quantify
-the performance of the MLE.
-
-### Bias
-A measure of the accuracy of $\v{\hat\theta}$ is the bias, which is defined as
-$$
-\operatorname{b}(\v{\hat\theta}) = E(\v{\hat\theta}) - \v\theta.
-$$
-We cannot analytically derive the bias, so we estimate the bias using the empirical
-sampling distribution,
-$$
-\hat{\operatorname{b}}(\v{\hat\theta}) =
-    E_{\hat{\v\theta} \sim \text{data}}(\v{\hat\theta}) - \v\theta.
-$$
-
-### Variance
-We estimate the precision of $\v{\hat\theta}$ with the variance-covariance matrix,
-$$
-\operatorname{Var}(\v{\hat\theta}) =
-    E\bigl(
-        (\hat{\v\theta} - E(\hat{\v\theta}))
-        (\hat{\v\theta} - E(\hat{\v\theta}))'
-    \bigr),
-$$
-which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
-the expectation is taken with respect to the empirical sampling distribution.
-We will principally use the diagonal elements of the variance-covariance matrix,
-which are the variances of the individual components of $\v{\hat\theta}$.
-
-### Coverage probability
-We will use the inverse of the observed Fisher information matrix (FIM), which was
-defined in Section \ref{sec:mle_properties}, to construct $95\%$-confidence intervals
-for $\v\theta$ to compute the coverage probability of the MLE for each scenario. A
-confidence interval is said to be *well-calibrated* if the coverage probability is
-close to the nominal level, $95\%$.
-
-We want the coverage probability to be close to the nominal level, $95\%$, because if
-the coverage probability is too low, then we will be too confident in the precision
-and accuracy of the MLE, and if the coverage probability is too high, then we will
-not be confident enough in the precision and accuracy of the MLE.
-
-### Mean squared error
-The mean squared error, $\operatorname{MSE}$, is a measure of
-estimator error that incorporates both the bias and the variance, and is defined as
-$$
-\operatorname{MSE}(\v{\hat\theta}) =
-    E\bigl((\v{\hat\theta} - \v\theta)(\v{\hat\theta} - \v\theta)'\bigr) =
-    \operatorname{Var}(\v{\hat\theta}) +
-    \operatorname{b}(\v{\hat\theta})\operatorname{b}(\v{\hat\theta})',
-$$
-which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
-expectation is with respect to the empirical sampling distribution. The diagonal
-elements of the MSE matrix are the mean squared errors of the individual components
-of $\v{\hat\theta}$. Asymptotically, the MSE is equal to the variance, but for
-finite $n$, the MSE is a more informative measure of estimator error than the
-variance alone.
-
 ## Bernoulli candidate set model
 
 In our simulation study, we must generate data that satisfies the masking
-conditions. In other words, we must generate data that satisfies the following
+conditions. In other words, we must generate data that satisfies the
 conditions described in Section \ref{sec:candmod}.
 
 There are many ways to satisfying the masking conditions. We choose the simplest
@@ -1720,29 +1663,15 @@ $$
 
 Here is an outline of the simulation study analysis:
 
-1. Set up simulation parameters:
+1. Set up simulation parameters for various scenarios of interest, such as
+   generating data to examine the relationship between bias and masking probability
+   for different sample sizes and right-censoring times.
 
-    - Set a seed value for simulation study reproducibility. All of the code
-      will be written in R, and so we will use the `set.seed` function to set
-      the seed value. to 9484913. The data we generate for our simulation study can
-      be reproduced by anyone with the same seed value and R code.
-   
-    - Generate a range of sample sizes $n$ from $n = 40$ to $n = 200$.
-     
-    - Generate a range of Bernoulli masking probabilities from $p = 0$
-      (no masking the component cause of failure) to $p = 0.3$ (significant masking)
-      for including each non-failed component in the candidate set using the
-      Bernoulli candidate set model.
-
-    - Generate a range of right-censoring times $\tau$ based on quantiles for the
-      Weibull series system, from the 70th quantile ($70\%$ of the observations
-      are expected to be right-censored) to the 100th quantile (no right censoring)).
-
-2. Generate $R = 200$ data sets for each scenario (combination of $n$, $p$, and
+2. Generate $R$ data sets for each scenario (some combination of $n$, $p$, and
    $\tau$).
 
-3. Estimate the parameters for each replication, giving us $R$ estimates of the
-   parameters for each scenario. We use these replicates as an empirical estimate of
+3. Estimate the parameters for each data set, giving us $R$ estimates of the
+   parameters. We use these data sets as an empirical estimate of
    the sampling distribution of the MLE for each scenario.
    
 4. Using the empirical sampling distribution of the MLE, estimate various 
@@ -1760,13 +1689,318 @@ Here is an outline of the simulation study analysis:
    results to hold for finite $n$, but we would like to see how the bias, MSE, and
    coverage probability change as we vary $n$, $p$, and $\tau$.
 
-6. Analyze cases where the MLE does not converge, e.g., when $n$ is small and $p$
-   is large. We would like to see if there is a pattern in the cases where the MLE
-   does not converge.
+For how we generate a scenario, see Appendix A.
 
-## Simulation study results
+### Verification
 
-Results here
+To verify that our likelihood model is correct, we load the Table 2 data from
+[@Huairu-2013] and fit the Weibull series model to the data to see if we can
+recover the MLE they reported. When we fit the Weibull series model to this data by
+maximizing the likelihood function, we obtain the following fit for the shape and
+scale parameters given respectively by
+$$
+    \hat{k}_1 = `r theta["shape1"]`,
+    \hat{k}_2 = `r theta["shape2"]`,
+    \hat{k}_3 = `r theta["shape3"]`,
+$$
+and
+$$
+    \hat{\lambda}_1 = `r theta["scale1"]`,
+    \hat{\lambda}_2 = `r theta["scale2"]`,
+    \hat{\lambda}_3 = `r theta["scale3"]`,
+$$
+which is in agreement with the MLE they reported. Satisfied that our likelihood model
+is correct, we proceed with the simulation study.
+
+## Analysis of the MLE {#sec:acc_prec}
+
+The primary purpose of the simulation study is to anlyze the performance of the
+MLE under different scenarios. We will compute the bias, variance, MSE, confidence
+interval widths, and coverage proababilities for confidence intervals with respect to
+a range of scenarios to quantify the performance of the MLE under different
+circumstances.
+
+### Bias
+A measure of the accuracy of $\v{\hat\theta}$ is the bias, which is defined as
+$$
+\operatorname{b}(\v{\hat\theta}) = E(\v{\hat\theta}) - \v\theta.
+$$
+We cannot analytically derive the bias, so we estimate the bias using the empirical
+sampling distribution,
+$$
+\hat{\operatorname{b}}(\v{\hat\theta}) =
+    E_{\hat{\v\theta} \sim \text{data}}(\v{\hat\theta}) - \v\theta.
+$$
+
+##### Scenario: Absolute bias vs. sample size with a masking probability but no right-censoring {-}
+
+In this scenario, we want to see the bias of the MLE as a function of the sample
+size $n$ from $n = 30$ to $n = 800$ for a fixed masking probability $p = 0.2$ and no
+right-censoring $(\tau = \infty)$. Recall that the masking probability is the
+probability of including each non-failed component.
+
+
+```{r plot-bias-p-0.2-vs-sample-size, echo =F, fig.cap="Bias vs. sample size (masking probability 0.2)", fig.align="center"}
+knitr::include_graphics("image/plot-p-0.2-bias-vs-sample-size.pdf")
+```
+
+In Figure \ref{fig:plot-bias-p-0.2-vs-sample-size}, we plot the absolute bias
+$|\operatorname{bias}(\hat\theta)|$ on a log scale against the sample size. 
+However, because the absolute bias is quite large for small sample sizes and small
+for large sample sizes, we use a log scale. Furthermore, we show the absolute bias
+for the shape and scale parameters separately, since the scale parameters are much
+larger than the shape parameters.
+
+Here are some important observations Figure \ref{fig:plot-bias-p-0.2-vs-sample-size} reveals:
+
+1. For both shape and scale parameters, we see that the absolute bias seems to be
+decreasing to zero as the sample size increases. This is not surprising since we
+expect the MLE to be consistent, i.e., $\v{\hat\theta}$ converges in probability
+to $\v\theta$ as the sample size increases to infinity. Still, it is reassuring to
+see that the bias seems to be behaving as expected.
+
+2. For the shape parameters, which are small (the shape parameters have true values
+a little larger than 1), the bias is relatively large for sample sizes up to
+$100$.
+
+3. For the scale parameters, which are quite large (the scale parameters have true
+values around 1000). Like with the shape parameters, the bias is relatively large for
+sample sizes up to $100$, but seems to stabilize and reach relatively small values
+after that.
+
+##### Scenario: Bias vs. sample size and masking probability and no right-censoring {-}
+
+Now, we take a larger view and plot the bias (without taking its absolute value
+as we had done previously) against the masking probabilities $p = 0$
+(no masking) to $p = 0.4$ (significant masking) for sample sizes 100, 400, and 800.
+
+For the shape parameters, at a sample of size 100, we see significant bias and we
+also see that it is very sensitive to the masking probability. See Figure
+\ref{fig:plot-bias-shapes-vs-p-sample-size-100-400-800}. However, for sample sizes
+of 400 and 800, the bias is relatively small and unaffected by the masking
+probability.
+
+```{r plot-bias-shapes-vs-p-sample-size-100-400-800, echo =F, fig.cap="Shape Bias vs. masking probability for sample sizes 100, 400, and 800", fig.align="center"}
+knitr::include_graphics("image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf")
+```
+
+For the scale parameters, a similar pattern emerges, although we see that even
+for sample size 400, there is evidence that the bias is still affected by the masking
+probability. See Figure \ref{fig:plot-bias-scales-vs-p-sample-size-100-400-800}.
+
+The smallest bias, as expected, occurs for sample sizes of $800$. The bias 
+for $\lambda_1$ (scale parameter 1) at the masking probability $0.3$ is an interesting
+case, since it jumps up at that point for some reason. We used only $R = 100$
+replications, so it is plausible it would decrease with more replications.
+Regardless, the overall trend is that the bias decreases as the sample size increases, and its
+dependence on the masking probability is relatively small with sufficiently large
+sample sizes.
+
+```{r plot-bias-scales-vs-p-sample-size-100-400-800, echo =F, fig.cap="Scale Bias vs. masking probability for sample sizes 100, 400, and 800", fig.align="center"}
+knitr::include_graphics("image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf")
+```
+
+#### Scenario: Bias vs. right-censoring time and sample size with a fixed masking probability {-}
+
+In this scenario, we want to isolate the effect of the right-censoring time $\tau$
+on the bias. We fix the masking probability to $p = 0.215$, in line with the masking
+probability we estimate for the Table 2 data set in [@Huairu-2013].
+
+We plot the bias against the right-censoring
+time for sample sizes 50, 150, and 300. See Figure \ref{fig:plot-bias-tau-vs-sample-size-50-150-300}.
+On the $x$-axis, we report the right-censoring time as a quantile of the
+Weibull series distribution so that we can more clearly see the effect of the right-censoring
+on the bias, e.g., the $50\%$ quantile is the time at which $50\%$ of the
+systems are expected to fail.
+
+```{r plot-bias-tau-vs-sample-size-50-150-300, echo =F, fig.cap="Bias vs. right-censoring time and sample sizes 50, 150, and 300", fig.align="center"}
+knitr::include_graphics("image/plot-bias-tau-vs-sample-size-50-150-300.pdf")
+```
+
+A few observations about Figure \ref{fig:plot-bias-tau-vs-sample-size-50-150-300}:
+
+1. The bias decreases as the right-censoring time increases. This is expected since we have
+more information about the system when the right-censoring time is larger.
+
+2. The bias decreases as the sample size increases, which is also expected since we
+have more information about the system when the sample size is larger.
+
+3. The bias is relatively small for sample sizes 150 and 300, but for sample size 50,
+the bias is quite large, particularly for the shape parameters. This is not
+surprising since the sample size is quite small, and so we do not expect the MLE to
+be very accurate.
+
+### Coverage probability {#sec:coverage_prob}
+We will use the inverse of the observed Fisher information matrix (FIM), which was
+defined in Section \ref{sec:mle_properties}, to construct $95\%$-confidence intervals
+for $\v\theta$ to compute the coverage probability of the MLE for each scenario. A
+confidence interval is said to be *well-calibrated* if the coverage probability is
+close to the nominal level, $95\%$.
+
+We want the coverage probability to be close to the nominal level, $95\%$, because if
+the coverage probability is too low, then we will be too confident in the precision
+and accuracy of the MLE, and if the coverage probability is too high, then we will
+not be confident enough in the precision and accuracy of the MLE.
+
+To estimate the coverage probability, we use the following procedure:
+
+1. For a given scenario (say, sample size and masking probability), we generate
+   $R = 100$ data sets.
+
+2. We find an MLE for each of $R$ data sets.
+
+3. We compute the $95\%$-confidence interval for each MLE using the
+   inverse of the observed FIM.
+
+4. We compute the coverage probability by calculating the proportion of times
+   the true parameter values were contained in computed the $95\%$-confidence
+   interval.
+
+#### Scenario: Coverage probability vs. sample size with a fixed masking probability and no right-censoring {-}
+
+We want to isolate the effect of the coverage probability as a function of the sample
+size $n$. We fix the masking probability to $p = 0.2$ and without right-censoring $(\tau = \infty)$
+and vary the sample size from $n = 30$ to $n = 800$. See Figure \ref{fig:plot-coverage-p-three-vs-sample-size}.
+
+```{r plot-coverage-p-three-vs-sample-size, echo =F, fig.cap="Coverage probability vs. sample size for masking probability $0.3$", fig.align="center"}
+knitr::include_graphics("image/plot-coverage-p_0.3-vs-sample-size.pdf")
+```
+
+Here are some key observations:
+
+1. It is immediately obvious that the scale parameters (dashed lines) have a much
+   lower coverage probability than the shape parameters (solid lines), particularly
+   for small sample sizes less than $n = 200$.
+   
+   In general, the scale parameters appear to be more difficult to estimate than the
+   shape parameters. 
+
+2. As the sample size increases, the coverage probability for the shape parameters
+   and scale parameters approaches the nominal level, $95\%$.
+   
+   This suggests that the sampling distribution of the MLE is converging in
+   distribution to a multivariate normal distribution with mean $\v\theta$ and
+   variance-covariance given by the inverse of the FIM, consistent with the
+   asymptotic theory.
+
+#### Scenario: Coverage probability vs. sample size and masking probability without right-censoring {-}
+
+We want to get a larger picture of how the coverage probability depends on the
+sample size $n$ and masking probability $p$. We fix the right-censoring time to
+$\tau = \infty$ and vary the sample size from $n = 30$ to $n = 800$ and vary the
+masking probability from $p = 0$ (no masking) to $p = 0.4$ and then compute the
+coverage probability for each combination of sample size $n$ and masking probability
+$p$.
+
+```{r plot-coverage-p-vs-sample-size, echo =F, fig.cap="Coverage probability vs. sample size", fig.align="center"}
+knitr::include_graphics("image/plot-coverage-p-vs-sample-size.pdf")
+```
+
+The results of this analysis are summarized by Figure \ref{fig:plot-coverage-p-vs-sample-size}.
+Here are some key observations:
+
+1. For sample sizes $n \leq 100$, the coverage probability for the shape parameters
+is close to the nominal level, $95\%$, only for small masking probabilities. However,
+as the sample size increases, the coverage probability for the shape parameters
+quickly approaches the nominal level, $95\%$, for all masking probabilities reported
+here.
+
+2. For the scale parameters, the coverage probability is too low for all sample sizes
+$n < 200$ for all masking probabilities reported here. For small sample sizes, the
+confience intervals particularly for the scale parameters, should probably be taken
+with a grain of salt.
+
+In Section \ref{sec:boot}, we explore an alternative way to construct confidence
+intervals using the bootstrap method, which is generally a more accurate way to
+compute confidence intervals. Unlike the inverse of the observed FIM, it does not
+assume that the sampling distribution of the MLE is asymptotically normal, and so
+it is more robust to violations of this assumption.
+
+### Confidence interval width
+
+We will use the inverse of the observed Fisher information matrix (FIM), which was
+defined in Section \ref{sec:mle_properties}, to construct $95\%$-confidence intervals
+for $\v\theta$ to compute the confidence interval width of the MLE for each scenario.
+The confidence interval width is defined as the difference between the upper and
+lower bounds of the confidence interval.
+
+If the confidence intervals are well-calibrated, a small confidence interval width
+means we are more confident that the true value of $\v\theta$ is close to the MLE,
+and a large confidence interval width means we are less confident that the true value
+of $\v\theta$ is close to the MLE. However, if the confidence intervals are not
+well-calibrated, then the confidence interval width is not particularly informative.
+See Section \ref{ec:coverage_prob} for a discussion of well-calibrated confidence
+intervals, which we assume here.
+
+```{r plot-ci-width-vs-sample-size, echo =F, fig.cap="Confidence interval widths vs. sample size", fig.align="center"}
+knitr::include_graphics("image/ci-widths.pdf")
+```
+
+Some key observations:
+
+1. For the shape parameters, the confidence interval widths are small, but the
+   true parameter values are also small. For the scale parameters, the confidence
+   interval widths are large, but the true parameter values are also large.
+
+2. For small sample sizes for every masking probability, the confidence interval
+   widths are extremely variable, and since the coverage probability reported earlier
+   showed they were not well-calibrated, we should not be confident in the MLE for
+   small sample sizes. However, for large sample sizes, the confidence interval
+   widths are relatively stable, and since the coverage probability reported earlier
+   showed they were well-calibrated, we can be confident in the MLE for large sample
+   sizes.
+
+3. The confidence interval widths decrease at a decreasing rate as the sample size
+   increases. This is expected since the inverse of the observed FIM scales as
+   $1/n$, and so the confidence interval widths should scale as $1/\sqrt{n}$.
+   
+   On the one hand, this means that as the sample size increases, we see diminishing
+   returns in the precision of the MLE, but on the other hand, the coverage
+   probability is converging to the nominal level, $95\%$, as the sample size
+   increases, so we can at least gain confidence that the true parameter value is
+   more likely to be within the reported confidence interval at the reported
+   confidence level.
+
+4. The confidence interval widths are somewhat sensitive to the masking
+   probability. As the masking probability increases, the confidence interval widths
+   increase.
+
+For the visualization code for the confidence widths, see Appendix C.
+
+### Variance
+
+We estimate the precision of $\v{\hat\theta}$ with the variance-covariance matrix,
+$$
+\operatorname{Var}(\v{\hat\theta}) =
+    E\bigl(
+        (\hat{\v\theta} - E(\hat{\v\theta}))
+        (\hat{\v\theta} - E(\hat{\v\theta}))'
+    \bigr),
+$$
+which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
+the expectation is taken with respect to the empirical sampling distribution.
+We will only report the diagonal elements of the variance-covariance matrix,
+which are the variances of the individual components of $\v{\hat\theta}$.
+
+> Dr. Agustin: I didn't fill out variance and MSE sections.
+> I have the data, and most of the code for visualization. Would  you like for me to
+> include any of these? I'm not sure about how large this paper should be.
+
+### Mean squared error
+The mean squared error, $\operatorname{MSE}$, is a measure of
+estimator error that incorporates both the bias and the variance, and is defined as
+$$
+\operatorname{MSE}(\v{\hat\theta}) =
+    E\bigl((\v{\hat\theta} - \v\theta)(\v{\hat\theta} - \v\theta)'\bigr) =
+    \operatorname{Var}(\v{\hat\theta}) +
+    \operatorname{b}(\v{\hat\theta})\operatorname{b}(\v{\hat\theta})',
+$$
+which is a $p$-by-$p$ matrix, where $p$ is the number of parameters, and again the
+expectation is with respect to the empirical sampling distribution. We will only
+report the diagoanl elements of the MSE matrix, which are the mean squared errors of
+the individual components of $\v{\hat\theta}$. Assuming the regularity conditions for
+the MLE are met, the MSE converges in probability to the variance, but for finite $n$,
+the MSE is a more informative measure of estimator error than the variance alone.
 
 ## Bootstrapping the sampling distribution of the MLE {#sec:boot}
 
@@ -1791,30 +2025,453 @@ We expect that since the sample size is relatively small, the bootstrap method
 will give us a better estimate of the sampling distribution of the MLE than the
 asymptotic theory.
 
-### Verification
-
-First, we fit the Weibull series model to the data in [@Huairu-2013] by maximizing
-`loglik_wei_series_md_c1_c2_c3` function in the R package `wei.series.md`. The MLE
-$\hat{\v\theta}$ is in agreement with the MLE reported in [@Huairu-2013], with
-shape and scale parameters given respectively by
-$$
-    \hat{k}_1 = `r theta["shape1"]`,
-    \hat{k}_2 = `r theta["shape2"]`,
-    \hat{k}_3 = `r theta["shape3"]`,
-$$
-and
-$$
-    \hat{\lambda}_1 = `r theta["scale1"]`,
-    \hat{\lambda}_2 = `r theta["scale2"]`,
-    \hat{\lambda}_3 = `r theta["scale3"]`.
-$$
-
 So, now we just resample from the data with replacement, and fit the Weibull series
 model to each bootstrap sample. We do this $B = 1000$ times, giving us $B$ bootstrap
 replicates of the MLE $\hat{\v\theta}^{(1)},\ldots,\hat{\v\theta}^{(B)}$.
 
-We then compute the bias, variance, MSE, and coverage probability of the bootstrap
+We could then compute the bias, variance, MSE, and coverage probability of the bootstrap
 replicates, and compare these results to the asymptotic theory.
 
-### Results
+Earlier, we observed the inverse FIM provided for to small of a variance of the
+component estimates for the MLE.
+So, we are going to use the bootstrap method to provide better estimates.
+
+We should see that the variance of the bootstrap replicates is larger than the
+variance of the asymptotic theory, which should mitigate the earlier problem
+of the inverse FIM providing too small of a variance of the component estimates
+and thus resulting in poorly calibrated confidence intervals.
+
+This is particularly important for small sample sizes before the asymptotic theory
+kicks in.
+
+In Figure \ref{fig:ci-boot-shape}, we show the variance of the shape paraemetes
+for the bootstrap replicates (blue) and the asymptotic theory (green) for different
+sample sizes and differnet masking conditions. For small sample sizes, the variance
+of the bootstrap replicates is larger than the variance of the asymptotic theory,
+but they both converge to the same value as the sample size increases.
+
+```{r ci-boot-shape, echo=FALSE, out.width="100%", fig.cap="Shape Parameters", fig.align='center'}
+
+# Load the PNG files and convert them to grobs
+plot11 <- rasterGrob(readPNG("plot_shapes_0.png"))
+plot12 <- rasterGrob(readPNG("plot_scales_0.png"))
+plot21 <- rasterGrob(readPNG("plot_shapes_0.1.png"))
+plot22 <- rasterGrob(readPNG("plot_scales_0.1.png"))
+plot31 <- rasterGrob(readPNG("plot_shapes_0.215.png"))
+plot32 <- rasterGrob(readPNG("plot_scales_0.215.png"))
+
+# Arrange the plots in a grid
+grid.arrange(plot11, plot21, plot31, nrow = 1)
+```
+
+In Figure \ref{fig:ci-boot-scale}, we show the variance of the scale parameters.
+Again, we see the same pattern emerge, where the variance of the bootstrap replicates
+is larger than the variance of the asymptotic theory for small sample sizes, but
+they both converge to the same value as the sample size increases.
+
+
+```{r ci-boot-scale, echo=FALSE, out.width="100%", fig.cap="Scale Parameters", fig.align='center'}
+grid.arrange(plot12, plot22, plot32, nrow = 1)
+```
+
+These corrections to the variance estimates should result in better calibrated
+confidence intervals for small sample sizes.
+
+# Conclusion
+
+We have developed a likelihood model for series systems with latent components
+and right-censoring. We have provided evidence that, as long as certain regularity
+conditions are met, the MLE is asymptotically unbiased and consistent.
+
+# References {-}
+
+Please see below for a full list of references.
+
+```{r refmgr, echo=FALSE, results='asis'}
+
+cat("<div id=\"refs\"></div>")
+```
+
+# Appendix {-}
+
+## Appendix A: Simulation of scenarios using the Monte-carlo data-generating process {-}
+
+```{r eval = FALSE}
+#############################################################
+# Simulation data generating process for specified scenario #
+# (n, p, q), where:                                         #
+#    - n is a vector of sample sizes                        #
+#     - n is a vector of sample sizes                       #
+#     - p is a vector of masking probabilities              #
+#     - q is a vector of right-censoring quantiles of the   #
+#       Weibull series distribution.
+#############################################################
+
+# here is the R libary we developed for this project
+library(wei.series.md.c1.c2.c3) 
+
+# for parallel processing
+library(parallel)
+
+# you can set a seed for reproducibility of the experimental run
+# however, if you use parallel processing, this simple approach will not work.
+set.seed(1234)
+
+###############################################
+# Here is an example of how to run a scenario #
+###############################################
+
+# set the simulation name to be used in the file names
+sim.name <- "sim-2"
+# set the sample sizes
+ns <- c(30, 40, 50, 75, 100, 200, 400, 800)
+# set the masking probabilities
+ps <- seq(0, 0,1, 0.2, 0.3, 0.4)
+# set the right-censoring quantiles
+qs <- c(0.5, 0.6, 0.7, 0.8, 0.9, 0.95)
+# set the number of replicates
+R <- 100
+# set the number of CPU cores to use
+ncores <- 4
+
+# true parameter values
+theta <- c(shape1 = 1.2576, scale1 = 994.3661,
+           shape2 = 1.1635, scale2 = 908.9458,
+           shape3 = 1.1308, scale3 = 840.1141,
+           shape4 = 1.1802, scale4 = 940.1141,
+           shape5 = 1.3311, scale5 = 836.1123)
+
+shapes <- theta[seq(1, length(theta), 2)]
+scales <- theta[seq(2, length(theta), 2)]
+
+# helps the MLE optimization routine converge more quickly and reliably
+# by scaling the parameters to be of similar magnitude
+parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
+
+sim.run <- function(sim.name, n, p, q, R = 1000) {
+    mles <- list()
+    problems <- list()
+
+    tau <- wei.series.md.c1.c2.c3::qwei_series(
+        p = q, scales = scales, shapes = shapes)
+
+    cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
+
+    for (r in 1:R) {
+        result <- tryCatch({
+
+            df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
+                shapes = shapes,
+                scales = scales,
+                n = n,
+                p = p,
+                tau = tau)
+
+            sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+                df = df,
+                theta0 = theta,
+                reltol = 1e-7,
+                parscale = parscale,
+                maxit = 2000L)
+            mles <- append(mles, list(sol))
+
+            if (r %% 10 == 0) {
+                cat("r = ", r, ": ", sol$par, "\n")
+            }
+
+        }, error = function(e) {
+            cat("Error at iteration", r, ":")
+            print(e)
+            problems <- append(problems, list(list(
+                error = e, n = n, p = p, q = q, tau = tau, df = df)))
+        })
+    }
+  
+    if (length(mles) != 0) {
+        saveRDS(list(n = n, p = p, q = q, tau = tau, mles = mles),
+            file = paste0("./results/", sim.name, "/results_", n, "_", p, "_", q, ".rds"))
+    }
+
+    if (length(problems) != 0) {
+        saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
+            file = paste0("./problems/", sim.name, "/problems_", n, "_", p, "_", q, ".rds"))
+    }
+}
+
+params <- expand.grid(n = ns, p = ps, q = qs)
+result <- mclapply(
+    1:nrow(params),
+    function(i) sim.run(sim.name, params$n[i], params$p[i], params$q[i], R),
+    mc.cores = ncores)
+
+```
+
+
+## Appendix B: Simulation of scenarios using the Bootstrap method {-}
+
+```{r, eval=FALSE}
+#############################################################
+# in this scenario, we want to see how we can use the bootstrap
+# method to estimate the confidence intervals more precisely (better calibration
+# of confidence intervals) for small sample sizes.
+# we'll use it to construct a 95% confidence interval for the estimator. we'll
+# compare this result to the asymptotic theory confidence interval.
+# finally, we'll generate CIs by each method, asymptotic (inverse FIM) and 
+# bootstrap (cov), and compare the coverage probabilities.
+#############################################################
+
+library(boot)
+library(parallel)
+library(wei.series.md.c1.c2.c3)
+
+theta <- c(shape1 = 1.2576, scale1 = 994.3661,
+           shape2 = 1.1635, scale2 = 908.9458,
+           shape3 = 1.1308, scale3 = 840.1141,
+           shape4 = 1.1802, scale4 = 940.1141,
+           shape5 = 1.3311, scale5 = 836.1123)
+
+shapes <- theta[seq(1, length(theta), 2)]
+scales <- theta[seq(2, length(theta), 2)]
+
+# number of CPU cores to use in bootstrap for parallel processing
+ncores <- 4
+
+# helps the MLE optimization routine converge more quickly and reliably
+parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
+
+#set.seed(134849131)
+
+# sample sizes
+ns <- c(30, 50, 100, 200, 400)
+# masking probabilities, no masking and 21.5% masking
+ps <- c(0, 0.215)
+# quantiles of weibull series distribution, no right-censoring and 25% right-censoring
+qs <- c(1, 0.75)
+
+sim.name <- "sim-1-boot"
+
+sim.boot.run <- function(n, p, q, R = 1000) {
+
+    problems <- list()
+
+    tau <- wei.series.md.c1.c2.c3::qwei_series(
+        p = q, scales = scales, shapes = shapes)
+
+    cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
+  
+    result <- tryCatch({
+        df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
+            shapes = shapes,
+            scales = scales,
+            n = n,
+            p = p,
+            tau = tau)
+
+        sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+            df = df,
+            theta0 = theta,
+            reltol = 1e-7,
+            parscale = parscale,
+            maxit = 2000L)
+
+        cat("mle: ", sol$par, "\n")
+
+        sol.boot <- boot(df, function(df, i) {
+            sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+                df = df[i, ],
+                theta0 = sol$par,
+                reltol = 1e-7,
+                parscale = parscale,
+                maxit = 1000L)
+            cat("boot: ", sol$par, "\n")
+            sol$par
+        }, ncpus = ncores, R = R)
+
+        saveRDS(list(n = n, p = p, q = q, tau = tau, mle = sol, mle.boot = sol.boot),
+            file = paste0("./results/", sim.name, "/results_", n, "_", p, "_", q, ".rds"))
+
+        }, error = function(e) {
+            print(e)
+            problems <- append(problems, list(list(
+                error = e, n = n, p = p, q = q, tau = tau, df = df)))
+        })
+
+    if (length(problems) != 0) {
+        saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
+                file = paste0("./problems/", sim.name, "/problems_", n, "_", p, "_", q, ".rds"))
+    }
+}
+  
+params <- expand.grid(n = ns, p = ps, q = qs)
+result <- mclapply(
+    1:nrow(params),
+    function(i) sim.boot.run(sim.name, params$n[i], params$p[i], params$q[i]),
+    mc.cores = ncores)
+```
+
+## Appendix C: Confidence width visualizations {-}
+
+```{r eval = FALSE}
+###################################################################
+# we visualize CI width as a function of                          #
+# masking component cause of failure p from p = 0 to p = 0.4      #
+# and sample size n. we have R = 100 replicates for each p and n. #
+###################################################################
+library(gridExtra)  # for arranging plots
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(algebraic.mle)
+library(md.tools)
+library(wei.series.md.c1.c2.c3)
+
+theta <- c(shape1 = 1.2576, scale1 = 994.3661,
+           shape2 = 1.1635, scale2 = 908.9458,
+           shape3 = 1.1308, scale3 = 840.1141,
+           shape4 = 1.1802, scale4 = 940.1141,
+           shape5 = 1.3311, scale5 = 836.1123)
+
+shapes <- theta[seq(1, length(theta), 2)]
+scales <- theta[seq(2, length(theta), 2)]
+sim2_n <- c(30, 40, 50, 75, 100, 200, 400, 800)
+
+##############################
+# generate CI width function #
+##############################
+gen_ci_width <- function(sim_p_mles, sim_p) {
+
+    ci_widths <- list()
+
+    for (i in 1:length(sim_p)) {
+
+        ci_widths[[i]] <- matrix(nrow = length(sim_p_mles[[i]]), ncol = length(theta))
+
+        for (j in 1:length(sim_p_mles[[i]])) {
+            theta.hat <- algebraic.mle::mle_numerical(sim_p_mles[[i]][[j]])
+            # this is a m x 2 matrix, where m is the number of parameters
+            ci <- confint(theta.hat, use_t_dist = FALSE)
+
+            if (any(is.na(ci))) {
+                next
+            }
+
+            ci_widths[[i]][j,] <- ci[,2] - ci[,1]
+        }
+    }
+
+    ci_widths
+}
+
+###################################
+# generate CI width plot function #
+###################################
+gen_ci_width_plot <- function(ci_widths, sim_n, p) {
+
+    ci_widths_df <- do.call(rbind, lapply(seq_along(ci_widths), function(i) {
+    data.frame(SampleSize = rep(sim_n[i], nrow(ci_widths[[i]])),
+                CI_Width = as.vector(ci_widths[[i]]),
+                Parameter = rep(seq(ncol(ci_widths[[i]])), each = nrow(ci_widths[[i]])),
+                Type = rep(c("Shape", "Scale"), each = nrow(ci_widths[[i]]), times = ncol(ci_widths[[i]]) / 2))
+    }))
+
+    # Split the data frame based on parameter type (Scale or Shape)
+    ci_widths_list <- split(ci_widths_df, ci_widths_df$Type)
+    # Generate a plot for each type, using a log y scale
+    plots <- lapply(ci_widths_list, function(df) {
+        ggplot(df, aes(x = SampleSize, y = CI_Width, color = factor(Parameter))) +
+            geom_line() + 
+            scale_y_log10() +
+            labs(title = paste("Masking Probability", p),
+                x = "Sample Size", y = "Confidence Interval Width", color = "Parameter") +
+            facet_wrap(~ Type, scales = "free") +
+            theme_minimal()
+    })
+
+    # Arrange the plots in a grid
+    grid.arrange(grobs = plots, ncol = 2)
+}
+
+###########
+# p = 0.1 #
+###########
+sim2_30_0.1 <- readRDS("results/sim-2/results_30_0.1_1.rds")
+sim2_40_0.1 <- readRDS("results/sim-2/results_40_0.1_1.rds")
+sim2_50_0.1 <- readRDS("results/sim-2/results_50_0.1_1.rds")
+sim2_75_0.1 <- readRDS("results/sim-2/results_75_0.1_1.rds")
+sim2_100_0.1 <- readRDS("results/sim-2/results_100_0.1_1.rds")
+sim2_200_0.1 <- readRDS("results/sim-2/results_200_0.1_1.rds")
+sim2_400_0.1 <- readRDS("results/sim-2/results_400_0.1_1.rds")
+sim2_800_0.1 <- readRDS("results/sim-2/results_800_0.1_1.rds")
+
+sim2_p_0.1_mles <- list(sim2_30_0.1$mles, sim2_40_0.1$mles, sim2_50_0.1$mles,
+    sim2_75_0.1$mles, sim2_100_0.1$mles, sim2_200_0.1$mles, sim2_400_0.1$mles,
+    sim2_800_0.1$mles)
+ci_width_0.1 <- gen_ci_width(sim2_p_0.1_mles, sim2_n)
+plts_p_0.1 <- gen_ci_width_plot(ci_width_0.1, sim2_n, 0.1)
+
+###########
+# p = 0.2 #
+###########
+sim2_30_0.2 <- readRDS("results/sim-2/results_30_0.2_1.rds")
+sim2_40_0.2 <- readRDS("results/sim-2/results_40_0.2_1.rds")
+sim2_50_0.2 <- readRDS("results/sim-2/results_50_0.2_1.rds")
+sim2_75_0.2 <- readRDS("results/sim-2/results_75_0.2_1.rds")
+sim2_100_0.2 <- readRDS("results/sim-2/results_100_0.2_1.rds")
+sim2_200_0.2 <- readRDS("results/sim-2/results_200_0.2_1.rds")
+sim2_400_0.2 <- readRDS("results/sim-2/results_400_0.2_1.rds")
+sim2_800_0.2 <- readRDS("results/sim-2/results_800_0.2_1.rds")
+
+sim2_p_0.2_mles <- list(sim2_30_0.2$mles, sim2_40_0.2$mles, sim2_50_0.2$mles,
+    sim2_75_0.2$mles, sim2_100_0.2$mles, sim2_200_0.2$mles, sim2_400_0.2$mles,
+    sim2_800_0.2$mles)
+
+ci_width_0.2 <- gen_ci_width(sim2_p_0.2_mles, sim2_n)
+plts_p_0.2 <- gen_ci_width_plot(ci_width_0.2, sim2_n, 0.2)
+
+###########
+# p = 0.3 #
+###########
+sim2_30_0.3 <- readRDS("results/sim-2/results_30_0.3_1.rds")
+sim2_40_0.3 <- readRDS("results/sim-2/results_40_0.3_1.rds")
+sim2_50_0.3 <- readRDS("results/sim-2/results_50_0.3_1.rds")
+sim2_75_0.3 <- readRDS("results/sim-2/results_75_0.3_1.rds")
+sim2_100_0.3 <- readRDS("results/sim-2/results_100_0.3_1.rds")
+sim2_200_0.3 <- readRDS("results/sim-2/results_200_0.3_1.rds")
+sim2_400_0.3 <- readRDS("results/sim-2/results_400_0.3_1.rds")
+sim2_800_0.3 <- readRDS("results/sim-2/results_800_0.3_1.rds")
+
+sim2_p_0.3_mles <- list(sim2_30_0.3$mles, sim2_40_0.3$mles, sim2_50_0.3$mles,
+    sim2_75_0.3$mles, sim2_100_0.3$mles, sim2_200_0.3$mles, sim2_400_0.3$mles,
+    sim2_800_0.3$mles)
+
+ci_width_0.3 <- gen_ci_width(sim2_p_0.3_mles, sim2_n)
+plts_p_0.3 <- gen_ci_width_plot(ci_width_0.3, sim2_n, 0.3)
+
+###########
+# p = 0.4 #
+###########
+sim2_30_0.4 <- readRDS("results/sim-2/results_30_0.4_1.rds")
+sim2_40_0.4 <- readRDS("results/sim-2/results_40_0.4_1.rds")
+sim2_50_0.4 <- readRDS("results/sim-2/results_50_0.4_1.rds")
+sim2_75_0.4 <- readRDS("results/sim-2/results_75_0.4_1.rds")
+sim2_100_0.4 <- readRDS("results/sim-2/results_100_0.4_1.rds")
+sim2_200_0.4 <- readRDS("results/sim-2/results_200_0.4_1.rds")
+sim2_400_0.4 <- readRDS("results/sim-2/results_400_0.4_1.rds")
+sim2_800_0.4 <- readRDS("results/sim-2/results_800_0.4_1.rds")
+
+sim2_p_0.4_mles <- list(sim2_30_0.4$mles, sim2_40_0.4$mles, sim2_50_0.4$mles,
+    sim2_75_0.4$mles, sim2_100_0.4$mles, sim2_200_0.4$mles, sim2_400_0.4$mles,
+    sim2_800_0.4$mles)
+
+ci_width_0.4 <- gen_ci_width(sim2_p_0.4_mles, sim2_n)
+plts_p_0.4 <- gen_ci_width_plot(ci_width_0.4, sim2_n, 0.4)
+
+###############################################
+# plot all together, plts_p_0.1 to plts_p_0.4 #
+###############################################
+ci_plots <- plot_grid(plts_p_0.1, plts_p_0.2, plts_p_0.3, plts_p_0.4, ncol = 1)
+ggsave("results/sim-2/ci-widths.pdf", ci_plots)
+```
+
+
 

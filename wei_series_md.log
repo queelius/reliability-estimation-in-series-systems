@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.11)  13 JUL 2023 03:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.7.11)  15 JUL 2023 18:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -293,47 +293,62 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 \Gm@layouthoffset=\dimen160
 \Gm@layoutvoffset=\dimen161
 \Gm@dimlist=\toks26
+) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2023/01/19 4.5a verbatim text (tvz,hv)
+\FV@CodeLineNo=\count286
+\FV@InFile=\read2
+\FV@TabBox=\box53
+\c@FancyVerbLine=\count287
+\FV@StepNumber=\count288
+\FV@OutFile=\write3
+) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip54
+\fb@frw=\dimen162
+\fb@frh=\dimen163
+\FrameRule=\dimen164
+\FrameSep=\dimen165
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
-\LTleft=\skip54
-\LTright=\skip55
-\LTpre=\skip56
-\LTpost=\skip57
-\LTchunksize=\count286
-\LTcapwidth=\dimen162
-\LT@head=\box53
-\LT@firsthead=\box54
-\LT@foot=\box55
-\LT@lastfoot=\box56
-\LT@gbox=\box57
-\LT@cols=\count287
-\LT@rows=\count288
-\c@LT@tables=\count289
-\c@LT@chunks=\count290
+\LTleft=\skip55
+\LTright=\skip56
+\LTpre=\skip57
+\LTpost=\skip58
+\LTchunksize=\count289
+\LTcapwidth=\dimen166
+\LT@head=\box54
+\LT@firsthead=\box55
+\LT@foot=\box56
+\LT@lastfoot=\box57
+\LT@gbox=\box58
+\LT@cols=\count290
+\LT@rows=\count291
+\c@LT@tables=\count292
+\c@LT@chunks=\count293
 \LT@p@ftn=\toks27
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen163
-\lightrulewidth=\dimen164
-\cmidrulewidth=\dimen165
-\belowrulesep=\dimen166
-\belowbottomsep=\dimen167
-\aboverulesep=\dimen168
-\abovetopsep=\dimen169
-\cmidrulesep=\dimen170
-\cmidrulekern=\dimen171
-\defaultaddspace=\dimen172
-\@cmidla=\count291
-\@cmidlb=\count292
-\@aboverulesep=\dimen173
-\@belowrulesep=\dimen174
-\@thisruleclass=\count293
-\@lastruleclass=\count294
-\@thisrulewidth=\dimen175
+\heavyrulewidth=\dimen167
+\lightrulewidth=\dimen168
+\cmidrulewidth=\dimen169
+\belowrulesep=\dimen170
+\belowbottomsep=\dimen171
+\aboverulesep=\dimen172
+\abovetopsep=\dimen173
+\cmidrulesep=\dimen174
+\cmidrulekern=\dimen175
+\defaultaddspace=\dimen176
+\@cmidla=\count294
+\@cmidlb=\count295
+\@aboverulesep=\dimen177
+\@belowrulesep=\dimen178
+\@thisruleclass=\count296
+\@lastruleclass=\count297
+\@thisrulewidth=\dimen179
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/mdwtools/footnote.sty
 Package: footnote 1997/01/28 1.13 Save footnotes around boxes
-\fn@notes=\box58
-\fn@width=\dimen176
+\fn@notes=\box59
+\fn@width=\dimen180
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
@@ -345,8 +360,8 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 107.
 )
-\Gin@req@height=\dimen177
-\Gin@req@width=\dimen178
+\Gin@req@height=\dimen181
+\Gin@req@width=\dimen182
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/amscls/amsthm.sty
 Package: amsthm 2020/05/29 v2.20.6
 \thm@style=\toks28
@@ -354,22 +369,22 @@ Package: amsthm 2020/05/29 v2.20.6
 \thm@headfont=\toks30
 \thm@notefont=\toks31
 \thm@headpunct=\toks32
-\thm@preskip=\skip58
-\thm@postskip=\skip59
-\thm@headsep=\skip60
+\thm@preskip=\skip59
+\thm@postskip=\skip60
+\thm@headsep=\skip61
 \dth@everypar=\toks33
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/natbib/natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
-\bibhang=\skip61
-\bibsep=\skip62
+\bibhang=\skip62
+\bibsep=\skip63
 LaTeX Info: Redefining \cite on input line 694.
-\c@NAT@ctr=\count295
+\c@NAT@ctr=\count298
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
 \pgfutil@everybye=\toks34
-\pgfutil@tempdima=\dimen179
-\pgfutil@tempdimb=\dimen180
+\pgfutil@tempdima=\dimen183
+\pgfutil@tempdimb=\dimen184
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
-\pgfutil@abb=\box59
+\pgfutil@abb=\box60
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/pgf.revision.tex)
 Package: pgfrcs 2023-01-15 v3.1.10 (3.1.10)
 ))
@@ -382,26 +397,26 @@ Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
 (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered.code.tex
 \pgfkeys@tmptoks=\toks37
 ))
-\pgf@x=\dimen181
-\pgf@y=\dimen182
-\pgf@xa=\dimen183
-\pgf@ya=\dimen184
-\pgf@xb=\dimen185
-\pgf@yb=\dimen186
-\pgf@xc=\dimen187
-\pgf@yc=\dimen188
-\pgf@xd=\dimen189
-\pgf@yd=\dimen190
-\w@pgf@writea=\write3
-\r@pgf@reada=\read2
-\c@pgf@counta=\count296
-\c@pgf@countb=\count297
-\c@pgf@countc=\count298
-\c@pgf@countd=\count299
+\pgf@x=\dimen185
+\pgf@y=\dimen186
+\pgf@xa=\dimen187
+\pgf@ya=\dimen188
+\pgf@xb=\dimen189
+\pgf@yb=\dimen190
+\pgf@xc=\dimen191
+\pgf@yc=\dimen192
+\pgf@xd=\dimen193
+\pgf@yd=\dimen194
+\w@pgf@writea=\write4
+\r@pgf@reada=\read3
+\c@pgf@counta=\count299
+\c@pgf@countb=\count300
+\c@pgf@countc=\count301
+\c@pgf@countd=\count302
 \t@pgf@toka=\toks38
 \t@pgf@tokb=\toks39
 \t@pgf@tokc=\toks40
-\pgf@sys@id@count=\count300
+\pgf@sys@id@count=\count303
 (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
 File: pgf.cfg 2023-01-15 v3.1.10 (3.1.10)
 )
@@ -412,59 +427,59 @@ File: pgfsys-pdftex.def 2023-01-15 v3.1.10 (3.1.10)
 File: pgfsys-common-pdf.def 2023-01-15 v3.1.10 (3.1.10)
 ))) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
 File: pgfsyssoftpath.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfsyssoftpath@smallbuffer@items=\count301
-\pgfsyssoftpath@bigbuffer@items=\count302
+\pgfsyssoftpath@smallbuffer@items=\count304
+\pgfsyssoftpath@bigbuffer@items=\count305
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
 File: pgfsysprotocol.code.tex 2023-01-15 v3.1.10 (3.1.10)
 )) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
 Package: pgfcore 2023-01-15 v3.1.10 (3.1.10)
 (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
-\pgfmath@dimen=\dimen191
-\pgfmath@count=\count303
-\pgfmath@box=\box60
+\pgfmath@dimen=\dimen195
+\pgfmath@count=\count306
+\pgfmath@box=\box61
 \pgfmath@toks=\toks41
 \pgfmath@stack@operand=\toks42
 \pgfmath@stack@operation=\toks43
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonometric.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerarithmetics.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count304
+\c@pgfmathroundto@lastzeros=\count307
 )) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfint.code.tex) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex
 File: pgfcorepoints.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@picminx=\dimen192
-\pgf@picmaxx=\dimen193
-\pgf@picminy=\dimen194
-\pgf@picmaxy=\dimen195
-\pgf@pathminx=\dimen196
-\pgf@pathmaxx=\dimen197
-\pgf@pathminy=\dimen198
-\pgf@pathmaxy=\dimen199
-\pgf@xx=\dimen256
-\pgf@xy=\dimen257
-\pgf@yx=\dimen258
-\pgf@yy=\dimen259
-\pgf@zx=\dimen260
-\pgf@zy=\dimen261
+\pgf@picminx=\dimen196
+\pgf@picmaxx=\dimen197
+\pgf@picminy=\dimen198
+\pgf@picmaxy=\dimen199
+\pgf@pathminx=\dimen256
+\pgf@pathmaxx=\dimen257
+\pgf@pathminy=\dimen258
+\pgf@pathmaxy=\dimen259
+\pgf@xx=\dimen260
+\pgf@xy=\dimen261
+\pgf@yx=\dimen262
+\pgf@yy=\dimen263
+\pgf@zx=\dimen264
+\pgf@zy=\dimen265
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.code.tex
 File: pgfcorepathconstruct.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@path@lastx=\dimen262
-\pgf@path@lasty=\dimen263
+\pgf@path@lastx=\dimen266
+\pgf@path@lasty=\dimen267
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code.tex
 File: pgfcorepathusage.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@shorten@end@additional=\dimen264
-\pgf@shorten@start@additional=\dimen265
+\pgf@shorten@end@additional=\dimen268
+\pgf@shorten@start@additional=\dimen269
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex
 File: pgfcorescopes.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfpic=\box61
-\pgf@hbox=\box62
-\pgf@layerbox@main=\box63
-\pgf@picture@serial@count=\count305
+\pgfpic=\box62
+\pgf@hbox=\box63
+\pgf@layerbox@main=\box64
+\pgf@picture@serial@count=\count308
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex
 File: pgfcoregraphicstate.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgflinewidth=\dimen266
+\pgflinewidth=\dimen270
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformations.code.tex
 File: pgfcoretransformations.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@pt@x=\dimen267
-\pgf@pt@y=\dimen268
-\pgf@pt@temp=\dimen269
+\pgf@pt@x=\dimen271
+\pgf@pt@y=\dimen272
+\pgf@pt@temp=\dimen273
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
 File: pgfcorequick.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.tex
@@ -473,17 +488,17 @@ File: pgfcoreobjects.code.tex 2023-01-15 v3.1.10 (3.1.10)
 File: pgfcorepathprocessing.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex
 File: pgfcorearrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfarrowsep=\dimen270
+\pgfarrowsep=\dimen274
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@max=\dimen271
-\pgf@sys@shading@range@num=\count306
-\pgf@shadingcount=\count307
+\pgf@max=\dimen275
+\pgf@sys@shading@range@num=\count309
+\pgf@shadingcount=\count310
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
 File: pgfcoreexternal.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfexternal@startupbox=\box64
+\pgfexternal@startupbox=\box65
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
 File: pgfcorelayers.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex
@@ -494,90 +509,90 @@ File: pgfcorepatterns.code.tex 2023-01-15 v3.1.10 (3.1.10)
 File: pgfcorerdf.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ))) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
 File: pgfmoduleshapes.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfnodeparttextbox=\box65
+\pgfnodeparttextbox=\box66
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
 File: pgfmoduleplot.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty
 Package: pgfcomp-version-0-65 2023-01-15 v3.1.10 (3.1.10)
-\pgf@nodesepstart=\dimen272
-\pgf@nodesepend=\dimen273
+\pgf@nodesepstart=\dimen276
+\pgf@nodesepend=\dimen277
 ) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18.sty
 Package: pgfcomp-version-1-18 2023-01-15 v3.1.10 (3.1.10)
 )) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgffor.sty (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex)) (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/pgf/math/pgfmath.sty (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
 Package: pgffor 2023-01-15 v3.1.10 (3.1.10)
-\pgffor@iter=\dimen274
-\pgffor@skip=\dimen275
+\pgffor@iter=\dimen278
+\pgffor@skip=\dimen279
 \pgffor@stack=\toks44
 \pgffor@toks=\toks45
 )) (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
 Package: tikz 2023-01-15 v3.1.10 (3.1.10)
 (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@plot@mark@count=\count308
-\pgfplotmarksize=\dimen276
+\pgf@plot@mark@count=\count311
+\pgfplotmarksize=\dimen280
 )
-\tikz@lastx=\dimen277
-\tikz@lasty=\dimen278
-\tikz@lastxsaved=\dimen279
-\tikz@lastysaved=\dimen280
-\tikz@lastmovetox=\dimen281
-\tikz@lastmovetoy=\dimen282
-\tikzleveldistance=\dimen283
-\tikzsiblingdistance=\dimen284
-\tikz@figbox=\box66
-\tikz@figbox@bg=\box67
-\tikz@tempbox=\box68
-\tikz@tempbox@bg=\box69
-\tikztreelevel=\count309
-\tikznumberofchildren=\count310
-\tikznumberofcurrentchild=\count311
-\tikz@fig@count=\count312
+\tikz@lastx=\dimen281
+\tikz@lasty=\dimen282
+\tikz@lastxsaved=\dimen283
+\tikz@lastysaved=\dimen284
+\tikz@lastmovetox=\dimen285
+\tikz@lastmovetoy=\dimen286
+\tikzleveldistance=\dimen287
+\tikzsiblingdistance=\dimen288
+\tikz@figbox=\box67
+\tikz@figbox@bg=\box68
+\tikz@tempbox=\box69
+\tikz@tempbox@bg=\box70
+\tikztreelevel=\count312
+\tikznumberofchildren=\count313
+\tikznumberofcurrentchild=\count314
+\tikz@fig@count=\count315
 (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfmatrixcurrentrow=\count313
-\pgfmatrixcurrentcolumn=\count314
-\pgf@matrix@numberofcolumns=\count315
+\pgfmatrixcurrentrow=\count316
+\pgfmatrixcurrentcolumn=\count317
+\pgf@matrix@numberofcolumns=\count318
 )
-\tikz@expandcount=\count316
+\tikz@expandcount=\count319
 (/home/spinoza/.TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2023-01-15 v3.1.10 (3.1.10)
 )))
-\cslhangindent=\skip63
+\cslhangindent=\skip64
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2023-04-19 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count317
-\l__pdf_internal_box=\box70
+\l__color_backend_stack_int=\count320
+\l__pdf_internal_box=\box71
 ) (./wei_series_md.aux)
 \openout1 = `wei_series_md.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 117.
+LaTeX Font Info:    ... okay on input line 117.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring OFF on input line 77.
+Package hyperref Info: Link coloring OFF on input line 117.
 (./wei_series_md.out) (./wei_series_md.out)
-\@outlinefile=\write4
-\openout4 = `wei_series_md.out'.
+\@outlinefile=\write5
+\openout5 = `wei_series_md.out'.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -613,33 +628,33 @@ Package hyperref Info: Link coloring OFF on input line 77.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 79.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 119.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 79.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 119.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 79.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 119.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 79.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 119.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 79.
+(Font)              <12> on input line 119.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 79.
+(Font)              <8> on input line 119.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 79.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 79.
+(Font)              <6> on input line 119.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 119.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 79.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 119.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (./wei_series_md.toc
@@ -649,59 +664,147 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 3.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 3.
-)
-\tf@toc=\write5
-\openout5 = `wei_series_md.toc'.
-
-\c@definition=\count318
-\c@theorem=\count319
-\c@corollary=\count320
-\c@condition=\count321
 [1
 
-{/home/spinoza/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}] [2{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}] [3{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}] (./image/dep_model.tex
-\du=\skip64
-)
+{/home/spinoza/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}])
+\tf@toc=\write6
+\openout6 = `wei_series_md.toc'.
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14]
-<wei_series_md_files/figure-latex/exp_weib_haz-1.pdf, id=304, 469.755pt x 325.215pt>
+\c@definition=\count321
+\c@theorem=\count322
+\c@corollary=\count323
+\c@condition=\count324
+[2{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}] [3{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}] [4] (./image/dep_model.tex
+\du=\skip65
+) [5] [6] [7] [8] [9] [10] [11] [12] [13] [14]
+<wei_series_md_files/figure-latex/exp_weib_haz-1.pdf, id=328, 469.755pt x 325.215pt>
 File: wei_series_md_files/figure-latex/exp_weib_haz-1.pdf Graphic file (type pdf)
 <use wei_series_md_files/figure-latex/exp_weib_haz-1.pdf>
-Package pdftex.def Info: wei_series_md_files/figure-latex/exp_weib_haz-1.pdf  used on input line 1303.
+Package pdftex.def Info: wei_series_md_files/figure-latex/exp_weib_haz-1.pdf  used on input line 1342.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1315.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1354.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [15{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] [16 <./wei_series_md_files/figure-latex/exp_weib_haz-1.pdf>]
-<wei_series_md_files/figure-latex/series_haz_pdf-1.pdf, id=329, 469.755pt x 325.215pt>
+) [15] [16 <./wei_series_md_files/figure-latex/exp_weib_haz-1.pdf>]
+<wei_series_md_files/figure-latex/series_haz_pdf-1.pdf, id=357, 469.755pt x 325.215pt>
 File: wei_series_md_files/figure-latex/series_haz_pdf-1.pdf Graphic file (type pdf)
 <use wei_series_md_files/figure-latex/series_haz_pdf-1.pdf>
-Package pdftex.def Info: wei_series_md_files/figure-latex/series_haz_pdf-1.pdf  used on input line 1364.
+Package pdftex.def Info: wei_series_md_files/figure-latex/series_haz_pdf-1.pdf  used on input line 1403.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[17 <./wei_series_md_files/figure-latex/series_haz_pdf-1.pdf>]
 
-LaTeX Warning: Reference `thm:sys_lifetime' on page 18 undefined on input line 1380.
+LaTeX Warning: Reference `thm:sys_lifetime' on page 17 undefined on input line 1419.
 
+[17{/home/spinoza/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] [18 <./wei_series_md_files/figure-latex/series_haz_pdf-1.pdf>]
 
-LaTeX Warning: Reference `thm:f_given_s_form_2' on page 18 undefined on input line 1428.
-
-
-LaTeX Warning: Reference `eq:expo_prob_K_given_S' on page 18 undefined on input line 1444.
+LaTeX Warning: Reference `thm:f_given_s_form_2' on page 19 undefined on input line 1467.
 
 
-LaTeX Warning: Reference `eq:expo_sys_pdf' on page 18 undefined on input line 1445.
+LaTeX Warning: Reference `eq:expo_prob_K_given_S' on page 19 undefined on input line 1483.
 
-[18] [19] [20]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1699.
+
+LaTeX Warning: Reference `eq:expo_sys_pdf' on page 19 undefined on input line 1484.
+
+[19] [20] [21]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1738.
 (/home/spinoza/.TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [21]
+) [22]
+<image/plot-p-0.2-bias-vs-sample-size.pdf, id=435, 1203.49625pt x 888.31876pt>
+File: image/plot-p-0.2-bias-vs-sample-size.pdf Graphic file (type pdf)
+<use image/plot-p-0.2-bias-vs-sample-size.pdf>
+Package pdftex.def Info: image/plot-p-0.2-bias-vs-sample-size.pdf  used on input line 1882.
+(pdftex.def)             Requested size: 469.7473pt x 346.72757pt.
+[23] [24 <./image/plot-p-0.2-bias-vs-sample-size.pdf>]
+<image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf, id=464, 867.24pt x 433.62pt>
+File: image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf Graphic file (type pdf)
+<use image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf>
+Package pdftex.def Info: image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf  used on input line 1942.
+(pdftex.def)             Requested size: 469.75827pt x 234.87912pt.
+<image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf, id=466, 867.24pt x 433.62pt>
+File: image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf Graphic file (type pdf)
+<use image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf>
+Package pdftex.def Info: image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf  used on input line 1965.
+(pdftex.def)             Requested size: 469.75827pt x 234.87912pt.
+[25 <./image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf>]
+<image/plot-bias-tau-vs-sample-size-50-150-300.pdf, id=488, 615.29875pt x 424.58624pt>
+File: image/plot-bias-tau-vs-sample-size-50-150-300.pdf Graphic file (type pdf)
+<use image/plot-bias-tau-vs-sample-size-50-150-300.pdf>
+Package pdftex.def Info: image/plot-bias-tau-vs-sample-size-50-150-300.pdf  used on input line 1994.
+(pdftex.def)             Requested size: 469.76314pt x 324.15955pt.
+[26 <./image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf>] [27 <./image/plot-bias-tau-vs-sample-size-50-150-300.pdf>]
+<image/plot-coverage-p_0.3-vs-sample-size.pdf, id=521, 1095.09125pt x 671.50874pt>
+File: image/plot-coverage-p_0.3-vs-sample-size.pdf Graphic file (type pdf)
+<use image/plot-coverage-p_0.3-vs-sample-size.pdf>
+Package pdftex.def Info: image/plot-coverage-p_0.3-vs-sample-size.pdf  used on input line 2070.
+(pdftex.def)             Requested size: 469.76051pt x 288.05663pt.
+<image/plot-coverage-p-vs-sample-size.pdf, id=522, 1095.09125pt x 671.50874pt>
+File: image/plot-coverage-p-vs-sample-size.pdf Graphic file (type pdf)
+<use image/plot-coverage-p-vs-sample-size.pdf>
+Package pdftex.def Info: image/plot-coverage-p-vs-sample-size.pdf  used on input line 2117.
+(pdftex.def)             Requested size: 469.76051pt x 288.05663pt.
+[28 <./image/plot-coverage-p_0.3-vs-sample-size.pdf>]
 
-LaTeX Warning: Reference `' on page 22 undefined on input line 1799.
+LaTeX Warning: Reference `ec:coverage_prob' on page 29 undefined on input line 2168.
 
-[22] [23] (./wei_series_md.aux)
+<image/ci-widths.pdf, id=543, 1168.365pt x 2074.75125pt>
+File: image/ci-widths.pdf Graphic file (type pdf)
+<use image/ci-widths.pdf>
+Package pdftex.def Info: image/ci-widths.pdf  used on input line 2174.
+(pdftex.def)             Requested size: 366.2898pt x 650.44762pt.
+
+LaTeX Warning: Float too large for page by 23.96204pt on input line 2179.
+
+[29 <./image/plot-coverage-p-vs-sample-size.pdf>] [30 <./image/ci-widths.pdf>] [31]
+<wei_series_md_files/figure-latex/ci-boot-shape-1.pdf, id=581, 469.755pt x 325.215pt>
+File: wei_series_md_files/figure-latex/ci-boot-shape-1.pdf Graphic file (type pdf)
+<use wei_series_md_files/figure-latex/ci-boot-shape-1.pdf>
+Package pdftex.def Info: wei_series_md_files/figure-latex/ci-boot-shape-1.pdf  used on input line 2316.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<wei_series_md_files/figure-latex/ci-boot-scale-1.pdf, id=583, 469.755pt x 325.215pt>
+File: wei_series_md_files/figure-latex/ci-boot-scale-1.pdf Graphic file (type pdf)
+<use wei_series_md_files/figure-latex/ci-boot-scale-1.pdf>
+Package pdftex.def Info: wei_series_md_files/figure-latex/ci-boot-scale-1.pdf  used on input line 2331.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[32 <./wei_series_md_files/figure-latex/ci-boot-shape-1.pdf>] [33 <./wei_series_md_files/figure-latex/ci-boot-scale-1.pdf>]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2398.
+[34]
+Underfull \vbox (badness 10000) detected at line 2494
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2494
+ []
+
+[35]
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 2508.
+(/home/spinoza/.TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [36]
+Underfull \vbox (badness 10000) detected at line 2602
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2602
+ []
+
+[37] [38]
+Underfull \vbox (badness 10000) detected at line 2772
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2772
+ []
+
+[39]
+Underfull \vbox (badness 10000) detected at line 2772
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2772
+ []
+
+[40] [41] (./wei_series_md.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-06-30>
@@ -710,21 +813,21 @@ L3 programming layer <2023-06-30>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `wei_series_md.out' has not changed.
-(rerunfilecheck)             Checksum: 3C67C80AE5FDBFCB116224FA42FBF6CF;4411.
+(rerunfilecheck)             Checksum: 321C30D5051AFA03D400DC5C2C781576;5666.
  ) 
 Here is how much of TeX's memory you used:
- 21802 strings out of 477197
- 399348 string characters out of 5813587
- 1943244 words of memory out of 5000000
- 42219 multiletter control sequences out of 15000+600000
- 648367 words of font info for 95 fonts, out of 8000000 for 9000
+ 22544 strings out of 477197
+ 414963 string characters out of 5813587
+ 1941244 words of memory out of 5000000
+ 42867 multiletter control sequences out of 15000+600000
+ 649311 words of font info for 98 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  84i,20n,87p,793b,964s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on wei_series_md.pdf (23 pages, 560700 bytes).
+</home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></home/spinoza/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
+Output written on wei_series_md.pdf (41 pages, 891372 bytes).
 PDF statistics:
- 571 PDF objects out of 1000 (max. 8388607)
- 483 compressed objects within 5 object streams
- 152 named destinations out of 1000 (max. 500000)
- 191 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 835 PDF objects out of 1000 (max. 8388607)
+ 698 compressed objects within 7 object streams
+ 232 named destinations out of 1000 (max. 500000)
+ 284 words of extra memory for PDF output out of 10000 (max. 10000000)
 

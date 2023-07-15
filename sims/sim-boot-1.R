@@ -26,19 +26,17 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
+ncores <- 4
+
 parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 
 #set.seed(134849131)
-#ns <- c(50, 100, 200)
-ns <- c(50)
-#ps <- c(0, 0.215)
-ps <- c(0)
+ns <- c(30, 50, 100, 200, 400)
+ps <- c(0, 0.215)
+qs <- c(1, 0.75)
 
-#qs <- c(1, 0.75)
-qs <- c(1)
-R <- 2
 
-sim.boot.run <- function(n, p, q) {
+sim.boot.run <- function(n, p, q, R = 1000) {
 
     problems <- list()
 
@@ -73,7 +71,7 @@ sim.boot.run <- function(n, p, q) {
                 maxit = 1000L)
             cat("boot: ", sol$par, "\n")
             sol$par
-        }, ncpus = 4, R = R)
+        }, ncpus = ncores, R = R)
 
         saveRDS(list(n = n, p = p, q = q, tau = tau, mle = sol, mle.boot = sol.boot),
             file = paste0("./results/sim-boot-1/results_", n, "_", p, "_", q, ".rds"))
@@ -94,7 +92,7 @@ params <- expand.grid(n = ns, p = ps, q = qs)
 result <- mclapply(
     1:nrow(params),
     function(i) sim.boot.run(params$n[i], params$p[i], params$q[i]),
-    mc.cores = 4)
+    mc.cores = ncores)
 
 
 
