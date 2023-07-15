@@ -29,46 +29,84 @@ scales <- theta[seq(2, length(theta), 2)]
 parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 
 #set.seed(134849131)
-ns <- c(100)
-ps <- c(0.215)
-qs <- c(0.75)
-R <- 1000
+#ns <- c(50, 100, 200)
+ns <- c(50)
+#ps <- c(0, 0.215)
+ps <- c(0)
 
-# here is our observed data
-df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
-    shapes = shapes,
-    scales = scales,
-    n = n,
-    p = p,
-    tau = tau)
+#qs <- c(1, 0.75)
+qs <- c(1)
+R <- 2
 
-theta.hat <- algebraic.mle::mle_numerical(
-    wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
-        df = df,
-        theta0 = theta,
-        reltol = 1e-4,
-        parscale = parscale,
-        maxit = 1000L))
+sim.boot.run <- function(n, p, q) {
+
+    problems <- list()
+
+    tau <- wei.series.md.c1.c2.c3::qwei_series(
+        p = q, scales = scales, shapes = shapes)
+
+    cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
+  
+    result <- tryCatch({
+        df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
+            shapes = shapes,
+            scales = scales,
+            n = n,
+            p = p,
+            tau = tau)
+
+        sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+            df = df,
+            theta0 = theta,
+            reltol = 1e-7,
+            parscale = parscale,
+            maxit = 2000L)
+
+        cat("mle: ", sol$par, "\n")
+
+        sol.boot <- boot(df, function(df, i) {
+            sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+                df = df[i, ],
+                theta0 = sol$par,
+                reltol = 1e-7,
+                parscale = parscale,
+                maxit = 1000L)
+            cat("boot: ", sol$par, "\n")
+            sol$par
+        }, ncpus = 4, R = R)
+
+        saveRDS(list(n = n, p = p, q = q, tau = tau, mle = sol, mle.boot = sol.boot),
+            file = paste0("./results/sim-boot-1/results_", n, "_", p, "_", q, ".rds"))
+
+        }, error = function(e) {
+            print(e)
+            problems <- append(problems, list(list(
+                error = e, n = n, p = p, q = q, tau = tau, df = df)))
+        })
+
+    if (length(problems) != 0) {
+        saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
+                file = paste0("./problems/sim-boot-1/problems_", n, "_", p, "_", q, ".rds"))
+    }
+}
+  
+params <- expand.grid(n = ns, p = ps, q = qs)
+result <- mclapply(
+    1:nrow(params),
+    function(i) sim.boot.run(params$n[i], params$p[i], params$q[i]),
+    mc.cores = 4)
 
 
-theta.boot <- mle_boot(boot(df, function(df, i) {
-    sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
-        df = df[i, ],
-        theta0 = params(theta.hat),
-        reltol = 1e-4,
-        parscale = parscale,
-        maxit = 1000L)
-    sol$par
-}, R = 1000))
 
-confint(theta.hat)
-confint(theta.boot)
+#confint(theta.hat)
+#confint(theta.boot)
 
-bias(theta.hat, theta)
-mse(theta.hat, theta)
+#bias(theta.hat, theta)
+#mse(theta.hat, theta)
 
-vcov(theta.hat)
-vcov(theta.boot)
+#vcov(theta.hat)
+#vcov(theta.boot)
 
-sqrt(diag(vcov(theta.hat)))
-sqrt(diag(vcov(theta.boot)))
+#sqrt(diag(vcov(theta.hat)))
+#sqrt(diag(vcov(theta.boot)))
+

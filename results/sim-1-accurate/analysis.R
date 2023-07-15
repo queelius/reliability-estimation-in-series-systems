@@ -1,7 +1,7 @@
 # in this simulation, we have no right censoring and no masking of component cause
 # of failure. it's the ideal case. we want to see how well the estimator
 # performs in this case as a function of sample size, from n = 20 to n = 1000.
-# we have R = 200 replicates for each sample size.
+# we have R = 100 replicates for each sample size.
 
 library(reshape2)
 library(gridExtra)  # for arranging plots
@@ -77,11 +77,15 @@ coverage_df <- data.frame(SampleSize = rep(sample_sizes, each = length(coverage_
                           Parameter = rep(seq(length(coverage_probs[[1]])),
                           times = length(coverage_probs)))
 # Plot
-ggplot(coverage_df, aes(x = SampleSize, y = Coverage, color = factor(Parameter))) +
+sim1.cov.prob.plot <- ggplot(coverage_df, aes(x = SampleSize, y = Coverage, color = factor(Parameter))) +
   geom_line() + 
-  geom_hline(yintercept = 0.95, linetype = "dashed", color = "red") + # assuming 95% confidence intervals
+  geom_hline(yintercept = 0.95, linetype = "dashed", color = "red") +
   labs(x = "Sample Size", y = "Coverage Probability", color = "Parameter") +
   theme_minimal()
+
+# save the plots
+ggsave("results/sim-1-accurate/plot-coverage-prob-vs-sample-size.pdf",
+  plot = sim1.cov.prob.plot)
 
 
 
@@ -121,16 +125,21 @@ ci_widths_df <- do.call(rbind, lapply(seq_along(ci_widths), function(i) {
 ci_widths_list <- split(ci_widths_df, ci_widths_df$Type)
 
 # Generate a plot for each type
-plots <- lapply(ci_widths_list, function(df) {
+sim1_ci_width_vs_sample_size <- lapply(ci_widths_list, function(df) {
   ggplot(df, aes(x = SampleSize, y = CI_Width, color = factor(Parameter))) +
-    geom_line() + 
+    geom_line() +
     labs(x = "Sample Size", y = "Confidence Interval Width", color = "Parameter") +
     facet_wrap(~ Type, scales = "free") +
     theme_minimal()
 })
 
 # Arrange the plots in a grid
-grid.arrange(grobs = plots, ncol = 1)
+sim1_ci_width_vs_sample_size_grid <- grid.arrange(grobs = plots, ncol = 2)
+
+# save the plots
+ggsave("results/sim-1-accurate/plot-ci-width-vs-sample-size.pdf",
+  plot = sim1_ci_width_vs_sample_size)
+
 
 ######################
 # BIAS OF ESTIMATORS #
@@ -156,7 +165,8 @@ bias_df_melted_shapes <- bias_df_melted %>%
   filter(grepl("shape", variable))
 
 # Plot
-ggplot(bias_df_melted_shapes, aes(x = SampleSize, y = value, color = variable)) +
+sim1_plot_shape_bias_vs_sample_size <- ggplot(
+  bias_df_melted_shapes, aes(x = SampleSize, y = value, color = variable)) +
   geom_line() +
   labs(x = "Sample Size", y = "Bias", color = "Parameter") +
   theme_minimal()
@@ -167,9 +177,15 @@ bias_df_melted_scales <- bias_df_melted %>%
   filter(grepl("scale", variable))
 
 # Plot
-ggplot(bias_df_melted_scales, aes(x = SampleSize, y = value, color = variable)) +
+sim1_plot_scale_bias_vs_sample_size <- ggplot(bias_df_melted_scales,
+  aes(x = SampleSize, y = value, color = variable)) +
   geom_line() +
   labs(x = "Sample Size", y = "Bias", color = "Parameter") +
   theme_minimal()
 
+sim1_plots_bias_vs_sample_size <- list(
+  sim1_plot_shape_bias_vs_sample_size, sim1_plot_scale_bias_vs_sample_size)
+grid.arrange(grobs = sim1_plots_bias_vs_sample_size, ncol = 2)
 
+ggsave("results/sim-1-accurate/plot-bias-vs-sample-size.pdf",
+  plot = sim1_plots_bias_vs_sample_size)

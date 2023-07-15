@@ -1,7 +1,7 @@
 # in this simulation, we have no right censoring and no masking of component cause
 # of failure. it's the ideal case. we want to see how well the estimator
 # performs in this case as a function of sample size, from n = 20 to n = 1000.
-# we have R = 200 replicates for each sample size.
+# we have R = 100 replicates for each sample size.
 
 library(tidyverse)
 library(parallel)
@@ -23,7 +23,7 @@ scales <- theta[seq(2, length(theta), 2)]
 parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 
 #set.seed(134849131)
-ns <- c(30, 40, 50, 75, 100, 150, 200, 300)
+ns <- c(30, 40, 50, 75, 100, 100, 200, 400, 800)
 ps <- c(0)
 qs <- c(1)
 R <- 100
@@ -69,12 +69,12 @@ sim.run <- function(n, p, q) {
   
     if (length(mles) != 0) {
         saveRDS(list(n = n, p = p, q = q, tau = tau, mles = mles),
-            file = paste0("./results/sim-1/results_", n, "_", p, "_", q, ".rds"))
+            file = paste0("./results/sim-1-accurate/results_", n, "_", p, "_", q, ".rds"))
     }
 
     if (length(problems) != 0) {
         saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
-            file = paste0("./problems/sim-1/problems_", n, "_", p, "_", q, ".rds"))
+            file = paste0("./problems/sim-1-accurate/problems_", n, "_", p, "_", q, ".rds"))
     }
 }
 
