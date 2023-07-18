@@ -65,8 +65,9 @@ bias_p_0.2_df_melted_shapes <- bias_p_0.2_df_melted %>%
   filter(grepl("shape", variable))
 
 plot_bias_p_0.2_shapes <- ggplot(
-  bias_p_0.2_df_melted_shapes, aes(x = SampleSize, y = value, color = variable)) +
+  bias_p_0.2_df_melted_shapes, aes(x = SampleSize, y = abs(value), color = variable)) +
   geom_line() +
+  scale_y_log10() +  
   labs(x = "Sample Size", y = "Bias", color = "Parameter") +
   theme_minimal()
 
@@ -74,9 +75,11 @@ plot_bias_p_0.2_shapes <- ggplot(
 bias_p_0.2_df_melted_scales <- bias_p_0.2_df_melted %>%
   filter(grepl("scale", variable))
 
+# let's plot on a log scale
 plot_bias_p_0.2_scales <- ggplot(
-  bias_p_0.2_df_melted_scales, aes(x = SampleSize, y = value, color = variable)) +
+  bias_p_0.2_df_melted_scales, aes(x = SampleSize, y = abs(value), color = variable)) +
   geom_line() +
+  scale_y_log10() +  
   labs(x = "Sample Size", y = "Bias", color = "Parameter") +
   theme_minimal()
 
@@ -85,11 +88,11 @@ plot_bias_p_0.2 <- grid.arrange(
 
 
 # save the plots
-ggsave("results/sim-2/plot-bias-scales-vary-p-sample-size-100.pdf",
-  plot = masking_prob_vs_scales_bias_sample_size_100)
+ggsave("results/sim-2/plot-p-0.2-bias-scales-vs-sample-size.pdf",
+  plot = plot_bias_p_0.2_scales)
 
-ggsave("results/sim-2/plot-bias-shapes-vary-p-sample-size-100.pdf",
-  plot = masking_prob_vs_shapes_bias_sample_size_100)
+ggsave("results/sim-2/plot-p-0.2-bias-shapes-vs-sample-size.pdf",
+  plot = plot_bias_p_0.2_shapes)
 
-ggsave("results/sim-2/plot-bias-vary-p-sample-size-100.pdf",
-  plot = masking_prob_vs_bias_sample_size_100)
+ggsave("results/sim-2/plot-p-0.2-bias-vs-sample-size.pdf",
+  plot = plot_bias_p_0.2)

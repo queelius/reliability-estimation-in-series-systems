@@ -28,6 +28,8 @@ mle_newton_wei_series_md_c1_c2_c3(
 \item{...}{additional arguments passed to \code{newton_raphson}}
 
 \item{control}{list of control parameters passed to \code{loglik_wei_series_md_c1_c2_c3}}
+
+\item{parscale}{parameter scaling}
 }
 \value{
 list with components:

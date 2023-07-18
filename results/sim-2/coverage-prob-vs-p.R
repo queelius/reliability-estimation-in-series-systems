@@ -311,8 +311,7 @@ plot_coverage_p_0.2_vs_n <- ggplot(coverage_p_0.2_vs_n_df,
 plot_coverage_p_0.3_vs_n <- ggplot(coverage_p_0.3_vs_n_df,
     aes(x = SampleSize, y = Coverage, linetype = ParameterType)) +
   geom_line(aes(color = ParameterType)) +
-  geom_hline(yintercept = 0.95, linetype = 
-    color = "green") +
+  geom_hline(yintercept = 0.95, linetype = "dashed", color = "darkred", linewidth = 2) +
   scale_color_manual(values = myColors) +
   scale_linetype_manual(values = myLines) +
   labs(x = "Sample Size", y = "Coverage Probability") +

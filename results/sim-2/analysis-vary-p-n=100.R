@@ -176,10 +176,17 @@ masking_prob_vs_scales_bias_sample_size_100 <- ggplot(
   labs(x = "Masking Probability (Sample Size 100)", y = "Bias", color = "Parameter") +
   theme_minimal()
 
-plots_bias <- list(plot1, plot2)
-grid.arrange(grobs = plots_bias, ncol = 2)
+masking_prob_vs_bias_sample_size_100 <- grid.arrange(
+  grobs = list(masking_prob_vs_shapes_bias_sample_size_100,
+               masking_prob_vs_scales_bias_sample_size_100), ncol = 2)
 
 
 # save the plots
-ggsave("results/sim-2/analysis-vary-p-n=100.pdf", plot = plot1, width = 10, height = 5)
+ggsave("results/sim-2/plot-bias-scales-vary-p-sample-size-100.pdf",
+  plot = masking_prob_vs_scales_bias_sample_size_100)
 
+ggsave("results/sim-2/plot-bias-shapes-vary-p-sample-size-100.pdf",
+  plot = masking_prob_vs_shapes_bias_sample_size_100)
+
+ggsave("results/sim-2/plot-bias-vary-p-sample-size-100.pdf",
+  plot = masking_prob_vs_bias_sample_size_100)

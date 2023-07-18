@@ -200,14 +200,14 @@ combined_plot_scales <- masking_prob_vs_scales_bias_sample_size_100_yscaled |
   masking_prob_vs_scales_bias_sample_size_800_yscaled | common_legend
 
 ggsave("results/sim-2/plot-bias-scales-p-vs-sample-size-100-400-800.pdf",
-  plot = combined_plot_scales)
+  plot = combined_plot_scales, height = 6, width = 12)
 
 
 ##########
 # SHAPES #
 ##########
 
-y_range_shapes <- c(0, 0.3)  # Adjust the range as per your data
+y_range_shapes <- c(-.01, 0.25)  # Adjust the range as per your data
 
 # Set the y-axis limits for both plots
 masking_prob_vs_shapes_bias_sample_size_100_yscaled <- masking_prob_vs_shapes_bias_sample_size_100 +
@@ -231,7 +231,8 @@ combined_plot_shapes <- masking_prob_vs_shapes_bias_sample_size_100_yscaled |
   masking_prob_vs_shapes_bias_sample_size_800_yscaled | common_legend
 
 ggsave("results/sim-2/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf",
-  plot = combined_plot_shapes)
+  plot = combined_plot_shapes, , width = 12, height = 6)
+
 
 
 

@@ -2,15 +2,11 @@
 # we want to see the CI width in this case as a function of
 # masking component cause of failure p from p = 0 to p = 0.4.
 # we have R = 100 replicates for each p.
-library(patchwork)
-library(cowplot)
-library(reshape2)
 library(gridExtra)  # for arranging plots
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(algebraic.mle)
-library(algebraic.dist)
 library(md.tools)
 library(wei.series.md.c1.c2.c3)
 
@@ -122,7 +118,7 @@ sim2_p_0.2_mles <- list(sim2_30_0.2$mles, sim2_40_0.2$mles, sim2_50_0.2$mles,
     sim2_800_0.2$mles)
 
 ci_width_0.2 <- gen_ci_width(sim2_p_0.2_mles, sim2_n)
-plts_p_0.2 <- gen_ci_width_plot(ci_width_0.2, sim2_n, , 0.2)
+plts_p_0.2 <- gen_ci_width_plot(ci_width_0.2, sim2_n, 0.2)
 
 
 ###########
@@ -142,7 +138,7 @@ sim2_p_0.3_mles <- list(sim2_30_0.3$mles, sim2_40_0.3$mles, sim2_50_0.3$mles,
     sim2_800_0.3$mles)
 
 ci_width_0.3 <- gen_ci_width(sim2_p_0.3_mles, sim2_n)
-plts_p_0.3 <- gen_ci_width_plot(ci_width_0.3, sim2_n, , 0.3)
+plts_p_0.3 <- gen_ci_width_plot(ci_width_0.3, sim2_n, 0.3)
 
 ###########
 # p = 0.4 #

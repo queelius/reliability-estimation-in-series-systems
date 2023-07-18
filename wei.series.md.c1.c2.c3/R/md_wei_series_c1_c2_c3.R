@@ -136,3 +136,227 @@ hessian_wei_series_md_c1_c2_c3 <- function(
         control = control,
         method.args = list(r = 6, ...))
 }
+
+
+
+
+
+
+#' Generates a score function (gradient of the log-likelihood function) for a Weibull
+#' series system with respect to parameter `theta` (shape, scale) for masked data
+#' with candidate sets that satisfy conditions C1, C2, and C3 and right-censored
+#' data.
+#'
+#' @param df (masked) data frame
+#' @param theta parameter vector (shape1, scale1, ..., shapem, scalem)
+#' @param ... additional arguments passed to `method.args` in `grad`
+#' @param control list of control parameters for data frame labels. See
+#'        `loglik_wei_series_md_c1_c2_c3`
+#' @returns Score with respect to `theta` given `df`
+#' @export
+score_wei_series_md_c1_c2_c3_2 <- function(
+    df,
+    theta,
+    ...,
+    control = list()) {
+
+    defaults <- list(
+        candset = "x",
+        lifetime = "t",
+        right_censoring_indicator = "delta")
+
+    control <- modifyList(defaults, control)
+    if (!control$lifetime %in% colnames(df)) {
+        stop("lifetime variable not in colnames(df)")
+    }
+
+    n <- nrow(df)
+    if (n < 1) {
+        stop("sample size must be greater than 0")
+    }
+
+    C <- md_decode_matrix(df, control$candset)
+    if (is.null(C)) {
+        stop("no candidate set found for candset")
+    }
+    m <- ncol(C)
+
+    if (control$right_censoring_indicator %in% colnames(df)) {
+        delta <- df[[control$right_censoring_indicator]]
+    } else {
+        delta <- rep(TRUE, n)
+    }
+
+    t <- df[[control$lifetime]]
+    shapes <- theta[seq(1, length(theta), 2)]
+    scales <- theta[seq(2, length(theta), 2)]
+    shape_scores <- rep(0, m)
+    scale_scores <- rep(0, m)
+
+    for (j in 1:m) {
+        # let's do shape scores
+        for (i in 1:n) {
+            rt.term <- -(t[i] / scales[j])^shapes[j] * log(t[i] / scales[j])
+            mask.term <- 0
+            if (delta[i] && C[i,j]) {
+                denom <- 0
+                for (k in 1:m) {
+                    if (C[i,k]) {
+                        denom <- denom + shapes[k] / scales[k] *
+                            (t[i] / scales[k])^(shapes[k] - 1)
+                    }
+                }
+                numer <- 1/t[i] * (t[i] / scales[j])^shapes[j] *
+                    (1 + shapes[j] * log(t[i] / scales[j]))
+                mask.term <- numer / denom
+            }
+            shape_scores[j] <- shape_scores[j] + rt.term + mask.term
+        }
+
+        # let's do scale scores
+        for (i in 1:n) {
+            rt.term <- (shapes[j] / scales[j]) * (t[i] / scales[j])^shapes[j]
+            mask.term <- 0
+            if (delta[i] && C[i,j]) {
+                denom <- 0
+                for (k in 1:m) {
+                    if (C[i, k]) {
+                        denom <- denom + shapes[k] / scales[k] *
+                            (t[i] / scales[k])^(shapes[k] - 1)
+                    }
+                }
+
+                numer <- (shapes[j] / scales[j])^2 * (t[i] / scales[j])^shapes[j]
+                #numer <- (shapes[j] / scales[j]) * (t[i] / scales[j])^shapes[j] / t[i]
+                mask.term <- numer / denom
+            }
+            scale_scores[j] <- scale_scores[j] + rt.term - mask.term
+        }
+    }
+    
+    scr <- rep(0, length(theta))
+    scr[seq(1, length(theta), 2)] <- shape_scores
+    scr[seq(2, length(theta), 2)] <- scale_scores
+    scr
+}
+
+
+#' Generates a hessian of the log-likelihood function (negative of the observed
+#' FIM) for a Weibull series system with respect to parameter `theta` (shape, scale)
+#' for masked data with candidate sets that satisfy conditions C1, C2, and C3 and
+#' right-censored data.
+#'
+#' @param df (masked) data frame
+#' @param theta parameter vector (shape1, scale1, ..., shapem, scalem)
+#' @param ... additional arguments passed to `method.args` in `hessian`
+#' @param control list of control parameters. See `loglik_wei_series_md_c1_c2_c3`
+#' @returns Score with respect to `theta` given `df`
+#' @importFrom numDeriv jacobian
+#' @export
+hessian_wei_series_md_c1_c2_c3_jacobian <- function(
+    df,
+    theta,
+    ...,
+    control = list()) {
+
+    numDeriv::jacobian(
+        func = score_wei_series_md_c1_c2_c3_2,
+        x = theta,
+        df = df,
+        control = control,
+        method.args = list(r = 6, ...))
+}
+
+
+
+
+
+
+
+
+
+score_wei_series_md_c1_c2_c3_3 <- function(
+    df,
+    theta,
+    ...,
+    control = list()) {
+
+    defaults <- list(
+        candset = "x",
+        lifetime = "t",
+        right_censoring_indicator = "delta")
+
+    control <- modifyList(defaults, control)
+    if (!control$lifetime %in% colnames(df)) {
+        stop("lifetime variable not in colnames(df)")
+    }
+
+    n <- nrow(df)
+    if (n < 1) {
+        stop("sample size must be greater than 0")
+    }
+
+    C <- md_decode_matrix(df, control$candset)
+    if (is.null(C)) {
+        stop("no candidate set found for candset")
+    }
+    m <- ncol(C)
+
+    if (control$right_censoring_indicator %in% colnames(df)) {
+        delta <- df[[control$right_censoring_indicator]]
+    } else {
+        delta <- rep(TRUE, n)
+    }
+
+    t <- df[[control$lifetime]]
+    shapes <- theta[seq(1, length(theta), 2)]
+    scales <- theta[seq(2, length(theta), 2)]
+    shape_scores <- rep(0, m)
+    scale_scores <- rep(0, m)
+
+    for (j in 1:m) {
+        # let's do shape scores
+        for (i in 1:n) {
+            rt.term <- -(t[i] / scales[j])^shapes[j] * log(t[i] / scales[j])
+            mask.term <- 0
+            if (delta[i] && C[i,j]) {
+                denom <- 0
+                for (k in 1:m) {
+                    if (C[i,k]) {
+                        denom <- denom + shapes[k] / scales[k] *
+                            (t[i] / scales[k])^(shapes[k] - 1)
+                    }
+                }
+                numer <- 1/t[i] * (t[i] / scales[j])^shapes[j] *
+                    (1 + shapes[j] * log(t[i] / scales[j]))
+                mask.term <- numer / denom
+            }
+            shape_scores[j] <- shape_scores[j] + rt.term + mask.term
+        }
+
+        # let's do scale scores
+        for (i in 1:n) {
+            rt.term <- (shapes[j] / scales[j]) * (t[i] / scales[j])^shapes[j]
+            mask.term <- 0
+            if (delta[i] && C[i,j]) {
+                denom <- 0
+                for (k in 1:m) {
+                    if (C[i, k]) {
+                        denom <- denom + shapes[k] / scales[k] *
+                            (t[i] / scales[k])^(shapes[k] - 1)
+                    }
+                }
+
+                numer <- (shapes[j] / scales[j])^2 * (t[i] / scales[j])^(shapes[j] - 1)
+                #numer <- (shapes[j] / scales[j]) * (t[i] / scales[j])^shapes[j] / t[i]
+                mask.term <- numer / denom
+            }
+            scale_scores[j] <- scale_scores[j] + rt.term - mask.term
+        }
+    }
+    
+    scr <- rep(0, length(theta))
+    scr[seq(1, length(theta), 2)] <- shape_scores
+    scr[seq(2, length(theta), 2)] <- scale_scores
+    scr
+}

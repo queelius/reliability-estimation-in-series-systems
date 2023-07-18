@@ -9,12 +9,13 @@ newton_raphson(
   x0,
   gr,
   hess,
+  parscale = 1,
   tol = 1e-10,
   sup = function(x) TRUE,
   lr = 1,
   debug = FALSE,
   REPORT = 100L,
-  r = 0.8,
+  r = 0.5,
   maxit = 1000L
 )
 }
@@ -26,6 +27,8 @@ newton_raphson(
 \item{gr}{gradient function}
 
 \item{hess}{hessian function}
+
+\item{parscale}{parameter scaling}
 
 \item{tol}{tolerance}
 

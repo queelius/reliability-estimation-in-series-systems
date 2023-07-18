@@ -1547,13 +1547,12 @@ following result.
 \begin{corollary}
 The log-likelihood contribution of the $i$-th system is given by
 \begin{equation}
+\label{eq:weibull_log_likelihood_contribution}
 \ell_i(\boldsymbol{\theta}) =
-\begin{cases}
--\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j} + \log \biggl\{    
-    \sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}
-\biggr\} & \text{if } \delta_i = 1,\\
--\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j} & \text{if } \delta_i = 0,
-\end{cases}
+-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j} +
+    \delta_i \log \!\Biggl(    
+        \sum_{j \in c_i} \frac{k_j}{\lambda_j}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j-1}
+    \Biggr)
 \end{equation}
 where we drop any terms that do not depend on $\boldsymbol{\theta}$ since they do not
 affect the MLE.
@@ -1620,30 +1619,96 @@ system is given by
 where
 \begin{equation}
 \frac{\partial \ell_i(\boldsymbol{\theta})}{\partial k_r} = 
-\begin{cases}
-    -\bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r}       
-        \log\bigl(\frac{t_i}{\lambda_r}\bigr) +
-        \frac{\frac{1}{t_i} \bigl(\frac{t_i}{\lambda_r}\bigr)
+    -\biggl(\frac{t_i}{\lambda_r}\biggr)^{k_r}    
+        \!\!\log\biggl(\frac{t_i}{\lambda_r}\biggr) +
+        \frac{\frac{1}{t_i} \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r}
             \bigl(1+ k_r \log\bigl(\frac{t_i}{\lambda_r}\bigr)\bigr)}
             {\sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}}
-            & \text{if } \delta_i = 1 \text{ and } r \in c_i,\\
-    -\bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r}\log\bigl(\frac{t_i}{\lambda_r}\bigr)
-    & \text{if } \delta_i = 0 \text{ or } r \notin c_i\\
-\end{cases}
+        1_{\delta_i = 1 \land r \in c_i}
 \end{equation}
 and 
 \begin{equation}
 \frac{\partial \ell_i(\boldsymbol{\theta})}{\partial \lambda_r} = 
-\begin{cases}
-    \frac{k_r}{\lambda_r} \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r} -
-    \frac{k_r^2 \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r-1}}
-        {\sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}}
-    & \text{if } \delta_i = 1 \text{ and } r \in c_i,\\
-    \frac{k_r}{\lambda_r} \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r}
-    & \text{if } \delta_i = 0 \text{ or } r \notin c_i.
-\end{cases}
+    \frac{k_r}{\lambda_r} \biggl(\frac{t_i}{\lambda_r}\biggr)^{k_r} -
+    \frac{
+        \bigl(\frac{k_r}{\lambda_r}\bigr)^2 \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r - 1}
+    }
+    {
+        \sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}
+    }
+    1_{\delta_i = 1 \land r \in c_i}
 \end{equation}
 \end{theorem}
+
+\begin{proof}
+The log-likelihood contribution for the i-th observation is given by Equation \eqref{eq:weibull_log_likelihood_contribution}:
+$$
+\ell_i = -\sum_{j=1}^m \biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j} +
+    \delta_i \log \Biggl(\sum_{j \in c_i} \frac{k_j}{\lambda_j} \biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j - 1} \Biggr).
+$$
+
+\textbf{Shape parameters: $\partial \ell_i / \partial k_r$}
+
+Proof steps here.
+
+\textbf{Scale parameters: $\partial \ell_i / \partial \lambda_r$}
+We want to find the derivative of $\ell_i$ with respect to $\lambda_r$. 
+The derivative of the sum of functions is the sum of the derivatives, so we can
+differentiate each term in the sum separately. 
+
+First, we differentiate
+$$
+    -\sum_{j=1}^m (t_i/\lambda_j)^{k_j}
+$$
+with respect to $\lambda_r$. The derivative of this term with respect to
+$\lambda_r$ is zero for all $j$ not equal to $r$, and for $j = r$, we have
+$-(t_i/\lambda_r)^{k_r}$. The derivative of this term with respect to $\lambda_r$ is
+$$
+\frac{k_r}{\lambda_r} \biggl(\frac{t_i}{\lambda_r}\biggr)^{k_r}.
+$$
+
+Second, we differentiate
+$$
+\delta_i \log\Biggl(\sum_{j \in c_i} \frac{k_j}{\lambda_j} \biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j - 1}\Biggr)
+$$
+with respect to $\lambda_r$.
+The derivative of the logarithm of a function is the derivative of the function
+divided by the function itself.
+The function inside the logarithm is
+$$
+\sum_{j \in c_i} \frac{k_j}{\lambda_j} \left(\frac{t_i}{\lambda_j}\right)^{k_j - 1}. 
+$$
+The derivative of this function with respect to $\lambda_r$ is zero for all $j$ not
+in $c_i$ or not equal to $r$, and for $j = r$ in $c_i$, we have
+$$
+\frac{k_r}{\lambda_r} \left(\frac{t_i}{\lambda_r}\right)^{k_r - 1}. 
+$$
+The derivative of this term with respect to $\lambda_r$ is
+$$
+\biggl(\frac{k_r}{\lambda_r}\biggr)^2 \biggl(\frac{t_i}{\lambda_r}\biggr)^{k_r - 1}.
+$$
+So, the derivative of the second term is
+$$
+\delta_i \frac{\bigl(\frac{k_r}{\lambda_r}\bigr)^2 \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r - 1} }
+{\sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}}
+$$
+if $r$ in $c_i$ and zero otherwise.
+
+Adding the derivatives of the first and second terms, we get the partial derivative
+of $\ell_i$ with respect to $\lambda_r$,
+$$
+\frac{\partial \ell_i(\boldsymbol{\theta})}{\partial \lambda_r} = 
+    \frac{k_r}{\lambda_r} \biggl(\frac{t_i}{\lambda_r}\biggr)^{k_r} -
+    \delta_i \frac{
+        \bigl(\frac{k_r}{\lambda_r}\bigr)^2 \bigl(\frac{t_i}{\lambda_r}\bigr)^{k_r - 1}
+    }
+    {
+        \sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}
+    },
+$$
+if $r \in c_i$ and zero otherwise.
+This is the partial derivative of $\ell_i$ with respect to $\lambda_r$.
+\end{proof}
 
 These results follow from taking the partial derivatives of the
 log-likelihood contribution of the \(i\)-th system given by Equation

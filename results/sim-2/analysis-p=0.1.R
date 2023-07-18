@@ -1,20 +1,3 @@
-# let's read in the results from the simulations
-sim2_30_0.1 <- readRDS("results/sim-2/results_30_0.1_1.rds")
-sim2_40_0.1 <- readRDS("results/sim-2/results_40_0.1_1.rds")
-sim2_50_0.1 <- readRDS("results/sim-2/results_50_0.1_1.rds")
-sim2_75_0.1 <- readRDS("results/sim-2/results_75_0.1_1.rds")
-sim2_100_0.1 <- readRDS("results/sim-2/results_100_0.1_1.rds")
-sim2_200_0.1 <- readRDS("results/sim-2/results_200_0.1_1.rds")
-sim2_400_0.1 <- readRDS("results/sim-2/results_400_0.1_1.rds")
-sim2_800_0.1 <- readRDS("results/sim-2/results_800_0.1_1.rds")
-m <- 5
-
-# let's compute the confint of each mle for each sample size and compute the
-# coverage probability
-sim2_n <- c(30, 40, 50, 75, 100, 200, 400, 800)
-sim2_mles <- list(sim2_30_0.1$mles, sim2_40_0.1$mles, sim2_50_0.1$mles,
-    sim2_75_0.1$mles, sim2_100_0.1$mles, sim2_200_0.1$mles, sim2_400_0.1$mles,
-    sim2_800_0.1$mles)
 
 
 #############

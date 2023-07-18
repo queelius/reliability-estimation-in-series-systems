@@ -154,3 +154,161 @@ plot(x = data_scales$n, y = data_scales$var.boot, col ="blue",xlab = "Sample Siz
 points(x = data_scales$n, y = data_scales$var.fim, col = "green")
 legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
 dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+results <- results2
+# Extract necessary data
+data <- lapply(results, function(x) {
+  tibble(
+    n = x$n,
+    var.fim = x$var.fim,
+    var.boot = x$var.boot,
+    parameter = rep(c("shape", "scale"), each = 5) # adjust here according to your parameters
+  )
+})
+
+# Combine all data
+data <- bind_rows(data)
+data_shapes <- data[data$parameter == "shape",]
+data_scales <- data[data$parameter == "scale",]
+
+# Create the plot
+plot(x = data_shapes$n, y = data_shapes$var.boot, col = "blue", xlab = "Sample Size", ylab = "Variance")
+points(x = data_shapes$n, y = data_shapes$var.fim, col = "green")
+
+# Add a legend
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+
+# Save the plot as an image file
+png("plot_shapes_0.1.png")
+plot(x = data_shapes$n, y = data_shapes$var.boot,
+    col = "blue", xlab = "Sample Size", ylab = "Variance",
+    main = "Masking Probability = 0.1")
+points(x = data_shapes$n, y = data_shapes$var.fim, col = "green")
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+dev.off()
+
+
+
+
+
+#########
+
+
+
+# Create the plot
+plot(x = data_scales$n, y = data_scales$var.boot, col = "blue", xlab = "Sample Size", ylab = "Variance")
+points(x = data_scales$n, y = data_scales$var.fim, col = "green")
+
+# Add a legend
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+
+# Save the plot as an image file
+png("plot_scales_0.1.png")
+plot(x = data_scales$n, y = data_scales$var.boot, col ="blue",xlab = "Sample Size", ylab = "Variance",
+    main = "Masking Probability = 0.1")
+points(x = data_scales$n, y = data_scales$var.fim, col = "green")
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+results <- results1
+# Extract necessary data
+data <- lapply(results, function(x) {
+  tibble(
+    n = x$n,
+    var.fim = x$var.fim,
+    var.boot = x$var.boot,
+    parameter = rep(c("shape", "scale"), each = 5) # adjust here according to your parameters
+  )
+})
+
+# Combine all data
+data <- bind_rows(data)
+data_shapes <- data[data$parameter == "shape",]
+data_scales <- data[data$parameter == "scale",]
+
+
+# Create the plot
+plot(x = data_shapes$n, y = data_shapes$var.boot, col = "blue", xlab = "Sample Size", ylab = "Variance")
+points(x = data_shapes$n, y = data_shapes$var.fim, col = "green")
+
+# Add a legend
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+
+# Save the plot as an image file
+png("plot_shapes_0.png")
+plot(x = data_shapes$n, y = data_shapes$var.boot,
+    col = "blue", xlab = "Sample Size", ylab = "Variance",
+    main = "No Masking")
+points(x = data_shapes$n, y = data_shapes$var.fim, col = "green")
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+dev.off()
+
+
+
+
+
+#########
+
+
+
+# Create the plot
+plot(x = data_scales$n, y = data_scales$var.boot, col = "blue", xlab = "Sample Size", ylab = "Variance")
+points(x = data_scales$n, y = data_scales$var.fim, col = "green")
+
+# Add a legend
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+
+# Save the plot as an image file
+png("plot_scales_0.png")
+plot(x = data_scales$n, y = data_scales$var.boot, col ="blue",xlab = "Sample Size", ylab = "Variance",
+    main = "No Masking")
+points(x = data_scales$n, y = data_scales$var.fim, col = "green")
+legend("topright", legend = c("Boot", "FIM"), col = c("blue", "green"), pch = c(1, 1))
+dev.off()

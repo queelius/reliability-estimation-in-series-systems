@@ -26,85 +26,113 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
-ncores <- 4
-
 parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 
-#set.seed(134849131)
-ns <- c(30, 50, 100, 200, 400)
-ps <- c(0, 0.215)
-qs <- c(1, 0.75)
+ns <- c(30, 40, 50, 75)
+ps <- c(0.215)
+qs <- c(.7)
+R <- 2
+B <- 2
+mc.cores <- 4   # number of cores to use for simulations
+sim.name <- "sim-boot-2"
+sim.seed <- c(10407, -1723461988, 1517526765, -325759798,
+    1430175683, 851408424, -763779575)
 
-
-sim.boot.run <- function(n, p, q, R = 1000) {
+sim.boot.run <- function(sim.name, n, p, q, R = 1000,
+    bootstrap = FALSE, B = 1000, save.df = FALSE) {
 
     problems <- list()
+    results <- list()
 
     tau <- wei.series.md.c1.c2.c3::qwei_series(
         p = q, scales = scales, shapes = shapes)
 
     cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
   
-    result <- tryCatch({
-        df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
-            shapes = shapes,
-            scales = scales,
-            n = n,
-            p = p,
-            tau = tau)
+    for (r in 1:R) {
+        tryCatch({
+            df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
+                shapes = shapes,
+                scales = scales,
+                n = n,
+                p = p,
+                tau = tau)
 
-        sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
-            df = df,
-            theta0 = theta,
-            reltol = 1e-7,
-            parscale = parscale,
-            maxit = 2000L)
-
-        cat("mle: ", sol$par, "\n")
-
-        sol.boot <- boot(df, function(df, i) {
             sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
-                df = df[i, ],
-                theta0 = sol$par,
+                df = df,
+                theta0 = theta,
                 reltol = 1e-7,
                 parscale = parscale,
-                maxit = 1000L)
-            cat("boot: ", sol$par, "\n")
-            sol$par
-        }, ncpus = ncores, R = R)
+                maxit = 2000L)
 
-        saveRDS(list(n = n, p = p, q = q, tau = tau, mle = sol, mle.boot = sol.boot),
-            file = paste0("./results/sim-boot-1/results_", n, "_", p, "_", q, ".rds"))
+            cat("mle: ", sol$par, "\n")
 
-        }, error = function(e) {
-            print(e)
-            problems <- append(problems, list(list(
-                error = e, n = n, p = p, q = q, tau = tau, df = df)))
-        })
+            res <- list()
+            res$mle <- sol
+            if (save.df) {
+                res$df <- df
+            }
+            if (bootstrap) {
+                sol.boot <- boot(df, function(df, i) {
+                    sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+                        df = df[i, ],
+                        theta0 = sol$par,
+                        reltol = 1e-7,
+                        parscale = parscale,
+                        maxit = 1000L)
+                    sol$par
+                }, R = B)
+                res$boot <- sol.boot
+            }
+            results <- c(results, list(res))
 
-    if (length(problems) != 0) {
-        saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
-                file = paste0("./problems/sim-boot-1/problems_", n, "_", p, "_", q, ".rds"))
+            }, error = function(e) {
+                print(e)
+                problems <- c(problems, list(list(
+                    error = e, n = n, p = p, q = q, tau = tau, df = df)))
+            }
+        )
+
+        if (length(results) != 0) {
+            filename <- paste0("./results/", sim.name, "/", n, "_", p, "_", q, ".rds")
+            if (file.exists(filename)) {
+                warning(paste0("file `", filename, "` already exists. overwriting."))
+            }
+            saveRDS(list(n = n, p = p, q = q, tau = tau, mles = results),
+                file = filename)
+        }
+
+
+        if (length(problems) != 0) {
+            filename <- paste0("./problems/", sim.name, "/", n, "_", p, "_", q, ".rds")
+            # check to see if the file named `filename` exists
+
+            if (file.exists(filename)) {
+                warning(paste0("file ", filename, " already exists. overwriting."))
+            }
+
+            saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
+                    file = filename)
+        }
     }
 }
-  
+
+dir.create(paste0("./results/", sim.name))
+dir.create(paste0("./problems/", sim.name))
+
+RNGkind("L'Ecuyer-CMRG") 
+set.seed(sim.seed)
+
 params <- expand.grid(n = ns, p = ps, q = qs)
 result <- mclapply(
     1:nrow(params),
-    function(i) sim.boot.run(params$n[i], params$p[i], params$q[i]),
-    mc.cores = ncores)
-
-
-
-#confint(theta.hat)
-#confint(theta.boot)
-
-#bias(theta.hat, theta)
-#mse(theta.hat, theta)
-
-#vcov(theta.hat)
-#vcov(theta.boot)
-
-#sqrt(diag(vcov(theta.hat)))
-#sqrt(diag(vcov(theta.boot)))
-
+    function(i) sim.boot.run(
+        n = params$n[i],
+        p = params$p[i],
+        q = params$q[i],
+        R = R,
+        B = B,
+        sim.name = sim.name,
+        bootstrap = TRUE, 
+        save.df = TRUE),
+    mc.cores = mc.cores)

@@ -24,9 +24,9 @@ parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 
 #set.seed(134849131)
 ns <- c(30, 40, 50, 75, 100, 100, 200, 400, 800)
-ps <- c(0.1)
+ps <- c(0.1, 0.2, 0.3, 0.4)
 qs <- c(1)
-R <- 200
+R <- 100
 
 sim.run <- function(n, p, q) {
     mles <- list()
@@ -35,7 +35,7 @@ sim.run <- function(n, p, q) {
     tau <- wei.series.md.c1.c2.c3::qwei_series(
         p = q, scales = scales, shapes = shapes)
 
-      cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
+    cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
   
     for (r in 1:R) {
         result <- tryCatch({

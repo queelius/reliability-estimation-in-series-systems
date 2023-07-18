@@ -187,15 +187,24 @@ grid.arrange(tau_vs_shapes_bias_sample_size_300, tau_vs_scales_bias_sample_size_
 # DO THE PLOTS BELOW HERE #
 ###########################
 
+tau_vs_shapes_bias_sample_size_50_s <- tau_vs_shapes_bias_sample_size_50 + ylim(-.1, .9)
+tau_vs_scales_bias_sample_size_50_s <- tau_vs_scales_bias_sample_size_50 + ylim(0, 500)
+
+tau_vs_shapes_bias_sample_size_150_s <- tau_vs_shapes_bias_sample_size_150 + ylim(-.1, .9)
+tau_vs_scales_bias_sample_size_150_s <- tau_vs_scales_bias_sample_size_150 + ylim(0, 500)
+
+tau_vs_shapes_bias_sample_size_300_s <- tau_vs_shapes_bias_sample_size_300 + ylim(-.1, .9)
+tau_vs_scales_bias_sample_size_300_s <- tau_vs_scales_bias_sample_size_300 + ylim(0, 500)
+
+
 plot_tau_vs_sample <- grid.arrange(
-    tau_vs_shapes_bias_sample_size_50, tau_vs_scales_bias_sample_size_50,
-    tau_vs_shapes_bias_sample_size_150, tau_vs_scales_bias_sample_size_150,
-    tau_vs_shapes_bias_sample_size_300, tau_vs_scales_bias_sample_size_300,
+    tau_vs_shapes_bias_sample_size_50_s, tau_vs_scales_bias_sample_size_50_s,
+    tau_vs_shapes_bias_sample_size_150_s, tau_vs_scales_bias_sample_size_150_s,
+    tau_vs_shapes_bias_sample_size_300_s, tau_vs_scales_bias_sample_size_300_s,
     nrow = 3)
 
-
 ggsave("results/sim-5/plot-bias-tau-vs-sample-size-50-150-300.pdf",
-  plot = plot_tau_vs_sample, , width = 12, height = 6)
+  plot = plot_tau_vs_sample)
 
 
 
