@@ -151,7 +151,7 @@ res.newt <- wei.series.md.c1.c2.c3::mle_newton_wei_series_md_c1_c2_c3(
         maxit = 1000L)
 
 
-    res.lbfgsb <- wei.series.md.c1.c2.c3::mle_lbfgsb_wei_series_md_c1_c2_c3(
+res.lbfgsb <- wei.series.md.c1.c2.c3::mle_lbfgsb_wei_series_md_c1_c2_c3(
             df = df,
             theta0 = theta,
             pgtol = 1e-10,
@@ -169,14 +169,44 @@ res.newt <- wei.series.md.c1.c2.c3::mle_newton_wei_series_md_c1_c2_c3(
 
 
 
-library(microbenchmark)
-microbenchmark::microbenchmark(
-    score_wei_series_md_c1_c2_c3(df, theta),
-    score_wei_series_md_c1_c2_c3_2(df, theta),
-    score_wei_series_md_c1_c2_c3_3(df, theta))
-colnames(df)    
+# other_tests <- function() {
+#     sol.sann <- wei.series.md.c1.c2.c3::mle_sann_wei_series_md_c1_c2_c3(
+#         df = df,
+#         theta0 = theta,
+#         control = list(maxit = 10000L))
 
+#     sol.sann2 <- algebraic.mle::sim_anneal(
+#         par = theta,
+#         fn = function(theta) {
+#             wei.series.md.c1.c2.c3::loglik_wei_series_md_c1_c2_c3(
+#                 df = df, theta = theta)
+#         },
+#         control = list(
+#             t_init = 20,
+#             t_end = .0001,
+#             fnscale = -1,
+#             alpha = .95,
+#             neigh = function(par, temp, ...) {
+#                 a <- min(temp, 1) * parscale / 100
+#                 par + runif(length(par), -a, a)
+#             },
+#             proj = function(par) {
+#                 # project any non-positive components onto the nearest
+#                 # point in the parameter space, but slightly perturbed
+#                 # using `runif` to avoid numerical issues
+#                 for (i in 1:length(par)) {
+#                     if (par[i] <= 0) {
+#                         par[i] <- runif(1, .001, .2) * parscale[i] / 100
+#                     }
+#                 }
+#                 par
+#             }))
 
-
-parscale <- rep(c(1, 1000), 5)
-mle_lbfgsb_wei_series_md_c1_c2_c3(df, theta)
+#     sol.newt <- wei.series.md.c1.c2.c3::mle_newton_wei_series_md_c1_c2_c3(
+#         df = df,
+#         theta0 = theta,
+#         control = list(
+#             lr = .1,
+#             maxit = 10L,
+#             zero_tol = 1e-2))
+# }

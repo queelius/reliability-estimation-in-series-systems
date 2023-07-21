@@ -34,9 +34,33 @@ qs <- c(.7)
 R <- 2
 B <- 2
 mc.cores <- 4   # number of cores to use for simulations
-sim.name <- "sim-boot-2"
+sim.name <- "sim-boot-3"
 sim.seed <- c(10407, -1723461988, 1517526765, -325759798,
     1430175683, 851408424, -763779575)
+
+control <- list(
+    pgtol = 1e-10,
+    factr = 1e-10,
+    parscale = parscale,
+    maxit = 1000L)
+
+
+tau <- wei.series.md.c1.c2.c3::qwei_series(
+    p = 1, scales = scales, shapes = shapes)
+
+df.test <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
+    shapes = shapes,
+    scales = scales,
+    n = 35,
+    p = .215,
+    tau = tau)
+
+sol <- wei.series.md.c1.c2.c3::mle_lbfgsb_wei_series_md_c1_c2_c3(
+    df = df.test,
+    theta0 = theta,
+    control = control)
+sol$par
+cbind(confint(mle_numerical(sol)),theta)
 
 sim.boot.run <- function(sim.name, n, p, q, R = 1000,
     bootstrap = FALSE, B = 1000, save.df = FALSE) {
@@ -58,29 +82,21 @@ sim.boot.run <- function(sim.name, n, p, q, R = 1000,
                 p = p,
                 tau = tau)
 
-            sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+            sol <- wei.series.md.c1.c2.c3::mle_lbfgsb_wei_series_md_c1_c2_c3(
                 df = df,
                 theta0 = theta,
-                reltol = 1e-7,
-                parscale = parscale,
-                maxit = 2000L)
+                control = control)
 
             cat("mle: ", sol$par, "\n")
 
             res <- list()
             res$mle <- sol
-            if (save.df) {
-                res$df <- df
-            }
             if (bootstrap) {
                 sol.boot <- boot(df, function(df, i) {
-                    sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
+                    wei.series.md.c1.c2.c3::mle_lbfgsb_wei_series_md_c1_c2_c3(
                         df = df[i, ],
                         theta0 = sol$par,
-                        reltol = 1e-7,
-                        parscale = parscale,
-                        maxit = 1000L)
-                    sol$par
+                        control = control)$par
                 }, R = B)
                 res$boot <- sol.boot
             }
@@ -134,5 +150,5 @@ result <- mclapply(
         B = B,
         sim.name = sim.name,
         bootstrap = TRUE, 
-        save.df = TRUE),
+        save.df = FALSE),
     mc.cores = mc.cores)
