@@ -23,11 +23,12 @@ mle_solver <- function(df, i) {
 }
 
 n_cores <- 3
-N <- c(2000)
+N <- c(400)
 P <- c(0, .25, .5)
 Q <- c(1, .75, .5)
 R <- 500
 total_retries <- 20L
+max_iter <- 25L
 
 cat("Simulation parameters:\n")
 cat("R: ", R, "\n")
@@ -79,7 +80,7 @@ scenario_fn <- function(params) {
 
             sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
                 theta0 = theta, df = df, hessian = TRUE,
-                control = list(maxit = 50L, parscale = parscale))
+                control = list(maxit = max_iter, parscale = parscale))
         },
         error = function(e) {
             cat("Error: ", conditionMessage(e), "\n")
@@ -111,8 +112,8 @@ scenario_fn <- function(params) {
         convergences[iter] <- sol$convergence
 
         if (iter %% 50 == 0) {
-            cat("Scenario (n = ", n, ", p = ", p, ", q = ", q, "): ",
-                iter, "/", R, "\n")        }
+            cat("Scenario (n = ", n, ", p = ", p, ", q = ", q, "): ", iter, "/", R, "\n")
+        }
 
         if (iter == R) {
             break
@@ -143,7 +144,7 @@ scenario_fn <- function(params) {
     }
     close(lock)
 
-    cat("Completed scenario: n: ", n, ", p: ", p, ", q: ", q, "\n")
+    cat("Scenario: (n = ", n, ", p = ", p, ", q = ", q, "): Finished!\n")
 }
 
 param_list <- expand.grid(N = N, P = P, Q = Q)

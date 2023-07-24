@@ -7,8 +7,6 @@ library(algebraic.dist)
 library(md.tools)
 library(wei.series.md.c1.c2.c3)
 
-
-cat("Seting up...\n")
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
            shape3 = 1.1308, scale3 = 840.1141,
@@ -29,10 +27,10 @@ mle_solver <- function(df, i) {
 
 n_cores <- detectCores() - 1
 
-N <- c(30, 40, 60, 80, 100, 120, 140, 160, 180, 200, 250, 300, 400)
-P <- c(0, .1, .2, .3)
-Q <- c(1, .9, .8)
-R <- 100
+N <- c(25, 50, 75, 100)
+P <- c(0, .25, .5)
+Q <- c(1, .75, .5)
+R <- 200
 B <- 300
 total_retries <- 20L
 
@@ -56,11 +54,6 @@ options(digits = 3)
 for (n in N) {
     for (p in P) {
         for (q in Q) {
-            cat("Starting scenario:\n")
-            cat("n: ", n, "\n")
-            cat("p: ", p, "\n")
-            cat("q: ", q, "\n")
-
             # tau, the right-censoring time of the scenario, is the
             # q-th quantile of the weibull series ssytem distribution
             tau <- wei.series.md.c1.c2.c3::qwei_series(
@@ -155,26 +148,8 @@ for (n in N) {
                 theta.hats[iter, ] <- sol$par
                 logliks[iter] <- sol$value
 
-                if (iter %% 25 == 0) {
-                    shape.cov <- cov_prob[seq(1, length(theta), 2)] / iter
-                    shape.ci <- cbind(ci[seq(1, length(theta), 2), ], shape.cov)
-                    scale.cov <- cov_prob[seq(2, length(theta), 2)] / iter
-                    scale.ci <- cbind(ci[seq(2, length(theta), 2), ], scale.cov)
-
-                    cat("--------------[", iter, "]--------------\n")
-
-                    cat("MLE: ", theta.hats[iter,], "\n")
-                    cat("Loglik: ", logliks[iter], "\n")
-
-                    cat("Var (boot): ", var.hat, "\n")
-                    cat("Bias (boot): ", bias.hat, "\n")
-                    cat("MSE (boot): ", mse.hat, "\n")
-
-                    cat("Shape CI:\n")
-                    print(shape.ci)
-
-                    cat("Scale CI:\n")
-                    print(scale.ci)
+                if (iter %% 50 == 0) {
+                    cat("Scenario (n = ", n, ", p = ", p, ", q = ", q, "): ", iter, "/", R, "\n")
                 }
 
                 if (iter == R) {
@@ -192,16 +167,25 @@ for (n in N) {
                 coverages = coverages,
                 lowers = lowers.boot,
                 uppers = uppers.boot,
+                convergence = sol.boot$convergence,
                 bias = bias.boot,
                 var = var.boot,
                 mse = mse.boot,
                 loglik = logliks)
 
-            write.table(df, file = "data.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data.csv"), append = TRUE)
+            # let's making writing to the file an atomic operation, since other threads
+            # might be writing to the same file.
+            lock <- file(description = "data-boot.csv", open = "a")
+            # let's append to the file if it exists, otherwise create it
+            if (file.info("data-boot.csv")$size == 0) {
+                write.table(df, file = lock, row.names = FALSE, sep = ",")
+            } else {
+                write.table(df, file = lock, row.names = FALSE, sep = ",", append = TRUE,
+                            col.names = FALSE)
+            }
+            close(lock)
 
-            t1 <- Sys.time()
-            cat("Scenario time: ", t1 - t0, "\n")
+            cat("Scenario: (n = ", n, ", p = ", p, ", q = ", q, "): Finished!\n")
         }
     }
 }
