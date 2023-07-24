@@ -23,17 +23,26 @@ csl: the-annals-of-statistics.csl
 \renewcommand{\v}[1]{\boldsymbol{#1}}
 \numberwithin{equation}{section}
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(md.tools)
-library(algebraic.mle)
-library(wei.series.md.c1.c2.c3)
-library(dplyr)
-library(ggplot2)
-library(gridExtra)
-library(grid)
-library(glue)
-library(png)
+# cran packages
+cran_packages <- c("readr", "latex2exp", "tidyverse", "devtools", "dplyr", "ggplot2", "gridExtra", "grid", "glue", "png")
+github_packages <- c("queelius/md.tools", "queelius/wei.series.md.c1.c2.c3", "queelius/algebraic.mle")
+
+for (pkg in cran_packages) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+        install.packages(pkg)
+    }
+    eval(parse(text = paste0("library(", pkg, ")")))
+}
+for (pkg in github_packages) {
+    if (!require(pkg, quietly = TRUE)) {
+        install_github(pkg)
+    }
+    # strip the namespace
+    pkg <- gsub(".*\\/", "", pkg)
+    eval(parse(text = paste0("library(", pkg, ")")))
+}
 ```
 
 Introduction
@@ -54,98 +63,41 @@ The remainder of this paper is organized as follows. First, we detail the series
 
 Series System Model {#sec:statmod}
 ==================================
-We consider a system with $m$ components indexed by $1,2,\ldots,m$.
-Each component, and the system, only has two possible states, functionong and failed.
-The lifetime of a system is the elapsed time from when the new, functioning
-system is put into operation until it fails for the first time.
-We are not interested in what happens to a system after it fails, e.g., we do
-not consider repairing systems and putting them back into operation under
-further observation.
+We consider a system composed of $m$ components arranged in a series configuration. Each component and the system only has two possible states, functioning or failed.
 
-A system that is in a functioning state if and only if at least $k$
-of the $m$ components are in a functioning state is denoted a $k$-out-of-$m$
-system.
-We narrow our scope to $m$-out-of-$m$ systems, also known as series systems.
-A series system is functioning if and only if every component is functioning.
-Consequently, in a series system, precisely one component is the cause of
-failure.
+The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system is denoted by the random variable $T_{i j}$. We assume the component lifetimes in a system are statistically independent and non-identically distributed.
+Here, lifetime is defined as the elapsed time from when the new, functioning component is put into operation until it fails for the first time.
 
-Since the component lifetimes are subject to chance variations, we denote the
-lifetime of the $j$\textsuperscript{th} component of the $i$\textsuperscript{th}
-system by the random variable $T_{i j}$.
-
-We make the following assumptions about the components:
-
-1. The $n \times m$ components are independently distributed.
-
-2. The $j$\textsuperscript{th} component across all systems, $T_{1 j}, \ldots, T_{n j}$, are identically distributed.
-
-In a series system, whenever any component fails, the system fails.
-Thus, the lifetime of the $i$\textsuperscript{th} system, $\T_i$, is given by
-the component with the smallest lifetime,
+A series system fails when any component fails. Thus, the lifetime of the $i$\textsuperscript{th} system, $\T_i$, is given by the component with the shortest lifetime,
 $$
     \T_i = \min\bigr\{T_{i 1},T_{i 2}, \ldots, T_{i m} \bigr\}.
 $$
-By properties 1 and 2, the $n$ systems have i.i.d. lifetimes.
 
-We assume that the component lifetimes may be adequately modeled by some
-parametric probability distribution.
-In what follows, matrices and vectors are denoted in boldface, e.g., $\v{x}$ is
-a vector.
-The $i$\textsuperscript{th} column and $(i,j)$-th element of a matrix $\v{A}$
-is denoted respectively by $\v{A_j}$ and $\v{A}_{i j}$.
-We let $\v{\theta_j}$ denote the parameter vector of the $j\textsuperscript{th}$
-component, and each $\v{\theta_j}$ for $j=1,\ldots,m$ may be different sizes.
-We define the parameter vector of the entire series system by
+The component lifetimes are assumed to follow a parametric distribution indexed
+by a parameter vector $\v{\theta_j}$ for the $j$\textsuperscript{th} component.
+The parameter vector of the overall system is defined as
 $$
     \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
 $$
 
-The cumulative distribution function (cdf) for a random varible $T$ is given by
-\begin{equation}
- F_T(t) = \Pr\{T \leq t\},
-\end{equation}
-where $\Pr\{T \in E\}$ denotes the probability that a random variable $T$
-realizes a value in $E$.
-If a random variable $X$ is discrete, then its probability mass function (pmf) $f_X$
-is given by$f_X(x) = \Pr\{X = x\}$.
-The probability density function (pdf) for a continuous random varible $T$ is
-given by
-\begin{equation}
-f_T(t) = \frac{d}{dt} F_T(t).
-\end{equation}
-
-If a random variable $T$ has a parametric distribution indexed by a
-parameter vector $\v\beta$, we denote its pdf by $f_T(t;\v\beta)$ and likewise
-for other distribution functions, e.g., the $i$\textsuperscript{th} series
-system has a cdf denoted by $F_{\T_i}(t;\v{\theta})$.
-In the case of the lifetime distribution functions of components, we subscript
-the distribution functions by component index instead of the symbol for the
-random variable, e.g., the cdf of the $j$\textsuperscript{th} component for the
-$i$-th system is denoted by $F_j(t;\v{\theta_j})$ instead of
-$F_{T_{i j}}(t;\v{\theta_j})$.
-If it is clear from the context which random variable a distribution
-function is for, we may drop the subscripts, e.g., $F(t)$ instead of $F_T(t)$.
-Finally, as an abuse of notation, we often write a function as $f(t)$ when we
-really mean that $f$ is a function of variable $t$.
-
-There are two particularly important functions in survival analysis, the
-survival function and the hazard function.
-\begin{definition}
+There are three particularly important functions in survival analysis, the
+survival function, the probability density function, and the hazard function.
 The survival function, $R_T(t)$, of a random lifetime $T$ is the
 probability that it realizes a value larger than some specified duration of time $t$,
 \begin{equation}
-\begin{split}
-R_T(t) &= \Pr\{T > t\}\\
-     &= 1 - F_T(t).
-\end{split}
+R_T(t) = \Pr\{T > t\}\\
 \end{equation}
 In other words, $R_T(t)$ denotes the probability that $T$ survives longer than
 $t$.
-\end{definition}
 
-The hazard function is a bit more subtle. For a random lifetime $T$, the
-probability that a failure occurs between $t$ and $\Delta t$ given that no
+The probability density function (pdf) of a random lifetime $T$ is denoted by
+$f_T(t)$ and may be defined as
+$$
+    f_T(t) = -\frac{d}{dt} R_T(t).
+$$
+
+Next, we introduce the hazard function.
+For a random lifetime $T$, the probability that a failure occurs between $t$ and $\Delta t$ given that no
 failure occurs before time $t$ is given by
 $$
 \Pr\{T \leq t+\Delta t|T > t\} = \frac{\Pr\{t < T < t+\Delta t\}}{\Pr\{T > t\}}.
@@ -156,8 +108,6 @@ $$
 \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}} =
     \frac{R_T(t) - R(t+\Delta t)}{R_T(t)}.
 $$
-\begin{definition}
-\label{def:failure_rate}
 The hazard function $h_T(t)$ for a continuous random variable $T$ is the
 instantaneous failure rate at time $t$, which is given by
 \begin{equation}
@@ -168,6 +118,15 @@ h_T(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac
 \end{split}
 \end{equation}
 \end{definition}
+
+If the $i$\textsuperscript{th} system has the parameter vector $\v\theta$, we denote its pdf by $f_{\T_i}(t;\v\theta)$ and likewise for other distribution functions, e.g., its relability function is denoted by $R_{\T_i}(t;\v\theta)$.
+We denote the pdf of the $j$\textsuperscript{th} component by
+$f_j(t;\v\{\theta_j})$ and its reliability function by $R_j(t;\v{\theta_j})$.
+If it is clear from the context which random variable a distribution
+function is for, we may drop the subscripts, e.g., $F(t)$ instead of $F_T(t)$.
+Finally, as an abuse of notation, we often write a function as $f(t)$ when we
+really mean that $f$ is a function of variable $t$.
+
 
 Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
 Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
@@ -1587,11 +1546,6 @@ be very accurate.
 ### Variance
 
 ```{r var.plot, echo=F, fig.cap="Variance vs. sample size", fig.align="center"}
-library(ggplot2)
-library(dplyr)
-library(readr)
-library(tidyverse)
-library(latex2exp)
 
 # Load the data
 sim_data <- read_csv("simres.csv")

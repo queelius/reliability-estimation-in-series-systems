@@ -1,0 +1,332 @@
+---
+title: "Bootstrapping statistics of the maximum likelihood estimator of components in a series systems from masked failure data"
+author: "Alex Towell"
+abstract: "We estimate the parameters of a series system with Weibull component lifetimes from relatively small samples consisting of right-censored system lifetimes and masked component cause of failure. Under a set of conditions that permit us to ignore how the component cause of failures are masked, we assess the bias and variance of the estimator. Then, we assess the accuracy of the boostrapped variance and calibration of the confidence intervals of the MLE under a variety of scenarios."
+output:
+    pdf_document:
+        toc: yes
+        toc_depth: 2
+        number_sections: true
+        extra_dependencies: ["graphicx","amsthm","amsmath","natbib","tikz"]
+        df_print: kable
+        keep_tex: true
+indent: true
+bibliography: refs.bib
+csl: the-annals-of-statistics.csl
+---
+
+\newcommand{\T}{T}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{condition}{Condition}
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\numberwithin{equation}{section}
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# cran packages
+cran_packages <- c("devtools", "dplyr", "ggplot2", "gridExtra", "grid", "glue", "png")
+github_packages <- c("queelius/md.tools", "queelius/wei.series.md.c1.c2.c3", "queelius/algebraic.mle")
+
+for (pkg in cran_packages) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+        install.packages(pkg)
+    }
+    eval(parse(text = paste0("library(", pkg, ")")))
+}
+for (pkg in github_packages) {
+    if (!require(pkg, quietly = TRUE)) {
+        install_github(pkg)
+    }
+    # strip the namespace
+    pkg <- gsub(".*\\/", "", pkg)
+    eval(parse(text = paste0("library(", pkg, ")")))
+}
+```
+
+Introduction
+============
+Accurately estimating the reliability of individual components in multi-component systems is an important problem in many engineering domains. However, component lifetimes and failure causes are often not directly observable. In a series system, only the system-level failure time may be recorded along with limited information about which component failed. Such *masked* data poses challenges for estimating component reliability. 
+
+In this paper, we develop a maximum likelihood approach to estimate component reliability in series systems using right-censored lifetime data and candidate sets that contain the failed component. The key contributions are:
+
+1. Deriving a likelihood model that accounts for right-censoring and masked failure causes through candidate sets. This allows the available masked data to be used for estimation.
+
+2. Validating the accuracy, precision, and robustness of the maximum likelihood estimator through an extensive simulation study under different sample sizes, masking probabilities, and censoring levels. 
+
+3. Demonstrating that bootstrapping provides well-calibrated confidence intervals for the MLEs even with small samples.
+
+Together, these contributions provide a statistically rigorous methodology for learning about latent component properties from series system data. The methods are shown to work well even when failure information is significantly masked. This capability expands the range of applications where component reliability can be quantified from limited observations.
+
+The remainder of this paper is organized as follows. First, we detail the series system and masked data models. Next, we present the likelihood construction and maximum likelihood theory. We then describe the bootstrap approach for variance and confidence interval estimation. Finally, we validate the methods through simulation studies under various data scenarios and sample sizes.
+
+Series System Model {#sec:statmod}
+==================================
+We consider a system composed of $m$ components arranged in a series configuration. Each component and system has only two possible states, functioning or failed.
+The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system is denoted by the random variable $T_{i j}$. We assume the component lifetimes in a system are statistically independent and non-identically distributed.
+Here, lifetime is defined as the elapsed time from when the new, functioning component is put into operation until it fails for the first time.
+
+A series system fails when any component fails. Thus, the lifetime of the $i$\textsuperscript{th} system, $\T_i$, is given by the component with the shortest lifetime,
+$$
+    \T_i = \min\bigr\{T_{i 1},T_{i 2}, \ldots, T_{i m} \bigr\}.
+$$
+
+The component lifetimes are assumed to follow a parametric distribution indexed
+by a parameter vector $\v{\theta_j}$ for the $j$\textsuperscript{th} component.
+The parameter vector of the overall system is defined as
+$$
+    \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
+$$
+
+There are three particularly important functions in survival analysis, the
+survival function and the hazard function.
+\begin{definition}
+The survival function, $R_T(t)$, of a random lifetime $T$ is the
+probability that it realizes a value larger than some specified duration of time $t$,
+\begin{equation}
+R_T(t) = \Pr\{T > t\}\\
+\end{equation}
+In other words, $R_T(t)$ denotes the probability that $T$ survives longer than
+$t$.
+\end{definition}
+
+
+
+Next, we introduce the hazard function.
+For a random lifetime $T$, the probability that a failure occurs between $t$ and $\Delta t$ given that no
+failure occurs before time $t$ is given by
+$$
+\Pr\{T \leq t+\Delta t|T > t\} = \frac{\Pr\{t < T < t+\Delta t\}}{\Pr\{T > t\}}.
+$$
+The *failure rate* is given by the above divided by the length of the time
+interval, $\Delta t$:
+$$
+\frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}} =
+    \frac{R_T(t) - R(t+\Delta t)}{R_T(t)}.
+$$
+\begin{definition}
+\label{def:failure_rate}
+The hazard function $h_T(t)$ for a continuous random variable $T$ is the
+instantaneous failure rate at time $t$, which is given by
+\begin{equation}
+\label{eq:failure_rate}
+\begin{split}
+h_T(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}}\\
+       &= \frac{f_T(t)}{R_T(t)}.
+\end{split}
+\end{equation}
+\end{definition}
+
+If the $i$\textsuperscript{th} system has the parameter vector $\v\theta$, we denote its pdf by
+$f_{\T_i}(t;\v\theta)$ and likewise for other distribution functions, e.g., its relability function is denoted by $R_{\T_i}(t;\v\theta)$.
+We denote the pdf of the $j$\textsuperscript{th} component by
+$f_j(t;\v{\theta_j})$ and its reliability function by $R_j(t;\v{\theta_j})$.
+If it is clear from the context which random variable a distribution
+function is for, we may drop the subscripts, e.g., $F(t)$ instead of $F_T(t)$.
+Finally, as an abuse of notation, we often write a function as $f(t)$ when we
+really mean that $f$ is a function of variable $t$.
+
+
+Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
+Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
+$$
+f_X(x) = \int_{\mathcal{Y}} f_{X,Y}(x,y) dy,
+$$
+where $\mathcal{Y}$ is the support of $Y$. (If $Y$ is discrete, replace
+the integration with a summation over $\mathcal{Y}$.)
+
+The conditional pdf of $Y$ given $X=x$, $f_{Y|X}(y|x)$, is defined as
+$$
+f_{X|Y}(y|x) = \frac{f_{X,Y}(x,y)}{f_X(x)}.
+$$
+We may generalize all of the above to more than two random variables, e.g.,
+the joint pdf of $X_1,\ldots,X_m$ is denoted by $f(x_1,\ldots,x_m)$.
+
+Next, we dive deeper into these concepts and provide mathematical derivations for
+the reliability function, pdf, and hazard function of the series system.
+We begin with the reliability function of the series system, as given by the following theorem.
+\begin{theorem}
+\label{thm:sys_reliability_function}
+The series system has a reliability function given by
+\begin{equation}
+\label{eq:sys_reliability_function}
+  R(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+\end{equation}
+\end{theorem}
+\begin{proof}
+The reliability function is defined as
+$$
+  R(t;\v\theta) = \Pr\{\T_i > t\}
+$$
+which may be rewritten as
+$$
+  R(t;\v\theta) = \Pr\{\min\{T_{i 1},\ldots,T_{i m}\} > t\}.
+$$
+For the minimum to be larger than $t$, every component must be larger than $t$,
+$$
+  R(t;\v\theta) = \Pr\{T_{i 1} > t,\ldots,T_{i m} > t\}.
+$$
+Since the component lifetimes are independent, by the product rule the above may
+be rewritten as
+$$
+  R(t;\v\theta) = \Pr\{T_{i 1} > t\} \times \cdots \times \Pr\{T_{i m} > t\}.
+$$
+By definition, $R_j(t;\v\theta) = \Pr\{T_{i j} > t\}$.
+Performing this substitution obtains the result
+$$
+  R(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+$$
+\end{proof}
+
+Theorem \ref{thm:sys_reliability_function} shows that the system's overall reliability is the product of the reliabilities of its individual components. This property is inherent to series systems and will be used in the subsequent derivations.
+
+Next, we turn our attention to the pdf of the system lifetime, described in the following theorem.
+\begin{theorem}
+\label{thm:sys_pdf}
+The series system has a pdf given by
+\begin{equation}
+\label{eq:sys_pdf}
+f(t;\v\theta) = \sum_{j=1}^m f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k\neq j}}^m R_k(t;\v{\theta_j}).
+\end{equation}
+\end{theorem}
+\begin{proof}
+By definition, the pdf may be written as
+$$
+    f(t;\v\theta) = -\frac{d}{dt} \prod_{j=1}^m R_j(t;\v{\theta_j}).
+$$
+By the product rule, this may be rewritten as
+\begin{align*}
+  f(t;\v\theta)
+    &= -\frac{d}{dt} R_1(t;\v{\theta_1})\prod_{j=2}^m R_j(t;\v{\theta_j}) -
+      R_1(t;\v{\theta_1}) \frac{d}{dt} \prod_{j=2}^m R_j(t;\v{\theta_j})\\
+    &= f_1(t;\v\theta) \prod_{j=2}^m R_j(t;\v{\theta_j}) -
+      R_1(t;\v{\theta_1}) \frac{d}{dt} \prod_{j=2}^m R_j(t;\v{\theta_j}).
+\end{align*}
+Recursively applying the product rule $m-1$ times results in
+$$
+f(t;\v\theta) = \sum_{j=1}^{m-1} f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k}) -
+    \prod_{j=1}^{m-1} R_j(t;\v{\theta_j}) \frac{d}{dt} R_m(t;\v{\theta_m}),
+$$
+which simplifies to
+$$
+f(t;\v\theta)= \sum_{j=1}^m f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k}).
+$$
+\end{proof}
+Theorem \ref{thm:sys_pdf} shows the pdf of the system lifetime as a function of the pdfs and reliabilities of its components.
+
+We continue with the hazard function of the system lifetime, defined in the next theorem.
+\begin{theorem}
+\label{thm:sys_failure_rate}
+The series system has a hazard function given by
+\begin{equation}
+\label{eq:sys_failure_rate}
+  h(t;\v\theta) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
+\end{equation}
+\end{theorem}
+\begin{proof}
+The $i$\textsuperscript{th} series system lifetime has a hazard function defined as
+$$
+  h(t;\v\theta) = \frac{f_{\T_i}(t;\v\theta)}{R_{\T_i}(t;\v\theta)}.
+$$
+Plugging in expressions for these functions results in
+$$
+  h(t;\v\theta) = \frac{\sum_{j=1}^m f_j(t;\v{\theta_j})
+    \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k})}
+      {\prod_{j=1}^m R_j(t;\v{\theta_j})},
+$$
+which can be simplified to
+\begin{align*}
+h_{T_i}(t;\v\theta)
+    &= \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})}\\
+    &= \sum_{j=1}^m h_j(t;\v{\theta_j}).
+\end{align*}
+\end{proof}
+
+Theorem \ref{thm:sys_failure_rate} reveals that the system's hazard function is the sum of the hazard functions of its components.
+
+By definition, the hazard function is the ratio of the pdf to the reliability
+function,
+$$
+h(t;\v\theta) = \frac{f(t;\v\theta)}{R(t;\v\theta)},
+$$
+and we can rearrange this to get
+\begin{equation}
+\label{eq:sys_pdf_2}
+\begin{split}
+f(t;\v\theta) &= h(t;\v\theta) R(t;\v\theta)\\
+              &= \biggl\{\sum_{j=1}^m h_j(t;\v{\theta_j})\biggr\}
+                 \biggl\{ \prod_{j=1}^m R_j(t;\v{\theta_j}) \biggr\},
+\end{split}
+\end{equation}
+which we sometimes find to be a more convenient form than Equation \eqref{eq:sys_pdf}.
+
+In this section, we derived the mathematical forms for the system's reliability function, pdf, and hazard function. Next, we build upon these concepts to derive distributions related to the component cause of failure.
+
+## Component Cause of Failure {#sec:comp_cause}
+Whenever a series system fails, precisely one of the components is the cause.
+We model the component cause of the series system failure as a random variable.
+\begin{definition}
+The component cause of failure of a series system is
+denoted by the random variable $K_i$ whose support is given by $\{1,\ldots,m\}$.
+For example, $K_i=j$ indicates that the component indexed by $j$ failed first, i.e.,
+$$
+    T_{i j} < T_{i j'}
+$$
+for every $j'$ in the support of $K_i$ except for $j$.
+Since we have series systems, $K_i$ is unique.
+\end{definition}
+Note that a more succinct way to define $K_i$ is given by
+$$
+K_i = \operatorname{argmin}_j \bigl\{ T_{i j} : j \in \{1,\ldots,m\}\bigr\}.
+$$
+
+The system lifetime and the component cause of failure has a joint distribution
+given by the following theorem.
+\begin{theorem}
+\label{thm:f_k_and_t}
+The joint pdf of the component cause of failure $K_i$ and series system lifetime
+$\T_i$ is given by
+\begin{equation}
+\label{eq:f_k_and_t}
+  f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) R_{\T_i}(t;\v\theta),
+\end{equation}
+where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th}
+component and $R_{\T_i}(t;\v\theta)$ is the reliability function of the series
+system.
+\end{theorem}
+\begin{proof}
+Consider a $3$-out-of-$3$ system.
+By the assumption that component lifetimes are mutually independent,
+the joint pdf of $T_{i 1},T_{i 2},T_{i 3}$ is given by
+$$
+    f(t_1,t_2,t_3;\v\theta) = \prod_{j=1}^{3} f_j(t;\v{\theta_j}).
+$$
+The first component is the cause of failure at time $t$ if $K_i = 1$ and
+$T_i = t$, which may be rephrased as the likelihood that $T_{i 1} = t$,
+$T_{i 2} > t$, and $T_{i 3} > t$. Thus,
+\begin{align*}
+f_{K_i,T_i}(j;\v\theta) 
+    &= \int_t^{\infty} \int_t^{\infty}
+        f_1(t;\v{\theta_1}) f_2(t_2;\v{\theta_2}) f_3(t_3;\v{\theta_3})
+        dt_3 dt_2\\
+     &= \int_t^{\infty} f_1(t;\v{\theta_1}) f_2(t_2;\v{\theta_2})
+        R_3(t;\v{\theta_3}) dt_2\\
+     &= f_1(t;\v{\theta_1}) R_2(t;\v{\theta_2}) R_3(t_1;\v{\theta_3}).
+\end{align*}
+Since $h_1(t;\v{\theta_1}) = f_1(t;\v{\theta_1}) / R_1(t;\v{\theta_1})$,
+$$
+f_1(t;\v{\theta_1}) = h_1(t;\v{\theta_1}) R_1(t;\v{\theta_1}).
+$$
+Making this substitution into the above expression for $f_{K_i,T_i}(j,t;\v\theta)$
+yields
+\begin{align*}
+f_{K_i,T_i}(j,t;\v\theta)
+    &= h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l})\\
+    &= h_1(t;\v{\theta_1}) R(t;\v{\theta}).
+\end{align*}
+Generalizing from this completes the proof.
+\end{proof}
