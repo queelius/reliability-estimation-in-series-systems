@@ -30,9 +30,10 @@ n_cores <- detectCores() - 1
 N <- c(25, 50, 75, 100)
 P <- c(0, .25, .5)
 Q <- c(1, .75, .5)
-R <- 200
-B <- 300
+R <- 10
+B <- 500
 total_retries <- 20L
+max_iter <- 500L
 
 cat("Simulation parameters:\n")
 cat("R: ", R, "\n")
@@ -54,6 +55,7 @@ options(digits = 3)
 for (n in N) {
     for (p in P) {
         for (q in Q) {
+            cat("Starting scenario: n: ", n, ", p: ", p, ", q: ", q, "\n")            
             # tau, the right-censoring time of the scenario, is the
             # q-th quantile of the weibull series ssytem distribution
             tau <- wei.series.md.c1.c2.c3::qwei_series(
@@ -76,6 +78,9 @@ for (n in N) {
             # for each MLE, we bootstrap the MSE of the MLE
             mse.boot <- matrix(NA, nrow = R, ncol = length(theta))
 
+            # capture convergence of the MLE
+            convergence <- rep(NA, R)
+
             # for each MLE, we bootstrap the confidence interval of the MLE
             # and the coverage probability of the confidence intervals
             cov_prob <- rep(0, length(theta))
@@ -93,7 +98,6 @@ for (n in N) {
             coverages <- matrix(NA, nrow = R, ncol = length(theta))
 
             iter <- 0L
-            t0 <- Sys.time()
             retries <- 0L
             repeat {
                 retry <- FALSE
@@ -103,7 +107,7 @@ for (n in N) {
 
                     sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
                         theta0 = theta, df = df, hessian = FALSE,
-                        control = list(maxit = 5L, parscale = parscale))
+                        control = list(maxit = max_iter, parscale = parscale))
 
                     # do the non-parametric bootstrap
                     sol.boot <- mle_boot(boot::boot(df, mle_solver,
@@ -147,8 +151,14 @@ for (n in N) {
                 uppers.boot[iter, ] <- ci[, 2]
                 theta.hats[iter, ] <- sol$par
                 logliks[iter] <- sol$value
+                convergence[iter] <- sol$convergence
+                if (convergence[iter] == 0) {
+                    cat("Iteration ", iter, ": convergence obtained!\n")
+                } else {
+                    cat("Iteration ", iter, ": convergence not obtained!\n")
+                }
 
-                if (iter %% 50 == 0) {
+                if (iter %% 5 == 0) {
                     cat("Scenario (n = ", n, ", p = ", p, ", q = ", q, "): ", iter, "/", R, "\n")
                 }
 
@@ -167,7 +177,7 @@ for (n in N) {
                 coverages = coverages,
                 lowers = lowers.boot,
                 uppers = uppers.boot,
-                convergence = sol.boot$convergence,
+                convergence = convergence,
                 bias = bias.boot,
                 var = var.boot,
                 mse = mse.boot,
