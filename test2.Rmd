@@ -16,10 +16,10 @@ csl: the-annals-of-statistics.csl
 ---
 
 \newcommand{\T}{T}
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
-\newtheorem{condition}{Condition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{condition}{Condition}[section]
 \renewcommand{\v}[1]{\boldsymbol{#1}}
 \numberwithin{equation}{section}
 

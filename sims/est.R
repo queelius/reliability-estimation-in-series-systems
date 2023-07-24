@@ -23,10 +23,10 @@ mle_solver <- function(df, i) {
 }
 
 n_cores <- 3
-N <- c(30, 40, 50, 75, 100, 150, 200, 400, 800, 1600)
-P <- c(0, .1, .2, .4)
-Q <- c(1, .9, .8, .6)
-R <- 400
+N <- c(2000)
+P <- c(0, .25, .5)
+Q <- c(1, .75, .5)
+R <- 500
 total_retries <- 20L
 
 cat("Simulation parameters:\n")
@@ -133,9 +133,9 @@ scenario_fn <- function(params) {
 
     # let's making writing to the file an atomic operation, since other threads
     # might be writing to the same file.
-    lock <- file(description = "simres.csv", open = "a")
+    lock <- file(description = "data2.csv", open = "a")
     # let's append to the file if it exists, otherwise create it
-    if (file.info("simres.csv")$size == 0) {
+    if (file.info("data2.csv")$size == 0) {
         write.table(df, file = lock, row.names = FALSE, sep = ",")
     } else {
         write.table(df, file = lock, row.names = FALSE, sep = ",", append = TRUE,

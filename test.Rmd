@@ -16,9 +16,9 @@ csl: the-annals-of-statistics.csl
 ---
 
 \newcommand{\T}{T}
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
 \newtheorem{condition}{Condition}
 \renewcommand{\v}[1]{\boldsymbol{#1}}
 \numberwithin{equation}{section}
@@ -63,70 +63,63 @@ The remainder of this paper is organized as follows. First, we detail the series
 
 Series System Model {#sec:statmod}
 ==================================
-We consider a system composed of $m$ components arranged in a series configuration. Each component and the system only has two possible states, functioning or failed.
-
-The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system is denoted by the random variable $T_{i j}$. We assume the component lifetimes in a system are statistically independent and non-identically distributed.
-Here, lifetime is defined as the elapsed time from when the new, functioning component is put into operation until it fails for the first time.
-
-A series system fails when any component fails. Thus, the lifetime of the $i$\textsuperscript{th} system, $\T_i$, is given by the component with the shortest lifetime,
+We consider a system composed of $m$ components arranged in a series configuration. Each component and system has two possible states, functioning or failed.
+We have $n$ systems whose lifetimes are independent and identically distributed (i.i.d.).
+The lifetime of the $i$\textsuperscript{th} system denoted by the random variable $T_{i}$.
+The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system is denoted by the random variable $T_{i j}$.
+We assume the component lifetimes in a single system are statistically independent and non-identically distributed.
+Here, lifetime is defined as the elapsed time from when the new, functioning component (or system) is put into operation until it fails for the first time.
+A series system fails when any component fails, thus the lifetime of the $i$\textsuperscript{th} system is given by the component with the shortest lifetime,
 $$
     \T_i = \min\bigr\{T_{i 1},T_{i 2}, \ldots, T_{i m} \bigr\}.
 $$
-
-The component lifetimes are assumed to follow a parametric distribution indexed
-by a parameter vector $\v{\theta_j}$ for the $j$\textsuperscript{th} component.
-The parameter vector of the overall system is defined as
+The lifetime of the $j$\textsuperscript{th} component is assumed to follow a parametric distribution indexed
+by a parameter vector $\v{\theta_j}$. The parameter vector of the overall system is defined as
 $$
     \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
 $$
 
-There are three particularly important functions in survival analysis, the
+There are three particularly important distribution functions in survival analysis: the
 survival function, the probability density function, and the hazard function.
-The survival function, $R_T(t)$, of a random lifetime $T$ is the
-probability that it realizes a value larger than some specified duration of time $t$,
+The survival function, $R_{\T_i}(t)$, is the
+probability that the $i$\textsuperscript{th} system has a lifespan larger than a duration $t$,
 \begin{equation}
-R_T(t) = \Pr\{T > t\}\\
+R_{\T_i}(t) = \Pr\{\T_i > t\}\\
 \end{equation}
-In other words, $R_T(t)$ denotes the probability that $T$ survives longer than
-$t$.
-
-The probability density function (pdf) of a random lifetime $T$ is denoted by
-$f_T(t)$ and may be defined as
+The probability density function (pdf) of $T_i$ is denoted by
+$f_{T_i}(t)$ and may be defined as
 $$
-    f_T(t) = -\frac{d}{dt} R_T(t).
+    f_{T_i}(t) = -\frac{d}{dt} R_{T_i}(t).
 $$
-
 Next, we introduce the hazard function.
-For a random lifetime $T$, the probability that a failure occurs between $t$ and $\Delta t$ given that no
+The probability that a failure occurs between $t$ and $\Delta t$ given that no
 failure occurs before time $t$ is given by
 $$
-\Pr\{T \leq t+\Delta t|T > t\} = \frac{\Pr\{t < T < t+\Delta t\}}{\Pr\{T > t\}}.
+\Pr\{\T_i \leq t+\Delta t|T_i > t\} = \frac{\Pr\{t < T_i < t+\Delta t\}}{\Pr\{T_i > t\}}.
 $$
-The *failure rate* is given by the above divided by the length of the time
+The failure rate is given by the dividing this equation by the length of the time
 interval, $\Delta t$:
 $$
 \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}} =
     \frac{R_T(t) - R(t+\Delta t)}{R_T(t)}.
 $$
-The hazard function $h_T(t)$ for a continuous random variable $T$ is the
-instantaneous failure rate at time $t$, which is given by
+The hazard function $h_{\T_i}(t)$ for $T_i$ is the instantaneous failure rate at time $t$, which is given by
 \begin{equation}
 \label{eq:failure_rate}
 \begin{split}
-h_T(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}}\\
-       &= \frac{f_T(t)}{R_T(t)}.
+h_{T_i}(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < \T_i < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{\T_i > t\}}\\
+       &= \frac{f_{T_i}(t)}{R_{T_i}(t)}.
 \end{split}
 \end{equation}
 \end{definition}
 
-If the $i$\textsuperscript{th} system has the parameter vector $\v\theta$, we denote its pdf by $f_{\T_i}(t;\v\theta)$ and likewise for other distribution functions, e.g., its relability function is denoted by $R_{\T_i}(t;\v\theta)$.
+If the $i$\textsuperscript{th} system has the parameter vector $\v\theta$, we denote its pdf by
+$f_{\T_i}(t;\v\theta)$ and likewise for other distribution functions, e.g., its
+relability function is denoted by $R_{\T_i}(t;\v\theta)$. If it is clear from the context which
+random variable a distribution function is for, we drop the subscripts, e.g., $F(t)$ instead of
+$F_{\T_i}(t)$.
 We denote the pdf of the $j$\textsuperscript{th} component by
-$f_j(t;\v\{\theta_j})$ and its reliability function by $R_j(t;\v{\theta_j})$.
-If it is clear from the context which random variable a distribution
-function is for, we may drop the subscripts, e.g., $F(t)$ instead of $F_T(t)$.
-Finally, as an abuse of notation, we often write a function as $f(t)$ when we
-really mean that $f$ is a function of variable $t$.
-
+$f_j(t;\v{\theta_j})$ and its reliability function by $R_j(t;\v{\theta_j})$.
 
 Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
 Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
@@ -1548,7 +1541,7 @@ be very accurate.
 ```{r var.plot, echo=F, fig.cap="Variance vs. sample size", fig.align="center"}
 
 # Load the data
-sim_data <- read_csv("simres.csv")
+sim_data <- read_csv("./results/data/data-fim.csv")
 
 # rename columns for plotting
 sim_data <- sim_data %>% rename(
@@ -1698,8 +1691,10 @@ cat("<div id=\"refs\"></div>")
 
 # Appendix {#app}
 
-\renewcommand{\thesection}{\Alph{section}}
-\setcounter[section}{0}
+```{r eval=F}
+#\renewcommand{\thesection}{\Alph{section}}
+#\setcounter[section}{0}
+```
 
 ## Data {#app:data}
 
