@@ -1,0 +1,4 @@
+for file in *.pdf; do
+    output_file="${file%.pdf}.png"
+    convert "$file" "$output_file"
+done

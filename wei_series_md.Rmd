@@ -10,9 +10,11 @@ output:
         extra_dependencies: ["graphicx","amsthm","amsmath","natbib","tikz"]
         df_print: kable
         keep_tex: true
+        citation_package: natbib
 indent: true
 bibliography: refs.bib
-csl: the-annals-of-statistics.csl
+biblio-style: apalike
+#csl: the-annals-of-statistics.csl
 ---
 
 \newcommand{\T}{T}
@@ -52,122 +54,66 @@ Together, these contributions provide a statistically rigorous methodology for l
 
 The remainder of this paper is organized as follows. First, we detail the series system and masked data models. Next, we present the likelihood construction and maximum likelihood theory. We then describe the bootstrap approach for variance and confidence interval estimation. Finally, we validate the methods through simulation studies under various data scenarios and sample sizes.
 
+
 Series System Model {#sec:statmod}
 ==================================
-We consider a system with $m$ components indexed by $1,2,\ldots,m$.
-Each component, and the system, only has two possible states, functionong and failed.
-The lifetime of a system is the elapsed time from when the new, functioning
-system is put into operation until it fails for the first time.
-We are not interested in what happens to a system after it fails, e.g., we do
-not consider repairing systems and putting them back into operation under
-further observation.
-
-A system that is in a functioning state if and only if at least $k$
-of the $m$ components are in a functioning state is denoted a $k$-out-of-$m$
-system.
-We narrow our scope to $m$-out-of-$m$ systems, also known as series systems.
-A series system is functioning if and only if every component is functioning.
-Consequently, in a series system, precisely one component is the cause of
-failure.
-
-Since the component lifetimes are subject to chance variations, we denote the
-lifetime of the $j$\textsuperscript{th} component of the $i$\textsuperscript{th}
-system by the random variable $T_{i j}$.
-
-We make the following assumptions about the components:
-
-1. The $n \times m$ components are independently distributed.
-
-2. The $j$\textsuperscript{th} component across all systems, $T_{1 j}, \ldots, T_{n j}$, are identically distributed.
-
-In a series system, whenever any component fails, the system fails.
-Thus, the lifetime of the $i$\textsuperscript{th} system, $\T_i$, is given by
-the component with the smallest lifetime,
+Consider a system composed of $m$ components arranged in a series configuration. Each component and system has two possible states, functioning or failed.
+We have $n$ systems whose lifetimes are independent and identically distributed (i.i.d.).
+The lifetime of the $i$\textsuperscript{th} system denoted by the random variable $T_{i}$.
+The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system is denoted by the random variable $T_{i j}$.
+We assume the component lifetimes in a single system are statistically independent and non-identically distributed.
+Here, lifetime is defined as the elapsed time from when the new, functioning component (or system) is put into operation until it fails for the first time.
+A series system fails when any component fails, thus the lifetime of the $i$\textsuperscript{th} system is given by the component with the shortest lifetime,
 $$
     \T_i = \min\bigr\{T_{i 1},T_{i 2}, \ldots, T_{i m} \bigr\}.
 $$
-By properties 1 and 2, the $n$ systems have i.i.d. lifetimes.
 
-We assume that the component lifetimes may be adequately modeled by some
-parametric probability distribution.
-In what follows, matrices and vectors are denoted in boldface, e.g., $\v{x}$ is
-a vector.
-The $i$\textsuperscript{th} column and $(i,j)$-th element of a matrix $\v{A}$
-is denoted respectively by $\v{A_j}$ and $\v{A}_{i j}$.
-We let $\v{\theta_j}$ denote the parameter vector of the $j\textsuperscript{th}$
-component, and each $\v{\theta_j}$ for $j=1,\ldots,m$ may be different sizes.
-We define the parameter vector of the entire series system by
+There are three particularly important distribution functions in survival analysis: the
+survival function, the probability density function, and the hazard function.
+The survival function, $R_{\T_i}(t)$, is the
+probability that the $i$\textsuperscript{th} system has a lifespan larger than a duration $t$,
+\begin{equation}
+R_{\T_i}(t) = \Pr\{\T_i > t\}\\
+\end{equation}
+The probability density function (pdf) of $T_i$ is denoted by
+$f_{T_i}(t)$ and may be defined as
 $$
-    \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
+    f_{T_i}(t) = -\frac{d}{dt} R_{T_i}(t).
 $$
-
-The cumulative distribution function (cdf) for a random varible $T$ is given by
-\begin{equation}
- F_T(t) = \Pr\{T \leq t\},
-\end{equation}
-where $\Pr\{T \in E\}$ denotes the probability that a random variable $T$
-realizes a value in $E$.
-If a random variable $X$ is discrete, then its probability mass function (pmf) $f_X$
-is given by$f_X(x) = \Pr\{X = x\}$.
-The probability density function (pdf) for a continuous random varible $T$ is
-given by
-\begin{equation}
-f_T(t) = \frac{d}{dt} F_T(t).
-\end{equation}
-
-If a random variable $T$ has a parametric distribution indexed by a
-parameter vector $\v\beta$, we denote its pdf by $f_T(t;\v\beta)$ and likewise
-for other distribution functions, e.g., the $i$\textsuperscript{th} series
-system has a cdf denoted by $F_{\T_i}(t;\v{\theta})$.
-In the case of the lifetime distribution functions of components, we subscript
-the distribution functions by component index instead of the symbol for the
-random variable, e.g., the cdf of the $j$\textsuperscript{th} component for the
-$i$-th system is denoted by $F_j(t;\v{\theta_j})$ instead of
-$F_{T_{i j}}(t;\v{\theta_j})$.
-If it is clear from the context which random variable a distribution
-function is for, we may drop the subscripts, e.g., $F(t)$ instead of $F_T(t)$.
-Finally, as an abuse of notation, we often write a function as $f(t)$ when we
-really mean that $f$ is a function of variable $t$.
-
-There are two particularly important functions in survival analysis, the
-survival function and the hazard function.
-\begin{definition}
-The survival function, $R_T(t)$, of a random lifetime $T$ is the
-probability that it realizes a value larger than some specified duration of time $t$,
-\begin{equation}
-\begin{split}
-R_T(t) &= \Pr\{T > t\}\\
-     &= 1 - F_T(t).
-\end{split}
-\end{equation}
-In other words, $R_T(t)$ denotes the probability that $T$ survives longer than
-$t$.
-\end{definition}
-
-The hazard function is a bit more subtle. For a random lifetime $T$, the
-probability that a failure occurs between $t$ and $\Delta t$ given that no
+Next, we introduce the hazard function.
+The probability that a failure occurs between $t$ and $\Delta t$ given that no
 failure occurs before time $t$ is given by
 $$
-\Pr\{T \leq t+\Delta t|T > t\} = \frac{\Pr\{t < T < t+\Delta t\}}{\Pr\{T > t\}}.
+\Pr\{\T_i \leq t+\Delta t|T_i > t\} = \frac{\Pr\{t < T_i < t+\Delta t\}}{\Pr\{T_i > t\}}.
 $$
-The *failure rate* is given by the above divided by the length of the time
+The failure rate is given by the dividing this equation by the length of the time
 interval, $\Delta t$:
 $$
 \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}} =
     \frac{R_T(t) - R(t+\Delta t)}{R_T(t)}.
 $$
-\begin{definition}
-\label{def:failure_rate}
-The hazard function $h_T(t)$ for a continuous random variable $T$ is the
-instantaneous failure rate at time $t$, which is given by
+The hazard function $h_{\T_i}(t)$ for $T_i$ is the instantaneous failure rate at time $t$, which is given by
 \begin{equation}
 \label{eq:failure_rate}
 \begin{split}
-h_T(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}}\\
-       &= \frac{f_T(t)}{R_T(t)}.
+h_{T_i}(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < \T_i < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{\T_i > t\}}\\
+       &= \frac{f_{T_i}(t)}{R_{T_i}(t)}.
 \end{split}
 \end{equation}
 \end{definition}
+
+The lifetime of the $j$\textsuperscript{th} component is assumed to follow a parametric distribution indexed
+by a parameter vector $\v{\theta_j}$. The parameter vector of the overall system is defined as
+$$
+    \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
+$$
+
+When a random variable $T$ is parameterized by a particular $\v\theta$, we denote the
+reliability function by $R_T(t;\v\theta)$, and the same for other distribution functions.
+If it is clear from the context which random variable a distribution function is for, we
+drop the subscripts, e.g., $R(t)$ instead of $R_T(t)$.
+As a special case, we denote the pdf of the $j$\textsuperscript{th} component by
+$f_j(t;\v{\theta_j})$ and its reliability function by $R_j(t;\v{\theta_j})$.
 
 Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
 Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
@@ -269,7 +215,7 @@ The series system has a hazard function given by
 \end{equation}
 \end{theorem}
 \begin{proof}
-The $i$\textsuperscript{th} series system lifetime has a hazard function defined as
+By Equation \eqref{eq:failure_rate}, the $i$\textsuperscript{th} series system lifetime has a hazard function defined as
 $$
   h(t;\v\theta) = \frac{f_{\T_i}(t;\v\theta)}{R_{\T_i}(t;\v\theta)}.
 $$
@@ -280,11 +226,9 @@ $$
       {\prod_{j=1}^m R_j(t;\v{\theta_j})},
 $$
 which can be simplified to
-\begin{align*}
-h_{T_i}(t;\v\theta)
-    &= \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})}\\
-    &= \sum_{j=1}^m h_j(t;\v{\theta_j}).
-\end{align*}
+$$
+h_{T_i}(t;\v\theta) = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})} = \sum_{j=1}^m h_j(t;\v{\theta_j}).
+$$
 \end{proof}
 
 Theorem \ref{thm:sys_failure_rate} reveals that the system's hazard function is the sum of the hazard functions of its components.
@@ -320,10 +264,6 @@ $$
 for every $j'$ in the support of $K_i$ except for $j$.
 Since we have series systems, $K_i$ is unique.
 \end{definition}
-Note that a more succinct way to define $K_i$ is given by
-$$
-K_i = \operatorname{argmin}_j \bigl\{ T_{i j} : j \in \{1,\ldots,m\}\bigr\}.
-$$
 
 The system lifetime and the component cause of failure has a joint distribution
 given by the following theorem.
@@ -340,7 +280,7 @@ component and $R_{\T_i}(t;\v\theta)$ is the reliability function of the series
 system.
 \end{theorem}
 \begin{proof}
-Consider a $3$-out-of-$3$ system.
+Consider a series system with $3$ components.
 By the assumption that component lifetimes are mutually independent,
 the joint pdf of $T_{i 1},T_{i 2},T_{i 3}$ is given by
 $$
@@ -471,8 +411,6 @@ System | Right-censoring time ($S_i$) | Right censoring indicator ($\delta_i$) |
    6   | $10$                        | 0                           | $\emptyset$           |
 
 : Right-censored lifetime data with masked component cause of failure.
-
-In statistical modeling, the likelihood is a powerful tool that allows us to estimate the parameters of a model given observed data. In more mathematical terms, the likelihood function quantifies how probable our observed data are for various possible values of the parameters in a statistical model. We denote these parameters as $\v\theta$ in this discussion. 
 
 In our model, we assume the data is governed by a pdf, which is determined by
 a specific parameter, represented as $\v\theta$ within the parameter space $\v\Omega$.
@@ -753,208 +691,66 @@ $$
 We use this result in the next section to derive the maximum likelihood
 estimator of $\v\theta$.
 
+
 Maximum Likelihood Estimation {#sec:mle}
 ========================================
+In our analysis, we use maximum likelihood estimation (MLE) to estimate the series system parameter $\v\theta$ from the masked data \citep{bain, casella2002statistical}. The MLE finds parameter values that maximize the likelihood of the observed data under the assumed model. The maximum likelihood estimate, $\hat{\v\theta}$, is the solution of:
 
-We use maximum likelihood estimation (MLE) to estimate the series system
-parameter $\v\theta$ given the masked data described in Section
-\ref{#sec:like_model}.
-This is achieved by maximizing the likelihood function $L(\v\theta)$ with
-respect to $\v\theta$ so that, under the assumed model, the observed data is
-most likely.
-The point in the parameter space $\Omega$ that maximizes the likelihood function
-is called the maximum likelihood estimate.
-
-According to @bain, a point $\hat{\v\theta}$ in $\v\Omega$ at which $L(\v\theta)$
-is a maximum is called the *maximum likelhood estimate* (MLE) of $\v\theta$.
-That is, $\hat{\v\theta}$ is a value of $\v\theta$ that satisfies
 \begin{equation}
 \label{eq:mle}
-L(\hat{\v\theta}) = \max_{\v\theta \in \v\Omega} L(\v\theta).
+L(\hat{\v\theta}) = \max_{\v\theta \in \v\Omega} L(\v\theta),
 \end{equation}
-Essentially, the MLE is a point in the parameter space that is a maximum of the
-likelihood of the observed data,
-$$
-\hat{\v\theta} \in \arg\max_{\v\theta \in \v\Omega} L(\v\theta).
-$$
 
-Any point that maximizes the likelihood function also maximizes the log-likelihood
-function.
-Thus, for both computational and analytical reasons, we work with the log-likelihood
-function.
+where $L(\v\theta)$ is the likelihood function of the observed data. For computational and analytical simplicity, we work with the log-likelihood function, denoted as $\ell(\v\theta)$, instead of the likelihood function \citep{casella2002statistical}.
+
 \begin{theorem}
 \label{thm:loglike_total}
-The log-likelihood function, $\ell(\v\theta)$, is given by
-the log of the likelihood function for our masked data model,
+The log-likelihood function, $\ell(\v\theta)$, for our masked data model is the sum of the log-likelihoods for each observation,
+
 \begin{equation}
 \label{eq:loglike}
-\ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta)
+\ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta),
 \end{equation}
-where
+where $\ell_i(\v\theta)$ is the log-likelihood contribution for the $i$\textsuperscript{th} observation:
 \begin{equation}
 \ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) +
     \delta_i \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \bigr).
 \end{equation}
 \end{theorem}
 \begin{proof}
-The log-likelihood function is just the logarithm of the likelihood function,
+The log-likelihood function is the logarithm of the likelihood function,
 $$
-\ell(\v\theta) = \log L(\v\theta) = \log \prod_{i=1}^n L_i(\v\theta).
+\ell(\v\theta) = \log L(\v\theta) = \log \prod_{i=1}^n L_i(\v\theta) = \sum_{i=1}^n \log L_i(\v\theta).
 $$
-Since $\log(A \cdot B) = \log(A) + \log(B)$, we may rewrite the log-likelihood
-function as
-$$
-\ell(\v\theta) = \sum_{i=1}^n \log L_i(\v\theta).
-$$
-By Equation \eqref{eq:like}, $L_i$ is given by
-$$
-L_i(\v\theta) =
-\begin{cases}
-R_{\T_i}(s_i;\v\theta) &\text{ if } \delta_i = 0,\\
-R_{\T_i}(s_i;\v\theta)
-    \beta_i \sum_{j\in c_i} h_j(s_i;\v{\theta_j}) &\text{ if } \delta_i = 1.
-\end{cases}
-$$
+Substituting $L_i(\v\theta)$ from Equation \eqref{eq:like} and separating the two cases of $\delta_i$, we get
 
-We now consider these two cases separately, then combine them to obtain the
-result in Theorem \ref{thm:loglike_total}.
-
-\textbf{Case 1}: If the $i$-th system is right-censored, i.e., $\delta_i = 0$, then
+\textbf{Case 1}: If the $i$-th system is right-censored ($\delta_i = 0$),
 $$
 \ell_i(\v\theta) = \log R_{\T_i}(s_i;\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}).
 $$
 
-\textbf{Case 2}: If the $i$-th system's component cause of failure is masked but the
-failure time is known, i.e., $\delta_i = 1$, then
+\textbf{Case 2}: If the $i$-th system's component cause of failure is masked but the failure time is known ($\delta_i = 1$),
 \begin{align*}
 \ell_i(\v\theta)
-    &= \log R_{\T_i}(s_i;\v\theta) \beta_i \sum_{j\in c_i} h_j(s_i;\v{\theta_j})\\
-    &= \log R_{\T_i}(s_i;\v\theta) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr).
+    &= \log R_{\T_i}(s_i;\v\theta) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr) \\
+    &= \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
 \end{align*}
-
-Since $\beta_i$ is not a function of $\v\theta$ (see Condition \ref{cond:masked_indept_theta}),
-$\log \beta_i$ is a constant with respect to $\v\theta$ and so may be ignored in MLE
-(when we solve the maximum likelihood equations, any terms that do not depend on
-$\v\theta$ will be eliminated by the gradient operator).
-Thus, we may rewrite the above equation as
-$$
-\ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) +
-        \log \biggl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
-$$
+By Condition \ref{cond:masked_indept_theta}, we may ignore the term $\log \beta_i$ in the MLE since it does not
+depend on $\v\theta$. This gives us the result in Theorem \ref{thm:loglike_total}.
 \end{proof}
 
-## Solving the MLE {#sec:iterative}
-According to @bain, if $\v\Omega$ is a Cartesian product of $l$ intervals,
-partial derivatives of $L(\v\theta)$ exist, and the MLEs do not occur on the
-boundary of $\v\Omega$, then the MLEs will be solutions of the simultaneous
-equations
+The MLE, $\hat{\v\theta}$, is often found by solving a system of equations derived from setting the derivative of the log-likelihood function to zero, i.e.,
 \begin{equation}
 \label{eq:mle_eq}
-\frac{\partial}{\partial \theta_j} \ell(\v\theta) = 0
+\frac{\partial}{\partial \theta_j} \ell(\v\theta) = 0,
 \end{equation}
-for $j=1,\ldots,p$ where $p$ is the number of components in $\v\theta$.
-We call these equations the *maximum likelihood equations*.
-If multiple solutions to Equation \eqref{eq:mle_eq} exist, each solution that
-maximizes the likelihood function is a valid MLE.
+for each component $\theta_j$ of the parameter $\v\theta$ \citep{bain}. When there's no closed-form solution,
+we resort to numerical methods like the Newton-Raphson method.
 
-If there is no closed-form solution to the maximum likelihood equations
-\eqref{eq:mle_eq}, we may use iterative root-finding methods to
-numerically approximate a solution.
-A general approach is, if we have a guess $\v\theta^{(n)}$, take a step in
-a "promising" direction $\v{d}^{(n)}$ to obtain the next guess,
-\begin{equation}
-\label{eq:iterative_update}
-\v\theta^{(n+1)} = \v\theta^{(n)} + \alpha^{(n)} \v{d}^{(n)},
-\end{equation}
-where $\v\theta^{(0)}$ is an initial guess in the parameter space $\Omega$ that is
-sufficiently close to the MLE $\hat{\v\theta}$. In our case, we use the
-parameter vector $\v\theta^{(0)} = \v\theta$ as our initial guess, since we know
-the true value $\v\theta$ in our simulation studies, but if plausible initial
-guesses are not known, then global methods may be used to find a good initial
-guess, like Simulated Annealing.
+Often, the MLE is found by setting the derivative of the log-likelihood function to zero, leading to a system of equations that is usually solved using numerical methods, such as the Newton-Raphson method [2, 3].
 
-Assuming that at $\v\theta^{(n)}$, a sufficiently small step in the direction
-$\v{d}^{(n)}$ results in an improvement with respect to the log-likelihood function,
-we say that we *overshoot* if
-$$
-\ell(\v{\theta}^{(n+1)}) < \ell(\v{\theta}^{(n)}).
-$$
-The value $\alpha^{(n)}$ in Equation \eqref{eq:iterative_update} is a positive
-real number chosen by a *line search* method so that we do not overshot, which
-has an optimal value given by
-$$
-\alpha^{(n)} \in \operatorname{argmax}_{\alpha}
-    \ell(\v{\theta}^{(n)} + \alpha \v{d}^{(n)}).
-$$
-However, this may be too computationally expensive to compute, and so we use
-a less optimal but faster method known as *backtracking*.
-In the backtracking line search method, we determine $\alpha^{(n)}$ by initially
-letting $\alpha^{(n)} = 1$ and then, if we overshoot, redo the update
-with $\alpha^{(n)} \gets r \alpha^{(n)}$, $0 < r < 1$, repeating until we
-do not overshoot.
+MLE has desirable asymptotic properties that underpin statistical inference, namely that it is asymptotically unbiased, unique, and normally distributed, with a variance given by the inverse of the Fisher Information Matrix (FIM) [2]. However, for smaller samples or complex models, these asymptotic properties may not yield accurate approximations. Hence, we propose to use the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE.
 
-Note that this is not necessarily the best course of action for finding
-global maximums, since depending on our initial guess $\v\theta^{(0)}$, we may
-get stuck in a local maximum.
-A global search method, like Simulated Annealing, may be used to find
-better initial guesses.
-
-We do as many iterations in Equation \eqref{eq:iterative_update} as necessary to
-satisfy some *stopping condition*, which is usually something simple like the
-distance between $\v\theta^{(n)}$ and $\v\theta^{(n+1)}$ being sufficiently
-small. Under the right conditions, for sufficiently large $n$,
-$\v\theta^{(n)} \approx \hat{\v\theta}$.
-
-We use a popular technique known as Newton-Raphson method, which is obtained by
-letting $\v{d}^{(n)}$ be defined as
-$$
-\v{d}^{(n)} = -J^{-1}(\v\theta^{(n)}) \nabla \ell(\v\theta^{(n)}),
-$$
-where $J(\v\theta^{(n)})$ and $\nabla \ell(\v\theta^{(n)})$ are respectively
-the observed Fisher information matrix (Hessian of the
-log-likelihood function) and the score (gradient of the log-likelihood
-function), each evaluated at $\v\theta^{(n)}$.
-
-## Properties of the MLE {#sec:mle_properties}
-
-In this section, we discuss some properties of the MLE that are useful for
-making statistical inferences about the parameter vector $\v\theta$.
-According to @bain, if certain regularity conditions are satisfied, then
-solutions of the maximum likelihood equation \eqref{eq:mle_eq} have the
-following desirable properties:
-
-1. $\v{\hat\theta}$ exists and is unique.
-
-2. $\v{\hat\theta}$ is an asymptotically unbiased estimator.
-
-3. $\v{\hat\theta}$ is asymptotically the UMVUE, the uniform minimum variance unbiased
-   estimator.
-   
-4. $\v{\hat\theta}$ is asymptotically normal with a mean $\v\theta$ and a
-   variance-covariance matrix that is the inverse of the Fisher information matrix (FIM),
-   whose $(i,j)$-th component is given by
-   $$
-    I(\v\theta)_{i j} = n E_{\v\theta}\biggl(-\frac{\partial^2}{\partial \theta_i \partial \theta_j}
-        \log f(S_i,\delta_i,\mathcal{C}_i;\v\theta)\biggr).
-   $$
-   
-Usually, the *observed* FIM is used instead of the FIM, which is a conditioned on the
-observed data,
-$$
-J(\v\theta)_{i j} = -\frac{\partial}{\partial \theta_i \partial \theta_j}
-    \ell(\v\theta).
-$$
-If $\v\theta$ is unknown, $J(\v\theta)$ may be estimated with $J(\v{\hat\theta})$.
-Thus, assuming the regularity conditions are satisfied, then approximately,
-$$
-    \hat{\v\theta} \sim \mathcal{N}(\hat{\v\theta},J^{-1}(\hat{\v\theta}))
-$$
-and as the sample size goes to infinity, $\hat{\v\theta}$ converges in
-distribution to $\mathcal{N}(\hat{\v\theta},J^{-1}(\hat{\v\theta}))$.
-
-This is the asymptotic sampling distribution of MLE, but for small samples, it can be
-a very poor approximation. In the next section, we discuss the bootstrap
-method. In particular, bootstrapping the variance and confidence intervals.
 
 Bootstrapping the Variance and Confidence Intervals of the MLE {#sec:boot}
 ===============================================================
@@ -994,6 +790,58 @@ coverage, then the confidence interval width is not particularly informative.
 Thus, we see that the confidence interval is only useful if it has good coverage,
 and so we will focus on assessing the coverage probability of the confidence intervals
 in our simulation study.
+
+## Caveats
+
+While the bootstrap method provides a robust and flexible tool for statistical
+estimation, its effectiveness can be influenced by several factors
+\citep{efron1994introduction}.
+
+Firstly, instances of non-convergence in our bootstrap samples were observed.
+Such cases can occur when the estimation method, like the MLE used in our
+analysis, fails to converge due to the specifics of the resampled data
+\citep{casella2002statistical}. This issue can potentially introduce bias or
+reduce the effective sample size of our bootstrap distribution.
+
+Secondly, the bootstrap's accuracy can be compromised with small sample sizes,
+as the method relies on the law of large numbers to approximate the true sampling
+distribution. For small datasets, the bootstrap samples might not adequately
+represent the true variability in the data, leading to inaccurate results
+\citep{efron1994introduction}.
+
+Thirdly, our data involves right censoring and a Bernoulli candidate set model
+for component failure masking. These aspects can cause certain data points or
+trends to be underrepresented or not represented at all in our data, introducing
+bias in the bootstrap distribution \citep{klein2005survival}.
+
+On the topic of independence and identical distribution (i.i.d.), each system
+failure observation in our study can indeed be considered independently drawn
+from the same overall distribution, thus satisfying the i.i.d. assumption at the
+system level. However, it's worth noting that introducing external information
+during MLE computation or not resampling whole systems could potentially violate
+the i.i.d. assumption \citep{efron1994introduction}.
+
+Despite these challenges, we found the bootstrap method useful in approximating
+our parameter distributions, taking care in interpreting the results. Further
+research could explore more sophisticated techniques that can handle these
+issues effectively.
+
+
+
+# Bootstrapping the Variance and Confidence Intervals of the MLE {#sec:boot}
+The bootstrap is a non-parametric approach that estimates the sampling distribution of a statistic, in our case, statistics of the MLE. It involves generating random data by resampling with replacement from the original data and repeating this process $B$ times. We obtain $B$ bootstrap replicates, and the empirical distribution of these replicates approximates the statistic's sampling distribution.
+
+We use the bootstrap to estimate two particular statistics of the MLE: the variance and the confidence interval. The confidence interval is bootstrapped using the percentile method, which doesn't explicitly depend on the variance estimate.
+
+In our simulation study, we will assess the performance of the bootstrap variance by comparing it to the empirical variance of the MLE. The performance of the bootstrap confidence interval will be evaluated by computing its coverage probability. Good coverage means that a 95% confidence interval should contain the true value 95% of the time.
+
+There are, however, limitations to using the bootstrap method. Bootstrap samples may fail to converge when using MLE, which can introduce bias or reduce the bootstrap distribution's effective sample size. The method may also produce inaccurate results for small datasets, as it relies on the law of large numbers to approximate the true sampling distribution. Our study involving right-censored data and a Bernoulli candidate set model for component failure masking might cause certain trends to be underrepresented in our data, which could introduce bias in the bootstrap distribution. Despite these challenges, the bootstrap method still provides a valuable approach to approximating parameter distributions.
+
+
+
+
+
+
 
 Simulation Study: Series System with Weibull Components {#sec:weibull}
 =============================================
@@ -1116,7 +964,7 @@ others.
 One way to define reliability is by the mean time to failure (MTTF), which is the
 expected value of the lifetime, which for the Weibull distribution is given by
 $$
-\text{MTTF} = k \, \Gamma(1 + 1/\lambda),
+\text{MTTF} = \lambda \, \Gamma(1 + 1/k),
 $$
 where $\Gamma$ is the gamma function.
 
@@ -1159,7 +1007,8 @@ than any of the others.
 Note that a series system in which, say, one of the components does have a significantly
 shorter MTTF would also pose significant challenges to estimating the parameters of
 the system from our masked failure data, since the failure time of the series system
-would be dominated by the failure time of the least reliable component.
+would be dominated by the failure time of the least reliable component. See Section
+\ref{sec:opt_rescale} for further discussion.
 
 ## Weibull Likelihood Model for Masked Data
 
@@ -1221,38 +1070,24 @@ where we drop any terms that do not depend on $\v\theta$ since they do not
 affect the MLE.
 \end{corollary}
 
-Since the systems are independent, the log-likelihood of the entire sample of $n$
-observations is given by
-\begin{equation}
-\label{eq:weibull_log_likelihood}
-\ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta).
-\end{equation}
-
 ## Numerically Solving the MLE
 
-We may find an MLE by solving the maximum likelihood equation \eqref{eq:mle_eq},
+We find an MLE by solving \eqref{eq:mle_eq},
 i.e., a point $\v{\hat\theta} = (\hat{k}_1,\hat{\lambda}_1,\ldots,\hat{k}_m,\hat{\lambda}_m)$ satisfying
 $\nabla_{\theta} \ell(\v{\hat\theta}) = \v{0}$, where $\nabla_{\v\theta}$
-is the gradient of the log-likelihood function with respect to $\v\theta$, otherwise
-known as the score.
+is the gradient of the log-likelihood function (score) with respect to $\v\theta$.
 
-To solve these ML equations, we use the Newton-Raphson method described in Section
-\ref{sec:iterative}. In order to use the Newton-Raphson method, we need to
-compute the gradient and Hessian of the log-likelihood function.
+To solve this system of equations, we use the Newton-Raphson method, which requires
+the score and the Hessian of the log-likelihood function.
+We analytically derive the score since it is useful to have for the Newton-Raphson
+method, but we do not do the same for the Hessian of the log-likelihood for the following reasons:
 
-We analytically derive the gradient of the log-likelihood function (score), since it
-is useful to have for the Newton-Raphson method, but we do not do the same for the
-Hessian of the log-likelihood for the following reasons:
+1. The gradient is relatively easy to derive, and it is useful to have for
+computing gradients efficiently and accurately, which will be useful for
+numerically approximating the Hessian.
 
-1. The Hessian is not necessarily needed since we often use some faster method to
-approximate the Hessian, e.g., the BFGS method. Technically, we could also
-numerically approximate the gradient too, but the gradient is much easier
-to derive than the Hessian, and moreover, knowing the score precisely also
-enables us to more accurately approximate the Hessian by taking the Jacobian
-of the gradient.
-
-2. The Hessian is more difficult to derive than the score, and so it is more
-likely that we will make a mistake when deriving the Hessian. 
+2. The Hessian is tedious and error prone to derive, and Newton-like methods
+often do not require the Hessian to be explicitly computed.
 
 The following theorem derives the score function.
 \begin{theorem}
@@ -1299,8 +1134,8 @@ has been omitted, but the result has been verified by using a very precise numer
 approximation of the gradient.
 
 By the linearity of differentiation, the gradient of a sum of functions is
-the same of their gradients, and so the score function of the entire sample is given
-by
+the sum of their gradients, and so the score function conditioned on the entire
+sample is given by
 \begin{equation}
 \label{eq:weibull_series_score}
 \nabla \ell(\v\theta) = \sum_{i=1}^n \nabla \ell_i(\v\theta).
@@ -1308,20 +1143,39 @@ by
 
 ### Issues with the MLE {#sec:opt_rescale}
 
-\textbf{Identifiability}: When estimating the parameters of latent components, we
+\textbf{Identifiability}: When estimating the parameters, we
 must be careful to ensure that the parameters are identifiable such that the
 likelihood function is maximized at a unique point. If the likelihood
 function is not maximized at a unique point, then the MLE is not unique, and
-a lot of the theory we have developed so far breaks down.
+a lot of the theory we have developed so far breaks down, particularly when the
+likelihood surface is flat or has multiple local maxima \citep{mclachlan2007algorithm}
 
 One way in which this problem may arise is if the data is not informative
 enough. For example, if we have a series system and in the observed masked data
 component $1$ is in the candidate set if and only if component $2$ is in
 candidate set, then we do not have enough information to estimate the
-parameters of component $1$ and component $2$ separately. In this case, we
-could combine these two components into a single component. We lagely avoid this
-problem by using the Bernoulli candidate set model, but sometimes it may still arise
-by chance.
+parameters of component $1$ and component $2$ separately.
+
+Another way is if the the series system has a component that is the
+least reliable by a significant margin and is most likely the component cause
+of failure. In this case, our data is not informative enough to estimate the
+parameters of the other components. We constructed a quick experiment
+to demonstrate this phenomenon in Figure \ref{fig:flat-loglike-prof}.
+
+```{r flat-loglike-prof, echo = F, fig.cap = "Log-likelihood profile of a flat surface (non-unique MLE)", fig.align = "center", fig.width = 2, fig.height = 3}
+knitr::include_graphics("image/last_plot.pdf")
+```
+
+We simply made the MTTF of the first component much smaller than the others,
+and for even large samples there was not generally enough information to
+estimate the parameters of the other components. In this case, the MLE is not
+unique, and the likelihood surface is flat, as shown.
+
+We encountered this issue in our simulation study for small samples due to
+right-censored and masked component cause of failure data, despite parameterizing
+a series system with components that have similar MTTFs. Our decision was to
+simply exclude these data sets from our analysis, since they are not
+informative enough to estimate the parameters of the system.
 
 \textbf{Parameter rescaling}: When the parameters under investigation span different
 orders of magnitude, parameter rescaling can significantly improve the performance
@@ -1337,13 +1191,6 @@ study, we employ the Bootstrap method to estimate the sampling distribution of t
 MLE, which requires us to estimate the MLE for many data sets. We found that
 parameter rescaling significantly improved the speed of convergence, which allowed
 us to run our simulation study in a tractable amount of time.
-
-In the `optim` algorithm in the R package `stats`, we achieve this result by
-assigning a `parscale` vector in line with the parameter magnitudes. It does not
-matter what the values of the `parscale` vector are, only their relative magnitudes.
-It does not need to be very precise, but since we are doing a simulation study,
-we know the true parameter values and can use that information to scale them
-appropriately.
 
 ## Simulation Design
 
@@ -1408,19 +1255,6 @@ Here is an outline of the simulation study analysis:
 
 For how we generate a scenario, see Appendix A.
 
-
-> So, now we just resample from the data with replacement, and fit the Weibull series
-> model to each bootstrap sample. We do this $B = 1000$ times, giving us $B$ bootstrap
-> replicates of the MLE $\hat{\v\theta}^{(1)},\ldots,\hat{\v\theta}^{(B)}$.
-
-> As a ground truth, we will use the empirical distribution of the MLE
-> under our data model
-> under a variety of simulation scenarios where we vary the sample size,
-> the right censoring time, and the so-called masking probability of the
-> candidate sets, where a higher masking probability means that the
-> candidate sets are more likely to contain non-failed components.
-
-
 ### Verification
 
 To verify that our likelihood model is correct, we load the Table 2 data from
@@ -1475,8 +1309,18 @@ $$
     E_{\hat{\v\theta} \sim \text{data}}\bigl((\hat\theta_j - \theta_j)^2\bigr).
 $$
 
-Assuming the regularity conditions for the MLE are met, the MSE converges in
-probability to the variance.
+## Assessing the Bootstrapped Variance, Bias, MSE, and Confidence Intervals
+
+Once we analyze the bias, variance, and MSE of the MLE, using a simulation study, we
+then assess the bootstrapped variance, bias, MSE, and confidence intervals. This is
+useful for understanding the performance of the bootstrap method for estimating the
+sampling distribution of the MLE and constructing confidence intervals.
+
+We will assess the bootstrapped variance, bias, MSE, and confidence intervals by
+comparing them to the bias, variance, MSE, and confidence intervals obtained from
+the empirical sampling distribution. In particular, if the variance is too large
+or small, then the coverage probability of the confidence intervals will be too
+small or large, respectively.
 
 ## Simulation Scenarios
 
@@ -1594,7 +1438,7 @@ library(tidyverse)
 library(latex2exp)
 
 # Load the data
-sim_data <- read_csv("simres.csv")
+sim_data <- read_csv("results/data/data-fim.csv")
 
 # rename columns for plotting
 sim_data <- sim_data %>% rename(
@@ -1743,9 +1587,6 @@ cat("<div id=\"refs\"></div>")
 ```
 
 # Appendix {#app}
-
-\renewcommand{\thesection}{\Alph{section}}
-\setcounter[section}{0}
 
 ## Data {#app:data}
 

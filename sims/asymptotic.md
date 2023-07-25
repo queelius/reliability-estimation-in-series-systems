@@ -48,11 +48,18 @@ Here are explanations of the columns:
 
 - `scalej.upper` is the upper bound of the CI for scale parameter j.
 
-The `shapej.mle` and `scalej.mle` columns (MLEs) are an *empirical* sampling distribution of the MLE and we treat this as the ground truth. For instance, we can compute the bias of the MLE by taking
-the expectation with respect to empirical sampling distribution,
-
+The `shapej.mle` and `scalej.mle` columns (MLEs) are an *empirical* sampling distribution of the MLE and we treat this as the ground truth.
+We can compute the bias of the MLE by taking the expectation with respect to empirical sampling distribution:
 $$
     E_{\hat\theta \sim \text{data}}(\hat\theta) - \theta
+$$
+We can compute the variance of the MLE by taking the expectation with respect to empirical sampling distribution:
+$$
+    E_{\hat\theta \sim \text{data}}(\hat\theta) - \hat\theta
+$$
+We can compute the MSE of the MLE by taking the expectation with respect to empirical sampling distribution:
+$$
+    E_{\hat\theta \sim \text{data}}((\hat\theta) - \theta)^2
 $$
 
 Note that we specifically controlled, in our simulation setup, `n`, `p`, `q`. We will analyze the other statistics with respect to these simulation parameters, e.g., we can plot the variance:

@@ -73,11 +73,6 @@ A series system fails when any component fails, thus the lifetime of the $i$\tex
 $$
     \T_i = \min\bigr\{T_{i 1},T_{i 2}, \ldots, T_{i m} \bigr\}.
 $$
-The lifetime of the $j$\textsuperscript{th} component is assumed to follow a parametric distribution indexed
-by a parameter vector $\v{\theta_j}$. The parameter vector of the overall system is defined as
-$$
-    \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
-$$
 
 There are three particularly important distribution functions in survival analysis: the
 survival function, the probability density function, and the hazard function.
@@ -113,12 +108,17 @@ h_{T_i}(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < \T_i < t+\Delta t\}}{\Delta t
 \end{equation}
 \end{definition}
 
-If the $i$\textsuperscript{th} system has the parameter vector $\v\theta$, we denote its pdf by
-$f_{\T_i}(t;\v\theta)$ and likewise for other distribution functions, e.g., its
-relability function is denoted by $R_{\T_i}(t;\v\theta)$. If it is clear from the context which
-random variable a distribution function is for, we drop the subscripts, e.g., $F(t)$ instead of
-$F_{\T_i}(t)$.
-We denote the pdf of the $j$\textsuperscript{th} component by
+The lifetime of the $j$\textsuperscript{th} component is assumed to follow a parametric distribution indexed
+by a parameter vector $\v{\theta_j}$. The parameter vector of the overall system is defined as
+$$
+    \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
+$$
+
+When a random variable $T$ is parameterized by a particular $\v\theta$, we denote the
+reliability function by $R_T(t;\v\theta)$, and the same for other distribution functions.
+If it is clear from the context which random variable a distribution function is for, we
+drop the subscripts, e.g., $R(t)$ instead of $R_T(t)$.
+As a special case, we denote the pdf of the $j$\textsuperscript{th} component by
 $f_j(t;\v{\theta_j})$ and its reliability function by $R_j(t;\v{\theta_j})$.
 
 Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
