@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  25 JUL 2023 07:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  27 JUL 2023 00:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -671,11 +671,7 @@ File: tikzlibrarytopaths.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 File: l3backend-pdftex.def 2022-01-12 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count322
 \l__pdf_internal_box=\box71
-) (./wei_series_md.aux
-
-LaTeX Warning: Label `sec:boot' multiply defined.
-
-)
+) (./wei_series_md.aux)
 \openout1 = `wei_series_md.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 119.
@@ -849,145 +845,75 @@ File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 
 LaTeX Warning: Reference `sec:data' on page 10 undefined on input line 895.
 
-[10] [11] [12]pdfTeX warning (ext4): destination with the same identifier (name
-{sec:boot}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.1107 MLE}\label{sec:boot}}
-                             [13] [14] [15] [16]
+[10] [11]
+
+LaTeX Warning: Reference `sec:simstudy' on page 12 undefined on input line 1107
+.
+
+[12] [13] [14] [15] [16]
 
 Package natbib Warning: Citation `mclachlan2007algorithm' on page 17 undefined 
-on input line 1460.
+on input line 1518.
 
-<image/last_plot.pdf, id=297, 289.08pt x 216.81pt>
+<image/last_plot.pdf, id=307, 289.08pt x 216.81pt>
 File: image/last_plot.pdf Graphic file (type pdf)
 <use image/last_plot.pdf>
-Package pdftex.def Info: image/last_plot.pdf  used on input line 1478.
+Package pdftex.def Info: image/last_plot.pdf  used on input line 1536.
 (pdftex.def)             Requested size: 289.09251pt x 216.81938pt.
-[17 <./image/last_plot.pdf>] [18]
-
-pdfTeX warning: pdflatex (file ./image/plot-p-0.2-bias-vs-sample-size.pdf): PDF
- inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<image/plot-p-0.2-bias-vs-sample-size.pdf, id=329, 1168.365pt x 2074.75125pt>
-File: image/plot-p-0.2-bias-vs-sample-size.pdf Graphic file (type pdf)
-<use image/plot-p-0.2-bias-vs-sample-size.pdf>
-Package pdftex.def Info: image/plot-p-0.2-bias-vs-sample-size.pdf  used on inpu
-t line 1682.
-(pdftex.def)             Requested size: 366.2898pt x 650.44762pt.
-
-LaTeX Warning: Float too large for page by 24.51761pt on input line 1687.
-
-[19] [20 <./image/plot-p-0.2-bias-vs-sample-size.pdf>]
-<image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf, id=356, 867.24pt x 43
-3.62pt>
-File: image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf Graphic file (typ
-e pdf)
-<use image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf>
-Package pdftex.def Info: image/plot-bias-shapes-p-vs-sample-size-100-400-800.pd
-f  used on input line 1742.
-(pdftex.def)             Requested size: 469.75827pt x 234.87912pt.
-[21 <./image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf>]
-<image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf, id=375, 867.24pt x 43
-3.62pt>
-File: image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf Graphic file (typ
-e pdf)
-<use image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf>
-Package pdftex.def Info: image/plot-bias-scales-p-vs-sample-size-100-400-800.pd
-f  used on input line 1765.
-(pdftex.def)             Requested size: 469.75827pt x 234.87912pt.
-<image/plot-bias-tau-vs-sample-size-50-150-300.pdf, id=379, 615.29875pt x 424.5
-8624pt>
-File: image/plot-bias-tau-vs-sample-size-50-150-300.pdf Graphic file (type pdf)
-
-<use image/plot-bias-tau-vs-sample-size-50-150-300.pdf>
-Package pdftex.def Info: image/plot-bias-tau-vs-sample-size-50-150-300.pdf  use
-d on input line 1794.
-(pdftex.def)             Requested size: 469.76314pt x 324.15955pt.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-824.
-(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [22 <./image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf>] [23 <./image
-/plot-bias-tau-vs-sample-size-50-150-300.pdf>]
-Overfull \hbox (76.2434pt too wide) in paragraph at lines 1834--1834
-[]\T1/lmtt/m/n/10 ## i Use the conflicted package (<http://conflicted.r-lib.org
-/>) to force all conflicts to become errors[] 
- []
-
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-1841.
-(/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-<wei_series_md_files/figure-latex/var.plot-1.pdf, id=410, 453.695pt x 315.1775p
-t>
-File: wei_series_md_files/figure-latex/var.plot-1.pdf Graphic file (type pdf)
-<use wei_series_md_files/figure-latex/var.plot-1.pdf>
-Package pdftex.def Info: wei_series_md_files/figure-latex/var.plot-1.pdf  used 
-on input line 1856.
-(pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
-<wei_series_md_files/figure-latex/var.plot-2.pdf, id=411, 453.695pt x 315.1775p
-t>
-File: wei_series_md_files/figure-latex/var.plot-2.pdf Graphic file (type pdf)
-<use wei_series_md_files/figure-latex/var.plot-2.pdf>
-Package pdftex.def Info: wei_series_md_files/figure-latex/var.plot-2.pdf  used 
-on input line 1864.
-(pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
-[24 <./wei_series_md_files/figure-latex/var.plot-1.pdf>] [25 <./wei_series_md_f
-iles/figure-latex/var.plot-2.pdf>]
-<image/plot-coverage-p_0.3-vs-sample-size.pdf, id=440, 1095.09125pt x 671.50874
+[17] [18 <./image/last_plot.pdf>]
+<image/plot-coverage-p_0.3-vs-sample-size.pdf, id=335, 1095.09125pt x 671.50874
 pt>
 File: image/plot-coverage-p_0.3-vs-sample-size.pdf Graphic file (type pdf)
 <use image/plot-coverage-p_0.3-vs-sample-size.pdf>
 Package pdftex.def Info: image/plot-coverage-p_0.3-vs-sample-size.pdf  used on 
-input line 1919.
+input line 1705.
 (pdftex.def)             Requested size: 469.76051pt x 288.05663pt.
-[26 <./image/plot-coverage-p_0.3-vs-sample-size.pdf>]
-<image/plot-coverage-p-vs-sample-size.pdf, id=459, 1095.09125pt x 671.50874pt>
+[19]
+<image/plot-coverage-p-vs-sample-size.pdf, id=354, 1095.09125pt x 671.50874pt>
 File: image/plot-coverage-p-vs-sample-size.pdf Graphic file (type pdf)
 <use image/plot-coverage-p-vs-sample-size.pdf>
 Package pdftex.def Info: image/plot-coverage-p-vs-sample-size.pdf  used on inpu
-t line 1966.
+t line 1750.
 (pdftex.def)             Requested size: 469.76051pt x 288.05663pt.
-[27 <./image/plot-coverage-p-vs-sample-size.pdf>]
+[20 <./image/plot-coverage-p_0.3-vs-sample-size.pdf>] [21 <./image/plot-coverag
+e-p-vs-sample-size.pdf>]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
+816.
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2041.
-[28]
-Underfull \vbox (badness 10000) detected at line 2137
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 1828.
+[22]
+Underfull \vbox (badness 10000) detected at line 1924
  []
 
 
-Underfull \vbox (badness 10000) detected at line 2137
+Underfull \vbox (badness 10000) detected at line 1924
  []
 
-[29] [30]
-Underfull \vbox (badness 10000) detected at line 2245
- []
-
-
-Underfull \vbox (badness 10000) detected at line 2245
- []
-
-[31] (./wei_series_md.bbl)
+[23]
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+1938.
+(/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [24] (./wei_series_md.bbl [25])
 
 Package natbib Warning: There were undefined citations.
 
-[32] (./wei_series_md.aux)
+[26] (./wei_series_md.aux)
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: There were multiply-defined labels.
-
  ) 
 Here is how much of TeX's memory you used:
- 25198 strings out of 478287
- 461906 string characters out of 5849289
- 770452 words of memory out of 5000000
- 42456 multiletter control sequences out of 15000+600000
- 562605 words of font info for 206 fonts, out of 8000000 for 9000
+ 25104 strings out of 478287
+ 458142 string characters out of 5849289
+ 769349 words of memory out of 5000000
+ 42400 multiletter control sequences out of 15000+600000
+ 562231 words of font info for 203 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,20n,80p,1010b,962s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 84i,20n,80p,1131b,962s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texmf/fonts/enc/d
 vips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/te
 xmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ma
@@ -1007,10 +933,10 @@ blic/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy5.pfb></usr/shar
 e/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texm
 f/fonts/type1/public/lm/lmtti10.pfb>
-Output written on wei_series_md.pdf (32 pages, 1299673 bytes).
+Output written on wei_series_md.pdf (26 pages, 522175 bytes).
 PDF statistics:
- 743 PDF objects out of 1000 (max. 8388607)
- 628 compressed objects within 7 object streams
- 204 named destinations out of 1000 (max. 500000)
- 49410 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 651 PDF objects out of 1000 (max. 8388607)
+ 560 compressed objects within 6 object streams
+ 183 named destinations out of 1000 (max. 500000)
+ 49396 words of extra memory for PDF output out of 51595 (max. 10000000)
 

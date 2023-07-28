@@ -1,0 +1,193 @@
+## Bias, variance, and MSE of the MLE {#sec:acc_prec}
+
+First, we estimate the bias, variance, and MSE of the MLE under various scenarios.
+This is useful for understanding the accuracy and precision of the MLE under
+different conditions. It is unrelated to the bootstrap method, but it is useful to
+compute these quantities before we assess the bootstrapped variance and confidence
+intervals.
+
+A measure of the accuracy of $\v{\hat\theta}$ is the bias, which is defined as
+$$
+\operatorname{b}(\v{\hat\theta}) = E(\v{\hat\theta}) - \v\theta.
+$$
+We cannot analytically derive the bias, so we estimate the bias using the empirical
+sampling distribution,
+$$
+\hat{\operatorname{b}}(\hat\theta_j) =
+    E_{\hat{\v\theta} \sim \text{data}}(\v{\hat\theta}) - \theta_j.
+$$
+
+We estimate the precision of $\hat\theta_j$ with the variance and MSE. The variance
+of $\v{\hat\theta}$ is defined as
+$$
+\operatorname{Var}(\hat\theta_j) =
+    E_{\hat{\v\theta} \sim \text{data}}\bigl((\hat\theta_j - E_{\hat{\v\theta} \sim \text{data}}(\hat\theta_j))^2\bigr),
+$$
+where the expectation is taken with respect to the empirical sampling distribution.
+The mean squared error is a measure of estimator error that incorporates both the
+bias and the variance, and is defined as
+$$
+\operatorname{MSE}(\hat\theta_j) =
+    E_{\hat{\v\theta} \sim \text{data}}\bigl((\hat\theta_j - \theta_j)^2\bigr).
+$$
+
+
+
+
+### Absolute bias vs. sample size with a masking probability but no right-censoring {-}
+
+In this scenario, we want to see the bias of the MLE as a function of the sample
+size $n$ from $n = 30$ to $n = 800$ for a fixed masking probability $p = 0.2$ and no
+right-censoring $(\tau = \infty)$. Recall that the masking probability is the
+probability of including each non-failed component.
+
+
+```{r plot-bias-p-0.2-vs-sample-size, echo =F, fig.cap="Bias vs. sample size (masking probability 0.2)", fig.align="center"}
+knitr::include_graphics("image/plot-p-0.2-bias-vs-sample-size.pdf")
+```
+
+In Figure \ref{fig:plot-bias-p-0.2-vs-sample-size}, we plot the absolute bias
+$|\operatorname{bias}(\hat\theta)|$ on a log scale against the sample size. 
+However, because the absolute bias is quite large for small sample sizes and small
+for large sample sizes, we use a log scale. Furthermore, we show the absolute bias
+for the shape and scale parameters separately, since the scale parameters are much
+larger than the shape parameters.
+
+Here are some important observations Figure \ref{fig:plot-bias-p-0.2-vs-sample-size} reveals:
+
+1. For both shape and scale parameters, we see that the absolute bias seems to be
+decreasing to zero as the sample size increases. This is not surprising since we
+expect the MLE to be consistent, i.e., $\v{\hat\theta}$ converges in probability
+to $\v\theta$ as the sample size increases to infinity. Still, it is reassuring to
+see that the bias seems to be behaving as expected.
+
+2. For the shape parameters, which are small (the shape parameters have true values
+a little larger than 1), the bias is relatively large for sample sizes up to
+$100$.
+
+3. For the scale parameters, which are quite large (the scale parameters have true
+values around 1000). Like with the shape parameters, the bias is relatively large for
+sample sizes up to $100$, but seems to stabilize and reach relatively small values
+after that.
+
+### Scenario: Bias vs. sample size and masking probability and no right-censoring {-}
+
+Now, we take a larger view and plot the bias (without taking its absolute value
+as we had done previously) against the masking probabilities $p = 0$
+(no masking) to $p = 0.4$ (significant masking) for sample sizes 100, 400, and 800.
+
+For the shape parameters, at a sample of size 100, we see significant bias and we
+also see that it is very sensitive to the masking probability. See Figure
+\ref{fig:plot-bias-shapes-vs-p-sample-size-100-400-800}. However, for sample sizes
+of 400 and 800, the bias is relatively small and unaffected by the masking
+probability.
+
+```{r plot-bias-shapes-vs-p-sample-size-100-400-800, echo =F, fig.cap="Shape Bias vs. masking probability for sample sizes 100, 400, and 800", fig.align="center"}
+knitr::include_graphics("image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf")
+```
+
+For the scale parameters, a similar pattern emerges, although we see that even
+for sample size 400, there is evidence that the bias is still affected by the masking
+probability. See Figure \ref{fig:plot-bias-scales-vs-p-sample-size-100-400-800}.
+
+The smallest bias, as expected, occurs for sample sizes of $800$. The bias 
+for $\lambda_1$ (scale parameter 1) at the masking probability $0.3$ is an interesting
+case, since it jumps up at that point for some reason. We used only $R = 100$
+replications, so it is plausible it would decrease with more replications.
+Regardless, the overall trend is that the bias decreases as the sample size increases, and its
+dependence on the masking probability is relatively small with sufficiently large
+sample sizes.
+
+```{r plot-bias-scales-vs-p-sample-size-100-400-800, echo =F, fig.cap="Scale Bias vs. masking probability for sample sizes 100, 400, and 800", fig.align="center"}
+knitr::include_graphics("image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf")
+```
+
+#### Scenario: Bias vs. right-censoring time and sample size with a fixed masking probability {-}
+
+In this scenario, we want to isolate the effect of the right-censoring time $\tau$
+on the bias. We fix the masking probability to $p = 0.215$, in line with the masking
+probability we estimate for the Table 2 data set in [@Huairu-2013].
+
+We plot the bias against the right-censoring
+time for sample sizes 50, 150, and 300. See Figure \ref{fig:plot-bias-tau-vs-sample-size-50-150-300}.
+On the $x$-axis, we report the right-censoring time as a quantile of the
+Weibull series distribution so that we can more clearly see the effect of the right-censoring
+on the bias, e.g., the $50\%$ quantile is the time at which $50\%$ of the
+systems are expected to fail.
+
+```{r plot-bias-tau-vs-sample-size-50-150-300, echo =F, fig.cap="Bias vs. right-censoring time and sample sizes 50, 150, and 300", fig.align="center"}
+knitr::include_graphics("image/plot-bias-tau-vs-sample-size-50-150-300.pdf")
+```
+
+A few observations about Figure \ref{fig:plot-bias-tau-vs-sample-size-50-150-300}:
+
+1. The bias decreases as the right-censoring time increases. This is expected since we have
+more information about the system when the right-censoring time is larger.
+
+2. The bias decreases as the sample size increases, which is also expected since we
+have more information about the system when the sample size is larger.
+
+3. The bias is relatively small for sample sizes 150 and 300, but for sample size 50,
+the bias is quite large, particularly for the shape parameters. This is not
+surprising since the sample size is quite small, and so we do not expect the MLE to
+be very accurate.
+
+
+### Variance
+
+```{r var.plot, echo=F, fig.cap="Variance vs. sample size", fig.align="center"}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tidyverse)
+library(latex2exp)
+
+# Load the data
+sim_data <- read_csv("results/data/data-fim.csv")
+
+# rename columns for plotting
+sim_data <- sim_data %>% rename(
+  "Shape 1" = mle.1,
+  "Scale 1" = mle.2,
+  "Shape 2" = mle.3,
+  "Scale 2" = mle.4,
+  "Shape 3" = mle.5,
+  "Scale 3" = mle.6,
+  "Shape 4" = mle.7,
+  "Scale 4" = mle.8,
+  "Shape 5" = mle.9,
+  "Scale 5" = mle.10
+)
+
+# Filter data
+filtered_data <- sim_data %>% filter(p == 0 & q == 1)
+
+# Compute variances
+shape_data <- filtered_data %>% select(n, "Shape 1", "Shape 2", "Shape 3", "Shape 4", "Shape 5")
+scale_data <- filtered_data %>% select(n, "Scale 1", "Scale 2", "Scale 3", "Scale 4", "Scale 5")
+
+shape_variances <- shape_data %>% group_by(n) %>% summarise_all(var, na.rm = TRUE)
+scale_variances <- scale_data %>% group_by(n) %>% summarise_all(var, na.rm = TRUE)
+
+# Reshape the data for ggplot2
+shape_variances_long <- shape_variances %>% gather(key = "Parameter", value = "Variance", -n)
+scale_variances_long <- scale_variances %>% gather(key = "Parameter", value = "Variance", -n)
+
+# Plotting
+ggplot(shape_variances_long, aes(x = n, y = Variance, colour = Parameter)) +
+  geom_line() +
+  geom_point() +
+  scale_y_log10() +
+  labs(x = "Sample Size (n)", y = "Variance", 
+       title = "Variance of Shape Parameter MLEs with respect to Sample Size") +
+  theme_minimal()
+
+ggplot(scale_variances_long, aes(x = n, y = Variance, colour = Parameter)) +
+  geom_line() +
+  geom_point() +
+  scale_y_log10() +
+  labs(x = "Sample Size (n)", y = "Variance", 
+       title = "Variance of Scale Parameter MLEs with respect to Sample Size") +
+  theme_minimal()
+```
+

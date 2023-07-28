@@ -691,7 +691,6 @@ $$
 We use this result in the next section to derive the maximum likelihood
 estimator of $\v\theta$.
 
-
 Maximum Likelihood Estimation {#sec:mle}
 ========================================
 In our analysis, we use maximum likelihood estimation (MLE) to estimate the series system parameter $\v\theta$ from the masked data \citep{bain, casella2002statistical}. The MLE finds parameter values that maximize the likelihood of the observed data under the assumed model. The maximum likelihood estimate, $\hat{\v\theta}$, is the solution of:
@@ -752,46 +751,45 @@ Often, the MLE is found by setting the derivative of the log-likelihood function
 MLE has desirable asymptotic properties that underpin statistical inference, namely that it is asymptotically unbiased, unique, and normally distributed, with a variance given by the inverse of the Fisher Information Matrix (FIM) [2]. However, for smaller samples or complex models, these asymptotic properties may not yield accurate approximations. Hence, we propose to use the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE.
 
 
-Bootstrapping the Variance and Confidence Intervals of the MLE {#sec:boot}
+Bootstrapping the Confidence Intervals of the MLE {#sec:boot}
 ===============================================================
-The bootstrap method is a powerful, general purpose tool for estimating
-the sampling distribution of a statistic, in our case statistics of the MLE,
-that does not rely on making strong assumptions about the
-underlying distribution of the data.
+We utilize the non-parametric bootstrap to approximate the sampling distribution of
+the MLE. In the non-parametric bootstrap, we resample from the observed data
+with replacement to generate a bootstrap sample. The MLE is then computed for
+the bootstrap sample. This process is repeated $B$ times, giving us $B$ bootstrap
+replicates of the MLE. The sampling distribution of the MLE is then approximated
+by the empirical distribution of the bootstrap replicates of the MLE.
 
-The most common form of the Bootstrap method is the non-parametric Bootstrap.
-In the non-parametric bootstrap, the random data is created by resampling with
-replacement from the original data and then computing the statistic of interest
-on the resampled data. This is repeated $B$ times, giving us $B$
-bootstrap replicates of the statistic. The sampling distribution of
-the statistic is then approximated by the empirical distribution of the
-bootstrap replicates. Since we do not know (nor do we attempt to model) the way
-candidate sets are generated, this non-parametric form is ideal.
+Once we have a bootstrap distribution of the MLE, we can use it to construct
+confidence intervals for the parameters $\v\theta$.
+The confidence interval for $\theta_j$ is given by
+$$
+\bigl[\hat{\theta}_j - z_{\alpha/2} \hat{\sigma}_j, \hat{\theta}_j + z_{\alpha/2} \hat{\sigma}_j\bigr],
+$$
+where $\hat{\theta}_j$ is the MLE of $\theta_j$, $\hat{\sigma}_j$ is the
 
-We are particularly interested in two statistics of the MLE: the variance and
-the confidence interval. We will bootstrap the confidence interval using the
-percentile method, which does not explicitly depend on the variance estimate. However,
-conceptually, they are still related: a higher variance should
-generally lead to a larger confidence interval.
+We will bootstrap the confidence interval using the
+percentile method and variance will be computed using the variance
+of the bootstrap replicates of the MLE.
 
-In our simulation study, we will assess the performance of the bootstrapped variance
-by comparing it to the empirical variance of the MLE, and we will assess
-the performance of the bootstrapped confidence interval by computing
-its coverage probability, i.e., a 95% confidence interval should
-contain the true value 95% of the time. We say that a confidence interval
+In our simulation study, we will assess the performance of the bootstrapped
+confidence intervals by computing their widths and computing coverage
+probabilities, i.e., a 95% confidence interval should contain the true
+value 95% of the time.
+
+Together, the width and the coverage probability, tell us how
+informative the confidence interval is. We say that a confidence interval
 has *good coverage* if its coverage probability is close to the nominal
 confidence level.
 
 If the confidence intervals have good coverage, a small confidence interval width
-means we are more confident that the true value of $\v\theta$ is close to the MLE,
+means we are more confident that the true value $\v\theta$ is close to the MLE,
 and a large confidence interval width means we are less confident that the true value
 of $\v\theta$ is close to the MLE. However, if the confidence interval has poor
 coverage, then the confidence interval width is not particularly informative.
 Thus, we see that the confidence interval is only useful if it has good coverage,
-and so we will focus on assessing the coverage probability of the confidence intervals
-in our simulation study.
 
-## Caveats
+### Issues with Resampling from the Observed Data {-}
 
 While the bootstrap method provides a robust and flexible tool for statistical
 estimation, its effectiveness can be influenced by several factors
@@ -814,37 +812,26 @@ for component failure masking. These aspects can cause certain data points or
 trends to be underrepresented or not represented at all in our data, introducing
 bias in the bootstrap distribution \citep{klein2005survival}.
 
-On the topic of independence and identical distribution (i.i.d.), each system
-failure observation in our study can indeed be considered independently drawn
-from the same overall distribution, thus satisfying the i.i.d. assumption at the
-system level. However, it's worth noting that introducing external information
-during MLE computation or not resampling whole systems could potentially violate
-the i.i.d. assumption \citep{efron1994introduction}.
-
 Despite these challenges, we found the bootstrap method useful in approximating
 our parameter distributions, taking care in interpreting the results. Further
 research could explore more sophisticated techniques that can handle these
-issues effectively.
+issues more effectively.
+
+### Parametric Bootstrap {-}
+
+There is an alternative form of the bootstrap called the parametric bootstap,
+where the bootstrap samples are generated from a parametric distribution.
+However, this parametric bootstrap is not appropriate for our analysis
+because we do not assume a parametric form for the distribution of the
+candidate sets $\mathcal{C}_i$. In our simulation study, we use what
+we call the Bernoulli candidate set model (see Section \ref{sec:simstudy}),
+which is a parametric model for the distribution of the candidate sets,
+but we want to assess the performance of the bootstrap method when the
+true data generating process for candidate sets is not known.
 
 
-
-# Bootstrapping the Variance and Confidence Intervals of the MLE {#sec:boot}
-The bootstrap is a non-parametric approach that estimates the sampling distribution of a statistic, in our case, statistics of the MLE. It involves generating random data by resampling with replacement from the original data and repeating this process $B$ times. We obtain $B$ bootstrap replicates, and the empirical distribution of these replicates approximates the statistic's sampling distribution.
-
-We use the bootstrap to estimate two particular statistics of the MLE: the variance and the confidence interval. The confidence interval is bootstrapped using the percentile method, which doesn't explicitly depend on the variance estimate.
-
-In our simulation study, we will assess the performance of the bootstrap variance by comparing it to the empirical variance of the MLE. The performance of the bootstrap confidence interval will be evaluated by computing its coverage probability. Good coverage means that a 95% confidence interval should contain the true value 95% of the time.
-
-There are, however, limitations to using the bootstrap method. Bootstrap samples may fail to converge when using MLE, which can introduce bias or reduce the bootstrap distribution's effective sample size. The method may also produce inaccurate results for small datasets, as it relies on the law of large numbers to approximate the true sampling distribution. Our study involving right-censored data and a Bernoulli candidate set model for component failure masking might cause certain trends to be underrepresented in our data, which could introduce bias in the bootstrap distribution. Despite these challenges, the bootstrap method still provides a valuable approach to approximating parameter distributions.
-
-
-
-
-
-
-
-Simulation Study: Series System with Weibull Components {#sec:weibull}
-=============================================
+Series System with Weibull Components {#sec:weibull}
+====================================================
 In the real world, systems are quite complex:
 
 1. They are not perfect series systems.
@@ -943,73 +930,6 @@ Equations \eqref{eq:sys_weibull_reliability_function} and
 \eqref{eq:sys_weibull_failure_rate_function} completes the proof.
 \end{proof}
 
-
-## System Reliability
-```{r sim-study-design, echo = F}
-theta <- c(shape1 = 1.2576, scale1 = 994.3661,
-           shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1141,
-           shape5 = 1.3311, scale5 = 836.1123)
-shapes <- theta[grepl("shape", names(theta))]
-scales <- theta[grepl("scale", names(theta))]
-```
-
-A series system is only as reliable as its least reliable component. 
-In order to make the simulation study representative of real-world scenarios, at least
-for systems designed to be reliable, we choose parameter values that are representative of
-real-world systems where there is no single component that is much less reliable than the
-others.
-
-One way to define reliability is by the mean time to failure (MTTF), which is the
-expected value of the lifetime, which for the Weibull distribution is given by
-$$
-\text{MTTF} = \lambda \, \Gamma(1 + 1/k),
-$$
-where $\Gamma$ is the gamma function.
-
-We consider the data from [@Huairu-2013], which includes a study of the reliability of a series system
-with three Weibull components with shape and scale parameters given by
-\begin{equation}
-\begin{aligned}
-    k_1 = `r theta["shape1"]` &\quad \lambda_1 = `r theta["scale1"]`\\
-    k_2 = `r theta["shape2"]` &\quad \lambda_2 = `r theta["scale2"]`\\
-    k_3 = `r theta["shape3"]` &\quad \lambda_3 = `r theta["scale3"]`.
-\end{aligned}
-\end{equation}
-
-Our approach is to extend this system to a five component system by adding two
-more components with shape and scale parameters given by
-\begin{equation}
-\begin{aligned}
-    k_4 = `r theta["shape4"]` &\quad \lambda_4 = `r theta["scale4"]`\\
-    k_5 = `r theta["shape5"]` &\quad \lambda_5 = `r theta["scale5"]`.
-\end{aligned}
-\end{equation}
-
-```{r table-2, table.attr = "style='width:50%;'", echo = F, results = 'asis', fig.cap = "Component Reliability", fig.align = "center"}
-
-# let's also show the MTTF of the entire series system
-mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
-    shapes=shapes) }, lower=0, upper=Inf)$value
-mttf <- gamma(1 + 1/shapes) * scales
-components <- data.frame(
-  "MTTF" = mttf,
-  row.names = paste("Component", 1:5)
-)
-
-components <- rbind(components, "Series System" = mttf.sys)
-knitr::kable(components, caption = "Meean Time To Failure of Weibull Components and Series System")
-```
-
-As shown by Table 2, there are no components that are significantly less reliable
-than any of the others.
-Note that a series system in which, say, one of the components does have a significantly
-shorter MTTF would also pose significant challenges to estimating the parameters of
-the system from our masked failure data, since the failure time of the series system
-would be dominated by the failure time of the least reliable component. See Section
-\ref{sec:opt_rescale} for further discussion.
-
 ## Weibull Likelihood Model for Masked Data
 
 In Section \ref{sec:like_model}, we discussed two separate kinds of likelihood
@@ -1069,8 +989,6 @@ The log-likelihood contribution of the $i$-th system is given by
 where we drop any terms that do not depend on $\v\theta$ since they do not
 affect the MLE.
 \end{corollary}
-
-## Numerically Solving the MLE
 
 We find an MLE by solving \eqref{eq:mle_eq},
 i.e., a point $\v{\hat\theta} = (\hat{k}_1,\hat{\lambda}_1,\ldots,\hat{k}_m,\hat{\lambda}_m)$ satisfying
@@ -1141,14 +1059,163 @@ sample is given by
 \nabla \ell(\v\theta) = \sum_{i=1}^n \nabla \ell_i(\v\theta).
 \end{equation}
 
-### Issues with the MLE {#sec:opt_rescale}
 
-\textbf{Identifiability}: When estimating the parameters, we
-must be careful to ensure that the parameters are identifiable such that the
-likelihood function is maximized at a unique point. If the likelihood
-function is not maximized at a unique point, then the MLE is not unique, and
-a lot of the theory we have developed so far breaks down, particularly when the
-likelihood surface is flat or has multiple local maxima \citep{mclachlan2007algorithm}
+Simulation Study {#simstudy}
+============================
+
+We derived the likelihood model for masked data for the
+Weibull series system in Section \ref{sec:weibull}. In this section, we
+describe the design of our simulation study, and we assess the performance
+of the bootstrap method for estimating the sampling distribution of the MLE
+for a Weibull series system with $m=5$ components under our proposed
+likelihood model.
+
+## Realistic System Designs
+```{r sim-study-design, echo = F}
+theta <- c(shape1 = 1.2576, scale1 = 994.3661,
+           shape2 = 1.1635, scale2 = 908.9458,
+           shape3 = 1.1308, scale3 = 840.1141,
+           shape4 = 1.1802, scale4 = 940.1141,
+           shape5 = 1.3311, scale5 = 836.1123)
+shapes <- theta[grepl("shape", names(theta))]
+scales <- theta[grepl("scale", names(theta))]
+```
+
+A series system is only as reliable as its least reliable component. 
+In order to make the simulation study representative of real-world scenarios, at least
+for systems designed to be reliable, we choose parameter values that are representative of
+real-world systems where there is no single component that is much less reliable than the
+others.
+
+One way to define reliability is by the mean time to failure (MTTF), which is the
+expected value of the lifetime, which for the Weibull distribution is given by
+$$
+\text{MTTF} = \lambda \, \Gamma(1 + 1/k),
+$$
+where $\Gamma$ is the gamma function.
+
+We consider the data from [@Huairu-2013], which includes a study of the reliability of a series system
+with three Weibull components with shape and scale parameters given by
+\begin{equation}
+\begin{aligned}
+    k_1 = `r theta["shape1"]` &\quad \lambda_1 = `r theta["scale1"]`\\
+    k_2 = `r theta["shape2"]` &\quad \lambda_2 = `r theta["scale2"]`\\
+    k_3 = `r theta["shape3"]` &\quad \lambda_3 = `r theta["scale3"]`.
+\end{aligned}
+\end{equation}
+
+Our approach is to extend this system to a five component system by adding two
+more components with shape and scale parameters given by
+\begin{equation}
+\begin{aligned}
+    k_4 = `r theta["shape4"]` &\quad \lambda_4 = `r theta["scale4"]`\\
+    k_5 = `r theta["shape5"]` &\quad \lambda_5 = `r theta["scale5"]`.
+\end{aligned}
+\end{equation}
+
+```{r table-2, table.attr = "style='width:50%;'", echo = F, results = 'asis', fig.cap = "Component Reliability", fig.align = "center"}
+
+# let's also show the MTTF of the entire series system
+mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
+    shapes=shapes) }, lower=0, upper=Inf)$value
+mttf <- gamma(1 + 1/shapes) * scales
+components <- data.frame(
+  "MTTF" = mttf,
+  row.names = paste("Component", 1:5)
+)
+
+components <- rbind(components, "Series System" = mttf.sys)
+knitr::kable(components, caption = "Meean Time To Failure of Weibull Components and Series System")
+```
+
+As shown by Table 2, there are no components that are significantly less reliable
+than any of the others.
+Note that a series system in which, say, one of the components does have a significantly
+shorter MTTF would also pose significant challenges to estimating the parameters of
+the system from our masked failure data, since the failure time of the series system
+would be dominated by the failure time of the least reliable component. See Section
+\ref{sec:opt_rescale} for further discussion.
+
+### Verification {-}
+
+To verify that our likelihood model is correct, we load the Table 2 data from
+[@Huairu-2013] and fit the Weibull series model to the data to see if we can
+recover the MLE they reported. When we fit the Weibull series model to this data by
+maximizing the likelihood function, we obtain the following fit for the shape and
+scale parameters given respectively by
+$$
+    \hat{k}_1 = `r theta["shape1"]`,
+    \hat{k}_2 = `r theta["shape2"]`,
+    \hat{k}_3 = `r theta["shape3"]`,
+$$
+and
+$$
+    \hat{\lambda}_1 = `r theta["scale1"]`,
+    \hat{\lambda}_2 = `r theta["scale2"]`,
+    \hat{\lambda}_3 = `r theta["scale3"]`,
+$$
+which is in agreement with the MLE they reported. Satisfied that our likelihood model
+is correct, we proceed with the simulation study.
+
+
+## Data Generating Process
+
+In this section, we describe the data generating process for our simulation study.
+It consists of three parts: the series system, the candidate set model, and the
+right-censoring model.
+
+### Weibull Series System Lifetime {-}
+
+We generate data from a Weibull series system with $m=5$ components.
+As described in Section \ref{sec:weibull}, the $j$\textsuperscript{th} component
+of the $i$\textsuperscript{th} system has a lifetime distribution given by
+$$
+    T_{i j} \sim \operatorname{WEI}(k_j, \lambda_j)
+$$
+and the lifetime of the series system composed of $m$ Weibull components
+is defined as
+$$
+    \T_i = \min\{T_{i 1}, \ldots, T_{i m}\}.
+$$
+
+To generate a data set, we first generate the $m$ component failure times,
+by efficiently sampling from their respective distributions, and we then set
+the failure time $t_i$ of the system to the minimum of the component failure times.
+
+### Right-Censoring Model {-}
+
+We employ a very simple right-censoring model, where the right-censoring time
+$\tau$ is fixed at some known value, e.g., an experiment is run for a fixed
+amount of time $\tau$, and all systems that have not failed by the end of the
+experiment are right-censored. The censoring time $S_i$ of the
+$i$\textsuperscript{th} system is thus given by
+$$
+    S_i = \min\{\T_i, \tau\}.
+$$
+So, after we generate the system failure time $\T_i$, we generate the censoring
+time $S_i$ by taking the minimum of $\T_i$ and $\tau$.
+
+
+### Masking Model for Component Cause of Failure {-}
+
+We must generate data that satisfies the masking conditions described in
+Section \ref{sec:candmod}.
+There are many ways to satisfying the masking conditions. We choose the simplest
+method, which we call the *Bernoulli candidate set model*. In this model, each
+non-failed component is included in the candidate set with
+a fixed probability $p$, independently of all other components and independently
+of $\v\theta$, and the failed component is always included in the candidate set.
+
+## Issues with Convergence to the MLE {#sec:opt_rescale}
+
+### Identifiability {-}
+
+When estimating the parameters, we must be careful to ensure that the parameters
+are identifiable such that the likelihood function is maximized at a unique point.
+If the likelihood function is not maximized at a unique point, then the MLE is not
+unique, and a lot of the theory we have developed so far breaks down, particularly
+when the likelihood surface is flat or has multiple local maxima
+\citep{mclachlan2007algorithm}
 
 One way in which this problem may arise is if the data is not informative
 enough. For example, if we have a series system and in the observed masked data
@@ -1177,7 +1244,8 @@ a series system with components that have similar MTTFs. Our decision was to
 simply exclude these data sets from our analysis, since they are not
 informative enough to estimate the parameters of the system.
 
-\textbf{Parameter rescaling}: When the parameters under investigation span different
+### Parameter rescaling {-}
+When the parameters under investigation span different
 orders of magnitude, parameter rescaling can significantly improve the performance
 and reliability of optimization algorithms. Parameter rescaling gives an optimizer a
 sense of the typical size of each parameter, enabling it to adjust its steps
@@ -1192,124 +1260,7 @@ MLE, which requires us to estimate the MLE for many data sets. We found that
 parameter rescaling significantly improved the speed of convergence, which allowed
 us to run our simulation study in a tractable amount of time.
 
-## Simulation Design
-
-In this section, we describe the design of our simulation study. We first describe
-the simulation scenarios we consider, and then we describe how we generate data
-for each scenario.
-
-### Bernoulli Candidate Set Model
-
-In our simulation study, we must generate data that satisfies the masking
-conditions described in Section \ref{sec:candmod}.
-There are many ways to satisfying the masking conditions. We choose the simplest
-method, which we call the *Bernoulli candidate set model*. In this model, each
-non-failed component is included in the candidate set with
-a fixed probability $p$, independently of all other components and independently
-of $\v\theta$, and the failed component is always included in the candidate set.
-
-### Right-Censoring Model
-
-We employ a very simple right-censoring model, where the right-censoring time
-$\tau$ is fixed and independent of $\v\theta$ and the censoring time $S_i$ of
-the $i$\textsuperscript{th} system.
-
-We parameterize $\tau$ by quantiles of the series system, e.g., if $q = 0.8$,
-then $\tau(q)$ is the $80\%$ quantile of the series system such that $80\%$ of
-the series systems are observed (fail before time $\tau(q)$) and $20\%$ of the
-series systems fail after time $\tau(q)$ (are right-censored).
-
-### Scenarios
-
-we vary the sample size $n$, the Bernoulli masking probability $p$ of including each
-non-failed component in the candidate set, and the right-censoring time $\tau$. We
-then analyze the performance of the MLE under these various scenarios.
-
-Here is an outline of the simulation study analysis:
-
-1. Set up simulation parameters for various scenarios of interest, such as
-   generating data to examine the relationship between bias and masking probability
-   for different sample sizes and right-censoring times.
-
-2. Generate $R$ data sets for each scenario (some combination of $n$, $p$, and
-   $\tau$).
-
-3. Estimate the parameters for each data set, giving us $R$ estimates of the
-   parameters. We use these data sets as an empirical estimate of
-   the sampling distribution of the MLE for each scenario.
-   
-4. Using the empirical sampling distribution of the MLE, estimate various 
-   performance measures of the MLE, like bias, variance, MSE, and coverage
-   probability for each scenario.
-
-5. Analyze and visualize the results, e.g., by plotting the bias, variance, MSE,
-   and coverage probability as a function of $n$ for different combinations of $p$
-   and $\tau$. 
-
-   We then interpret the results and discuss the performance of the MLE estimator
-   under various conditions. We expect that as $n \to \infty$, the bias and MSE
-   will go to $0$ and the coverage probability will go to $0.95$ (when
-   constructing $95\%$ confidence intervals). Of course, we do not expect these
-   results to hold for finite $n$, but we would like to see how the bias, MSE, and
-   coverage probability change as we vary $n$, $p$, and $\tau$.
-
-For how we generate a scenario, see Appendix A.
-
-### Verification
-
-To verify that our likelihood model is correct, we load the Table 2 data from
-[@Huairu-2013] and fit the Weibull series model to the data to see if we can
-recover the MLE they reported. When we fit the Weibull series model to this data by
-maximizing the likelihood function, we obtain the following fit for the shape and
-scale parameters given respectively by
-$$
-    \hat{k}_1 = `r theta["shape1"]`,
-    \hat{k}_2 = `r theta["shape2"]`,
-    \hat{k}_3 = `r theta["shape3"]`,
-$$
-and
-$$
-    \hat{\lambda}_1 = `r theta["scale1"]`,
-    \hat{\lambda}_2 = `r theta["scale2"]`,
-    \hat{\lambda}_3 = `r theta["scale3"]`,
-$$
-which is in agreement with the MLE they reported. Satisfied that our likelihood model
-is correct, we proceed with the simulation study.
-
-## Bias, variance, and MSE of the MLE {#sec:acc_prec}
-
-First, we estimate the bias, variance, and MSE of the MLE under various scenarios.
-This is useful for understanding the accuracy and precision of the MLE under
-different conditions. It is unrelated to the bootstrap method, but it is useful to
-compute these quantities before we assess the bootstrapped variance and confidence
-intervals.
-
-A measure of the accuracy of $\v{\hat\theta}$ is the bias, which is defined as
-$$
-\operatorname{b}(\v{\hat\theta}) = E(\v{\hat\theta}) - \v\theta.
-$$
-We cannot analytically derive the bias, so we estimate the bias using the empirical
-sampling distribution,
-$$
-\hat{\operatorname{b}}(\hat\theta_j) =
-    E_{\hat{\v\theta} \sim \text{data}}(\v{\hat\theta}) - \theta_j.
-$$
-
-We estimate the precision of $\hat\theta_j$ with the variance and MSE. The variance
-of $\v{\hat\theta}$ is defined as
-$$
-\operatorname{Var}(\hat\theta_j) =
-    E_{\hat{\v\theta} \sim \text{data}}\bigl((\hat\theta_j - E_{\hat{\v\theta} \sim \text{data}}(\hat\theta_j))^2\bigr),
-$$
-where the expectation is taken with respect to the empirical sampling distribution.
-The mean squared error is a measure of estimator error that incorporates both the
-bias and the variance, and is defined as
-$$
-\operatorname{MSE}(\hat\theta_j) =
-    E_{\hat{\v\theta} \sim \text{data}}\bigl((\hat\theta_j - \theta_j)^2\bigr).
-$$
-
-## Assessing the Bootstrapped Variance, Bias, MSE, and Confidence Intervals
+## Assessing the Bootstrapped Confidence Intervals
 
 Once we analyze the bias, variance, and MSE of the MLE, using a simulation study, we
 then assess the bootstrapped variance, bias, MSE, and confidence intervals. This is
@@ -1322,171 +1273,6 @@ the empirical sampling distribution. In particular, if the variance is too large
 or small, then the coverage probability of the confidence intervals will be too
 small or large, respectively.
 
-## Simulation Scenarios
-
-We consider many different scenarios, where we vary the sample size $n$, the masking
-probability $p$, and the right-censoring time $\tau$. We then analyze the performance
-of the MLE under these various scenarios by estimating the bias, variance, and MSE
-of the MLE.
-
-### Absolute bias vs. sample size with a masking probability but no right-censoring {-}
-
-In this scenario, we want to see the bias of the MLE as a function of the sample
-size $n$ from $n = 30$ to $n = 800$ for a fixed masking probability $p = 0.2$ and no
-right-censoring $(\tau = \infty)$. Recall that the masking probability is the
-probability of including each non-failed component.
-
-
-```{r plot-bias-p-0.2-vs-sample-size, echo =F, fig.cap="Bias vs. sample size (masking probability 0.2)", fig.align="center"}
-knitr::include_graphics("image/plot-p-0.2-bias-vs-sample-size.pdf")
-```
-
-In Figure \ref{fig:plot-bias-p-0.2-vs-sample-size}, we plot the absolute bias
-$|\operatorname{bias}(\hat\theta)|$ on a log scale against the sample size. 
-However, because the absolute bias is quite large for small sample sizes and small
-for large sample sizes, we use a log scale. Furthermore, we show the absolute bias
-for the shape and scale parameters separately, since the scale parameters are much
-larger than the shape parameters.
-
-Here are some important observations Figure \ref{fig:plot-bias-p-0.2-vs-sample-size} reveals:
-
-1. For both shape and scale parameters, we see that the absolute bias seems to be
-decreasing to zero as the sample size increases. This is not surprising since we
-expect the MLE to be consistent, i.e., $\v{\hat\theta}$ converges in probability
-to $\v\theta$ as the sample size increases to infinity. Still, it is reassuring to
-see that the bias seems to be behaving as expected.
-
-2. For the shape parameters, which are small (the shape parameters have true values
-a little larger than 1), the bias is relatively large for sample sizes up to
-$100$.
-
-3. For the scale parameters, which are quite large (the scale parameters have true
-values around 1000). Like with the shape parameters, the bias is relatively large for
-sample sizes up to $100$, but seems to stabilize and reach relatively small values
-after that.
-
-### Scenario: Bias vs. sample size and masking probability and no right-censoring {-}
-
-Now, we take a larger view and plot the bias (without taking its absolute value
-as we had done previously) against the masking probabilities $p = 0$
-(no masking) to $p = 0.4$ (significant masking) for sample sizes 100, 400, and 800.
-
-For the shape parameters, at a sample of size 100, we see significant bias and we
-also see that it is very sensitive to the masking probability. See Figure
-\ref{fig:plot-bias-shapes-vs-p-sample-size-100-400-800}. However, for sample sizes
-of 400 and 800, the bias is relatively small and unaffected by the masking
-probability.
-
-```{r plot-bias-shapes-vs-p-sample-size-100-400-800, echo =F, fig.cap="Shape Bias vs. masking probability for sample sizes 100, 400, and 800", fig.align="center"}
-knitr::include_graphics("image/plot-bias-shapes-p-vs-sample-size-100-400-800.pdf")
-```
-
-For the scale parameters, a similar pattern emerges, although we see that even
-for sample size 400, there is evidence that the bias is still affected by the masking
-probability. See Figure \ref{fig:plot-bias-scales-vs-p-sample-size-100-400-800}.
-
-The smallest bias, as expected, occurs for sample sizes of $800$. The bias 
-for $\lambda_1$ (scale parameter 1) at the masking probability $0.3$ is an interesting
-case, since it jumps up at that point for some reason. We used only $R = 100$
-replications, so it is plausible it would decrease with more replications.
-Regardless, the overall trend is that the bias decreases as the sample size increases, and its
-dependence on the masking probability is relatively small with sufficiently large
-sample sizes.
-
-```{r plot-bias-scales-vs-p-sample-size-100-400-800, echo =F, fig.cap="Scale Bias vs. masking probability for sample sizes 100, 400, and 800", fig.align="center"}
-knitr::include_graphics("image/plot-bias-scales-p-vs-sample-size-100-400-800.pdf")
-```
-
-#### Scenario: Bias vs. right-censoring time and sample size with a fixed masking probability {-}
-
-In this scenario, we want to isolate the effect of the right-censoring time $\tau$
-on the bias. We fix the masking probability to $p = 0.215$, in line with the masking
-probability we estimate for the Table 2 data set in [@Huairu-2013].
-
-We plot the bias against the right-censoring
-time for sample sizes 50, 150, and 300. See Figure \ref{fig:plot-bias-tau-vs-sample-size-50-150-300}.
-On the $x$-axis, we report the right-censoring time as a quantile of the
-Weibull series distribution so that we can more clearly see the effect of the right-censoring
-on the bias, e.g., the $50\%$ quantile is the time at which $50\%$ of the
-systems are expected to fail.
-
-```{r plot-bias-tau-vs-sample-size-50-150-300, echo =F, fig.cap="Bias vs. right-censoring time and sample sizes 50, 150, and 300", fig.align="center"}
-knitr::include_graphics("image/plot-bias-tau-vs-sample-size-50-150-300.pdf")
-```
-
-A few observations about Figure \ref{fig:plot-bias-tau-vs-sample-size-50-150-300}:
-
-1. The bias decreases as the right-censoring time increases. This is expected since we have
-more information about the system when the right-censoring time is larger.
-
-2. The bias decreases as the sample size increases, which is also expected since we
-have more information about the system when the sample size is larger.
-
-3. The bias is relatively small for sample sizes 150 and 300, but for sample size 50,
-the bias is quite large, particularly for the shape parameters. This is not
-surprising since the sample size is quite small, and so we do not expect the MLE to
-be very accurate.
-
-
-### Variance
-
-```{r var.plot, echo=F, fig.cap="Variance vs. sample size", fig.align="center"}
-library(ggplot2)
-library(dplyr)
-library(readr)
-library(tidyverse)
-library(latex2exp)
-
-# Load the data
-sim_data <- read_csv("results/data/data-fim.csv")
-
-# rename columns for plotting
-sim_data <- sim_data %>% rename(
-  "Shape 1" = mle.1,
-  "Scale 1" = mle.2,
-  "Shape 2" = mle.3,
-  "Scale 2" = mle.4,
-  "Shape 3" = mle.5,
-  "Scale 3" = mle.6,
-  "Shape 4" = mle.7,
-  "Scale 4" = mle.8,
-  "Shape 5" = mle.9,
-  "Scale 5" = mle.10
-)
-
-# Filter data
-filtered_data <- sim_data %>% filter(p == 0 & q == 1)
-
-# Compute variances
-shape_data <- filtered_data %>% select(n, "Shape 1", "Shape 2", "Shape 3", "Shape 4", "Shape 5")
-scale_data <- filtered_data %>% select(n, "Scale 1", "Scale 2", "Scale 3", "Scale 4", "Scale 5")
-
-shape_variances <- shape_data %>% group_by(n) %>% summarise_all(var, na.rm = TRUE)
-scale_variances <- scale_data %>% group_by(n) %>% summarise_all(var, na.rm = TRUE)
-
-# Reshape the data for ggplot2
-shape_variances_long <- shape_variances %>% gather(key = "Parameter", value = "Variance", -n)
-scale_variances_long <- scale_variances %>% gather(key = "Parameter", value = "Variance", -n)
-
-# Plotting
-ggplot(shape_variances_long, aes(x = n, y = Variance, colour = Parameter)) +
-  geom_line() +
-  geom_point() +
-  scale_y_log10() +
-  labs(x = "Sample Size (n)", y = "Variance", 
-       title = "Variance of Shape Parameter MLEs with respect to Sample Size") +
-  theme_minimal()
-
-ggplot(scale_variances_long, aes(x = n, y = Variance, colour = Parameter)) +
-  geom_line() +
-  geom_point() +
-  scale_y_log10() +
-  labs(x = "Sample Size (n)", y = "Variance", 
-       title = "Variance of Scale Parameter MLEs with respect to Sample Size") +
-  theme_minimal()
-```
-
-## Coverage Probability of Bootstrapped Confidence Intervals {#sec:coverage_prob}
 Under a variety of scenarios, we will bootstrap a $95\%$-confidence interval for
 $\v\theta$ using the percentile method, and we will evaluate its accuracy by
 computing the coverage probability.
@@ -1496,21 +1282,77 @@ the coverage probability is too low, then we will be too confident in the precis
 and accuracy of the MLE, and if the coverage probability is too high, then we will
 not be confident enough in the precision and accuracy of the MLE.
 
-To estimate the coverage probability, we use the following procedure:
-
-1. For a given scenario, we generate $R = 300$ data sets.
-
-2. We find an MLE for each of $R$ data sets.
-
-3. We bootstrap the $95\%$-confidence interval for each MLE.
-
-4. We compute the coverage probability by computing the proportion of times
-   the true parameter $\v\theta$ is contained in $95\%$-confidence
-   interval.
+The coverage probability is defined as the proportion of times that the true value
+of $\v\theta$ falls within the confidence interval. We will compute the coverage
+probability by generating $R$ datasets from the Data Generating Process (DGP) and
+computing the coverage probability for each dataset. We will then aggregate this
+information across all $R$ datasets to estimate the coverage probability.
 
 ## Simulation Scenarios
 
-### Scenario: Coverage probability vs. sample size with a fixed masking probability and no right-censoring {-}
+We parameterize $\tau$ by quantiles of the series system, e.g., if $q = 0.8$,
+then $\tau(0.8)$ is the $80\%$ quantile of the series system such that $80\%$ of
+the sytems are expected to fail before time $\tau(0.8)$ and $20\%$ of the
+series systems are expected to be right-censored.
+
+
+We define a simulation scenario to be some comination of $n$,
+$p$, and $q$. For the sake of brevity, we will refer to a simulation scenario
+by its sample size $n$, masking probability $p$, and right-censoring probability
+$q$. We are interested in choosing a small number of scenarios that are
+representative of real-world scenarios and that are interesting to analyze.
+There are many ways to choose scenarios, but we choose the following three.
+
+1. Ideal case with no masking of the component cause of failure
+   ($p = 0$) and no right-censoring ($q = 1$, or
+   equivalently, $\tau = \infty$).
+
+2. Moderate masking of the component cause of failure ($p = 0.2$)
+   and moderate right-censoring ($q = 0.9$).
+
+3. Significant masking of the component cause of failure ($p = 0.4$)
+   and significant right-censoring ($q = 0.75$).
+
+For each of these scenarios, we will consider sample sizes $n$ from
+small samples $(n = 30)$ to relatively large samples $(n = 300)$.
+
+We will analyze the performance of the MLE under these various scenarios by
+computing the coverage probability and width of the $95\%$-confidence intervals.
+
+Here is an outline of the simulation study analysis:
+
+1. Choose a scenario (sample size $n$, masking probability $p$, and right-censoring
+  probability $q$).
+
+2. Generate R datasets from the Data Generating Process (DGP). The DGP
+  should be compatible with the assumptions in our likelihood model.
+  In our case, we use:
+
+    * Right-censored series lifetimes with $m = 5$ Weibull components.
+
+    * Bernoulli candidate set model for the masking of component cause of failure.
+
+3. For each of these $R$ datasets, calculate the Maximum Likelihood Estimator (MLE).
+
+4. For each of these $R$ datasets, perform bootstrap resampling $B$ times to create
+  a set of bootstrap samples.
+
+5. Calculate the MLE for each of these bootstrap samples. This generates an empirical
+  distribution of the MLE, which is used to construct a Confidence Interval (CI) for
+  the MLE.
+
+6. Repeat steps 4 and 5 for each of the $R$ datasets.
+
+7. For each dataset, determine whether the true parameter value falls within the
+  computed CI. Aggregate this information across all $R$ datasets to estimate the
+  coverage probability of the CI.
+
+8. Interpret the results and discuss the performance of the MLE estimator
+  under various scenarios.
+
+For how we generate a scenario, see Appendix A.
+
+## Coverage probability vs. sample size with a fixed masking probability and no right-censoring
 
 We want to isolate the effect of the coverage probability as a function of the sample
 size $n$. We fix the masking probability to $p = 0.2$ and without right-censoring $(\tau = \infty)$
@@ -1537,7 +1379,7 @@ Here are some key observations:
    variance-covariance given by the inverse of the FIM, consistent with the
    asymptotic theory.
 
-### Scenario: Coverage probability vs. sample size and masking probability without right-censoring {-}
+## Coverage probability vs. sample size and masking probability without right-censoring
 
 We want to get a larger picture of how the coverage probability depends on the
 sample size $n$ and masking probability $p$. We fix the right-censoring time to
@@ -1569,6 +1411,8 @@ intervals using the bootstrap method, which is generally a more accurate way to
 compute confidence intervals. Unlike the inverse of the observed FIM, it does not
 assume that the sampling distribution of the MLE is asymptotically normal, and so
 it is more robust to violations of this assumption.
+
+# Future Work
 
 
 # Conclusion
