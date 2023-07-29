@@ -1,17 +1,10 @@
-#
-# This is an experiment to see how masking probability effects the sampling distribution of the MLE
-# Of course, as always, we are interested in assessing the coverage probability and CI in general.
-# But, since it's an MC simulation too, we can also see the bias plotted on the graph that results
-# from this. Whenever censoring occurs, whether component cause of failure, or right censoring,
-# the parameters of the components are going to be biased in a way that increases the MTTF of the
-# component. Why? Because we only know that a component (if right censored, all components) survived
-# longer than some time. this is interesting. we will not examine the effect of tau, we keep that fixed,
-# at q = .825 (quantile of the series system). however, we do change masking probability p. when
-# we increase this, it's interesting to see the effect.
-#
-# another experiment i'm running is making one of the components the weakest link in the chain,
-# and so dominates the component cause of failure. this will increase the bias of the other
-# components, but the weak component will be estimated quite well.
+#' we do the semi-parametric bootstrap in this way:
+#' 1. generate component lifetimes from the fitted MLE weibull distributions
+#' 2. populate the df with the component lifetimes, censored system failure times,
+#'    and the censoring indicator.
+#' 3. populate the df with the component cause of failure
+#' 4. sample a C[i] from the df with replacement using the
+#'    empirical distribution of C[i] | K[i] = k.
 
 library(tidyverse)
 library(parallel)
