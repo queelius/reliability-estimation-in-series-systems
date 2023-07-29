@@ -152,4 +152,5 @@ plt.tight_layout(h_pad=8.0, w_pad=5.0)
 
 # Show the plot
 #plt.show()
-plt.savefig('plot-p-vs-stats.pdf', dpi=300)
+#plt.savefig('plot-p-vs-stats.pdf', dpi=300)
+plt.savefig('plot-p-vs-stats.png', dpi=300)

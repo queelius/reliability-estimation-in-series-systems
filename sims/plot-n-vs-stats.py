@@ -34,7 +34,8 @@ def plot_mles_and_cis(ax, data_p, true_params, param, param_label, probmask=0.21
     std_devs = []
     coverage_probs = []
     for i, p in enumerate(p_values):
-        data_p = data_p_no_outliers[data_p_no_outliers['n'] == p && data_p_no_outliers['p'] == probmask]
+        data_p = data_p_no_outliers[data_p_no_outliers['n']]
+        data_p = data_p[data_p['p'] == pmask]
         
         # Show interquartile range of confidence intervals
         lower_q3, upper_q1 = np.percentile(data_p[param_lower], 75), np.percentile(data_p[param_upper], 25)
@@ -127,7 +128,7 @@ shape_params = ['shapes.1', 'shapes.2', 'shapes.3', 'shapes.4', 'shapes.5']
 shape_param_labels = ["k_1", "k_2", "k_3", "k_4", "k_5"]
 
 # Plot each parameter
-for ax, param, param_label in zip(axes.flatten()[:-1], shape_params, shape_param_labels):
+for ax, param, param_label in zip(axes.flatten()[:-1], shape_params, shape_param_labels, .215):
     plot_mles_and_cis(ax, data, true_params, param, param_label)
 
 # Remove the last subplot
@@ -149,4 +150,5 @@ plt.tight_layout(h_pad=8.0, w_pad=5.0)
 
 # Show the plot
 #plt.show()
-plt.savefig('plot-n-vs-stats.pdf', dpi=300)
+#plt.savefig('plot-n-vs-stats.pdf', dpi=300)
+plt.savefig('plot-n-vs-stats-shape-p215.png', dpi=300)
