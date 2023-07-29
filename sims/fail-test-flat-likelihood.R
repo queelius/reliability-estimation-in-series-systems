@@ -37,7 +37,4 @@ plt <- ggplot(data.frame(x=shape1, y=l(shape1)), aes(x=x, y=y)) +
     title="Log-likelihood Profile vs Shape 1") + theme_bw() +
     theme(plot.title = element_text(hjust = 0.5))
 
-print(plt)
-
-# save plt
-ggsave("last_plot.pdf", plot=plt, device="pdf", width=4, height=3, units="in", dpi=75)
+ggsave("fail-test-flat-likelihood.pdf", plot=plt, device="pdf", width=4, height=3, units="in", dpi=75)

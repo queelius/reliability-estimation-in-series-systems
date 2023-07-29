@@ -29,15 +29,16 @@ parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-N <- c(200)
-P <- rep(c(0, .1, .2, .3, .4, .5), 50)
+n_cores <- detectCores() - 1
+
+N <- c(1000)
+P <- c(.215, .333)
 Q <- c(.825)
-R <- 10
-B <- 750L
+R <- 200
+B <- 750
 max_iter <- 150L
 max_boot_iter <- 150L
 total_retries <- 10000L
-n_cores <- detectCores() - 1
 
 cat("Simulation parameters:\n")
 cat("R: ", R, "\n")
@@ -64,6 +65,8 @@ for (n in N) {
             shapes.mle <- matrix(NA, nrow = R, ncol = length(theta) / 2)
             scales.mle <- matrix(NA, nrow = R, ncol = length(theta) / 2)
 
+            # confidence intervals for each MLE, lower and upper bounds
+            # for 95% and 90% confidence intervals
             shapes.lower <- matrix(NA, nrow = R, ncol = length(theta) / 2)
             shapes.upper <- matrix(NA, nrow = R, ncol = length(theta) / 2)
             scales.lower <- matrix(NA, nrow = R, ncol = length(theta) / 2)
@@ -125,20 +128,23 @@ for (n in N) {
 
                 tryCatch({
                     sb <- mle_boot(sol.boot)
-                    ci <- confint(sb, type = "bca", level = 0.95)
-                    #ci <- confint(sb, type = "perc", level = 0.95)
+                    #print(boot.ci(sol.boot, type = "bca", index = 1))
+                    ci <- confint(sb, type = "perc", level = 0.95)
+
                     shapes.ci <- ci[seq(1, length(theta), 2), ]
                     scales.ci <- ci[seq(2, length(theta), 2), ]
                     shapes.lower[iter, ] <- shapes.ci[, 1]
                     shapes.upper[iter, ] <- shapes.ci[, 2]
                     scales.lower[iter, ] <- scales.ci[, 1]
                     scales.upper[iter, ] <- scales.ci[, 2]
+
+                    # check if any bootstrap replicate has a NA in any column,
+                    # if so, the bootstrap did not converge
                 }, error = function(e) {
                     cat("Error: ", conditionMessage(e), "\n")
                 })
                 if (iter %% 1 == 0) {
                     cat("Iter = ", iter, ", Shapes = ", shapes.mle[iter,], "Scales = ", scales.mle[iter, ], "\n")
-                    print(shapes.lower[iter,])
                 }
 
                 if (iter == R) {
@@ -160,8 +166,8 @@ for (n in N) {
                 scales.upper = scales.upper,
                 logliks = logliks)
 
-            write.table(df, file = "data-boot-tau-fixed-bca-p-vs-ci.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data-boot-tau-fixed-bca-p-vs-ci.csv"), append = TRUE)
+            write.table(df, file = "data-boot-tau-fixed-bca-100.csv", sep = ",", row.names = FALSE,
+                col.names = !file.exists("data-boot-tau-fixed-bca-100.csv"), append = TRUE)
         }
     }
 }

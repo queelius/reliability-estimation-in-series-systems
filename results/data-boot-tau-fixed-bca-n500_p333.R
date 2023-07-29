@@ -29,13 +29,13 @@ parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-N <- c(200)
-P <- rep(c(0, .1, .2, .3, .4, .5), 50)
+N <- c(500)
+P <- c(.333)
 Q <- c(.825)
-R <- 10
+R <- 100
 B <- 750L
-max_iter <- 150L
-max_boot_iter <- 150L
+max_iter <- 120L
+max_boot_iter <- 120L
 total_retries <- 10000L
 n_cores <- detectCores() - 1
 

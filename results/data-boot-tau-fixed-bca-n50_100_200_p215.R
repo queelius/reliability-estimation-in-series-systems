@@ -1,13 +1,3 @@
-
-
-#' we do the semi-parametric bootstrap in two steps:
-#' 1. generate component lifetimes from the fitted MLE weibull distributions
-#' 2. populate the df with the component lifetimes, censored system failure times,
-#'    and the censoring indicator.
-#' 3. populate the df with the component cause of failure
-#' 4. sample a C[i] from the df with replacement using the
-#'    empirical distribution of C[i] | K[i] = k.
-
 library(tidyverse)
 library(parallel)
 library(boot)
@@ -29,13 +19,13 @@ parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-N <- c(200)
-P <- rep(c(0, .1, .2, .3, .4, .5), 50)
+N <- c(50, 100, 200, 50)
+P <- c(.215)
 Q <- c(.825)
-R <- 10
-B <- 750L
-max_iter <- 150L
-max_boot_iter <- 150L
+R <- c(100, 10)
+B <- 600L
+max_iter <- 120L
+max_boot_iter <- 120L
 total_retries <- 10000L
 n_cores <- detectCores() - 1
 

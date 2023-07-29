@@ -1,13 +1,3 @@
-
-
-#' we do the semi-parametric bootstrap in two steps:
-#' 1. generate component lifetimes from the fitted MLE weibull distributions
-#' 2. populate the df with the component lifetimes, censored system failure times,
-#'    and the censoring indicator.
-#' 3. populate the df with the component cause of failure
-#' 4. sample a C[i] from the df with replacement using the
-#'    empirical distribution of C[i] | K[i] = k.
-
 library(tidyverse)
 library(parallel)
 library(boot)
@@ -29,15 +19,17 @@ parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-N <- c(200)
-P <- rep(c(0, .1, .2, .3, .4, .5), 50)
+n_cores <- detectCores() - 1
+N <- c(50, 100, 200)
+P <- c(.215)
 Q <- c(.825)
 R <- 10
-B <- 750L
-max_iter <- 150L
-max_boot_iter <- 150L
+B <- 100
+max_iter <- 250L
+max_boot_iter <- 250L
 total_retries <- 10000L
-n_cores <- detectCores() - 1
+# NOTE: removed two NA CI's from n=50 (was for `bca`, but removed
+#       corresponding row for `perc` too for some reason
 
 cat("Simulation parameters:\n")
 cat("R: ", R, "\n")
@@ -64,10 +56,12 @@ for (n in N) {
             shapes.mle <- matrix(NA, nrow = R, ncol = length(theta) / 2)
             scales.mle <- matrix(NA, nrow = R, ncol = length(theta) / 2)
 
-            shapes.lower <- matrix(NA, nrow = R, ncol = length(theta) / 2)
-            shapes.upper <- matrix(NA, nrow = R, ncol = length(theta) / 2)
-            scales.lower <- matrix(NA, nrow = R, ncol = length(theta) / 2)
-            scales.upper <- matrix(NA, nrow = R, ncol = length(theta) / 2)
+            # confidence intervals for each MLE, lower and upper bounds
+            # for 95% and 90% confidence intervals
+            shapes.lower.perc <- matrix(NA, nrow = R, ncol = length(theta) / 2)
+            shapes.upper.perc <- matrix(NA, nrow = R, ncol = length(theta) / 2)
+            scales.lower.perc <- matrix(NA, nrow = R, ncol = length(theta) / 2)
+            scales.upper.perc <- matrix(NA, nrow = R, ncol = length(theta) / 2)
 
             # for each MLE, we compute the log-likelihood
             logliks <- rep(0, R)
@@ -125,14 +119,13 @@ for (n in N) {
 
                 tryCatch({
                     sb <- mle_boot(sol.boot)
-                    ci <- confint(sb, type = "bca", level = 0.95)
-                    #ci <- confint(sb, type = "perc", level = 0.95)
-                    shapes.ci <- ci[seq(1, length(theta), 2), ]
-                    scales.ci <- ci[seq(2, length(theta), 2), ]
-                    shapes.lower[iter, ] <- shapes.ci[, 1]
-                    shapes.upper[iter, ] <- shapes.ci[, 2]
-                    scales.lower[iter, ] <- scales.ci[, 1]
-                    scales.upper[iter, ] <- scales.ci[, 2]
+                    ci.perc <- confint(sb, type = "perc", level = 0.95)
+                    shapes.ci.perc <- ci.perc[seq(1, length(theta), 2), ]
+                    scales.ci.perc <- ci.perc[seq(2, length(theta), 2), ]
+                    shapes.lower.perc[iter, ] <- shapes.ci.perc[, 1]
+                    shapes.upper.perc[iter, ] <- shapes.ci.perc[, 2]
+                    scales.lower.perc[iter, ] <- scales.ci.perc[, 1]
+                    scales.upper.perc[iter, ] <- scales.ci.perc[, 2]
                 }, error = function(e) {
                     cat("Error: ", conditionMessage(e), "\n")
                 })
@@ -154,14 +147,14 @@ for (n in N) {
                 B = rep(B, R),
                 shapes = shapes.mle,
                 scales = scales.mle,
-                shapes.lower = shapes.lower,
-                shapes.upper = shapes.upper,
-                scales.lower = scales.lower,
-                scales.upper = scales.upper,
+                shapes.lower = shapes.lower.perc,
+                shapes.upper = shapes.upper.perc,
+                scales.lower = scales.lower.perc,
+                scales.upper = scales.upper.perc,                
                 logliks = logliks)
 
-            write.table(df, file = "data-boot-tau-fixed-bca-p-vs-ci.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data-boot-tau-fixed-bca-p-vs-ci.csv"), append = TRUE)
+            write.table(df, file = "data-boot-tau-fixed-perc-p215_n50_100_200.csv", sep = ",", row.names = FALSE,
+                col.names = !file.exists("data-boot-tau-fixed-perc-p215_n50_100_200.csv"), append = TRUE)
         }
     }
 }

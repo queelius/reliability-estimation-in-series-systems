@@ -22,5 +22,4 @@ res <- optim(par = guo_weibull_series_mle$mle,
                 parscale = c(1,1000,1,1000,1,1000)))
 
 theta.hat <- mle_numerical(res)
-
 confint(theta.hat, level = 0.95)

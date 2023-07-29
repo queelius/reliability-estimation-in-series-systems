@@ -29,13 +29,17 @@ parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-N <- c(200)
-P <- rep(c(0, .1, .2, .3, .4, .5), 50)
+n = 100, 200, 500
+B = 500
+p = .333
+
+N <- c(100, 200, 500)
+P <- c(.333)
 Q <- c(.825)
 R <- 10
-B <- 750L
-max_iter <- 150L
-max_boot_iter <- 150L
+B <- 500
+max_iter <- 50L
+max_boot_iter <- 50L
 total_retries <- 10000L
 n_cores <- detectCores() - 1
 
@@ -160,8 +164,8 @@ for (n in N) {
                 scales.upper = scales.upper,
                 logliks = logliks)
 
-            write.table(df, file = "data-boot-tau-fixed-bca-p-vs-ci.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data-boot-tau-fixed-bca-p-vs-ci.csv"), append = TRUE)
+            write.table(df, file = "data-boot-tau-fixed-bca-lot-of-NA-server.csv", sep = ",", row.names = FALSE,
+                col.names = !file.exists("data-boot-tau-fixed-bca-lot-of-NA-server.csv"), append = TRUE)
         }
     }
 }

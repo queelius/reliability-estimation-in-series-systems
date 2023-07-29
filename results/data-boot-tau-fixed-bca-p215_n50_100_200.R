@@ -1,13 +1,3 @@
-
-
-#' we do the semi-parametric bootstrap in two steps:
-#' 1. generate component lifetimes from the fitted MLE weibull distributions
-#' 2. populate the df with the component lifetimes, censored system failure times,
-#'    and the censoring indicator.
-#' 3. populate the df with the component cause of failure
-#' 4. sample a C[i] from the df with replacement using the
-#'    empirical distribution of C[i] | K[i] = k.
-
 library(tidyverse)
 library(parallel)
 library(boot)
@@ -29,15 +19,15 @@ parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-N <- c(200)
-P <- rep(c(0, .1, .2, .3, .4, .5), 50)
+n_cores <- detectCores() - 1
+N <- c(50, 100, 200)
+P <- c(.215)
 Q <- c(.825)
 R <- 10
-B <- 750L
-max_iter <- 150L
-max_boot_iter <- 150L
+B <- 500
+max_iter <- 100L
+max_boot_iter <- 100L
 total_retries <- 10000L
-n_cores <- detectCores() - 1
 
 cat("Simulation parameters:\n")
 cat("R: ", R, "\n")
@@ -46,6 +36,8 @@ cat("n_cores: ", n_cores, "\n")
 cat("total_retries: ", total_retries, "\n")
 cat("shape: ", shapes, "\n")
 cat("scale: ", scales, "\n")
+# NOTE: for the associated data file, I removed a single result for n=50
+#       whose CI was NA
 
 for (n in N) {
     for (p in P) {
@@ -64,6 +56,8 @@ for (n in N) {
             shapes.mle <- matrix(NA, nrow = R, ncol = length(theta) / 2)
             scales.mle <- matrix(NA, nrow = R, ncol = length(theta) / 2)
 
+            # confidence intervals for each MLE, lower and upper bounds
+            # for 95% and 90% confidence intervals
             shapes.lower <- matrix(NA, nrow = R, ncol = length(theta) / 2)
             shapes.upper <- matrix(NA, nrow = R, ncol = length(theta) / 2)
             scales.lower <- matrix(NA, nrow = R, ncol = length(theta) / 2)
@@ -126,7 +120,6 @@ for (n in N) {
                 tryCatch({
                     sb <- mle_boot(sol.boot)
                     ci <- confint(sb, type = "bca", level = 0.95)
-                    #ci <- confint(sb, type = "perc", level = 0.95)
                     shapes.ci <- ci[seq(1, length(theta), 2), ]
                     scales.ci <- ci[seq(2, length(theta), 2), ]
                     shapes.lower[iter, ] <- shapes.ci[, 1]
@@ -157,11 +150,11 @@ for (n in N) {
                 shapes.lower = shapes.lower,
                 shapes.upper = shapes.upper,
                 scales.lower = scales.lower,
-                scales.upper = scales.upper,
+                scales.upper = scales.upper,                
                 logliks = logliks)
 
-            write.table(df, file = "data-boot-tau-fixed-bca-p-vs-ci.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data-boot-tau-fixed-bca-p-vs-ci.csv"), append = TRUE)
+            write.table(df, file = "data-boot-tau-fixed-bca-p215_n50_100_200.csv", sep = ",", row.names = FALSE,
+                col.names = !file.exists("data-boot-tau-fixed-bca-p215_n50_100_200.csv"), append = TRUE)
         }
     }
 }

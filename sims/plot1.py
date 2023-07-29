@@ -100,8 +100,10 @@ true_params = {
     'scales.5': 923.1631
 }
 
+# print current working directory
+
 # Load the data from a CSV file
-data = pd.read_csv('./sims/data-boot-q-fixed-bca.csv')
+data = pd.read_csv('/home/spinoza/github/private/proj/sims/data-boot-q-fixed-bca.csv')
 
 plot_mles_and_cis(data, true_params, 'scales.3', 0.215, "\lambda_1")
 

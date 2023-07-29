@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import scipy.stats as stats
 import random
 
 def remove_outliers(group, param):
@@ -18,6 +17,7 @@ def plot_mles_and_cis(data, true_params, param, p, param_label, ax):
 
     # Get unique 'n' values in ascending order
     n_values = sorted(data_p_no_outliers['n'].unique())
+    n_values = [100, 200]
     
     # Prepare the lower and upper bounds names
     param_lower = param.replace('.', '.lower.')
@@ -33,29 +33,20 @@ def plot_mles_and_cis(data, true_params, param, p, param_label, ax):
         
         # Compute the interquartile range of confidence intervals
         lower_q3, upper_q1 = np.percentile(data_n[param_lower], 75), np.percentile(data_n[param_upper], 25)
+        
         # Plot the interquartile range
         ax.vlines(i, lower_q3, upper_q1, color='blue', alpha=0.5, label='Interquartile Range of CIs' if i == 0 else "")
-
+        
         # Compute and store the mean and median of the MLEs
         mean_mle = data_n[param].mean()
         mean_mles.append(mean_mle)
-
-        # Compute the 95% confidence interval for the mean, and plot it as a band
-        mean_ci = stats.norm.interval(0.95, loc=mean_mle, scale=data_n[param].std() / np.sqrt(data_n.shape[0]))
-        # Plot the confidence interval
-        ax.fill_between([i], mean_ci[0], mean_ci[1], color='gray', alpha=0.2, label='Confidence Bands' if i == 0 else "")
-
-
-
         median_mle = data_n[param].median()
         median_mles.append(median_mle)
         
         # Compute and store the standard error of the MLEs
         std_error = data_n[param].std() / np.sqrt(data_n.shape[0])
         std_errors.append(std_error)
-
-
-            
+        
         # Compute and store the coverage probability
         coverage_prob = ((data_n[param_lower] <= true_params[param]) & 
                          (data_n[param_upper] >= true_params[param])).mean()
@@ -91,7 +82,7 @@ def plot_mles_and_cis(data, true_params, param, p, param_label, ax):
     ax.set_xlabel('Sample Size (n)')
     #ax.set_ylabel(f'Interquartile Range of CI and Mean/Median MLE for ${param_label}$')
     #ax.set_title(f'Confidence Intervals, Mean/Median MLEs, and Coverage Probabilities for ${param_label}$ (p = {p})')
-    #ax.grid(True)
+    ax.grid(True)
     #ax.legend(loc='upper right')
 
 # Load your data
@@ -111,29 +102,30 @@ true_params = {
     'scales.5': 923.1631
 }
 # Create a 5x2 grid of subplots
-fig, axes = plt.subplots(5, 2, figsize=(10, 30))  # Adjust the figure size as needed
+fig, axes = plt.subplots(5, 2, figsize=(10, 20))  # Adjust the figure size as needed
 
 shape_params = [f'shapes.{i+1}' for i in range(5)]
-scale_params = [f'scales.{i+1}' for i in range(5)]
 shape_labels = [f'k_{i+1}' for i in range(5)]
-scale_labels = [f'\\theta_{i+1}' for i in range(5)]
 
 for i, row_axes in enumerate(axes):
     # For the left column (shapes), use index 'i'
     ax = row_axes[0]
     plot_mles_and_cis(data, true_params, shape_params[i], 0.215, shape_labels[i], ax)
-    ax.set_ylabel(f'MLE for ${shape_labels[i]}$')
-    ax.set_title(f'Statistics for ${shape_labels[i]}$')
+    ax.set_ylabel(f'CI / MLE distribution ${shape_labels[i]}$')
+    ax.set_title(f'MLE for ${shape_labels[i]}$')
 
-    # For the right column (scales), also use index 'i'
+    # For the right column (shapes), also use index 'i'
     ax = row_axes[1]
-    plot_mles_and_cis(data, true_params, scale_params[i], 0.215, scale_labels[i], ax)
-    ax.set_ylabel(f'Values for ${scale_labels[i]}$')
-    ax.set_title(f'Statistics for ${scale_labels[i]}$')
+    plot_mles_and_cis(data, true_params, shape_params[i], 0.333, shape_labels[i], ax)
+    ax.set_ylabel(f'MLE for ${shape_labels[i]}$')
+    ax.set_title(f'${shape_labels[i]}$')
 
-# Create a single legend for the entire figure
+# Create a single legend for the entire thing, since they are
+# related. let's put the legend in the middle
+
 handles, labels = ax.get_legend_handles_labels()
 fig.legend(handles, labels, loc='upper right')
+
 
 # Set a "master" title for the entire figure
 fig.suptitle('Confidence Intervals, Mean/Median MLEs, and Coverage Probabilities', fontsize=16)
@@ -141,5 +133,32 @@ fig.suptitle('Confidence Intervals, Mean/Median MLEs, and Coverage Probabilities
 # Adjust the space between subplots as needed
 plt.subplots_adjust(wspace=0.3, hspace=0.5)
 
-plt.tight_layout(rect=[0, 0, 1, 1.96])  # Adjust as needed to make space for the "master" title
+#plt.tight_layout(rect=[0, 0, 0, 1.96])  # Adjust as needed to make space for the "master" title
 plt.show()
+
+
+
+plot_mles_and_cis(data, true_params, shape_params[0], 0.215, shape_labels[0], None)
+
+
+
+def mles_and_cis(data, param, p, n):
+    # Preprocess the data: select only rows with the specified 'p' and remove outliers
+    data_p = data[data['p'] == p]
+    data_p_no_outliers = data_p.groupby('n').apply(remove_outliers, param).reset_index(drop=True)
+    data_n = data_p_no_outliers[data_p_no_outliers['n'] == n]
+    return data_n
+
+dat = mles_and_cis(data, "shapes.1", .215, 50)
+dat
+dat['shapes.1'].std()
+dat.shape[0]
+dat = mles_and_cis(data, "shapes.1", .215, 100)
+dat['shapes.1'].std()
+dat.shape[0]
+dat = mles_and_cis(data, "shapes.1", .215, 200)
+dat['shapes.1'].std()
+dat.shape[0]
+dat = mles_and_cis(data, "shapes.1", .215, 500)
+dat['shapes.1'].std()
+dat.shape[0]
