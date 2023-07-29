@@ -83,11 +83,6 @@ for (n in N) {
                             break
                         }
                         cat("[", iter, "] MLE did not converge, retrying...\n")
-                        # save the df to a file for inspection... use a random name, but encode the scenario
-                        # parameters in the file name
-                        #write.table(df, file = paste0("df-", n, "-", p, "-", q, "-", iter, ".csv"),
-                        #    sep = ",", row.names = FALSE, col.names = !file.exists(paste0("df-", n, "-", p, "-", q, "-", iter, ".csv")))
-
                     }
 
                     mle_solver <- function(df, i) {
@@ -100,21 +95,6 @@ for (n in N) {
                     # do the non-parametric bootstrap
                     sol.boot <- boot::boot(df, mle_solver,
                         R = B, parallel = "multicore", ncpus = n_cores)
-
-                    # compute two std devs, one for each parameter
-                    q.975 <- qnorm(0.975)
-                    serr1 <- sqrt(diag(cov(sol.boot$t)))
-                    lwr <- sol.boot$t0 - q.975 * serr1
-                    upr <- sol.boot$t0 + q.975 * serr1
-
-                    #print(ci)
-                    cat("Bootstrapped MLE #1: ", sol.boot$t0, "\n")
-                    print(matrix(c(lwr, upr), ncol = 2))
-                    #cat("Bootstrapped MLE #2: ", sol.boot$t0, "\n")
-                    #print(matrix(c(lwr2, upr2), ncol = 2))
-
-                    print(confint(mle_boot(sol.boot), type = "perc", level = 0.95))
-
                 },
                 error = function(e) {
                     cat("Error: ", conditionMessage(e), "\n")
@@ -173,7 +153,7 @@ for (n in N) {
                 shapes.lower = shapes.lower.perc,
                 shapes.upper = shapes.upper.perc,
                 scales.lower = scales.lower.perc,
-                scales.upper = scales.upper.perc,                
+                scales.upper = scales.upper.perc,
                 logliks = logliks)
 
             write.table(df, file = "data-boot-tau-fixed-perc-local.csv", sep = ",", row.names = FALSE,

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 import random
 
@@ -83,9 +84,6 @@ def plot_mles_and_cis(data, true_params, param, p, param_label):
     plt.tight_layout()
     plt.show()
 
-
-import pandas as pd
-
 # Define the true parameter values
 true_params = {
     'shapes.1': 1.2576,
@@ -100,10 +98,8 @@ true_params = {
     'scales.5': 923.1631
 }
 
-# print current working directory
-
 # Load the data from a CSV file
-data = pd.read_csv('/home/spinoza/github/private/proj/sims/data-boot-q-fixed-bca.csv')
+data = pd.read_csv('/home/spinoza/github/private/proj/results/temp_csv/data.csv')
 
-plot_mles_and_cis(data, true_params, 'scales.3', 0.215, "\lambda_1")
+plot_mles_and_cis(data, true_params, 'shapes.4', 0.215, "k_4")
 
