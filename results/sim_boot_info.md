@@ -34,57 +34,46 @@ C_i is the candidate set, T_i is the system failure, and K_i is the component ca
                  right-censoring, i.e., the higher the probability that a system failure will not be observed.
 
     - `tau`: The Weibull series time (parameterized by `theta`) that corresponds to quantle `q`.
+    
+    - `B`: Bootstrap replications used to compute the CI. Rows may have different values of `B` if I decided to try to get a more accurate bootstrap estimate of the CI.
 
-    - `shape.j` is the MLE estimate of shape parameter j for component j.
+    - `shapes.j`: The MLE estimate of shape parameter j for component j.
 
-    - `scale.j` is the MLE estimate of scale parameter j for component j.
+    - `scales.j`: The MLE estimate of scale parameter j for component j.
 
-    - `shape.lower.j` is the lower bound of the CI for shape parameter j.
+    - `shapes.lower.j`: The lower bound of the CI for shape parameter j.
 
-    - `shape.upper.j` is the upper-bound of the CI for shape parameter j.
+    - `shapes.upper.j`: The upper-bound of the CI for shape parameter j.
 
-    - `scale.lower.j` is the lower bound of the CI for scale parameter j.
+    - `scales.lower.j`: The lower bound of the CI for scale parameter j.
 
-    - `scale.upper.j` is the upper bound of the CI for scale parameter j.
+    - `scales.upper.j`: The upper bound of the CI for scale parameter j.
+    
+    - `logliks`: The log-likelihood value (log-likelihood function evaluated at the MLE).
 
-The true parameter value is `θ = (shape1, scale1, shape2, scale2, shape3, scale3, shape4, scale4, shape5, scale5)`, where:
+The true parameter value is:
 ```
-           shape1 = 1.2576, scale1 = 994.3661,
-           shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1141,
-           shape5 = 1.3311, scale5 = 836.1123.
+theta <- c(shape.1 = 1.2576, scale.1 = 994.3661,
+           shape.2 = 1.1635, scale.2 = 908.9458,
+           shape.3 = 1.1308, scale.3 = 840.1141,
+           shape.4 = 1.1802, scale.4 = 940.1342,
+           shape.5 = 1.2034, scale.5 = 923.1631)
 ```
 Note that the scale parameters are 1000 times larger than the shape parameters, approximately.
 
 The CSV data was generated from a simulation study of a series system with `m = 5` components, where we estimate the parameters of the system using MLE.
-We Bootstrap the FIM to generate confidence intervals and other interesting statistics and properties, like bias and MSE.
+The `j`-th component has true shape parameter `shape.j` and a true scale parameter `scale.j`.
+We use the Bootstrap to compute confidence intervals (instead of the inverse FIM method).
 
-Here are explanations of the columns:
+Here are some more explanations of the columns:
 
-The `shapej.mle` and `scalej.mle` columns (MLEs) are an *empirical* sampling distribution of the MLE and we treat this as the ground truth.
+The `shapes.j` and `scales.j` columns (MLEs) may be seen as representnig an empirical sampling distribution of the MLE and we treat this as the ground truth.
 We can compute the bias of the MLE by taking the expectation with respect to empirical sampling distribution:
 $$
     E_{\hat\theta \sim \text{data}}(\hat\theta) - \theta
 $$
-We can compute the variance of the MLE by taking the expectation with respect to empirical sampling distribution:
-$$
-    E_{\hat\theta \sim \text{data}}(\hat\theta) - \hat\theta
-$$
-We can compute the MSE of the MLE by taking the expectation with respect to empirical sampling distribution:
-$$
-    E_{\hat\theta \sim \text{data}}((\hat\theta) - \theta)^2
-$$
 
-Note that we specifically controlled, in our simulation setup, `n`, `p`, `q`. We will analyze the other statistics with respect to these simulation parameters, e.g., we can plot the variance:
-
-- with respect to sample size `n`, with `p` and `q` fixed
-
-- with respect to masking probability `p`, with `n` and `q` fixed. 
-
-- with respect to quantile `q`, with `n` and `p` fixed.
-
-Later, I will upload a different data file, one that includes Boostrapped confidence interval estimator, bootstrapped bias, bootstrapped variance, and bootstrapped MSE estimates. We will have these for smaller sample sizes, with the assumption being that for the larger samples, the asymptotic theory will suffice, so we seek to use the Bootstrapped estimates for cases when the asympototic theory doesn't kick in. We will be doing a similar analysis for it, and we compare the results with the asymptotic theory. We will identity where the there are issues with the estimator, such as potentially right censoring being problematic for the Bootstrap, since it may estimate the variance to be smaller than the actual (empirically computed) variance, resulting in confidence intervals that are poorly calibrated.
+Note that we specifically controlled, in our simulation setup, `n` and `p`. We will analyze the other statistics with respect to these simulation parameters.
 
 As data scientists, we will be doing a rigorous and comprehensive analysis of the MLE. Let's begin.
 

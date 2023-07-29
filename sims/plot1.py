@@ -101,5 +101,12 @@ true_params = {
 # Load the data from a CSV file
 data = pd.read_csv('/home/spinoza/github/private/proj/results/temp_csv/data.csv')
 
-plot_mles_and_cis(data, true_params, 'shapes.4', 0.215, "k_4")
+plot_mles_and_cis(data, true_params, 'shapes.1', 0.215, "k_1")
 
+
+# filter: it must be the case that colum p == .215 and column n = 50
+d = data[(data['p'] == 0.215) & (data['n'] == 50)]
+
+# get the mean of the column shapes.4
+d['shapes.1'].mean()
+d['shapes.1'].std()

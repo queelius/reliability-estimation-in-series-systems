@@ -13,25 +13,26 @@ theta.star <- c(shape1 = 1.2576, scale1 = 994.3661,
                 shape4 = 1.1802, scale4 = 940.1342,
                 shape5 = 1.2034, scale5 = 923.1631)
 # we will vary this
-scales3 <- theta["scale3"] + c(-400)
+scales3 <- theta["scale3"] + c(-400, 500)
 shapes3 <- theta["shape3"] 
 
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
+
 MTTB <- scales * gamma(1 + 1 / shapes)
 names(MTTB) <- paste0("Component",1:5)
-MTTB
+print(MTTB)
 
 MTTB3_vary <- scale3 * gamma(1 + 1 / scale3)
-MTTB3_vary
+print(MTTB3_vary)
 parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-N <- c(200, 200, 200, 200, 200, 200, 200, 200, 200, 200)
+N <- c(200)
 P <- c(.215)
 Q <- c(.825)
-R <- 10
+R <- 100
 B <- 1000L
 max_iter <- 200L
 max_boot_iter <- 200L
@@ -165,7 +166,7 @@ for (scale3 in scales3) {
                     q = rep(q, R),
                     tau = rep(tau, R),
                     B = rep(B, R),
-                    scale3 = rep(scale3, R),
+                    scale3 = scale3,
                     MTTB = rep(MTTB, R),
                     shapes = shapes.mle,
                     scales = scales.mle,
