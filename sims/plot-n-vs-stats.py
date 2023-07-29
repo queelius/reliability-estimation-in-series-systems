@@ -14,12 +14,12 @@ def remove_outliers_iqr(df, param):
     iqr = q3 - q1
     return df[(df[param] > q1 - 1.5*iqr) & (df[param] < q3 + 1.5*iqr)]
 
-def plot_mles_and_cis(ax, data_p, true_params, param, param_label):
+def plot_mles_and_cis(ax, data_p, true_params, param, param_label, probmask=0.215):
     # Preprocess the data: select only rows with the specified 'p' and remove outliers
-    data_p_no_outliers = data_p.groupby('p').apply(remove_outliers_iqr, param).reset_index(drop=True)
+    data_p_no_outliers = data_p.groupby('n').apply(remove_outliers_iqr, param).reset_index(drop=True)
     
     # Get unique 'n' values in ascending order
-    p_values = sorted(data_p_no_outliers['p'].unique())
+    p_values = sorted(data_p_no_outliers['n'].unique())
     
     # Prepare the lower and upper bounds names
     param_lower = param.replace('.', '.lower.')
@@ -34,7 +34,7 @@ def plot_mles_and_cis(ax, data_p, true_params, param, param_label):
     std_devs = []
     coverage_probs = []
     for i, p in enumerate(p_values):
-        data_p = data_p_no_outliers[data_p_no_outliers['p'] == p]
+        data_p = data_p_no_outliers[data_p_no_outliers['n'] == p && data_p_no_outliers['p'] == probmask]
         
         # Show interquartile range of confidence intervals
         lower_q3, upper_q1 = np.percentile(data_p[param_lower], 75), np.percentile(data_p[param_upper], 25)
@@ -63,7 +63,7 @@ def plot_mles_and_cis(ax, data_p, true_params, param, param_label):
         #plt.plot(i, median_mle, 'o', color='orange', label='Median of MLEs' if i == 0 else "")
    
     # Plot the true value of the parameter
-    ax.plot(np.arange(len(p_values)), [true_params[param]] * len(p_values), 'g-', label=f'True Value of ${param_label}$')
+    ax.plot(np.arange(len(p_values)), [true_params[param]] * len(p_values), 'g-', label=f'True Value')
     
     # Connect the means and medians of the MLEs with a line
     ax.plot(np.arange(len(p_values)), mean_mles, 'r--')
@@ -90,10 +90,10 @@ def plot_mles_and_cis(ax, data_p, true_params, param, param_label):
 
     #ax.xlabel('Masking Probability ($p$)')
     #ax.ylabel(f'Interquartile Range of Confidence Intervals and Mean/Median MLE for ${param_label}$')
-    ax.set_xlabel('Masking Probability ($p$)')
+    ax.set_xlabel('Sample Size ($n$)')
     #ax.set_ylabel(f'Interquartile Range of Confidence Intervals and Mean/Median MLE for ${param_label}$')    
-    ax.set_ylabel(f'Statistics for ${param_label}$')    
-    ax.set_title(f'CI, Mean MLEs, and Coverage Probabilities for ${param_label}$ (n = 200)')
+    ax.set_ylabel(f'MLE statistics for ${param_label}$')    
+    ax.set_title(f'CI, Mean MLEs, and Coverage Probabilities for ${param_label}$ (p = ${probmask}$)')
     #ax.title(f'Confidence Intervals, Mean/Median MLEs, and Coverage Probabilities for ${param_label}$ (n = 200)')
     #ax.grid(True)
     #ax.legend()
@@ -118,16 +118,13 @@ true_params = {
 }
 
 # Load the data from a CSV file
-data = pd.read_csv('/home/spinoza/github/private/proj/sims/data-boot-tau-fixed-bca-p-vs-ci.csv')
+data = pd.read_csv('/home/spinoza/github/private/proj/results/data.csv')
 
 fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(14, 18))
 plt.subplots_adjust(wspace=0.4, hspace=0.6)
 # Define the parameters
 shape_params = ['shapes.1', 'shapes.2', 'shapes.3', 'shapes.4', 'shapes.5']
 shape_param_labels = ["k_1", "k_2", "k_3", "k_4", "k_5"]
-
-# Load the data from a CSV file
-data = pd.read_csv('/home/spinoza/github/private/proj/sims/data-boot-tau-fixed-bca-p-vs-ci.csv')
 
 # Plot each parameter
 for ax, param, param_label in zip(axes.flatten()[:-1], shape_params, shape_param_labels):
@@ -152,4 +149,4 @@ plt.tight_layout(h_pad=8.0, w_pad=5.0)
 
 # Show the plot
 #plt.show()
-plt.savefig('plot-p-vs-stats.pdf', dpi=300)
+plt.savefig('plot-n-vs-stats.pdf', dpi=300)

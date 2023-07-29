@@ -645,7 +645,7 @@ contribution is given by Equation \eqref{eq:likelihood_contribution_masked}.
 
 ## Right-Censored Data
 
-As described in Section \ref{sec:data}, we observe realizations of
+As described in Section \ref{sec:like_model}, we observe realizations of
 $(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{\T_i,\tau_i\}$ is the
 right-censored system lifetime, $\delta_i = 1_{\{\T_i < \tau_i\}}$ is
 the right-censoring indicator, and $\mathcal{C}_i$ is the candidate set.
@@ -746,12 +746,13 @@ The MLE, $\hat{\v\theta}$, is often found by solving a system of equations deriv
 for each component $\theta_j$ of the parameter $\v\theta$ \citep{bain}. When there's no closed-form solution,
 we resort to numerical methods like the Newton-Raphson method.
 
-Often, the MLE is found by setting the derivative of the log-likelihood function to zero, leading to a system of equations that is usually solved using numerical methods, such as the Newton-Raphson method [2, 3].
+MLE has desirable asymptotic properties that underpin statistical inference, namely that it is asymptotically unbiased,
+unique, and normally distributed, with a variance given by the inverse of the Fisher Information Matrix (FIM) \citep{casella2002statistical}.
+However, for smaller samples or complex models, these asymptotic properties may not yield accurate approximations. Hence, we propose to use
+the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE.
 
-MLE has desirable asymptotic properties that underpin statistical inference, namely that it is asymptotically unbiased, unique, and normally distributed, with a variance given by the inverse of the Fisher Information Matrix (FIM) [2]. However, for smaller samples or complex models, these asymptotic properties may not yield accurate approximations. Hence, we propose to use the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE.
 
-
-Bootstrapping the Confidence Intervals of the MLE {#sec:boot}
+Bias-Corrected and Accelerated Bootstrap Confidence Intervals {#sec:boot}
 ===============================================================
 We utilize the non-parametric bootstrap to approximate the sampling distribution of
 the MLE. In the non-parametric bootstrap, we resample from the observed data
@@ -760,34 +761,32 @@ the bootstrap sample. This process is repeated $B$ times, giving us $B$ bootstra
 replicates of the MLE. The sampling distribution of the MLE is then approximated
 by the empirical distribution of the bootstrap replicates of the MLE.
 
-Once we have a bootstrap distribution of the MLE, we can use it to construct
-confidence intervals for the parameters $\v\theta$.
-The confidence interval for $\theta_j$ is given by
-$$
-\bigl[\hat{\theta}_j - z_{\alpha/2} \hat{\sigma}_j, \hat{\theta}_j + z_{\alpha/2} \hat{\sigma}_j\bigr],
-$$
-where $\hat{\theta}_j$ is the MLE of $\theta_j$, $\hat{\sigma}_j$ is the
+The method we use to generate confidence intervals is known
+as Bias-Corrected and Accelerated Bootstrap Confidence Intervals (BCa), which
+applies two corrections to the standard bootstrap method:
 
-We will bootstrap the confidence interval using the
-percentile method and variance will be computed using the variance
-of the bootstrap replicates of the MLE.
+- Bias correction: This adjusts for bias in the bootstrap distribution itself.
+  This bias is measured as the difference between the mean of the bootstrap distribution and the observed statistic.
+
+- Acceleration: This adjusts for the rate of change of the statistic as a function of the true, unknown parameter.
+  This correction is important when the shape of the statistic's distribution changes with the true parameter.
+
+Thus, BCa provides a more accurate estimate of confidence intervals, particularly for small sample sizes
+or skewed distributions, compared to other methods.
+Since we are primarly interested in generating confidence intervals for small samples (otherwise the inverse FIM would
+be a good approximation), we use BCa in our analysis. For more details on BCa, see \citep{efron1987better}.
 
 In our simulation study, we will assess the performance of the bootstrapped
-confidence intervals by computing their widths and computing coverage
-probabilities, i.e., a 95% confidence interval should contain the true
-value 95% of the time.
+confidence intervals by computing the coverage probability of the confidence
+intervals. A 95% confidence interval should contain the true
+value 95% of the time. If the confidence interval is too narrow, it will have
+a coverage probability less than 95%, which conveys a sort of false confidence
+in the precision of the MLE. If the confidence interval is too wide, it will
+have a coverage probability greater than 95%, which conveys a lack of confidence
+in the precision of the MLE. Thus, we want the confidence interval to be as
+narrow as possible while still having a coverage probability close to the
+nominal level, 95%.
 
-Together, the width and the coverage probability, tell us how
-informative the confidence interval is. We say that a confidence interval
-has *good coverage* if its coverage probability is close to the nominal
-confidence level.
-
-If the confidence intervals have good coverage, a small confidence interval width
-means we are more confident that the true value $\v\theta$ is close to the MLE,
-and a large confidence interval width means we are less confident that the true value
-of $\v\theta$ is close to the MLE. However, if the confidence interval has poor
-coverage, then the confidence interval width is not particularly informative.
-Thus, we see that the confidence interval is only useful if it has good coverage,
 
 ### Issues with Resampling from the Observed Data {-}
 
@@ -807,28 +806,14 @@ distribution. For small datasets, the bootstrap samples might not adequately
 represent the true variability in the data, leading to inaccurate results
 \citep{efron1994introduction}.
 
-Thirdly, our data involves right censoring and a Bernoulli candidate set model
-for component failure masking. These aspects can cause certain data points or
+Thirdly, our data involves right censoring and a masking of the component cause
+of failure when a system failure is observed. These aspects can cause certain data points or
 trends to be underrepresented or not represented at all in our data, introducing
 bias in the bootstrap distribution \citep{klein2005survival}.
 
 Despite these challenges, we found the bootstrap method useful in approximating
-our parameter distributions, taking care in interpreting the results. Further
-research could explore more sophisticated techniques that can handle these
-issues more effectively.
-
-### Parametric Bootstrap {-}
-
-There is an alternative form of the bootstrap called the parametric bootstap,
-where the bootstrap samples are generated from a parametric distribution.
-However, this parametric bootstrap is not appropriate for our analysis
-because we do not assume a parametric form for the distribution of the
-candidate sets $\mathcal{C}_i$. In our simulation study, we use what
-we call the Bernoulli candidate set model (see Section \ref{sec:simstudy}),
-which is a parametric model for the distribution of the candidate sets,
-but we want to assess the performance of the bootstrap method when the
-true data generating process for candidate sets is not known.
-
+the sampling distribution of the MLE, taking care in interpreting the results,
+particularly as it relates to coverage probabilities.
 
 Series System with Weibull Components {#sec:weibull}
 ====================================================
@@ -1215,7 +1200,7 @@ are identifiable such that the likelihood function is maximized at a unique poin
 If the likelihood function is not maximized at a unique point, then the MLE is not
 unique, and a lot of the theory we have developed so far breaks down, particularly
 when the likelihood surface is flat or has multiple local maxima
-\citep{mclachlan2007algorithm}
+\citep{mclachlan2007algorithm}.
 
 One way in which this problem may arise is if the data is not informative
 enough. For example, if we have a series system and in the observed masked data
@@ -1252,35 +1237,23 @@ sense of the typical size of each parameter, enabling it to adjust its steps
 accordingly. This is crucial in scenarios like ours, where shape and scale parametes
 are a few orders of magnitude apart. Without rescaling, the optimization routine may
 struggle, taking numerous small steps for larger parameters and overshooting for
-smaller ones.
+smaller ones. For more information, see \citep{nocedal2006numerical}.
 
 Speed of convergence was particularly important in our case, since in our simulation
-study, we employ the Bootstrap method to estimate the sampling distribution of the
+study, we employ the bootstrap method to estimate the sampling distribution of the
 MLE, which requires us to estimate the MLE for many data sets. We found that
 parameter rescaling significantly improved the speed of convergence, which allowed
 us to run our simulation study in a tractable amount of time.
 
 ## Assessing the Bootstrapped Confidence Intervals
 
-Once we analyze the bias, variance, and MSE of the MLE, using a simulation study, we
-then assess the bootstrapped variance, bias, MSE, and confidence intervals. This is
-useful for understanding the performance of the bootstrap method for estimating the
-sampling distribution of the MLE and constructing confidence intervals.
-
-We will assess the bootstrapped variance, bias, MSE, and confidence intervals by
-comparing them to the bias, variance, MSE, and confidence intervals obtained from
-the empirical sampling distribution. In particular, if the variance is too large
-or small, then the coverage probability of the confidence intervals will be too
-small or large, respectively.
-
+Our primary interest is in assessing the performance of the BCa confidence intervals
+for the MLE. We will assess the performance of the BCa confidence intervals by
+computing the coverage probability of the confidence intervals. 
 Under a variety of scenarios, we will bootstrap a $95\%$-confidence interval for
-$\v\theta$ using the percentile method, and we will evaluate its accuracy by
-computing the coverage probability.
-
-We want the coverage probability to be close to the nominal level, $95\%$, because if
-the coverage probability is too low, then we will be too confident in the precision
-and accuracy of the MLE, and if the coverage probability is too high, then we will
-not be confident enough in the precision and accuracy of the MLE.
+$\v\theta$ using the BCa method, and we will evaluate its calibration by
+computing the coverage probability and its precision by assessing the
+width of the confidence interval.
 
 The coverage probability is defined as the proportion of times that the true value
 of $\v\theta$ falls within the confidence interval. We will compute the coverage
@@ -1295,34 +1268,13 @@ then $\tau(0.8)$ is the $80\%$ quantile of the series system such that $80\%$ of
 the sytems are expected to fail before time $\tau(0.8)$ and $20\%$ of the
 series systems are expected to be right-censored.
 
-
-We define a simulation scenario to be some comination of $n$,
-$p$, and $q$. For the sake of brevity, we will refer to a simulation scenario
-by its sample size $n$, masking probability $p$, and right-censoring probability
-$q$. We are interested in choosing a small number of scenarios that are
+We define a simulation scenario to be some comination of $n$ and 
+$p$. We are interested in choosing a small number of scenarios that are
 representative of real-world scenarios and that are interesting to analyze.
-There are many ways to choose scenarios, but we choose the following three.
-
-1. Ideal case with no masking of the component cause of failure
-   ($p = 0$) and no right-censoring ($q = 1$, or
-   equivalently, $\tau = \infty$).
-
-2. Moderate masking of the component cause of failure ($p = 0.2$)
-   and moderate right-censoring ($q = 0.9$).
-
-3. Significant masking of the component cause of failure ($p = 0.4$)
-   and significant right-censoring ($q = 0.75$).
-
-For each of these scenarios, we will consider sample sizes $n$ from
-small samples $(n = 30)$ to relatively large samples $(n = 300)$.
-
-We will analyze the performance of the MLE under these various scenarios by
-computing the coverage probability and width of the $95\%$-confidence intervals.
 
 Here is an outline of the simulation study analysis:
 
-1. Choose a scenario (sample size $n$, masking probability $p$, and right-censoring
-  probability $q$).
+1. Choose a scenario (sample size $n$, masking probability $p$ ($\tau$ fixed).
 
 2. Generate R datasets from the Data Generating Process (DGP). The DGP
   should be compatible with the assumptions in our likelihood model.
@@ -1330,89 +1282,130 @@ Here is an outline of the simulation study analysis:
 
     * Right-censored series lifetimes with $m = 5$ Weibull components.
 
-    * Bernoulli candidate set model for the masking of component cause of failure.
+    * Mmasking component cause of failure using Bernoulli candidate set model.
 
 3. For each of these $R$ datasets, calculate the Maximum Likelihood Estimator (MLE).
 
 4. For each of these $R$ datasets, perform bootstrap resampling $B$ times to create
-  a set of bootstrap samples.
+   a set of bootstrap samples.
 
 5. Calculate the MLE for each of these bootstrap samples. This generates an empirical
-  distribution of the MLE, which is used to construct a Confidence Interval (CI) for
-  the MLE.
+   distribution of the MLE, which is used to construct a confidence interval for
+   the MLE.
 
 6. Repeat steps 4 and 5 for each of the $R$ datasets.
 
 7. For each dataset, determine whether the true parameter value falls within the
-  computed CI. Aggregate this information across all $R$ datasets to estimate the
-  coverage probability of the CI.
+   computed CI. Aggregate this information across all $R$ datasets to estimate the
+   coverage probability of the CI.
 
 8. Interpret the results and discuss the performance of the MLE estimator
-  under various scenarios.
+   under various scenarios.
 
 For how we generate a scenario, see Appendix A.
 
-## Coverage probability vs. sample size with a fixed masking probability and no right-censoring
+## Effect of Right-Censoring on the MLE
 
-We want to isolate the effect of the coverage probability as a function of the sample
-size $n$. We fix the masking probability to $p = 0.2$ and without right-censoring $(\tau = \infty)$
-and vary the sample size from $n = 30$ to $n = 800$. See Figure \ref{fig:plot-coverage-p-three-vs-sample-size}.
+In all of our simulation studies, we use a fixed right-censoring time $\tau = 377.71$,
+which is the $82.5\%$ quantile of the series system. This means that $82.5\%$ of the
+series systems are expected to fail before time $\tau$ and $17.5\%$ of the series.
 
-```{r plot-coverage-p-three-vs-sample-size, echo =F, fig.cap="Coverage probability vs. sample size for masking probability $0.3$", fig.align="center"}
-knitr::include_graphics("image/plot-coverage-p_0.3-vs-sample-size.pdf")
+This represents a situation in which an experiment is run for a fixed amount of time
+$\tau$, and all systems that have not failed by the end of the experiment are
+right-censored.
+
+Right-censoring introduces a source of bias in the MLE. Right-censoring has the
+effect of pushing the MLE to estimate a lower value for the scale parameters and
+a higher value for the shape parameters. This is because when we observe a
+right-censoring event, we know that the system failed after the censoring time,
+but we do not know precisely when it will fail. 
+
+## Effect of Masking the Component Cause of Failure on the MLE
+
+The mean time to failure (MTTF) for the $j$\textsuperscript{th} component in a Weibull distribution is given by:
+$$
+\text{MTTF} = \lambda_j \Gamma(1 + 1/k_j).
+$$
+
+## Scale Paramater: Positive Bias
+
+As the scale parameter $\lambda_j$ increases (keeping the shape parameter constant), the MTTF increases.
+When we increase the component masking, which in our simulation study is determined by the masking
+probability $p$, then there is less certainty about which component caused the system to fail,
+but we know it was one of the components in the candidate set. Therefore, to make it more likely
+that the component cause of failure is in the candidate set, we increase the scale parameters
+of the components in the candidate set, which increases their respective MTTFs.
+
+We will demonstrate this effect in Section \ref{sec:p-vs-mttf}.
+
+### Shape Parameter: Negative Bias
+
+As the shape parameter increases (keeping the scale parameter constant), the quantity $1/k_j$ decreases. Given that the gamma
+function $\Gamma$ is a monotonically increasing function, a decrease in its argument (which is the case here since
+$1 + 1/k_j$ decreases with an increase in shape) results in a decrease in the MTTF.
+
+Hence, when the shape parameter increases, the MTTF decreases, assuming the scale parameter is kept constant.
+Now, if the MLE for the shape parameter is positively biased (i.e., $E(\hat k_j) > k_j$), then the estimated shape
+parameter is larger than the true shape parameter. When we use this larger estimated shape parameter to compute
+the MTTF, the resulting MTTF will be smaller than the actual MTTF (assuming the scale parameter is kept constant
+or accurately estimated). 
+
+In other words, a positive bias in the estimated shape parameter would lead to an underestimation of the MTTF, assuming
+that the scale parameter is either known or accurately estimated. 
+
+
+## Coverage Probability vs Sample Size
+```{r samp-size-n-vs-stats-215-shape, fig.cap=c("Sample Size vs Shape CI Statistics (p = 0.215)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs for p = 0.215"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-n-vs-stats-p215-shape.pdf")
 ```
 
-Here are some key observations:
 
-1. It is immediately obvious that the scale parameters (dashed lines) have a much
-   lower coverage probability than the shape parameters (solid lines), particularly
-   for small sample sizes less than $n = 200$.
-   
-   In general, the scale parameters appear to be more difficult to estimate than the
-   shape parameters. 
-
-2. As the sample size increases, the coverage probability for the shape parameters
-   and scale parameters approaches the nominal level, $95\%$.
-   
-   This suggests that the sampling distribution of the MLE is converging in
-   distribution to a multivariate normal distribution with mean $\v\theta$ and
-   variance-covariance given by the inverse of the FIM, consistent with the
-   asymptotic theory.
-
-## Coverage probability vs. sample size and masking probability without right-censoring
-
-We want to get a larger picture of how the coverage probability depends on the
-sample size $n$ and masking probability $p$. We fix the right-censoring time to
-$\tau = \infty$ and vary the sample size from $n = 30$ to $n = 800$ and vary the
-masking probability from $p = 0$ (no masking) to $p = 0.4$ and then compute the
-coverage probability for each combination of sample size $n$ and masking probability
-$p$.
-
-```{r plot-coverage-p-vs-sample-size, echo =F, fig.cap="Coverage probability vs. sample size", fig.align="center"}
-knitr::include_graphics("image/plot-coverage-p-vs-sample-size.pdf")
+```{r samp-size-n-vs-stats-215-scale, fig.cap=c("Sample Size vs Scale CI Statistics (p = 0.215)","Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.215"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-n-vs-stats-p215-scale.pdf")
 ```
 
-The results of this analysis are summarized by Figure \ref{fig:plot-coverage-p-vs-sample-size}.
-Here are some key observations:
 
-1. For sample sizes $n \leq 100$, the coverage probability for the shape parameters
-is close to the nominal level, $95\%$, only for small masking probabilities. However,
-as the sample size increases, the coverage probability for the shape parameters
-quickly approaches the nominal level, $95\%$, for all masking probabilities reported
-here.
 
-2. For the scale parameters, the coverage probability is too low for all sample sizes
-$n < 200$ for all masking probabilities reported here. For small sample sizes, the
-confience intervals particularly for the scale parameters, should probably be taken
-with a grain of salt.
+```{r samp-size-n-vs-stats-p333-scale, fig.cap=c("Sample Size vs Shape CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs for p = 0.333"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-n-vs-stats-p333-shape.pdf")
+```
 
-In Section \ref{sec:boot}, we explore an alternative way to construct confidence
-intervals using the bootstrap method, which is generally a more accurate way to
-compute confidence intervals. Unlike the inverse of the observed FIM, it does not
-assume that the sampling distribution of the MLE is asymptotically normal, and so
-it is more robust to violations of this assumption.
+```{r samp-size-n-vs-stats-p215-scale, fig.cap=c("Sample Size vs Shape CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.333"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-n-vs-stats-p333-scale.pdf")
+```
+
+
+## Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
+
+
+```{r masking-prob-vs-stats-shape, fig.cap=c("Component Cause of Failure Masking (p) vs Shape CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-p-vs-stats-shape.pdf")
+```
+
+Here, we can see that the coverage probability for the shape parameters is
+
+
+```{r masking-prob-vs-stats-scale, fig.cap=c("Component Cause of Failure Masking (p) vs Scale CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-p-vs-stats-scale.pdf")
+```
+
 
 # Future Work
+
+## Parametric Bootstrap {-}
+
+There is an alternative form of the bootstrap called the parametric bootstap,
+where the bootstrap samples are generated from a parametric distribution.
+However, this parametric bootstrap is not appropriate for our analysis
+because we do not assume a parametric form for the distribution of the
+candidate sets $\mathcal{C}_i$.
+
+However, it would be possible to employ a semi-parametric bootstrap, where
+the bootstrap samples are generated from a parametric distribution for the
+system lifetimes $\T_i$ and a non-parametric distribution for the candidate
+sets $\mathcal{C}_i | \T_i, K_i$, e.g., the empirical distribution with
+some discretization of $\T_i$ used.
+
 
 
 # Conclusion

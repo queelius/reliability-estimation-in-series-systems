@@ -63,7 +63,7 @@ def plot_mles_and_cis(ax, data_p, true_params, param, param_label):
         #plt.plot(i, median_mle, 'o', color='orange', label='Median of MLEs' if i == 0 else "")
    
     # Plot the true value of the parameter
-    ax.plot(np.arange(len(p_values)), [true_params[param]] * len(p_values), 'g-', label=f'True Value of ${param_label}$')
+    ax.plot(np.arange(len(p_values)), [true_params[param]] * len(p_values), 'g-', label=f'True Value')
     
     # Connect the means and medians of the MLEs with a line
     ax.plot(np.arange(len(p_values)), mean_mles, 'r--')
@@ -120,11 +120,11 @@ true_params = {
 # Load the data from a CSV file
 data = pd.read_csv('/home/spinoza/github/private/proj/sims/data-boot-tau-fixed-bca-p-vs-ci.csv')
 
-fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(14, 18))
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(14, 18))
 plt.subplots_adjust(wspace=0.4, hspace=0.6)
 # Define the parameters
-shape_params = ['shapes.1', 'shapes.2', 'shapes.3', 'shapes.4', 'shapes.5']
-shape_param_labels = ["k_1", "k_2", "k_3", "k_4", "k_5"]
+shape_params = ['scales.1', 'scales.2', 'scales.3', 'scales.4', 'scales.5']
+shape_param_labels = ["\lambda_1", "\lambda_2", "\lambda_3", "\lambda_4", "\lambda_5"]
 
 # Load the data from a CSV file
 data = pd.read_csv('/home/spinoza/github/private/proj/sims/data-boot-tau-fixed-bca-p-vs-ci.csv')
@@ -152,4 +152,4 @@ plt.tight_layout(h_pad=8.0, w_pad=5.0)
 
 # Show the plot
 #plt.show()
-plt.savefig('plot-p-vs-stats.pdf', dpi=300)
+plt.savefig('plot-p-vs-stats-scale.pdf', dpi=300)

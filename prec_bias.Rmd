@@ -191,3 +191,97 @@ ggplot(scale_variances_long, aes(x = n, y = Variance, colour = Parameter)) +
   theme_minimal()
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## TEST -- INCORRECT ANALYSIS BUT MAY BE USEFUL FOR REF FOR WRITING
+Average Width of Confidence Interval (CI) for shape.1 as a function of $p$:
+The plot shows that as the candidate masking probability ($p$) increases, the average width of the confidence interval also increases. This suggests that as the masking of the component cause increases, our uncertainty about the estimated shape parameter also increases. This is consistent with the expectation that more masking leads to less precise estimates, resulting in wider confidence intervals.
+
+Coverage Probability for shape.1 as a function of $p$:
+The coverage probability represents the proportion of confidence intervals that contain the true value of the parameter. The plot shows that the coverage probability fluctuates around
+$0.92$ to $0.95$ and does not have a clear trend with respect to 
+$p$. This suggests that, despite the increasing width of the confidence intervals, the method still maintains a high coverage probability. However, there is a slight drop in coverage probability at 
+$p=0.5$, which might be an area to investigate further.
+
+Expected MLE for shape.1 as a function of $p$:
+The plot shows that the expected value of the MLE for shape.1 increases as 
+$p$ increases, suggesting that the estimate is biased and the bias increases with 
+$p$. The true value is consistently lower than the expected MLE, indicating an overestimation bias.
+
+The plots reveal that while the method maintains a high coverage probability, the increasing width of the confidence intervals and
+the bias in the MLE estimates could be areas of concern, particularly at higher values of 
+$p$. It might be beneficial to investigate ways to reduce the bias and improve the precision of the estimates, especially in scenarios with high masking probability.
+
+
+## Coverage probability vs. sample size with a fixed masking probability and no right-censoring
+
+We want to isolate the effect of the coverage probability as a function of the sample
+size $n$. We fix the masking probability to $p = 0.2$ and without right-censoring $(\tau = \infty)$
+and vary the sample size from $n = 30$ to $n = 800$. See Figure \ref{fig:plot-coverage-p-three-vs-sample-size}.
+
+```{r plot-coverage-p-three-vs-sample-size, echo =F, fig.cap="Coverage probability vs. sample size for masking probability $0.3$", fig.align="center"}
+knitr::include_graphics("image/plot-coverage-p_0.3-vs-sample-size.pdf")
+```
+
+Here are some key observations:
+
+1. It is immediately obvious that the scale parameters (dashed lines) have a much
+   lower coverage probability than the shape parameters (solid lines), particularly
+   for small sample sizes less than $n = 200$.
+   
+   In general, the scale parameters appear to be more difficult to estimate than the
+   shape parameters. 
+
+2. As the sample size increases, the coverage probability for the shape parameters
+   and scale parameters approaches the nominal level, $95\%$.
+   
+   This suggests that the sampling distribution of the MLE is converging in
+   distribution to a multivariate normal distribution with mean $\v\theta$ and
+   variance-covariance given by the inverse of the FIM, consistent with the
+   asymptotic theory.
+
+## Coverage probability vs. sample size and masking probability without right-censoring
+
+We want to get a larger picture of how the coverage probability depends on the
+sample size $n$ and masking probability $p$. We fix the right-censoring time to
+$\tau = \infty$ and vary the sample size from $n = 30$ to $n = 800$ and vary the
+masking probability from $p = 0$ (no masking) to $p = 0.4$ and then compute the
+coverage probability for each combination of sample size $n$ and masking probability
+$p$.
+
+```{r plot-coverage-p-vs-sample-size, echo =F, fig.cap="Coverage probability vs. sample size", fig.align="center"}
+knitr::include_graphics("image/plot-coverage-p-vs-sample-size.pdf")
+```
+
+The results of this analysis are summarized by Figure \ref{fig:plot-coverage-p-vs-sample-size}.
+Here are some key observations:
+
+1. For sample sizes $n \leq 100$, the coverage probability for the shape parameters
+is close to the nominal level, $95\%$, only for small masking probabilities. However,
+as the sample size increases, the coverage probability for the shape parameters
+quickly approaches the nominal level, $95\%$, for all masking probabilities reported
+here.
+
+2. For the scale parameters, the coverage probability is too low for all sample sizes
+$n < 200$ for all masking probabilities reported here. For small sample sizes, the
+confience intervals particularly for the scale parameters, should probably be taken
+with a grain of salt.
+
+In Section \ref{sec:boot}, we explore an alternative way to construct confidence
+intervals using the bootstrap method, which is generally a more accurate way to
+compute confidence intervals. Unlike the inverse of the observed FIM, it does not
+assume that the sampling distribution of the MLE is asymptotically normal, and so
+it is more robust to violations of this assumption.
