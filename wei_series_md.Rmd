@@ -1356,51 +1356,96 @@ that the scale parameter is either known or accurately estimated.
 
 ## Coverage Probability vs Sample Size
 
-### Scale Parameters
-```{r samp-size-n-vs-stats-215-scale, fig.cap=c("Sample Size vs Scale CI Statistics (p = 0.215)","Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.215"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-n-vs-stats-p215-scale.pdf")
-```
-
-In the simulation study, we have generated many different synthetic samples of different sizes from a DGP that is compatible with the assumptions our likelihood model makes about the data.
+In the simulation study, we have generated many different synthetic samples of different sizes ($n$) from a data generating process (DGP) that is compatible with the assumptions our likelihood model makes about the data.
 In particular, right-censored series system lifetimes with a fixed right-censoring time for the system and five components with Weibull lifetimes, each with a different shape and scale parameter.
 For each observation, we then mask the component cause of failure with candidate sets that satisfy the three primary conditions of the likelihood model, e.g., the failed component is always in the
-candidate set.
+candidate set. For each synthetic data set, we then compute the MLEs of the shape and scale parameters of the Weibull distribution. We then use the MLEs to compute the BCa bootstrapped 95% CIs.
 
-For each synthetic data set, we then compute the MLEs of the shape and scale parameters of the Weibull distribution. We then use the MLEs to compute the bootstrapped CIs. The following figure shows the distribution of the MLEs and the bootstrapped CIs for different sample sizes.
+In what follows, we analyze the performance of the BCa bootstrapped CIs for the shape and scale parameters under different masking conditions ($p$) for the component cause of failure.
+We will focus on the following statistics:
 
-*Confidence Band* of the MLEs: The blue shaded region represents the range where 95% of the MLEs fall. This is not exactly a confidence interval but is more like a 95% quantile range representing the dispersion of MLEs.
+- *Coverage Probability (CP)*: The CP is the proportion of the bootstrapped CIs that contain the true value of the parameter. The CP is a good indicator of the reliability of the estimates as previously discussed.
 
-*IQR of Bootstrapped CIs*: The vertical blue bars represent the Interquartile Range (IQR) of the actual bootstrapped Confidence Intervals (CIs). Since in practice we only have one sample and consequently one MLE, we use bootstrapping to resample and compute multiple CIs. The IQR then represents the middle 50% range of these bootstrapped CIs.
+- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of the MLEs get narrower as the sample size increases. This is an indicator of the increased precision in the estimates as more data is available.
+                        We call it a *Confidence Band*, but it is actually an estimate of the quantile range of the MLEs. The shaded region provides insight into the distribution of the MLEs.
 
-For each sample size $n$, we also show:
+- *IQR of Bootstrapped CIs*: The vertical blue bars represent the Interquartile Range (IQR) of the actual bootstrapped Confidence Intervals (CIs). Since in practice we only have one sample and consequently
+                             one MLE, we use bootstrapping to resample and compute multiple CIs. The IQR then represents the middle 50% range of these bootstrapped CIs.
 
-    - The *coverage probability* (CP) of the bootstrapped CIs. The CP is the proportion of the bootstrapped CIs that contain the true value of the scale parameter.
-      The CP is a good indicator of the reliability of the estimates as previously discussed.
-
-    - Mean of the MLEs. The mean of the MLEs is a good indicator of the bias in the estimates. If the mean of the MLEs is close to the true value, then the MLEs are, on average, unbiased.
+- *Mean of the MLEs*: The mean of the MLEs is a good indicator of the bias in the estimates. If the mean of the MLEs is close to the true value, then the MLEs are, on average, unbiased.
 
 The distinction between the shaded region (95% range of MLEs) and the blue vertical bars (IQR of bootstrapped CIs) is important. The shaded region provides insight into the distribution of the MLEs, whereas the blue vertical bars provide information about the variation in the bootstrapped CIs. Both are relevant for understanding the behavior of the estimations.
 
-Here are a few key observations:
+### Scale Parameters {-}
+```{r samp-size-n-vs-stats-215-scale, fig.cap=c("Sample Size vs Bootstrapped Scale CI Statistics (p = 0.215)","Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.215"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-n-vs-stats-p215-scale.pdf")
+```
 
-- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the 95% probability level high across different sample sizes. This suggests that the bootstrapped CIs will contain the true value of the shape parameter with the specified confidence level. The CIs are neither too wide nor too narrow.
+Figure \ref{fig:samp-size-n-vs-stats-p215-scale} shows the distribution of the MLEs for the shape parameters of the first three components and the bootstrapped CIs for different sample sizes with a component cause of failrue masking probaility of $p = 0.215$ (each
+non-failed component is in the candidate set with a $21.5\%$ probabiltiy).
 
-- *Dispersion of MLEs*:
+The distinction between the shaded region (95% range of MLEs) and the blue vertical bars (IQR of bootstrapped CIs) is important. The shaded region provides insight into the distribution of the MLEs, whereas the blue vertical bars provide information about the variation in the bootstrapped CIs. Both are relevant for understanding the behavior of the estimations.
+Here are several key observations:
 
-    The shaded regions representing the 95% probability range of the MLEs get narrower as the sample size increases. This is an indicator of the increased precision in the estimates as more data is available. 
+- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the nominal 95% level across different sample sizes. This suggests that the bootstrapped CIs will contain the true value of the shape parameter with the specified confidence level. The CIs are neither too wide nor too narrow.
+
+- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of the MLEs get narrower as the sample size increases. This is an indicator of the increased precision in the estimates as more data is available. 
 
 - *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in sample size. This suggests that the bootstrapped CIs are getting more consistent and focused around a narrower range with larger samples while maintaining a good coverage probability. As we get more data, the bootstrapped CIs are more likely to be closer to each other and the true value of the scale parameter.
+                             For small sample sizes, they are quite large, but to maintain well-calibrated CIs, this was necessary. The estimator is quite sensitive to the data, and so the bootstrapped CIs are quite wide to account for this sensitivity when the
+                             sample size is small and not necessarily representative of the true distribution.
 
 - *Mean of MLEs*: The red dashed line indicating the mean of MLEs remains stable across different sample sizes and close to the true value, suggesting that the MLEs are, on average, reasonably unbiased.
 
-
-```{r samp-size-n-vs-stats-p215-scale, fig.cap=c("Sample Size vs Shape CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.333"), fig.align="center", echo = F}
+Next, we consider what occurs when we increase the masking probability $p$ to $0.333$, which represents a fairly significant masking of the component cause of failure.
+```{r samp-size-n-vs-stats-p333-scale, fig.cap=c("Sample Size vs Bootstrapped Scale CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.333"), fig.align="center", echo = F}
 knitr::include_graphics("image/plot-n-vs-stats-p333-scale.pdf")
 ```
 
+Figure \ref{fig:samp-size-n-vs-stats-p333-scale} shows the distribution of the MLEs for the shape parameters of the first three components and the bootstrapped CIs for different sample sizes with a component cause of failrue masking probaility of $p = 0.333$ (each
+non-failed component is in the candidate set with a $33.3\%$ probabiltiy).
+
+Here are several key observations, similar to the previous scenario:
+
+- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the nominal 95% level across different sample sizes.
+                               Again, this suggests that the bootstrapped CIs will contain the true value of the shape parameter with the specified confidence level. In general,
+                               the CIs are neither too wide nor too narrow, but the CP for $\lambda_1$ at the sample size of 50 is relatively lower at 0.88. This might indicate a bit
+                               of uncertainty at smaller sample sizes for this parameter. Recall in Section \ref{sec:reliability}, the MTTF of component 1 is the largest, and so it is
+                               the least likely to fail. This might explain the lower CP for $\lambda_1$ at smaller sample sizes, as the data has not shown enough failures from
+                               component 1 to accurately estimate its scale parameter. If we were to increase its MTTF to some radically larger value, it would almost never
+                               fail, and the uncertainty about the scale parameter would increase.
+
+- *Dispersion of MLEs*: As with the previous plots, the shaded regions, which represents the 95% probability range of the MLEs, narrows with incresing sample sizes.
+                        This indicates an increase in precision when more data is available. If this did not occur, then it would indicate that the MLEs are not consistent
+                        or are likelihood model is not appropriate for the data.
+
+- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in sample size. This suggests that the bootstrapped CIs are getting more consistent and focused around a narrower range with larger samples while maintaining a good coverage probability. As we get more data, the bootstrapped CIs are more likely to be closer to each other and the true value of the scale parameter.
+
+- *Mean of MLEs*: The red dashed line indicating the mean of MLEs is less stable across different sample sizes, but it is still close to the true value.
+                  We will investigate the effect of the masking probability in more detail in Section \ref{sec:p-vs-mttf}.
 
 ### Shape Parameters
-```{r samp-size-n-vs-stats-p333-scale, fig.cap=c("Sample Size vs Shape CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs for p = 0.333"), fig.align="center", echo = F}
+
+```{r samp-size-n-vs-stats-p215-shape, fig.cap=c("Sample Size vs Bootstrapped Shape CI Statistics (p = 0.215)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs for p = 0.333"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-n-vs-stats-p215-shape.pdf")
+```
+
+Figure \ref{fig:samp-size-n-vs-stats-p215-shape} shows the distribution of the MLEs for the shape parameters of the first three components and the bootstrapped CIs for different sample sizes with a component cause of failrue masking probaility of $p = 0.333$ (each
+non-failed component is in the candidate set with a $33.3\%$ probabiltiy).
+
+Here are several key observations, similar to the previous scenario:
+
+- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the nominal 95% level across different sample sizes. Again, this suggests that the bootstrapped CIs will contain the true value of the shape parameter with the specified confidence level. The CIs are neither too wide nor too narrow.
+
+- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of the MLEs get narrower as the sample size increases. This is an indicator of the increased precision in the estimates as more data is available. 
+
+- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in sample size. This suggests that the bootstrapped CIs are getting more consistent and focused around a narrower range with larger samples while maintaining a good coverage probability. As we get more data, the bootstrapped CIs are more likely to be closer to each other and the true value of the scale parameter.
+
+- *Mean of MLEs*: The red dashed line indicating the mean of MLEs is less stable across different sample sizes, but it is still close to the true value.
+                  We will investigate the effect of the masking probability in more detail in Section \ref{sec:p-vs-mttf}.
+
+
+```{r samp-size-n-vs-stats-p333-shape, fig.cap=c("Sample Size vs Bootstrapped Shape CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs for p = 0.333"), fig.align="center", echo = F}
 knitr::include_graphics("image/plot-n-vs-stats-p333-shape.pdf")
 ```
 
@@ -1408,13 +1453,27 @@ knitr::include_graphics("image/plot-n-vs-stats-p333-shape.pdf")
 
 ## Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
 
-Effect of $p$ Value: As mentioned earlier, it would be interesting to observe how changes in the value of $p$ would affect these distributions.
+>> Dr. Agustin: I did this experiment for n = 200 to demonstrate two effects the masking probability has:
+>>
+>>  (1) Demonstrate that as masking probability p increases, the precision of the MLEs decrease. If the CI maintains a well-calibrated coverage probability, this will 
+>>      reslt in wider CIs to account for the added uncertainty. Note that this is demonstrated by the plots.
+>>
+>>  (2) Demonstrate that as masking probability p increases, the estimates become more biased in a way that reduces the MTTF of the components, to account for the additional
+>>      uncertainty about the component cause of failure. This is I was seeking, but it's not obvious in the results of this experiment. I hypothesize
+>>      that the sample size chosen (200) is too large and infomative to demonstrate the effect.
+
+In Figure \ref{fig:masking-prob-vs-stats-scale}, we show the effect of the masking probability $p$ on the MLE and the bootstrapped confidence intervals for the scale parameters
+for relatively large samples of size $n = 200$. With this sample size, we see that the MLE is now largely unbiased and the bootstrapped BCa CIs for all parameters have
+well-calibrated coverage probabilities. In Figure \ref{fig:masking-prob-vs-stats-shape}, the same pattern occurs for the effect the masking probability has on the MLE of the
+shape parameters.
+
+For both shape and scale parameters, we see that as the masking probability increases, the IQR of the bootstrapped CIs and the dispersion of the MLEs increase,
+which indicates that the masking probability effects the precision of the estimates. As the masking probability increases, we have less certainty about the
+component cause of failure, and thus less certainty about the estimates for the component parameters.
 
 ```{r masking-prob-vs-stats-shape, fig.cap=c("Component Cause of Failure Masking (p) vs Shape CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs"), fig.align="center", echo = F}
 knitr::include_graphics("image/plot-p-vs-stats-shape.pdf")
 ```
-
-Here, we can see that the coverage probability for the shape parameters is
 
 
 ```{r masking-prob-vs-stats-scale, fig.cap=c("Component Cause of Failure Masking (p) vs Scale CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs"), fig.align="center", echo = F}
@@ -1422,9 +1481,14 @@ knitr::include_graphics("image/plot-p-vs-stats-scale.pdf")
 ```
 
 
+>> Dr. Agustin: I have a final experiment where I vary the MTTF of component 3, by changing its scale parameter, $\lambda_j$. I have data about how this effects the precision and accuracy of the
+>>              MLE and can explain why, e.g., if the MTTF is significantly lower, it domains the component cause of failure and so we have less information about the other components.
+>>              However, I haven't done the actual analysis yet (data is collected). I'm pretty sure it will cause the CIs for the other component parameters to be larger, but whether
+>>              we should include it can be discussed in our meeting. Tomorrow, I can do the do the visualization, and I can get back to you on the analysis before then if you're interested.
+
 # Future Work
 
-## Parametric Bootstrap {-}
+## Parametric Bootstrap
 
 There is an alternative form of the bootstrap called the parametric bootstap,
 where the bootstrap samples are generated from a parametric distribution.
@@ -1438,13 +1502,15 @@ system lifetimes $\T_i$ and a non-parametric distribution for the candidate
 sets $\mathcal{C}_i | \T_i, K_i$, e.g., the empirical distribution with
 some discretization of $\T_i$ used.
 
-
-
 # Conclusion
 
 We have developed a likelihood model for series systems with latent components
 and right-censoring. We have provided evidence that, as long as certain regularity
 conditions are met, the MLE is asymptotically unbiased and consistent.
+
+> Repeat earlier results about how the masking probability effects the MLE and
+> its bootstrapped CIs and the explanation why. Do the same for the sample size.
+
 
 # References {-}
 
