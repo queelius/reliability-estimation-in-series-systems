@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  29 JUL 2023 18:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  30 JUL 2023 19:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -842,100 +842,101 @@ File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) (./image/dep_model.tex
 \du=\skip65
 ) [7] [8] [9] [10] [11] [12] [13] [14] [15] [16]
-<image/last_plot.pdf, id=322, 289.08pt x 216.81pt>
-File: image/last_plot.pdf Graphic file (type pdf)
-<use image/last_plot.pdf>
-Package pdftex.def Info: image/last_plot.pdf  used on input line 1522.
-(pdftex.def)             Requested size: 289.09251pt x 216.81938pt.
-[17] [18 <./image/last_plot.pdf>] [19]
-<image/plot-n-vs-stats-p215-scale.pdf, id=371, 1011.78pt x 1300.86pt>
+<image/fail-test-flat-likelihood.pdf, id=319, 722.7pt x 361.35pt>
+File: image/fail-test-flat-likelihood.pdf Graphic file (type pdf)
+<use image/fail-test-flat-likelihood.pdf>
+Package pdftex.def Info: image/fail-test-flat-likelihood.pdf  used on input lin
+e 1551.
+(pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
+[17] [18 <./image/fail-test-flat-likelihood.pdf>] [19] [20]
+<image/plot-n-vs-stats-p215-scale.pdf, id=389, 1011.78pt x 1300.86pt>
 File: image/plot-n-vs-stats-p215-scale.pdf Graphic file (type pdf)
 <use image/plot-n-vs-stats-p215-scale.pdf>
 Package pdftex.def Info: image/plot-n-vs-stats-p215-scale.pdf  used on input li
-ne 1769.
+ne 1855.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
 
-LaTeX Warning: Reference `fig:samp-size-n-vs-stats-p215-scale' on page 20 undef
-ined on input line 1776.
+LaTeX Warning: Reference `fig:samp-size-n-vs-stats-p215-scale' on page 21 undef
+ined on input line 1862.
 
-<image/plot-n-vs-stats-p333-scale.pdf, id=372, 1011.78pt x 1300.86pt>
+[21] [22 <./image/plot-n-vs-stats-p215-scale.pdf>]
+<image/plot-n-vs-stats-p333-scale.pdf, id=460, 1011.78pt x 1300.86pt>
 File: image/plot-n-vs-stats-p333-scale.pdf Graphic file (type pdf)
 <use image/plot-n-vs-stats-p333-scale.pdf>
 Package pdftex.def Info: image/plot-n-vs-stats-p333-scale.pdf  used on input li
-ne 1825.
+ne 1911.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-[20] [21 <./image/plot-n-vs-stats-p215-scale.pdf>]
 
-LaTeX Warning: Reference `sec:reliability' on page 22 undefined on input line 1
-849.
+LaTeX Warning: Reference `sec:reliability' on page 23 undefined on input line 1
+935.
 
-<image/plot-n-vs-stats-p215-shape.pdf, id=446, 1011.78pt x 1300.86pt>
+<image/plot-n-vs-stats-p215-shape.pdf, id=463, 1011.78pt x 1300.86pt>
 File: image/plot-n-vs-stats-p215-shape.pdf Graphic file (type pdf)
 <use image/plot-n-vs-stats-p215-shape.pdf>
 Package pdftex.def Info: image/plot-n-vs-stats-p215-shape.pdf  used on input li
-ne 1882.
+ne 1968.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-<image/plot-n-vs-stats-p333-shape.pdf, id=449, 1011.78pt x 1300.86pt>
+[23] [24 <./image/plot-n-vs-stats-p333-scale.pdf>] [25 <./image/plot-n-vs-stats
+-p215-shape.pdf>]
+<image/plot-n-vs-stats-p333-shape.pdf, id=601, 1011.78pt x 1300.86pt>
 File: image/plot-n-vs-stats-p333-shape.pdf Graphic file (type pdf)
 <use image/plot-n-vs-stats-p333-shape.pdf>
 Package pdftex.def Info: image/plot-n-vs-stats-p333-shape.pdf  used on input li
-ne 1925.
+ne 2011.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-[22] [23 <./image/plot-n-vs-stats-p333-scale.pdf>] [24 <./image/plot-n-vs-stats
--p215-shape.pdf>] [25 <./image/plot-n-vs-stats-p333-shape.pdf>]
-<image/plot-p-vs-stats-shape.pdf, id=652, 1011.78pt x 1300.86pt>
+<image/plot-p-vs-stats-shape.pdf, id=604, 1011.78pt x 1300.86pt>
 File: image/plot-p-vs-stats-shape.pdf Graphic file (type pdf)
 <use image/plot-p-vs-stats-shape.pdf>
-Package pdftex.def Info: image/plot-p-vs-stats-shape.pdf  used on input line 19
-78.
+Package pdftex.def Info: image/plot-p-vs-stats-shape.pdf  used on input line 20
+64.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-<image/plot-p-vs-stats-scale.pdf, id=653, 1011.78pt x 1300.86pt>
+<image/plot-p-vs-stats-scale.pdf, id=605, 1011.78pt x 1300.86pt>
 File: image/plot-p-vs-stats-scale.pdf Graphic file (type pdf)
 <use image/plot-p-vs-stats-scale.pdf>
-Package pdftex.def Info: image/plot-p-vs-stats-scale.pdf  used on input line 19
-87.
+Package pdftex.def Info: image/plot-p-vs-stats-scale.pdf  used on input line 20
+73.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-[26] [27 <./image/plot-p-vs-stats-shape.pdf>] [28 <./image/plot-p-vs-stats-scal
-e.pdf>]
+[26] [27 <./image/plot-n-vs-stats-p333-shape.pdf>] [28 <./image/plot-p-vs-stats
+-shape.pdf>] [29 <./image/plot-p-vs-stats-scale.pdf>]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-062.
+149.
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2074.
-[29]
-Underfull \vbox (badness 10000) detected at line 2170
- []
-
-
-Underfull \vbox (badness 10000) detected at line 2170
- []
-
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2161.
 [30]
+Underfull \vbox (badness 10000) detected at line 2257
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 2257
+ []
+
+[31]
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-2184.
+2271.
 (/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [31]
-Underfull \vbox (badness 10000) detected at line 2278
+) [32]
+Underfull \vbox (badness 10000) detected at line 2365
  []
 
 
-Underfull \vbox (badness 10000) detected at line 2278
+Underfull \vbox (badness 10000) detected at line 2365
  []
 
-[32] (./wei_series_md.bbl) [33] (./wei_series_md.aux)
+[33] (./wei_series_md.bbl) [34] (./wei_series_md.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 25192 strings out of 478287
- 460308 string characters out of 5849289
- 770105 words of memory out of 5000000
- 42453 multiletter control sequences out of 15000+600000
- 562917 words of font info for 209 fonts, out of 8000000 for 9000
+ 25215 strings out of 478287
+ 460676 string characters out of 5849289
+ 770169 words of memory out of 5000000
+ 42456 multiletter control sequences out of 15000+600000
+ 569353 words of font info for 216 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,20n,80p,1010b,962s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texmf/fonts/enc/d
@@ -950,17 +951,18 @@ ublic/lm/lmmi5.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi7.pfb></usr/shar
 e/texmf/fonts/type1/public/lm/lmmib10.pfb></usr/share/texmf/fonts/type1/public/
 lm/lmmib7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/tex
 mf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr1
-7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/
-type1/public/lm/lmr9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></u
-sr/share/texmf/fonts/type1/public/lm/lmri7.pfb></usr/share/texmf/fonts/type1/pu
-blic/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy5.pfb></usr/shar
-e/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fonts/type1/public/lm
-/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texm
-f/fonts/type1/public/lm/lmtti10.pfb>
-Output written on wei_series_md.pdf (33 pages, 652454 bytes).
+7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/
+type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr
+/share/texmf/fonts/type1/public/lm/lmr9.pfb></usr/share/texmf/fonts/type1/publi
+c/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmri7.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/l
+msy5.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fo
+nts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.p
+fb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb>
+Output written on wei_series_md.pdf (34 pages, 707574 bytes).
 PDF statistics:
- 1065 PDF objects out of 1200 (max. 8388607)
- 666 compressed objects within 7 object streams
- 204 named destinations out of 1000 (max. 500000)
- 49432 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 1091 PDF objects out of 1200 (max. 8388607)
+ 686 compressed objects within 7 object streams
+ 212 named destinations out of 1000 (max. 500000)
+ 53520 words of extra memory for PDF output out of 61914 (max. 10000000)
 

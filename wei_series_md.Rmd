@@ -1060,8 +1060,9 @@ likelihood model.
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
            shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1141,
-           shape5 = 1.3311, scale5 = 836.1123)
+           shape4 = 1.1802, scale4 = 940.1342,
+           shape5 = 1.2034, scale5 = 923.1631)
+
 shapes <- theta[grepl("shape", names(theta))]
 scales <- theta[grepl("scale", names(theta))]
 ```
@@ -1110,7 +1111,7 @@ components <- data.frame(
 )
 
 components <- rbind(components, "Series System" = mttf.sys)
-knitr::kable(components, caption = "Meean Time To Failure of Weibull Components and Series System")
+knitr::kable(components, caption = "Mean Time To Failure of Weibull Components and Series System")
 ```
 
 As shown by Table 2, there are no components that are significantly less reliable
@@ -1193,41 +1194,111 @@ of $\v\theta$, and the failed component is always included in the candidate set.
 
 ## Issues with Convergence to the MLE {#sec:opt_rescale}
 
+The surface of the log-likelihood function can be quite complex with
+many local maxima and ridges. This makes it difficult to find the MLE
+using local search methods like Newton-Raphson. In this section, we
+discuss some of the issues we encountered when estimating the MLE.
+
+One issue we did not necessarily encounter in our simulation study, but
+is worth mentioning, is that the log-likelihood function may not be
+
+Since this is a simulation study, we knew
+the true parameter value $\v\theta$ and so started the optimization routine
+at the true parameter value. This is not the case in real-world scenarios,
+where the true parameter value is unknown, and so the optimization routine
+must start at some initial guess. We would have encountered even more issues
+if we had started the optimization routine at a poor initial guess.
+
 ### Identifiability {-}
+When estimating the parameters, at may sometimes be the case that the likelihood
+function is not maximized at a unique point. This is known as the *identifiability*
+problem. If the likelihood function is not maximized at a unique point, then a lot of the
+theory we have developed so far breaks down \citep{mclachlan2007algorithm}.
 
-When estimating the parameters, we must be careful to ensure that the parameters
-are identifiable such that the likelihood function is maximized at a unique point.
-If the likelihood function is not maximized at a unique point, then the MLE is not
-unique, and a lot of the theory we have developed so far breaks down, particularly
-when the likelihood surface is flat or has multiple local maxima
-\citep{mclachlan2007algorithm}.
+In our case, since we are estimating the parameters of latent components,
+identifiability is not guaranteed. We consider two examples where this
+might occur, but there are many more.
 
-One way in which this problem may arise is if the data is not informative
-enough. For example, if we have a series system and in the observed masked data
-component $1$ is in the candidate set if and only if component $2$ is in
-candidate set, then we do not have enough information to estimate the
-parameters of component $1$ and component $2$ separately.
+1. The candidate sets could have been constructed in a way that
+   prevents us from distinguishing between some of the components. For example,
+   if in the candidate sets in a sample have the characteristic that
+   component $1$ is in a candidate set if and only if component $2$ is in
+   a candidate set, then we do not have enough information to estimate the
+   parameters of component $1$ and component $2$ separately. This could
+   happen, for instance, if the failure analysis is done by a human, and
+   he or she is only able to identity that a larger component failed, but
+   not the smaller components inside it. In this case, we may want to
+   combine the two components into one component, and estimate the parameters
+   of the combined component.
 
-Another way is if the the series system has a component that is the
+   In our Bernoulli candidate set model, this is something that can arise
+   only by chance, and is unlikely to occur in practice, particularly for
+   reasonably large samples.
+
+2. The series system has a component that is the
 least reliable by a significant margin and is most likely the component cause
-of failure. In this case, our data is not informative enough to estimate the
-parameters of the other components. We constructed a quick experiment
-to demonstrate this phenomenon in Figure \ref{fig:flat-loglike-prof}.
+of failure and is in every candidate set. In this case, our data may not be
+informative enough to estimate the parameters of the other components. 
 
-```{r flat-loglike-prof, echo = F, fig.cap = "Log-likelihood profile of a flat surface (non-unique MLE)", fig.align = "center", fig.width = 2, fig.height = 3}
-knitr::include_graphics("image/last_plot.pdf")
+```{r flat-loglike-prof, echo = F, fig.align = "center", fig.cap="Log-likelihood Profile vs Shape Parameter for Component 1 ($k_1$): Non-unique MLE vs Unique MLE.\nRed Dashed Line is the True Shape Value."}
+knitr::include_graphics("image/fail-test-flat-likelihood.pdf")
 ```
 
-We simply made the MTTF of the first component much smaller than the others,
-and for even large samples there was not generally enough information to
-estimate the parameters of the other components. In this case, the MLE is not
-unique, and the likelihood surface is flat, as shown.
+We constructed a quick experiment to demonstrate (2) above. In this
+experiment, we performed the following steps:
 
-We encountered this issue in our simulation study for small samples due to
-right-censored and masked component cause of failure data, despite parameterizing
-a series system with components that have similar MTTFs. Our decision was to
-simply exclude these data sets from our analysis, since they are not
-informative enough to estimate the parameters of the system.
+1. We use the the series system from [@Huairu-2013] as a base, but tweak it
+slightly to design the MTTF of the last component (component 3) be be two
+orders of magnitude smaller than the others. We did this by changing its
+scale parameter to $\lambda_3 = 4.1141$.
+
+2. Generated a data set of size $n = 30$ from this system with a right-censoring time
+of $\tau = 6.706782$, corresponding to the $82.5\%$ quantile of the system's
+lifetime, and with a masking probability $p = 0.215$ using the Bernoulli
+candidate set model.
+
+3. We found an MLE by maximizing the log-likelihood function
+   with the data set generated in step 2. 
+   As shown in the left plot in Figure \ref{fig:flat-loglike-prof}, the log-likelihood
+   function is flat, and therefore there there is no unique MLE. It appears any
+   value of $\hat k_1$ larger than $3$ will maximize the log-likelihood function.
+
+   For a possible reason, we see that *every* candidate set in the data set contains
+   component 3 because it was the component cause of failure in every system failure
+   due to its significantly shorter MTTF. 
+
+4. We tweaked the data set in step 2 by removing component 3 from the candidate set
+in the first observation, leaving only component 1, which also happened to be
+in the candidate set (but if it was not, we could have simply inserted it).
+This is a very small change to the data set, but as shown in the right plot in
+Figure \ref{fig:flat-loglike-prof}, the log-likelihood function is no longer flat,
+and there is a unique MLE. We also see that it is a much better estimate of the
+true parameter value for $k_1$, although we did not do the analysis to assess whether
+this generally holds.
+
+According to this experiment, one could potentially justify either excluding these data
+sets from the analysis, or tweak them slightly as we had done, since otherwise they
+do not provide a unique MLE. In our simulation study, we mitgated these issues by
+choosing parameter values that are representative of real-world systems where there is
+no single component that is much less reliable than the others. We also use the Bernoulli
+candidate set model, which is unlikely to produce candidate sets that are not informative
+enough to estimate the parameters of the components, unless of course the masking
+probability $p$ is very large.
+
+After taking these precautions, we largely ignored identifiability issues in our simulation
+study, with the exception that we discarded any data sets that did not converge to a solution
+after 150 iterations.\footnote{The choice of $150$ iterations was driven by the computational demands of the
+simulation study combined with the subsequent bootstrapping of the confidence intervals.
+} A log-likelihood function that is flat can cause our convergence
+criteria to take a long time to reach a solution. Therefore, a failure to converge within
+150 iterations could be seen as evidence of potential identifiability issues.
+
+Nonetheless, such scenarios occurred infrequently. During the bootstrapping of
+confidence intervals, we included all MLEs, even those that did not converge. This worst-case analysis
+approach was adopted because our main objective was to assess the performance of the BCa confidence intervals.
+We were concerned that if we took any additional steps, we may unintentionally
+bias the results in favor of producing narrow BCa confidence intervals with good coverage
+probabilities.
 
 ### Parameter rescaling {-}
 When the parameters under investigation span different
@@ -1327,7 +1398,7 @@ $$
 \text{MTTF} = \lambda_j \Gamma(1 + 1/k_j).
 $$
 
-## Scale Paramater: Positive Bias
+### Scale Paramater: Positive Bias {-}
 
 As the scale parameter $\lambda_j$ increases (keeping the shape parameter constant), the MTTF increases.
 When we increase the component masking, which in our simulation study is determined by the masking
@@ -1338,7 +1409,7 @@ of the components in the candidate set, which increases their respective MTTFs.
 
 We will demonstrate this effect in Section \ref{sec:p-vs-mttf}.
 
-### Shape Parameter: Negative Bias
+### Shape Parameter: Negative Bias  {-}
 
 As the shape parameter increases (keeping the scale parameter constant), the quantity $1/k_j$ decreases. Given that the gamma
 function $\Gamma$ is a monotonically increasing function, a decrease in its argument (which is the case here since
