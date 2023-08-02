@@ -19,15 +19,16 @@ set.seed(151234)
 tau <- wei.series.md.c1.c2.c3::qwei_series(p = q, scales = scales, shapes = shapes)
 df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
     shapes = shapes, scales = scales, n = n, p = p, tau = tau)
-df.tweaked <- df
-df.tweaked[1,"x3"] <- FALSE # remove component 3 from first observation
-df.tweaked[1,"x1"] <- TRUE  # add component 1 to first observation
+
+
+df.prior <- data.frame(t = rep(tau, 3), t1 = rep(NA,3), t2 = rep(NA,3), t3 = rep(NA,3), q1 = rep(NA,3), q2 = rep(NA,3), q3 = rep(NA,3), delta = rep(TRUE, 3), x1 = c(T,F,F), x2 = c(F,T,F), x3 = c(F,F,T))
+df.post <- rbind(df.prior, df)
 
 sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
     theta0 = theta, df = df, hessian = FALSE,
     control = list(maxit = 1000))
 sol.tweaked <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-    theta0 = theta, df = df.tweaked, hessian = FALSE,
+    theta0 = theta, df = df.post, hessian = FALSE,
     control = list(maxit = 1000))
 
 l <- Vectorize(function(shape1) {
@@ -38,7 +39,7 @@ l <- Vectorize(function(shape1) {
 l.tweaked <- Vectorize(function(shape1) {
     theta <- sol.tweaked$par
     theta[1] <- shape1
-    wei.series.md.c1.c2.c3::loglik_wei_series_md_c1_c2_c3(df.tweaked, theta)
+    wei.series.md.c1.c2.c3::loglik_wei_series_md_c1_c2_c3(df.post, theta)
 }, vectorize.args = "shape1")
 
 shape1 <- seq(0.25, 4, by=.025)

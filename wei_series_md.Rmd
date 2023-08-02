@@ -1,5 +1,5 @@
 ---
-title: "Bootstrapping statistics of the maximum likelihood estimator of components in a series systems from masked failure data"
+title: "Bootstrapping confidence intervals (BCa) of the maximum likelihood estimator of components in a series systems from masked failure data"
 author: "Alex Towell"
 abstract: "We estimate the parameters of a series system with Weibull component lifetimes from relatively small samples consisting of right-censored system lifetimes and masked component cause of failure. Under a set of conditions that permit us to ignore how the component cause of failures are masked, we assess the bias and variance of the estimator. Then, we assess the accuracy of the boostrapped variance and calibration of the confidence intervals of the MLE under a variety of scenarios."
 output:
@@ -7,11 +7,14 @@ output:
         toc: yes
         toc_depth: 2
         number_sections: true
-        extra_dependencies: ["graphicx","amsthm","amsmath","natbib","tikz"]
+        extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
         df_print: kable
         keep_tex: true
         citation_package: natbib
 indent: true
+header-includes:
+   - \hypersetup{linktoc=all}
+   - \AtBeginDocument{\renewcommand{\refname}{References}}
 bibliography: refs.bib
 biblio-style: apalike
 #csl: the-annals-of-statistics.csl
@@ -26,7 +29,7 @@ biblio-style: apalike
 \numberwithin{equation}{section}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts = list(width.cutoff = 65))
 library(md.tools)
 library(algebraic.mle)
 library(wei.series.md.c1.c2.c3)
@@ -622,7 +625,7 @@ where $\beta_i$ is not a function of $\v\theta$.
 
 When Conditions \ref{cond:c_contains_k}, \ref{cond:equal_prob_failure_cause},
 and \ref{cond:masked_indept_theta} are satisfied, the joint pdf of $\T_i$ and
-$\mathcal{C_i}$ is given by
+$\mathcal{C}_i$ is given by
 $$
 f_{\T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) =
     \beta_i R_{\T_i}(t_i;\v\theta)
@@ -767,14 +770,22 @@ applies two corrections to the standard bootstrap method:
 
 - Bias correction: This adjusts for bias in the bootstrap distribution itself.
   This bias is measured as the difference between the mean of the bootstrap distribution and the observed statistic.
+  It works by transforming the percentiles of the bootstrap distribution to correct for these issues.
+  
+  This may be a useful transformation in our case since we are dealing with small samples and we have two potential
+  sources of bias: right-censoring and masking component cause of failure. They seem to have opposing effects
+  on the MLE, but the relationship is difficult to quantify.
 
 - Acceleration: This adjusts for the rate of change of the statistic as a function of the true, unknown parameter.
   This correction is important when the shape of the statistic's distribution changes with the true parameter.
 
-Thus, BCa provides a more accurate estimate of confidence intervals, particularly for small sample sizes
-or skewed distributions, compared to other methods.
+  Since we have a number of different shape parameters, $k_1,\ldots,k_m$, we may expect the shape of the
+  distribution of the MLE to change as a function of the true parameter, making this correction potentially useful.
+
 Since we are primarly interested in generating confidence intervals for small samples (otherwise the inverse FIM would
-be a good approximation), we use BCa in our analysis. For more details on BCa, see \citep{efron1987better}.
+be a good approximation) for a potentially biased MLE for the parameters of Weibull components in a series configuration
+(see Sections \ref{sec:effect-censoring} and \ref{sec:effect-masking}), we think the BCa method is a good choice for our
+analysis. For more details on BCa, see \cite{efron1987better}.
 
 In our simulation study, we will assess the performance of the bootstrapped
 confidence intervals by computing the coverage probability of the confidence
@@ -786,7 +797,6 @@ have a coverage probability greater than 95%, which conveys a lack of confidence
 in the precision of the MLE. Thus, we want the confidence interval to be as
 narrow as possible while still having a coverage probability close to the
 nominal level, 95%.
-
 
 ### Issues with Resampling from the Observed Data {-}
 
@@ -1055,7 +1065,7 @@ of the bootstrap method for estimating the sampling distribution of the MLE
 for a Weibull series system with $m=5$ components under our proposed
 likelihood model.
 
-## Realistic System Designs
+## Realistic System Designs {#sec:reliability}
 ```{r sim-study-design, echo = F}
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
@@ -1199,9 +1209,6 @@ many local maxima and ridges. This makes it difficult to find the MLE
 using local search methods like Newton-Raphson. In this section, we
 discuss some of the issues we encountered when estimating the MLE.
 
-One issue we did not necessarily encounter in our simulation study, but
-is worth mentioning, is that the log-likelihood function may not be
-
 Since this is a simulation study, we knew
 the true parameter value $\v\theta$ and so started the optimization routine
 at the true parameter value. This is not the case in real-world scenarios,
@@ -1210,7 +1217,7 @@ must start at some initial guess. We would have encountered even more issues
 if we had started the optimization routine at a poor initial guess.
 
 ### Identifiability {-}
-When estimating the parameters, at may sometimes be the case that the likelihood
+When estimating the parameters, it may sometimes be the case that the likelihood
 function is not maximized at a unique point. This is known as the *identifiability*
 problem. If the likelihood function is not maximized at a unique point, then a lot of the
 theory we have developed so far breaks down \citep{mclachlan2007algorithm}.
@@ -1221,15 +1228,15 @@ might occur, but there are many more.
 
 1. The candidate sets could have been constructed in a way that
    prevents us from distinguishing between some of the components. For example,
-   if in the candidate sets in a sample have the characteristic that
+   if the candidate sets in a sample have the characteristic that
    component $1$ is in a candidate set if and only if component $2$ is in
    a candidate set, then we do not have enough information to estimate the
    parameters of component $1$ and component $2$ separately. This could
    happen, for instance, if the failure analysis is done by a human, and
    he or she is only able to identity that a larger component failed, but
-   not the smaller components inside it. In this case, we may want to
-   combine the two components into one component, and estimate the parameters
-   of the combined component.
+   not which of the smaller components inside it had failed. In this case,
+   we may want to combine the two components into one component, and estimate
+   the parameters of the combined component.
 
    In our Bernoulli candidate set model, this is something that can arise
    only by chance, and is unlikely to occur in practice, particularly for
@@ -1240,8 +1247,8 @@ least reliable by a significant margin and is most likely the component cause
 of failure and is in every candidate set. In this case, our data may not be
 informative enough to estimate the parameters of the other components. 
 
-```{r flat-loglike-prof, echo = F, fig.align = "center", fig.cap="Log-likelihood Profile vs Shape Parameter for Component 1 ($k_1$): Non-unique MLE vs Unique MLE.\nRed Dashed Line is the True Shape Value."}
-knitr::include_graphics("image/fail-test-flat-likelihood.pdf")
+```{r flat-loglike-prof, echo = F, fig.align = "center", fig.cap="Log-likelihood Profile vs Shape Parameter for Component 1 ($k_1$): Non-unique MLE vs Unique MLE.\nBlue Dashed Line is the True Shape $k_1$."}
+knitr::include_graphics("image/test-flat-likelihood.pdf")
 ```
 
 We constructed a quick experiment to demonstrate (2) above. In this
@@ -1268,13 +1275,15 @@ candidate set model.
    due to its significantly shorter MTTF. 
 
 4. We tweaked the data set in step 2 by removing component 3 from the candidate set
-in the first observation, leaving only component 1, which also happened to be
-in the candidate set (but if it was not, we could have simply inserted it).
+in the first observation and adding component 1. This is permissible because the
+observation was not right-censored, and so must have a non-empty candidate set.
 This is a very small change to the data set, but as shown in the right plot in
 Figure \ref{fig:flat-loglike-prof}, the log-likelihood function is no longer flat,
 and there is a unique MLE. We also see that it is a much better estimate of the
 true parameter value for $k_1$, although we did not do the analysis to assess whether
 this generally holds.
+
+See \hyperref[app:flat-like-code]{Appendix D} for the R code used to generate the data set for this experiment.
 
 According to this experiment, one could potentially justify either excluding these data
 sets from the analysis, or tweak them slightly as we had done, since otherwise they
@@ -1315,6 +1324,67 @@ study, we employ the bootstrap method to estimate the sampling distribution of t
 MLE, which requires us to estimate the MLE for many data sets. We found that
 parameter rescaling significantly improved the speed of convergence, which allowed
 us to run our simulation study in a tractable amount of time.
+
+## Effect of Right-Censoring on the MLE {#sec:effect-censoring}
+
+In all of our simulation studies, we use a fixed right-censoring time $\tau = 377.71$,
+which is the $82.5\%$ quantile of the series system. This means that $82.5\%$ of the
+series systems are expected to fail before time $\tau$ and $17.5\%$ of the series are
+expected to be right-censored. This represents a situation in which an experiment is run
+for a fixed amount of time $\tau$, and all systems that have not failed by the end of
+the experiment are right-censored.
+
+Right-censoring introduces a source of bias in the MLE. Right-censoring has the
+effect of pushing the MLE to estimate a larger MTTF for each of the components,
+so that the series system has a larger MTTF. This is because when we observe a
+right-censoring event, we know that the system failed after the censoring time,
+but we do not know precisely when it will fail. This uncertainty has the effect
+of pushing the MLE to estimate a larger MTTF for the system so that it is more
+likely to fail after the censoring time. See \cite{klein2005survival} for more
+information on this phenomenon.
+
+To increase the MTTF of a series system, the MTTF of each component
+is increased. The mean time to failure (MTTF) for the $j$\textsuperscript{th}
+component in a Weibull distribution is given by
+\begin{equation}
+\label{eq:mttf-wei}
+\text{MTTF} = \lambda_j \Gamma(1 + 1/k_j),
+\end{equation}
+therefore, in order to increase the MTTF of the components, lower values for the shape parameters
+are chosen and higher values for the scale parameters are chosen.
+
+## Effect of Masking the Component Cause of Failure on the MLE {#sec:effect-masking}
+
+When we observe a system failure, we know that one of the components in the candidate set
+caused the system to fail, but we do not know which one. This uncertainty has the effect
+of pushing the MLE to estimate a smaller MTTF for each of the components in the candidate
+set. For components that are frequently in candidate sets but proportionally not more
+likely to be a component cause of failure, the effect is more pronounced, which may
+introduce a source of bias in the MLE for such components.
+
+In our Bernoulli candidate set model, the masking probability $p$ determines how commonly each
+non-failed component is in the candidate set, and so we expect that as $p$ increases, this will become a
+more pronoucned source of bias.\footnote{In a more complicated candidate set model, it is possible
+that masking could introduce a significant source of bias for some components, and none at all
+for others.}
+However, note that the effect of masking, which pushes
+the MLE to estimate a smaller MTTF, has opposite effect to that of right-censoring,
+which pushes the MLE to estimate a larger MTTF. As these two sources of bias compete with each other,
+it is not clear which one will dominate
+
+In what follows, we explain how the bias induced by masking the component cause of failure
+effects the MLE for the shape and scale parameters of a Weibull component.
+Assessing Equation \eqref{eq:mttf-wei}, we see that the MTTF of a Weibull component is
+proportional to its scale parameter $\lambda_j$, which means when we decrease
+the scale parameter $\lambda_j$ (keeping the shape parameter $k_j$ constant), the MTTF decreases.
+Therefore, if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
+to appear in the candidate set, its scale parameter should be decreased, potentially
+biasing the MLE for the scale parameter downwards.
+
+Conversely, we see that the MTTF decreases as we increase the shape parameter $k_j$.
+Therefore, if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
+to appear in in the candidate set, its shape parameter should be increased, potentially
+biasing the MLE for the shape parameter upwards.
 
 ## Assessing the Bootstrapped Confidence Intervals
 
@@ -1375,56 +1445,6 @@ Here is an outline of the simulation study analysis:
 
 For how we generate a scenario, see Appendix A.
 
-## Effect of Right-Censoring on the MLE
-
-In all of our simulation studies, we use a fixed right-censoring time $\tau = 377.71$,
-which is the $82.5\%$ quantile of the series system. This means that $82.5\%$ of the
-series systems are expected to fail before time $\tau$ and $17.5\%$ of the series.
-
-This represents a situation in which an experiment is run for a fixed amount of time
-$\tau$, and all systems that have not failed by the end of the experiment are
-right-censored.
-
-Right-censoring introduces a source of bias in the MLE. Right-censoring has the
-effect of pushing the MLE to estimate a lower value for the scale parameters and
-a higher value for the shape parameters. This is because when we observe a
-right-censoring event, we know that the system failed after the censoring time,
-but we do not know precisely when it will fail. 
-
-## Effect of Masking the Component Cause of Failure on the MLE
-
-The mean time to failure (MTTF) for the $j$\textsuperscript{th} component in a Weibull distribution is given by:
-$$
-\text{MTTF} = \lambda_j \Gamma(1 + 1/k_j).
-$$
-
-### Scale Paramater: Positive Bias {-}
-
-As the scale parameter $\lambda_j$ increases (keeping the shape parameter constant), the MTTF increases.
-When we increase the component masking, which in our simulation study is determined by the masking
-probability $p$, then there is less certainty about which component caused the system to fail,
-but we know it was one of the components in the candidate set. Therefore, to make it more likely
-that the component cause of failure is in the candidate set, we increase the scale parameters
-of the components in the candidate set, which increases their respective MTTFs.
-
-We will demonstrate this effect in Section \ref{sec:p-vs-mttf}.
-
-### Shape Parameter: Negative Bias  {-}
-
-As the shape parameter increases (keeping the scale parameter constant), the quantity $1/k_j$ decreases. Given that the gamma
-function $\Gamma$ is a monotonically increasing function, a decrease in its argument (which is the case here since
-$1 + 1/k_j$ decreases with an increase in shape) results in a decrease in the MTTF.
-
-Hence, when the shape parameter increases, the MTTF decreases, assuming the scale parameter is kept constant.
-Now, if the MLE for the shape parameter is positively biased (i.e., $E(\hat k_j) > k_j$), then the estimated shape
-parameter is larger than the true shape parameter. When we use this larger estimated shape parameter to compute
-the MTTF, the resulting MTTF will be smaller than the actual MTTF (assuming the scale parameter is kept constant
-or accurately estimated). 
-
-In other words, a positive bias in the estimated shape parameter would lead to an underestimation of the MTTF, assuming
-that the scale parameter is either known or accurately estimated. 
-
-
 ## Coverage Probability vs Sample Size
 
 In the simulation study, we have generated many different synthetic samples of different sizes ($n$) from a data generating process (DGP) that is compatible with the assumptions our likelihood model makes about the data.
@@ -1448,7 +1468,7 @@ We will focus on the following statistics:
 The distinction between the shaded region (95% range of MLEs) and the blue vertical bars (IQR of bootstrapped CIs) is important. The shaded region provides insight into the distribution of the MLEs, whereas the blue vertical bars provide information about the variation in the bootstrapped CIs. Both are relevant for understanding the behavior of the estimations.
 
 ### Scale Parameters {-}
-```{r samp-size-n-vs-stats-215-scale, fig.cap=c("Sample Size vs Bootstrapped Scale CI Statistics (p = 0.215)","Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.215"), fig.align="center", echo = F}
+```{r samp-size-n-vs-stats-p215-scale, fig.cap=c("Sample Size vs Bootstrapped Scale CI Statistics (p = 0.215)","Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.215"), fig.align="center", echo = F}
 knitr::include_graphics("image/plot-n-vs-stats-p215-scale.pdf")
 ```
 
@@ -1481,10 +1501,12 @@ Here are several key observations, similar to the previous scenario:
 - *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the nominal 95% level across different sample sizes.
                                Again, this suggests that the bootstrapped CIs will contain the true value of the shape parameter with the specified confidence level. In general,
                                the CIs are neither too wide nor too narrow, but the CP for $\lambda_1$ at the sample size of 50 is relatively lower at 0.88. This might indicate a bit
-                               of uncertainty at smaller sample sizes for this parameter. Recall in Section \ref{sec:reliability}, the MTTF of component 1 is the largest, and so it is
-                               the least likely to fail. This might explain the lower CP for $\lambda_1$ at smaller sample sizes, as the data has not shown enough failures from
-                               component 1 to accurately estimate its scale parameter. If we were to increase its MTTF to some radically larger value, it would almost never
-                               fail, and the uncertainty about the scale parameter would increase.
+                               of uncertainty at smaller sample sizes for this parameter.
+                               
+    According to Section \ref{sec:reliability}, the MTTF of component 1 is the largest, and so it is
+    the least likely to fail. This might explain the lower CP for $\lambda_1$ at smaller sample sizes, as the data has not shown enough failures from
+    component 1 to accurately estimate its scale parameter. If we were to increase its MTTF to a much larger value, it would almost never
+    fail, and the uncertainty about the scale parameter would further increase.
 
 - *Dispersion of MLEs*: As with the previous plots, the shaded regions, which represents the 95% probability range of the MLEs, narrows with incresing sample sizes.
                         This indicates an increase in precision when more data is available. If this did not occur, then it would indicate that the MLEs are not consistent
@@ -1524,38 +1546,91 @@ knitr::include_graphics("image/plot-n-vs-stats-p333-shape.pdf")
 
 ## Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
 
->> Dr. Agustin: I did this experiment for n = 200 to demonstrate two effects the masking probability has:
->>
->>  (1) Demonstrate that as masking probability p increases, the precision of the MLEs decrease. If the CI maintains a well-calibrated coverage probability, this will 
->>      reslt in wider CIs to account for the added uncertainty. Note that this is demonstrated by the plots.
->>
->>  (2) Demonstrate that as masking probability p increases, the estimates become more biased in a way that reduces the MTTF of the components, to account for the additional
->>      uncertainty about the component cause of failure. This is I was seeking, but it's not obvious in the results of this experiment. I hypothesize
->>      that the sample size chosen (200) is too large and infomative to demonstrate the effect.
+In this scenario, we fix the sample size at $n = 90$ and we fix the right-censoring quantile fixed $q = .825$, and
+we vary the masking probability $p$ from $p = 0$ (no masking the component cause of failure) to $p = 0.45$
+(significant masking of the component cause of failure).
+simualted 
 
-In Figure \ref{fig:masking-prob-vs-stats-scale}, we show the effect of the masking probability $p$ on the MLE and the bootstrapped confidence intervals for the scale parameters
-for relatively large samples of size $n = 200$. With this sample size, we see that the MLE is now largely unbiased and the bootstrapped BCa CIs for all parameters have
-well-calibrated coverage probabilities. In Figure \ref{fig:masking-prob-vs-stats-shape}, the same pattern occurs for the effect the masking probability has on the MLE of the
-shape parameters.
+### Scale Parameter {-}
+In Figures \ref{fig:masking-prob-vs-stats-scale}, we show the effect of the masking probability
+$p$ on the MLE and the bootstrapped BCa confidence intervals for the scale parameters. A this
+relatively sample size, we see that the MLE is relatively unbiased for small $p$, but as $p$ increases,
+the MLE becomes increasingly biased. We also see the confidence interval width seems relatively stable
+until the masking becomes significant, at $p = 0.45$. The confidence intervals appear to be well-calibrated
+at all masking probabilities, even for $p = 0.45$, although it exhibits the worst coverage at around $90\%$
+for 95% confidence intervals.
 
-For both shape and scale parameters, we see that as the masking probability increases, the IQR of the bootstrapped CIs and the dispersion of the MLEs increase,
-which indicates that the masking probability effects the precision of the estimates. As the masking probability increases, we have less certainty about the
+### Shape Parameter {-}
+In Figures \ref{fig:masking-prob-vs-stats-shape}, we show the effect of the masking probability $p$ on the
+shape parameters. Here, we see that as we increase the masking probability, the confidence interval widths
+increase fairly significantly, as does the bias. In other words, the shape parameters appear to be more
+sensitive to masking.
+
+Overall, for both parameter types, we see that as the masking probability increases, the IQR of the bootstrapped CIs,
+the dispersion of the MLEs,a the bias increases, which indicates that the masking probability effects the precision
+and accuracy of the estimates. As the masking probability increases, we have less certainty about the
 component cause of failure, and thus less certainty about the estimates for the component parameters.
-
-```{r masking-prob-vs-stats-shape, fig.cap=c("Component Cause of Failure Masking (p) vs Shape CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-p-vs-stats-shape.pdf")
-```
 
 
 ```{r masking-prob-vs-stats-scale, fig.cap=c("Component Cause of Failure Masking (p) vs Scale CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-p-vs-stats-scale.pdf")
+knitr::include_graphics("image/plot-p-vs-stats-scale-n90.pdf")
+```
+
+```{r masking-prob-vs-stats-shape, fig.cap=c("Component Cause of Failure Masking (p) vs Shape CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-p-vs-stats-shapes-n90.pdf")
 ```
 
 
->> Dr. Agustin: I have a final experiment where I vary the MTTF of component 3, by changing its scale parameter, $\lambda_j$. I have data about how this effects the precision and accuracy of the
->>              MLE and can explain why, e.g., if the MTTF is significantly lower, it domains the component cause of failure and so we have less information about the other components.
->>              However, I haven't done the actual analysis yet (data is collected). I'm pretty sure it will cause the CIs for the other component parameters to be larger, but whether
->>              we should include it can be discussed in our meeting. Tomorrow, I can do the do the visualization, and I can get back to you on the analysis before then if you're interested.
+## Manipulating the MTTF of Component 3 {#sec:mttf-c3}
+
+In Section \ref{?}, we discussed that if one of the components had a significantly lower MTTF,
+this could pose challenges to accurately estimating the parameters of the other components.
+In this section, we will explore this phenomenon in more detail by manipulating the MTTF of
+component 3 and observing the effect it has on the MLE and the bootstrapped confidence intervals
+for component 3 and component 1.\footnote{Since the other components had a similiar MTTF, we
+will arbitrarily choose component 1 to represent the other components.}
+
+
+```{r mttf-vs-ci, fig.cap=c("MTTF vs Parameter Statistics"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-scale3-vs-stats.pdf")
+```
+
+In Figure \ref{fig:mttf-vs-ci}, we show the effect of the MTTF of component 3 on the MLE and the bootstrapped confidence intervals for the shape and scale
+parameters for components 1 and 3 (the component we are varying).
+We simulate samples with a sample size of $n = 100$, a right-censoring quantile of $q = 0.825$, and a masking probability of $p = 0.215$.
+(Note that while $q$ is fixed, $\tau$ varies as we change the MTTF of component 3.)
+The MTTF of component 3 varies from around $300$ to $1500$ and MTTF of the other components, including component 2, is around $900$.
+There are several interesting observations that we can make about Figure \ref{fig:mttf-vs-ci}:
+
+1. When the MTTF of component 3 is much smaller than the other components, the estimate of parameters of component 3 is precise (narrow CIs with high Probability
+   coverage) and accurate (the MLE is close to the true value). This is because component 3 is the component cause of failure in nearly every system failure,
+   and so the data is very informative about the parameters of component 3. Conversely, the estimates of the parameters of the other components is quite poor,
+   with wide CIs and large positive bias. Nonetheless, the coverage probability of the CIs for the other components is still well-calibrated, which means that
+   the CIs will contain the true value of the parameter with a probability around the specified confidence level. So, while we may not have a good point estimates
+   for the parameters, we can still be confident that CIs contain them. That is to say, we have properly quantified our uncertainty about the parameters of the
+   other components.
+
+1. When the MTTF of component 3 is much larger than the MTTF of the other components, then component 3 is much less likely to be the component cause of failure,
+   and with a masking probability of $p = 0.215$, it will be in the candidate set with approximately $21.5\%$ probability, but it will generally be a false
+   candidate. The end result is that the estimates of the parameters of component 3 are quite poor, with wide CIs and large positive bias. However, the estimates
+   of the parameters of the other components are quite good, with narrow CIs and small positive bias. The coverage probability of the CIs for the other components
+   are, in comparison, quite good. As the MTTF of component 3 increases and it becomes less likely to be the component cause of failure, the estimates of the
+   parameters of the other components become more precise and accurate.
+
+   We also see that the bias is positive for both parameters of component 3. We had not necessarily expected this, but we knew there would be a complex
+   relationship given the presence of right-censoring and masking. When a system is right-censored, or the exact time of failure is observed but the component
+   cause of failure is masked and component 3 is not in the candidate set, then to make component 3 more likely to not be the component cause of failure,
+   its failure rate at that observed time is pushed down and its MTTF is pushed to the right by the MLE. Thus, $\hat\lambda_3$ being positively biased is
+   expected. However, $k_3$ being positively biased is not necessarily expected, but the fact is, decreasing $k_3$ only has a small impact on the MTTF compared
+   to the scale parameter $\lambda_3$, and the shape parameter may be more particular about when the failures occur. For example, if the shape parameter is
+    large, then the failures may be more likely to occur at the beginning of the lifetime, which would cause the MTTF to be pushed to the right. This is
+   
+   anticipated this: from our preliminary analysis, we had expected that the bias would
+   be positive for the scale parameter and negative for the shape parameter. We believed this because if component 3 is not the component cause of failure,
+   then the system is more likely to fail due to the failure of one of the other components, which would cause the system to fail sooner. This would cause
+   
+
+
 
 # Future Work
 
@@ -1582,231 +1657,312 @@ conditions are met, the MLE is asymptotically unbiased and consistent.
 > Repeat earlier results about how the masking probability effects the MLE and
 > its bootstrapped CIs and the explanation why. Do the same for the sample size.
 
+# Appendix A: R Code For Log-likelihood Function {-}
+\label{app:loglike-code}
 
-# References {-}
+The following code is the log-likelihood function for the Weibull series system
+with a likelihood model that includes masked component cause of failure and right-censoring.
+It is implemented in the R library `wei.series.md.c1.c2.c3` and is available on
+[GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
 
-Please see below for a full list of references.
+For clarity and brevity, we removed some of the functionality that is not relevant to the
+analysis in this paper.
 
-```{r refmgr, echo=FALSE, results='asis'}
+```{r}
+#' Generates a log-likelihood function for a Weibull series system with respect
+#' to parameter `theta` (shape, scale) for masked data with candidate sets
+#' that satisfy conditions C1, C2, and C3 and right-censored data.
+#'
+#' @param df (masked) data frame
+#' @param theta parameter vector (shape1, scale1, ..., shapem, scalem)
+#' @returns Log-likelihood with respect to `theta` given `df`
+loglik_wei_series_md_c1_c2_c3 <- function(df, theta) {
+    n <- nrow(df)
+    C <- md_decode_matrix(df, candset)
+    m <- ncol(C)
+    delta <- df[[right_censoring_indicator]]
+    t <- df[[lifetime]]
+    k <- length(theta)
+    shapes <- theta[seq(1, k, 2)]
+    scales <- theta[seq(2, k, 2)]
 
-cat("<div id=\"refs\"></div>")
+    s <- 0
+    for (i in 1:n) {
+        s <- s - sum((t[i] / scales)^shapes)
+        if (delta[i]) {
+            s <- s + log(sum(shapes[C[i, ]] / scales[C[i, ]] *
+                (t[i] / scales[C[i, ]])^(shapes[C[i, ]] - 1)))
+        }
+    }
+    s
+}
 ```
 
-# Appendix {#app}
 
-## Data {#app:data}
+# Appendix B: Score Function {-}
+\label{app:score-code}
 
-## Simulation Code {-}
+The following code is the score function (gradient of the log-likelihood function with respect to $\v\theta$) for the Weibull series system
+with a likelihood model that includes masked component cause of failure and right-censoring.
+It is implemented in the R library `wei.series.md.c1.c2.c3` and is available on [GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
 
-```{r eval = FALSE}
-#############################################################
-# Simulation data generating process for specified scenario #
-# (n, p, q), where:                                         #
-#    - n is a vector of sample sizes                        #
-#     - n is a vector of sample sizes                       #
-#     - p is a vector of masking probabilities              #
-#     - q is a vector of right-censoring quantiles of the   #
-#       Weibull series distribution.                        #
-#############################################################
+For clarity and brevity, we removed some of the functionality that is not relevant to the
+analysis in this paper.
 
-# here is the R libary we developed for this project
-library(wei.series.md.c1.c2.c3) 
+```{r score-code, eval = FALSE}
+#' Computes the score function (gradient of the log-likelihood function) for a
+#' Weibull series system with respect to parameter `theta` (shape, scale) for masked
+#' data with candidate sets that satisfy conditions C1, C2, and C3 and right-censored
+#' data.
+#'
+#' @param df (masked) data frame
+#' @param theta parameter vector (shape1, scale1, ..., shapem, scalem)
+#' @returns Score with respect to `theta` given `df`
+score_wei_series_md_c1_c2_c3 <- function(df, theta) {
+    n <- nrow(df)
+    C <- md_decode_matrix(df, candset)
+    m <- ncol(C)
+    delta <- df[[right_censoring_indicator]]
+    t <- df[[lifetime]]
+    shapes <- theta[seq(1, length(theta), 2)]
+    scales <- theta[seq(2, length(theta), 2)]
+    shape_scores <- rep(0, m)
+    scale_scores <- rep(0, m)
 
-# for parallel processing
-library(parallel)
+    for (i in 1:n) {
+        rt.term.shapes <- -(t[i] / scales)^shapes * log(t[i] / scales)
+        rt.term.scales <- (shapes / scales) * (t[i] / scales)^shapes
 
-# you can set a seed for reproducibility of the experimental run
-# however, if you use parallel processing, this simple approach will not work.
-# set.seed(1234)
+        # Initialize mask terms to 0
+        mask.term.shapes <- rep(0, m)
+        mask.term.scales <- rep(0, m)
+        
+        if (delta[i]) {
+            cindex <- C[i,]
+            denom <- sum(shapes[cindex] / scales[cindex] * (t[i] / scales[cindex])^(shapes[cindex] - 1))
+            
+            numer.shapes <- 1/t[i] * (t[i] / scales[cindex])^shapes[cindex] *
+                (1 + shapes[cindex] * log(t[i] / scales[cindex]))
+            mask.term.shapes[cindex] <- numer.shapes / denom
 
-###############################################
-# Here is an example of how to run a scenario #
-###############################################
+            numer.scales <- (shapes[cindex] / scales[cindex])^2 * (t[i] / scales[cindex])^(shapes[cindex] - 1)
+            mask.term.scales[cindex] <- numer.scales / denom
+        }
 
-# set the simulation name to be used in the file names
-sim.name <- "sim-2"
-# set the sample sizes
-ns <- c(30, 40, 50, 75, 100, 200, 400, 800)
-# set the masking probabilities
-ps <- seq(0, 0,1, 0.2, 0.3, 0.4)
-# set the right-censoring quantiles
-qs <- c(0.5, 0.6, 0.7, 0.8, 0.9, 0.95)
-# set the number of replicates
-R <- 100
-# set the number of CPU cores to use
-ncores <- 4
+        shape_scores <- shape_scores + rt.term.shapes + mask.term.shapes
+        scale_scores <- scale_scores + rt.term.scales - mask.term.scales
+    }
 
-# true parameter values
+    scr <- rep(0, length(theta))
+    scr[seq(1, length(theta), 2)] <- shape_scores
+    scr[seq(2, length(theta), 2)] <- scale_scores
+    scr
+}
+```
+
+# Appendix C: Simulation of Scenarios For Assessing Bootstrapped (BCa) Confidence Intervals {-}
+
+The following code is the Monte-carlo simulation code for estimating the
+confidence intervals of the MLE using the bootstrap method.
+
+```{r bootstrap-sim-code, eval=FALSE}
+#### Setup simulation parameters here ####
+
+# Set the theta parameter. It contains shape and scale parameters. Add as many
+# components as you desire. We show the default values for the 5-component
+# in our paper.
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
            shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1141,
-           shape5 = 1.3311, scale5 = 836.1123)
+           shape4 = 1.1802, scale4 = 940.1342,
+           shape5 = 1.2034, scale5 = 923.1631)
+
+N <- c(30, 60, 100)     # Sample sizes to simulate
+P <- c(.215, .333)      # masking probabilities to simulate
+Q <- c(.825)            # right censoring probabilities to simulate
+R <- 100                # number of simulations per scenario
+B <- 750L               # number of bootstrap samples
+max_iter <- 150L        # max iterations for MLE
+max_boot_iter <- 150L   # max iterations for bootstrap MLE
+total_retries <- 10000L # total number of retries for each scenario
+n_cores <- detectCores() - 1 # number of cores to use for parallel processing
+filename <- "data-boot-tau-fixed-bca-p-vs-ci" # filename prefix for output files
+ci_method <- "bca"      # bootstrap CI method. See ?boot::boot.ci for details.
+ci_level <- 0.95        # confidence interval level
+
+#### Simulation code below here ####
+library(tidyverse)
+library(parallel)
+library(boot)
+library(algebraic.mle) # for `mle_boot`
+library(wei.series.md.c1.c2.c3) # for `mle_lbfgsb_wei_series_md_c1_c2_c3` etc
+
+file.meta <- paste0(filename, ".txt")
+file.csv <- paste0(filename, ".csv")
+if (file.exists(file.meta)) {
+  stop("File already exists: ", file.meta)
+}
+if (file.exists(file.csv)) {
+  stop("File already exists: ", file.csv)
+}
 
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
+m <- length(shapes)
 
-# helps the MLE optimization routine converge more quickly and reliably
-# by scaling the parameters to be of similar magnitude
-parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
+sink(file.meta)
+cat("boostrap of confidence intervals:\n")
+cat("   simulated on: ", Sys.time(), "\n")
+cat("   type: ", ci_method, "\n")
+cat("weibull series system:\n")
+cat("   number of components: ", m, "\n")
+cat("   scale parameters: ", scales, "\n")
+cat("   shape parameters: ", shapes, "\n")
+cat("simulation parameters:\n")
+cat("   N: ", N, "\n")
+cat("   P: ", P, "\n")
+cat("   Q: ", Q, "\n")
+cat("   R: ", R, "\n")
+cat("   B: ", B, "\n")
+cat("   max_iter: ", max_iter, "\n")
+cat("   max_boot_iter: ", max_boot_iter, "\n")
+cat("   n_cores: ", n_cores, "\n")
+cat("   total_retries: ", total_retries, "\n")
+sink()
 
-sim.run <- function(sim.name, n, p, q, R = 1000) {
-    mles <- list()
-    problems <- list()
+for (n in N) {
+    for (p in P) {
+        for (q in Q) {
+            cat("[starting scenario: n = ", n, ", p = ", p, ", q = ", q, "]\n")
+            tau <- qwei_series(p = q, scales = scales, shapes = shapes)
 
-    tau <- wei.series.md.c1.c2.c3::qwei_series(
-        p = q, scales = scales, shapes = shapes)
+            # we compute R MLEs for each scenario
+            shapes.mle <- matrix(NA, nrow = R, ncol = m)
+            scales.mle <- matrix(NA, nrow = R, ncol = m)
+            shapes.lower <- matrix(NA, nrow = R, ncol = m)
+            shapes.upper <- matrix(NA, nrow = R, ncol = m)
+            scales.lower <- matrix(NA, nrow = R, ncol = m)
+            scales.upper <- matrix(NA, nrow = R, ncol = m)
+            logliks <- rep(0, R)
 
-    cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
+            iter <- 0L
+            retries <- 0L
+            repeat {
+                retry <- FALSE
+                tryCatch({
+                    repeat {
+                        df <- generate_guo_weibull_table_2_data(
+                            shapes = shapes, scales = scales, n = n, p = p, tau = tau)
 
-    for (r in 1:R) {
-        result <- tryCatch({
+                        sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+                            theta0 = theta, df = df, hessian = FALSE,
+                            control = list(maxit = max_iter, parscale = theta))
+                        if (sol$convergence == 0) {
+                            break
+                        }
+                        cat("[", iter, "] MLE did not converge, retrying.\n")
+                    }
 
-            df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
-                shapes = shapes,
-                scales = scales,
-                n = n,
-                p = p,
-                tau = tau)
+                    mle_solver <- function(df, i) {
+                        mle_lbfgsb_wei_series_md_c1_c2_c3(
+                            theta0 = sol$par, df = df[i, ], hessian = FALSE,
+                            control = list(maxit = max_boot_iter, parscale = sol$par))$par
+                    }
 
-            sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
-                df = df,
-                theta0 = theta,
-                reltol = 1e-7,
-                parscale = parscale,
-                maxit = 2000L)
-            mles <- append(mles, list(sol))
+                    # do the non-parametric bootstrap
+                    sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
+                },
+                error = function(e) {
+                    cat("Error: ", conditionMessage(e), "\n")
+                    retries <<- retries + 1L
+                    if (retries < total_retries) {
+                        cat("[scenario: n = ", n, ", p = ", p, ", q = ", q, "]: ",
+                            retries, "/", total_retries, " retries\n")
+                        retry <<- TRUE
+                    }
+                })
+                if (retries > total_retries) {
+                    break
+                }
 
-            if (r %% 10 == 0) {
-                cat("r = ", r, ": ", sol$par, "\n")
+                if (retry) {
+                    next
+                }
+                iter <- iter + 1L
+                shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
+                scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
+                logliks[iter] <- sol$value
+
+                tryCatch({
+                    ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
+                    shapes.ci <- ci[seq(1, length(theta), 2), ]
+                    scales.ci <- ci[seq(2, length(theta), 2), ]
+                    shapes.lower[iter, ] <- shapes.ci[, 1]
+                    shapes.upper[iter, ] <- shapes.ci[, 2]
+                    scales.lower[iter, ] <- scales.ci[, 1]
+                    scales.upper[iter, ] <- scales.ci[, 2]
+                }, error = function(e) {
+                    cat("[error] ", conditionMessage(e), "\n")
+                })
+                if (iter %% 10 == 0) {
+                    cat("[iteration ", iter, "] shapes = ", shapes.mle[iter,], "scales = ", scales.mle[iter, ], "\n")
+                }
+
+                if (iter == R) {
+                    break
+                }
             }
 
-        }, error = function(e) {
-            cat("Error at iteration", r, ":")
-            print(e)
-            problems <- append(problems, list(list(
-                error = e, n = n, p = p, q = q, tau = tau, df = df)))
-        })
-    }
-  
-    if (length(mles) != 0) {
-        saveRDS(list(n = n, p = p, q = q, tau = tau, mles = mles),
-            file = paste0("./results/", sim.name, "/results_", n, "_", p, "_", q, ".rds"))
-    }
+            df <- data.frame(n = rep(n, R), p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
+                shapes = shapes.mle, scales = scales.mle, shapes.lower = shapes.lower, shapes.upper = shapes.upper,
+                scales.lower = scales.lower, scales.upper = scales.upper, logliks = logliks)
 
-    if (length(problems) != 0) {
-        saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
-            file = paste0("./problems/", sim.name, "/problems_", n, "_", p, "_", q, ".rds"))
+            write.table(df, file = file.csv, sep = ",", row.names = FALSE,
+                col.names = !file.exists(file.csv), append = TRUE)
+        }
     }
 }
-
-params <- expand.grid(n = ns, p = ps, q = qs)
-result <- mclapply(
-    1:nrow(params),
-    function(i) sim.run(sim.name, params$n[i], params$p[i], params$q[i], R),
-    mc.cores = ncores)
-
 ```
 
+# Appendix D: Flat Log-likelihood Experiment {-}
+\label{app:flat-like_code}
+Here is the code to generate the data set for Figure \ref{fig:flat-loglike-prof}.
 
-## Appendix B: Simulation of scenarios using the Bootstrap method {-}
-
-```{r, eval=FALSE}
-#############################################################
-# in this scenario, we want to see how we can use the bootstrap
-# method to estimate the confidence intervals more precisely (better calibration
-# of confidence intervals) for small sample sizes.
-# we'll use it to construct a 95% confidence interval for the estimator. we'll
-# compare this result to the asymptotic theory confidence interval.
-# finally, we'll generate CIs by each method, asymptotic (inverse FIM) and 
-# bootstrap (cov), and compare the coverage probabilities.
-#############################################################
-
-library(boot)
-library(parallel)
+```{r flat-likelihood-code, eval=FALSE}
 library(wei.series.md.c1.c2.c3)
 
+# changed scale3 to make MTTF of component 3 much smaller than the others
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1141,
-           shape5 = 1.3311, scale5 = 836.1123)
-
+           shape3 = 1.1308, scale3 = 4.1141) 
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
-# number of CPU cores to use in bootstrap for parallel processing
-ncores <- 4
+n <- 30
+p <- .215
+q <- .825
+set.seed(151234)
+tau <- qwei_series(p = q, scales = scales, shapes = shapes)
+df <- generate_guo_weibull_table_2_data(
+    shapes = shapes, scales = scales, n = n, p = p, tau = tau)
+df.tweaked <- df
+df.tweaked[1,"x3"] <- FALSE # remove component 3 from first observation
+df.tweaked[1,"x1"] <- TRUE  # add component 1 to first observation
 
-# helps the MLE optimization routine converge more quickly and reliably
-parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
-
-#set.seed(134849131)
-
-# sample sizes
-ns <- c(30, 50, 100, 200, 400)
-# masking probabilities, no masking and 21.5% masking
-ps <- c(0, 0.215)
-# quantiles of weibull series distribution, no right-censoring and 25% right-censoring
-qs <- c(1, 0.75)
-
-sim.name <- "sim-1-boot"
-
-sim.boot.run <- function(n, p, q, R = 1000) {
-
-    problems <- list()
-
-    tau <- wei.series.md.c1.c2.c3::qwei_series(
-        p = q, scales = scales, shapes = shapes)
-
-    cat("n =", n, ", p =", p, ", q = ", q, ", tau = ", tau, "\n")
-  
-    result <- tryCatch({
-        df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
-            shapes = shapes,
-            scales = scales,
-            n = n,
-            p = p,
-            tau = tau)
-
-        sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
-            df = df,
-            theta0 = theta,
-            reltol = 1e-7,
-            parscale = parscale,
-            maxit = 2000L)
-
-        cat("mle: ", sol$par, "\n")
-
-        sol.boot <- boot(df, function(df, i) {
-            sol <- wei.series.md.c1.c2.c3::mle_nelder_wei_series_md_c1_c2_c3(
-                df = df[i, ],
-                theta0 = sol$par,
-                reltol = 1e-7,
-                parscale = parscale,
-                maxit = 1000L)
-            cat("boot: ", sol$par, "\n")
-            sol$par
-        }, ncpus = ncores, R = R)
-
-        saveRDS(list(n = n, p = p, q = q, tau = tau, mle = sol, mle.boot = sol.boot),
-            file = paste0("./results/", sim.name, "/results_", n, "_", p, "_", q, ".rds"))
-
-        }, error = function(e) {
-            print(e)
-            problems <- append(problems, list(list(
-                error = e, n = n, p = p, q = q, tau = tau, df = df)))
-        })
-
-    if (length(problems) != 0) {
-        saveRDS(list(n = n, p = p, q = q, tau = tau, problems = problems),
-                file = paste0("./problems/", sim.name, "/problems_", n, "_", p, "_", q, ".rds"))
-    }
-}
-  
-params <- expand.grid(n = ns, p = ps, q = qs)
-result <- mclapply(
-    1:nrow(params),
-    function(i) sim.boot.run(sim.name, params$n[i], params$p[i], params$q[i]),
-    mc.cores = ncores)
+sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+    theta0 = theta, df = df, hessian = FALSE,
+    control = list(maxit = 1000))
+sol.tweaked <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+    theta0 = theta, df = df.tweaked, hessian = FALSE,
+    control = list(maxit = 1000))
+l <- Vectorize(function(shape1) {
+    theta <- sol$par
+    theta[1] <- shape1
+    loglik_wei_series_md_c1_c2_c3(df, theta)
+}, vectorize.args = "shape1")
+l.tweaked <- Vectorize(function(shape1) {
+    theta <- sol.tweaked$par
+    theta[1] <- shape1
+    loglik_wei_series_md_c1_c2_c3(df.tweaked, theta)
+}, vectorize.args = "shape1")
 ```

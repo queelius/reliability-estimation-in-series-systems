@@ -7,10 +7,11 @@ library(algebraic.dist)
 library(md.tools)
 library(wei.series.md.c1.c2.c3)
 
-
 ####################################
 # Setup simulation parameters here #
 ####################################
+
+# Set the theta parameter. It contains shape and scale parameters for 5 different components
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
            shape3 = 1.1308, scale3 = 840.1141,
@@ -19,23 +20,22 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
+m <- length(shapes)
 parscale <- c(1, 1000, 1, 1000, 1, 1000, 1, 1000, 1, 1000)
 stopifnot(length(parscale) == length(theta))
 options(digits = 5, scipen = 999)
 
-seed_value <- 151234
-set.seed(151234)
-N <- c(200)
-P <- rep(c(0, .1, .2, .3, .4, .5), 50)
-Q <- c(.825)
-R <- 10
-B <- 750L
-max_iter <- 150L
-max_boot_iter <- 150L
-total_retries <- 10000L
-n_cores <- detectCores() - 1
-filename <- "data-boot-tau-fixed-bca-p-vs-ci"
-ci_method <- "bca"          # Bootstrap CI method. See ?boot::boot.ci for details.
+N <- c(30, 60, 100)     # Sample sizes to simulate
+P <- c(.215, .333)      # masking probabilities to simulate
+Q <- c(.825)            # right censoring probabilities to simulate
+R <- 100                # number of simulations per scenario
+B <- 750L               # number of bootstrap samples
+max_iter <- 150L        # max iterations for MLE
+max_boot_iter <- 150L   # max iterations for bootstrap MLE
+total_retries <- 10000L # total number of retries for each scenario
+n_cores <- detectCores() - 1 # number of cores to use for parallel processing
+filename <- "data-boot-tau-fixed-bca-p-vs-ci" # filename prefix for output files
+ci_method <- "bca"      # Bootstrap CI method. See ?boot::boot.ci for details.
 
 ##############################
 # Simulation code below here #
@@ -49,29 +49,31 @@ if (file.exists(file.csv)) {
   stop("File already exists: ", file.csv)
 }
 
-sink(paste0(file, "txt"))
-cat("Simulation Parameters:\n")
-cat("seed_value: ", seed_value, "\n")
-cat("ci_method: ", ci_method, "\n")
-cat("theta: ", theta, "\n")
-cat("N: ", N, "\n")
-cat("P: ", P, "\n")
-cat("Q: ", Q, "\n")
-cat("R: ", R, "\n")
-cat("B: ", B, "\n")
-cat("max_iter: ", max_iter, "\n")
-cat("max_boot_iter: ", max_boot_iter, "\n")
-cat("n_cores: ", n_cores, "\n")
-cat("total_retries: ", total_retries, "\n")
-cat("shape: ", shapes, "\n")
-cat("scale: ", scales, "\n")
-cat("parscale: ", parscale, "\n")
+sink(file.meta)
+cat("boostrap of confidence intervals:\n")
+cat("   simulated on: ", Sys.time(), "\n")
+cat("   type: ", ci_method, "\n")
+cat("weibull series system:\n")
+cat("   number of components: ", m, "\n")
+cat("   scale parameters: ", scales, "\n")
+cat("   shape parameters: ", shapes, "\n")
+cat("simulation parameters:\n")
+cat("   N: ", N, "\n")
+cat("   P: ", P, "\n")
+cat("   Q: ", Q, "\n")
+cat("   R: ", R, "\n")
+cat("   B: ", B, "\n")
+cat("   max_iter: ", max_iter, "\n")
+cat("   max_boot_iter: ", max_boot_iter, "\n")
+cat("   n_cores: ", n_cores, "\n")
+cat("   total_retries: ", total_retries, "\n")
+cat("   parscale: ", parscale, "\n")
 sink()
 
 for (n in N) {
     for (p in P) {
         for (q in Q) {
-            cat("Starting Scenario (n = ", n, ", p = ", p, ", q = ", q, ")\n")
+            cat("[starting scenario: n = ", n, ", p = ", p, ", q = ", q, "]\n")
             tau <- wei.series.md.c1.c2.c3::qwei_series(
                 p = q, scales = scales, shapes = shapes)
 
@@ -99,7 +101,7 @@ for (n in N) {
                         if (sol$convergence == 0) {
                             break
                         }
-                        cat("[", iter, "] MLE did not converge, retrying...\n")
+                        cat("[", iter, "] MLE did not converge, retrying.\n")
                     }
 
                     mle_solver <- function(df, i) {
@@ -116,7 +118,7 @@ for (n in N) {
                     cat("Error: ", conditionMessage(e), "\n")
                     retries <<- retries + 1L
                     if (retries < total_retries) {
-                        cat("Scenario (n = ", n, ", p = ", p, ", q = ", q, "): ",
+                        cat("[scenario: n = ", n, ", p = ", p, ", q = ", q, "]: ",
                             retries, "/", total_retries, " retries\n")
                         retry <<- TRUE
                     }
@@ -143,11 +145,10 @@ for (n in N) {
                     scales.lower[iter, ] <- scales.ci[, 1]
                     scales.upper[iter, ] <- scales.ci[, 2]
                 }, error = function(e) {
-                    cat("Error: ", conditionMessage(e), "\n")
+                    cat("[error] ", conditionMessage(e), "\n")
                 })
                 if (iter %% 10 == 0) {
-                    cat("Iter = ", iter, ", Shapes = ", shapes.mle[iter,], "Scales = ", scales.mle[iter, ], "\n")
-                    print(shapes.lower[iter,])
+                    cat("[iteration ", iter, "] shapes = ", shapes.mle[iter,], "scales = ", scales.mle[iter, ], "\n")
                 }
 
                 if (iter == R) {
@@ -155,19 +156,9 @@ for (n in N) {
                 }
             }
 
-            df <- data.frame(
-                n = rep(n, R),
-                p = rep(p, R),
-                q = rep(q, R),
-                tau = rep(tau, R),
-                B = rep(B, R),
-                shapes = shapes.mle,
-                scales = scales.mle,
-                shapes.lower = shapes.lower,
-                shapes.upper = shapes.upper,
-                scales.lower = scales.lower,
-                scales.upper = scales.upper,
-                logliks = logliks)
+            df <- data.frame(n = rep(n, R), p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
+                shapes = shapes.mle, scales = scales.mle, shapes.lower = shapes.lower, shapes.upper = shapes.upper,
+                scales.lower = scales.lower, scales.upper = scales.upper, logliks = logliks)
 
             write.table(df, file = file.csv, sep = ",", row.names = FALSE,
                 col.names = !file.exists(file.csv), append = TRUE)

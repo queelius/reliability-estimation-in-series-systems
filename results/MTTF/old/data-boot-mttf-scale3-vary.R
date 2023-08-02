@@ -13,19 +13,28 @@ theta.star <- c(shape1 = 1.2576, scale1 = 994.3661,
                 shape4 = 1.1802, scale4 = 940.1342,
                 shape5 = 1.2034, scale5 = 923.1631)
 # we will vary this
-scales3 <- theta.star["scale3"] + c(-500, 0, 500)
+scales3 <- theta.star["scale3"] + c(-500, -300, -100, 0, 100, 300, 500, 700)
 scales3 <- rep(scales3, 20)
 
 options(digits = 5, scipen = 999)
-N <- c(100)
+N <- c(200)
 P <- c(.215)
 Q <- c(.825)
 R <- 10
 B <- 500L
-max_iter <- 150L
-max_boot_iter <- 150L
+max_iter <- 100L
+max_boot_iter <- 100L
 total_retries <- 10000L
 n_cores <- detectCores() - 1
+
+cat("Simulation parameters:\n")
+cat("R: ", R, "\n")
+cat("B: ", B, "\n")
+cat("n_cores: ", n_cores, "\n")
+cat("total_retries: ", total_retries, "\n")
+cat("shape: ", shapes, "\n")
+cat("scale: ", scales, "\n")
+m <- length(scales)
 
 for (scale3 in scales3) {
     for (n in N) {
@@ -37,12 +46,18 @@ for (scale3 in scales3) {
 
                 shapes <- theta[seq(1, length(theta.star), 2)]
                 scales <- theta[seq(2, length(theta.star), 2)]
+                MTTB <- scales * gamma(1 + 1 / shapes)
+                names(MTTB) <- paste0("Component",1:5)
+
+                # tau, the right-censoring time of the scenario, is the
+                # q-th quantile of the weibull series ssytem distribution
                 tau <- wei.series.md.c1.c2.c3::qwei_series(
                     p = q, scales = scales, shapes = shapes)
 
                 cat("[starting] scenario(scale3: ", scale3, ", n: ", n, ", p: ", p, ", q: ", q, ")\n")
                 cat("tau: ", tau, "\n")
                 cat("theta: ", theta, "\n") 
+                cat("MTTB: ", MTTB, "\n")
 
                 # we compute R MLEs for each scenario
                 shapes.mle <- matrix(NA, nrow = R, ncol = length(theta) / 2)
