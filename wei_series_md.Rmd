@@ -1488,62 +1488,6 @@ Here are several key observations:
 
 - *Mean of MLEs*: The red dashed line indicating the mean of MLEs remains stable across different sample sizes and close to the true value, suggesting that the MLEs are, on average, reasonably unbiased.
 
-Next, we consider what occurs when we increase the masking probability $p$ to $0.333$, which represents a fairly significant masking of the component cause of failure.
-```{r samp-size-n-vs-stats-p333-scale, fig.cap=c("Sample Size vs Bootstrapped Scale CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs for p = 0.333"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-n-vs-stats-p333-scale.pdf")
-```
-
-Figure \ref{fig:samp-size-n-vs-stats-p333-scale} shows the distribution of the MLEs for the shape parameters of the first three components and the bootstrapped CIs for different sample sizes with a component cause of failrue masking probaility of $p = 0.333$ (each
-non-failed component is in the candidate set with a $33.3\%$ probabiltiy).
-
-Here are several key observations, similar to the previous scenario:
-
-- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the nominal 95% level across different sample sizes.
-                               Again, this suggests that the bootstrapped CIs will contain the true value of the shape parameter with the specified confidence level. In general,
-                               the CIs are neither too wide nor too narrow, but the CP for $\lambda_1$ at the sample size of 50 is relatively lower at 0.88. This might indicate a bit
-                               of uncertainty at smaller sample sizes for this parameter.
-                               
-    According to Section \ref{sec:reliability}, the MTTF of component 1 is the largest, and so it is
-    the least likely to fail. This might explain the lower CP for $\lambda_1$ at smaller sample sizes, as the data has not shown enough failures from
-    component 1 to accurately estimate its scale parameter. If we were to increase its MTTF to a much larger value, it would almost never
-    fail, and the uncertainty about the scale parameter would further increase.
-
-- *Dispersion of MLEs*: As with the previous plots, the shaded regions, which represents the 95% probability range of the MLEs, narrows with incresing sample sizes.
-                        This indicates an increase in precision when more data is available. If this did not occur, then it would indicate that the MLEs are not consistent
-                        or are likelihood model is not appropriate for the data.
-
-- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in sample size. This suggests that the bootstrapped CIs are getting more consistent and focused around a narrower range with larger samples while maintaining a good coverage probability. As we get more data, the bootstrapped CIs are more likely to be closer to each other and the true value of the scale parameter.
-
-- *Mean of MLEs*: The red dashed line indicating the mean of MLEs is less stable across different sample sizes, but it is still close to the true value.
-                  We will investigate the effect of the masking probability in more detail in Section \ref{sec:p-vs-mttf}.
-
-### Shape Parameters
-
-```{r samp-size-n-vs-stats-p215-shape, fig.cap=c("Sample Size vs Bootstrapped Shape CI Statistics (p = 0.215)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs for p = 0.333"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-n-vs-stats-p215-shape.pdf")
-```
-
-Figure \ref{fig:samp-size-n-vs-stats-p215-shape} shows the distribution of the MLEs for the shape parameters of the first three components and the bootstrapped CIs for different sample sizes with a component cause of failrue masking probaility of $p = 0.333$ (each
-non-failed component is in the candidate set with a $33.3\%$ probabiltiy).
-
-Here are several key observations, similar to the previous scenario:
-
-- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the nominal 95% level across different sample sizes. Again, this suggests that the bootstrapped CIs will contain the true value of the shape parameter with the specified confidence level. The CIs are neither too wide nor too narrow.
-
-- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of the MLEs get narrower as the sample size increases. This is an indicator of the increased precision in the estimates as more data is available. 
-
-- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in sample size. This suggests that the bootstrapped CIs are getting more consistent and focused around a narrower range with larger samples while maintaining a good coverage probability. As we get more data, the bootstrapped CIs are more likely to be closer to each other and the true value of the scale parameter.
-
-- *Mean of MLEs*: The red dashed line indicating the mean of MLEs is less stable across different sample sizes, but it is still close to the true value.
-                  We will investigate the effect of the masking probability in more detail in Section \ref{sec:p-vs-mttf}.
-
-
-```{r samp-size-n-vs-stats-p333-shape, fig.cap=c("Sample Size vs Bootstrapped Shape CI Statistics (p = 0.333)", "Sample Size (n) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs for p = 0.333"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-n-vs-stats-p333-shape.pdf")
-```
-
-
-
 ## Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
 
 In this scenario, we fix the sample size at $n = 90$ and we fix the right-censoring quantile fixed $q = .825$, and
@@ -1630,7 +1574,35 @@ There are several interesting observations that we can make about Figure \ref{fi
    then the system is more likely to fail due to the failure of one of the other components, which would cause the system to fail sooner. This would cause
    
 
+## Adding Fake Data (Implcit Prior Beliefs)
 
+In the identifiability section, 7.3.1, we discussed how the likelihood function may not be
+maximized at a unique point. In this section, we will explore this phenomenon in more detail.
+
+We are going to add fake data as a sort of implicit prior to the likelihood function.
+
+Notice that the likelihood function is flat and any value greater than 1.5 or so could have been
+chosen as the MLE. If we add fake data, as we had done previously, then we can "bias" the MLE
+and also make it unique. 
+
+How will we add data?
+
+1. We could have an initial estimate of a component's MTTF, and we could
+add data that is consistent with that estimate. For example, if we have an initial estimate
+of the MTTF of component 1, then we could add $t_1 = \text{MTTF}$, $delta_0 = 1$, and $\mathcal{C}_0 = \{1\}$.
+We could do likewise for other components if we have prior data.
+
+2. We could have the prior assumption that $\mathcal{C}_i = c_i | \T_i = t_i, K_i = j$ is equally probable
+for every component $j$ in $c_i$. So, another way to construct a prior consistent with this assumption
+is to look at all the candidate sets in the sample that contain component $j$, and then add data
+where we assume it is the component cause of failure, estimate the component parameters given this
+assumption, and then sample data from it. The larger the sample, the stronger this prior.
+
+3. We could do something very simple, like take the average of the system lifetimes where it is in the
+candidate set, and then add that to the sample, e.g., suppose the average failure time of the system
+when component $j$ is in the candidate set is $\bar{t}_j$, then we could add $t_0 = \bar{t}_j$, $delta_0 = 1$,
+and $\mathcal{C}_0 = \{j\}$. This has the nice feature that it mostly lets the data speak for itself, and
+only adds a bit of prior information, and this prior is related (but not equivalent) to Condition 2.
 
 # Future Work
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  1 AUG 2023 16:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  1 AUG 2023 22:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -840,7 +840,7 @@ File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) (./image/dep_model.tex
 \du=\skip64
 ) [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
-<image/test-flat-likelihood.pdf, id=361, 722.7pt x 361.35pt>
+<image/test-flat-likelihood.pdf, id=364, 722.7pt x 361.35pt>
 File: image/test-flat-likelihood.pdf Graphic file (type pdf)
 <use image/test-flat-likelihood.pdf>
 Package pdftex.def Info: image/test-flat-likelihood.pdf  used on input line 156
@@ -852,104 +852,75 @@ LaTeX Warning: Hyper reference `app:flat-like-code' on page 19 undefined on inp
 ut line 1606.
 
 [19] [20]
-<image/plot-n-vs-stats-p215-scale.pdf, id=416, 1011.78pt x 1300.86pt>
+<image/plot-n-vs-stats-p215-scale.pdf, id=419, 1011.78pt x 1300.86pt>
 File: image/plot-n-vs-stats-p215-scale.pdf Graphic file (type pdf)
 <use image/plot-n-vs-stats-p215-scale.pdf>
 Package pdftex.def Info: image/plot-n-vs-stats-p215-scale.pdf  used on input li
 ne 1873.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
 [21] [22 <./image/plot-n-vs-stats-p215-scale.pdf>]
-<image/plot-n-vs-stats-p333-scale.pdf, id=493, 1011.78pt x 1300.86pt>
-File: image/plot-n-vs-stats-p333-scale.pdf Graphic file (type pdf)
-<use image/plot-n-vs-stats-p333-scale.pdf>
-Package pdftex.def Info: image/plot-n-vs-stats-p333-scale.pdf  used on input li
-ne 1929.
-(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-<image/plot-n-vs-stats-p215-shape.pdf, id=497, 1011.78pt x 1300.86pt>
-File: image/plot-n-vs-stats-p215-shape.pdf Graphic file (type pdf)
-<use image/plot-n-vs-stats-p215-shape.pdf>
-Package pdftex.def Info: image/plot-n-vs-stats-p215-shape.pdf  used on input li
-ne 1988.
-(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-[23] [24 <./image/plot-n-vs-stats-p333-scale.pdf>] [25 <./image/plot-n-vs-stats
--p215-shape.pdf>]
-<image/plot-n-vs-stats-p333-shape.pdf, id=635, 1011.78pt x 1300.86pt>
-File: image/plot-n-vs-stats-p333-shape.pdf Graphic file (type pdf)
-<use image/plot-n-vs-stats-p333-shape.pdf>
-Package pdftex.def Info: image/plot-n-vs-stats-p333-shape.pdf  used on input li
-ne 2031.
-(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-<image/plot-p-vs-stats-scale-n90.pdf, id=638, 1011.78pt x 1300.86pt>
+<image/plot-p-vs-stats-scale-n90.pdf, id=498, 1011.78pt x 1300.86pt>
 File: image/plot-p-vs-stats-scale-n90.pdf Graphic file (type pdf)
 <use image/plot-p-vs-stats-scale-n90.pdf>
 Package pdftex.def Info: image/plot-p-vs-stats-scale-n90.pdf  used on input lin
-e 2083.
+e 1968.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-<image/plot-p-vs-stats-shapes-n90.pdf, id=639, 1011.78pt x 1300.86pt>
+<image/plot-p-vs-stats-shapes-n90.pdf, id=499, 1011.78pt x 1300.86pt>
 File: image/plot-p-vs-stats-shapes-n90.pdf Graphic file (type pdf)
 <use image/plot-p-vs-stats-shapes-n90.pdf>
 Package pdftex.def Info: image/plot-p-vs-stats-shapes-n90.pdf  used on input li
-ne 2092.
+ne 1977.
 (pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
 
-LaTeX Warning: Reference `?' on page 26 undefined on input line 2102.
+LaTeX Warning: Reference `?' on page 23 undefined on input line 1987.
 
-<image/plot-scale3-vs-stats.pdf, id=641, 1445.4pt x 1445.4pt>
+<image/plot-scale3-vs-stats.pdf, id=501, 1445.4pt x 1445.4pt>
 File: image/plot-scale3-vs-stats.pdf Graphic file (type pdf)
 <use image/plot-scale3-vs-stats.pdf>
-Package pdftex.def Info: image/plot-scale3-vs-stats.pdf  used on input line 211
-3.
+Package pdftex.def Info: image/plot-scale3-vs-stats.pdf  used on input line 199
+8.
 (pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
-[26] [27 <./image/plot-n-vs-stats-p333-shape.pdf>] [28 <./image/plot-p-vs-stats
--scale-n90.pdf>] [29 <./image/plot-p-vs-stats-shapes-n90.pdf>] [30 <./image/plo
-t-scale3-vs-stats.pdf>] [31]
+[23] [24 <./image/plot-p-vs-stats-scale-n90.pdf>] [25 <./image/plot-p-vs-stats-
+shapes-n90.pdf>] [26 <./image/plot-scale3-vs-stats.pdf>] [27]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-232.
+166.
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-2240.
+2174.
 (/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2247.
-[32] [33]
-Underfull \vbox (badness 10000) detected at line 2515
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2181.
+[28] [29] [30]
+Underfull \vbox (badness 10000) detected at line 2449
  []
 
 
-Underfull \vbox (badness 10000) detected at line 2515
+Underfull \vbox (badness 10000) detected at line 2449
  []
 
-[34]
-Underfull \vbox (badness 10000) detected at line 2515
- []
-
-
-Underfull \vbox (badness 10000) detected at line 2515
- []
-
-[35]
-Underfull \vbox (badness 10000) detected at line 2515
+[31]
+Underfull \vbox (badness 10000) detected at line 2449
  []
 
 
-Underfull \vbox (badness 10000) detected at line 2515
+Underfull \vbox (badness 10000) detected at line 2449
  []
 
-[36] (./wei_series_md.bbl [37]) [38] (./wei_series_md.aux)
+[32] [33] (./wei_series_md.bbl) [34] (./wei_series_md.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 25243 strings out of 478287
- 461265 string characters out of 5849289
- 776292 words of memory out of 5000000
- 42468 multiletter control sequences out of 15000+600000
- 569722 words of font info for 220 fonts, out of 8000000 for 9000
+ 25206 strings out of 478287
+ 459994 string characters out of 5849289
+ 781652 words of memory out of 5000000
+ 42442 multiletter control sequences out of 15000+600000
+ 569509 words of font info for 218 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,20n,80p,1095b,962s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
@@ -972,10 +943,10 @@ exmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/l
 msy5.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fo
 nts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb>
-Output written on wei_series_md.pdf (38 pages, 724934 bytes).
+Output written on wei_series_md.pdf (34 pages, 663928 bytes).
 PDF statistics:
- 1215 PDF objects out of 1440 (max. 8388607)
- 759 compressed objects within 8 object streams
- 219 named destinations out of 1000 (max. 500000)
- 53525 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 1012 PDF objects out of 1200 (max. 8388607)
+ 713 compressed objects within 8 object streams
+ 215 named destinations out of 1000 (max. 500000)
+ 53518 words of extra memory for PDF output out of 61914 (max. 10000000)
 
