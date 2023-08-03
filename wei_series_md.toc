@@ -1,0 +1,39 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Series System Model}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Component Cause of Failure}{5}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Likelihood Model for Masked Data}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Masked Component Cause of Failure}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Right-Censored Data}{10}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Maximum Likelihood Estimation}{11}{section.4}%
+\contentsline {section}{\numberline {5}Bias-Corrected and Accelerated Bootstrap Confidence Intervals}{12}{section.5}%
+\contentsline {subsubsection}{Issues with Resampling from the Observed Data}{12}{section*.2}%
+\contentsline {section}{\numberline {6}Series System with Weibull Components}{13}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Weibull Likelihood Model for Masked Data}{14}{subsection.6.1}%
+\contentsline {section}{\numberline {7}Simulation Study}{15}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Realistic System Designs}{15}{subsection.7.1}%
+\contentsline {subsubsection}{Verification}{16}{section*.3}%
+\contentsline {subsection}{\numberline {7.2}Data Generating Process}{16}{subsection.7.2}%
+\contentsline {subsubsection}{Weibull Series System Lifetime}{17}{section*.4}%
+\contentsline {subsubsection}{Right-Censoring Model}{17}{section*.5}%
+\contentsline {subsubsection}{Masking Model for Component Cause of Failure}{17}{section*.6}%
+\contentsline {subsection}{\numberline {7.3}Issues with Convergence to the MLE}{17}{subsection.7.3}%
+\contentsline {subsubsection}{Identifiability}{17}{section*.7}%
+\contentsline {subsubsection}{Parameter rescaling}{19}{section*.8}%
+\contentsline {subsection}{\numberline {7.4}Effect of Right-Censoring on the MLE}{19}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Effect of Masking the Component Cause of Failure on the MLE}{20}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Assessing the Bootstrapped Confidence Intervals}{20}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}Simulation Scenarios}{20}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Coverage Probability vs Sample Size}{21}{subsection.7.8}%
+\contentsline {subsubsection}{Scale Parameters}{21}{section*.9}%
+\contentsline {subsection}{\numberline {7.9}Masking Probability for Component Cause of Failure}{23}{subsection.7.9}%
+\contentsline {subsubsection}{Scale Parameter}{23}{section*.10}%
+\contentsline {subsubsection}{Shape Parameter}{23}{section*.11}%
+\contentsline {subsection}{\numberline {7.10}Manipulating the MTTF of Component 3}{23}{subsection.7.10}%
+\contentsline {subsection}{\numberline {7.11}Adding Fake Data (Implcit Prior Beliefs)}{27}{subsection.7.11}%
+\contentsline {section}{\numberline {8}Future Work}{28}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Parametric Bootstrap}{28}{subsection.8.1}%
+\contentsline {section}{\numberline {9}Conclusion}{28}{section.9}%
+\contentsline {section}{Appendix A: R Code For Log-likelihood Function}{28}{section*.12}%
+\contentsline {section}{Appendix B: Score Function}{29}{section*.13}%
+\contentsline {section}{Appendix C: Simulation of Scenarios For Assessing Bootstrapped (BCa) Confidence Intervals}{30}{section*.14}%
+\contentsline {section}{Appendix D: Flat Log-likelihood Experiment}{33}{section*.15}%
