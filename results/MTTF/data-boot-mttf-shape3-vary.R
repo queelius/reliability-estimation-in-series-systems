@@ -14,7 +14,8 @@ theta.star <- c(shape1 = 1.2576, scale1 = 994.3661,
                 shape5 = 1.2034, scale5 = 923.1631)
 # we will vary this
 #shapes3 <- c(.456, .5, .55, .635, .75, 1.2034)
-shapes3 <- c(1.2034, .75, .635, .55, .5, .456)
+#shapes3 <- c(1.2034, .75, .635, .55, .5, .456)
+shapes3 <- c(2.5, 5, 10)
 shapes3 <- rep(shapes3, 50)
 
 # MTTF(3) = 500*gamma(1 + 1/c(.456, .5, .55, .635, .75, 1.1308))
@@ -146,8 +147,8 @@ for (shape3 in shapes3) {
                     scales.upper = scales.upper,
                     logliks = logliks)
 
-                write.table(df, file = "data-boot-mttf-shape3-vary.csv", sep = ",", row.names = FALSE,
-                    col.names = !file.exists("data-boot-mttf-shape3-vary.csv"), append = TRUE)
+                write.table(df, file = "data-boot-mttf-shape3-vary-low-prob.csv", sep = ",", row.names = FALSE,
+                    col.names = !file.exists("data-boot-mttf-shape3-vary-low-prob.csv"), append = TRUE)
             }
         }
     }

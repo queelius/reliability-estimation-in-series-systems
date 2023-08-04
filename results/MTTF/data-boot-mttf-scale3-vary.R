@@ -21,7 +21,7 @@ N <- c(100)
 P <- c(.215)
 Q <- c(.825)
 R <- 10
-B <- 500L
+B <- 750L
 max_iter <- 150L
 max_boot_iter <- 150L
 total_retries <- 10000L

@@ -15,12 +15,14 @@ scales <- theta[seq(2, length(theta), 2)]
 n <- 30
 p <- .215
 q <- .825
-set.seed(151234)
+set.seed(1151234)
 tau <- wei.series.md.c1.c2.c3::qwei_series(p = q, scales = scales, shapes = shapes)
 df <- wei.series.md.c1.c2.c3::generate_guo_weibull_table_2_data(
     shapes = shapes, scales = scales, n = n, p = p, tau = tau)
+print(df,n=30)
 
 mttf <- scales * gamma(1 + 1/shapes)
+names(mttf) <- c("t1", "t2", "t3")
 
 df.prior <- data.frame(t = mttf, t1 = rep(NA,3), t2 = rep(NA,3), t3 = rep(NA,3), q1 = rep(NA,3), q2 = rep(NA,3), q3 = rep(NA,3), delta = rep(TRUE, 3), x1 = c(T,F,F), x2 = c(F,T,F), x3 = c(F,F,T))
 df.post <- rbind(df.prior, df)
@@ -30,7 +32,7 @@ sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
     control = list(maxit = 1000))
 sol.post <- mle_lbfgsb_wei_series_md_c1_c2_c3(
     theta0 = theta, df = df.post, hessian = FALSE,
-    control = list(maxit = 1000))
+    control = list(maxit = 100))
 
 l <- Vectorize(function(shape1) {
     theta <- sol$par

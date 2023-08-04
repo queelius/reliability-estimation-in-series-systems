@@ -1083,12 +1083,23 @@ for systems designed to be reliable, we choose parameter values that are represe
 real-world systems where there is no single component that is much less reliable than the
 others.
 
-One way to define reliability is by the mean time to failure (MTTF), which is the
-expected value of the lifetime, which for the Weibull distribution is given by
+We consider two definitions of reliability, the mean time to failure (MTTF) and the
+probability of component cause of failure. The MTTF for the $j$\textsuperscript{th}
+component is given by its expected value,
 $$
-\text{MTTF} = \lambda \, \Gamma(1 + 1/k),
+\text{MTTF}_j = E(T_{i j})
 $$
-where $\Gamma$ is the gamma function.
+which for the Weibull distribution has the closed-form expression
+$$
+\text{MTTF}_j = \lambda_j \, \Gamma(1 + 1/k_j),
+$$
+where $\Gamma$ is the gamma function. The probability that the $j$\textsuperscript{th}
+component is the cause of failure for the $i$\textsuperscript{th} series system 
+is the probability that a component is the cause of failure of the series system,
+which is given by
+$$
+\Pr\{K_i = j\} = \int_{0}^\infty f_{\T_i, K_i}(t, j ; \v\theta) dt.
+$$
 
 We consider the data from [@Huairu-2013], which includes a study of the reliability of a series system
 with three Weibull components with shape and scale parameters given by
@@ -1117,11 +1128,13 @@ mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
 mttf <- gamma(1 + 1/shapes) * scales
 components <- data.frame(
   "MTTF" = mttf,
+  "Failure Probability" = wei_series_cause(1L:5L, scales=scales, shapes=shapes),
   row.names = paste("Component", 1:5)
 )
 
-components <- rbind(components, "Series System" = mttf.sys)
-knitr::kable(components, caption = "Mean Time To Failure of Weibull Components and Series System")
+components <- rbind(components, "Series System" = c(mttf.sys, NA))
+names(components) <- gsub("\\.", " ", names(components))
+knitr::kable(components, caption = "Mean Time To Failure (MTTF) and Probability of Component Failure of Weibull Components in Series Configuration")
 ```
 
 As shown by Table 2, there are no components that are significantly less reliable

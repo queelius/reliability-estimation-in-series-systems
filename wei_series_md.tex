@@ -1370,11 +1370,20 @@ scenarios, at least for systems designed to be reliable, we choose
 parameter values that are representative of real-world systems where
 there is no single component that is much less reliable than the others.
 
-One way to define reliability is by the mean time to failure (MTTF),
-which is the expected value of the lifetime, which for the Weibull
-distribution is given by \[
-\text{MTTF} = \lambda \, \Gamma(1 + 1/k),
-\] where \(\Gamma\) is the gamma function.
+We consider two definitions of reliability, the mean time to failure
+(MTTF) and the probability of component cause of failure. The MTTF for
+the \(j\)\textsuperscript{th} component is given by its expected value,
+\[
+\text{MTTF}_j = E(T_{i j})
+\] which for the Weibull distribution has the closed-form expression \[
+\text{MTTF}_j = \lambda_j \, \Gamma(1 + 1/k_j),
+\] where \(\Gamma\) is the gamma function. The probability that the
+\(j\)\textsuperscript{th} component is the cause of failure for the
+\(i\)\textsuperscript{th} series system is the probability that a
+component is the cause of failure of the series system, which is given
+by \[
+\Pr\{K_i = j\} = \int_{0}^\infty f_{T_i, K_i}(t, j ; \boldsymbol{\theta}) dt.
+\]
 
 We consider the data from \citep{Huairu-2013}, which includes a study of
 the reliability of a series system with three Weibull components with
@@ -1395,23 +1404,23 @@ adding two more components with shape and scale parameters given by
 \end{aligned}
 \end{equation}
 
-\begin{longtable}[]{@{}lr@{}}
-\caption{Mean Time To Failure of Weibull Components and Series
-System}\tabularnewline
+\begin{longtable}[]{@{}lrr@{}}
+\caption{Mean Time To Failure (MTTF) and Probability of Component
+Failure of Weibull Components in Series Configuration}\tabularnewline
 \toprule
-& MTTF\tabularnewline
+& MTTF & Failure Probability\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-& MTTF\tabularnewline
+& MTTF & Failure Probability\tabularnewline
 \midrule
 \endhead
-Component 1 & 924.8693\tabularnewline
-Component 2 & 862.1568\tabularnewline
-Component 3 & 803.5639\tabularnewline
-Component 4 & 888.2370\tabularnewline
-Component 5 & 867.7484\tabularnewline
-Series System & 222.8836\tabularnewline
+Component 1 & 924.8693 & 0.1685628\tabularnewline
+Component 2 & 862.1568 & 0.2069114\tabularnewline
+Component 3 & 803.5639 & 0.2337547\tabularnewline
+Component 4 & 888.2370 & 0.1955561\tabularnewline
+Component 5 & 867.7484 & 0.1952150\tabularnewline
+Series System & 222.8836 & NA\tabularnewline
 \bottomrule
 \end{longtable}
 
