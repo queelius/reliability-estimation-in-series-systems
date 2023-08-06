@@ -1,0 +1,29 @@
+Meta data for: "noboot-scale3-400-shape3-vary.csv"
+
+Used Rscript: "noboot-scale3-shape3.R" as a template
+Changed the setup to:
+
+``` r
+#########################################
+# Configuration file for the simulation #
+#########################################
+
+theta.star <- c(shape1 = 1.2576, scale1 = 994.3661,
+                shape2 = 1.1635, scale2 = 908.9458,
+                shape3 = NA, scale3 = NA,
+                shape4 = 1.1802, scale4 = 940.1342,
+                shape5 = 1.2034, scale5 = 923.1631)
+
+shapes3 <- c(.35, .4, .456, .5, .55, .635, .75, 1.1308, 2.5, 10, 100)
+scales3 <- c(400)
+
+# MTTF[3] = scale[3] * gamma(1 + 1/shape[3])
+
+name <- "noboot-scale3-{}-shape3-{}"
+N <- c(100)
+P <- c(0)
+Q <- c(1)
+R <- 1000
+max_iter <- 125L
+total_retries <- 10000L
+```
