@@ -230,7 +230,7 @@ $$
 $$
 which can be simplified to
 $$
-h_{T_i}(t;\v\theta) = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})} = \sum_{j=1}^m h_j(t;\v{\theta_j}).
+h(t;\v\theta) = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})} = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
 \end{proof}
 
@@ -276,7 +276,7 @@ The joint pdf of the component cause of failure $K_i$ and series system lifetime
 $\T_i$ is given by
 \begin{equation}
 \label{eq:f_k_and_t}
-  f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) R_{\T_i}(t;\v\theta),
+  f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) \prod_{l=1}^m R_l(t;\v\theta),
 \end{equation}
 where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th}
 component and $R_{\T_i}(t;\v\theta)$ is the reliability function of the series
@@ -307,13 +307,38 @@ f_1(t;\v{\theta_1}) = h_1(t;\v{\theta_1}) R_1(t;\v{\theta_1}).
 $$
 Making this substitution into the above expression for $f_{K_i,T_i}(j,t;\v\theta)$
 yields
-\begin{align*}
-f_{K_i,T_i}(j,t;\v\theta)
-    &= h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l})\\
-    &= h_1(t;\v{\theta_1}) R(t;\v{\theta}).
-\end{align*}
+$$
+f_{K_i,T_i}(j,t;\v\theta) = h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l})\\
+$$
 Generalizing from this completes the proof.
 \end{proof}
+
+The probability that the $j$\textsuperscript{th} component is the cause of failure
+is given by
+\begin{equation}
+\label{eq:prob_k}
+\Pr\{K_i = j\} = E_{\v\theta}
+\biggl[
+    \frac{h_j(\T_i;\v{\theta_j})}
+         {\sum_{l=1}^m h_l(\T_i ; \v{\theta_l})}
+\biggr].
+\end{equation}
+\begin{proof}
+The probability the $j$\textsuperscript{th} component is the cause of failure is given by
+marginalizing the joint pdf of $K_i$ and $\T_i$ over $\T_i$,
+$$
+\Pr\{K_i = j\} = \int_0^{\infty} f_{K_i,T_i}(j,t;\v\theta) dt.
+$$
+By Theorem \ref{thm:f_k_and_t}, this is equivalent to
+\begin{align*}
+\Pr\{K_i = j\}
+    &= \int_0^{\infty} h_j(t;\v{\theta_j}) R_{\T_i}(t;\v\theta) dt\\
+    &= \int_0^{\infty} h_j(t;\v{\theta_j}) / h_{\T_i}(t ; \v\theta) f_{\T_i}(t ; \v\theta)dt\\
+    &= E_{\v\theta}\bigl[h_j(\T_i;\v{\theta_j}) / \sum_{l=1}^m h_l(\T_i ; \v{\theta_l})\bigr].
+\end{align*}
+\end{proof}
+We use this result in the simulation study to analyze the impact of having a series system
+with a much "weaker" or "stronger" component.
 
 Likelihood Model for Masked Data {#sec:like_model}
 ==================================================
@@ -443,23 +468,28 @@ For each type of data, right-censored data and masked component cause of
 failure data, we will derive the *likelihood contribution* $L_i$, which refers to the
 part of the likelihood function that this particular piece of data contributes to.
 
+
+<!-- \begin{cases}
+    R_{\T_i}(s_i;\v\theta)                      &\text{ if } \delta_i = 0\\
+    \beta_i R_{\T_i}(s_i;\v\theta)
+        \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1,
+\end{cases} -->
+
+
 We present the following theorem for the likelihood contribution model.
 \begin{theorem}
 \label{thm:likelihood_contribution}
 The likelihood contribution of the $i$-th system is given by
 \begin{equation}
 \label{eq:like}
-L_i(\v\theta) =
-\begin{cases}
-    R_{\T_i}(s_i;\v\theta)                      &\text{ if } \delta_i = 0\\
-    \beta_i R_{\T_i}(s_i;\v\theta)
-        \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1,
-\end{cases}
+L_i(\v\theta) = R_{\T_i}(s_i;\v\theta) \biggl(\beta_i \sum_{j \in c_i} h_j(s_i;\v{\theta_j}) \biggr)^{\delta_i}
 \end{equation}
-where $\delta_i = 0$ indicates the $i$\textsuperscript{th} system is
-right-censored at time $s_i$ and $\delta_i = 1$ indicates the $i$\textsuperscript{th} system
-is observed to have failed at time $s_i$ and the component cause of failure
-is masked by the candidate set is $c_i$.
+where $R_{\T_i}(s_i;\v\theta) = \prod_{j=1}^m R_j(s_i;\v{\theta_j})$
+is the survival function of the series system evaluted at $s_i$, $\delta_i = 0$ indicates the
+$i$\textsuperscript{th} system is
+right-censored at time $s_i$, and $\delta_i = 1$ indicates the $i$\textsuperscript{th} system
+is observed to have failed at time $s_i$ with a component cause of failure
+is masked by the candidate set $c_i$.
 \end{theorem}
 
 In the follow subsections, we prove this result for each type of masked data, right-censored
@@ -696,19 +726,21 @@ estimator of $\v\theta$.
 
 Maximum Likelihood Estimation {#sec:mle}
 ========================================
-In our analysis, we use maximum likelihood estimation (MLE) to estimate the series system parameter $\v\theta$ from the masked data \citep{bain, casella2002statistical}. The MLE finds parameter values that maximize the likelihood of the observed data under the assumed model. The maximum likelihood estimate, $\hat{\v\theta}$, is the solution of:
-
+In our analysis, we use maximum likelihood estimation (MLE) to estimate the series
+system parameter $\v\theta$ from the masked data \citep{bain, casella2002statistical}.
+The MLE finds parameter values that maximize the likelihood of the observed data
+under the assumed model. A maximum likelihood estimate, $\hat{\v\theta}$, is a
+solution of
 \begin{equation}
 \label{eq:mle}
 L(\hat{\v\theta}) = \max_{\v\theta \in \v\Omega} L(\v\theta),
 \end{equation}
-
-where $L(\v\theta)$ is the likelihood function of the observed data. For computational and analytical simplicity, we work with the log-likelihood function, denoted as $\ell(\v\theta)$, instead of the likelihood function \citep{casella2002statistical}.
-
+where $L(\v\theta)$ is the likelihood function of the observed data. For computational
+efficiency and analytical simplicity, we work with the log-likelihood function,
+denoted as $\ell(\v\theta)$, instead of the likelihood function \citep{casella2002statistical}.
 \begin{theorem}
 \label{thm:loglike_total}
 The log-likelihood function, $\ell(\v\theta)$, for our masked data model is the sum of the log-likelihoods for each observation,
-
 \begin{equation}
 \label{eq:loglike}
 \ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta),
@@ -724,7 +756,9 @@ The log-likelihood function is the logarithm of the likelihood function,
 $$
 \ell(\v\theta) = \log L(\v\theta) = \log \prod_{i=1}^n L_i(\v\theta) = \sum_{i=1}^n \log L_i(\v\theta).
 $$
-Substituting $L_i(\v\theta)$ from Equation \eqref{eq:like} and separating the two cases of $\delta_i$, we get
+
+Substituting $L_i(\v\theta)$ from Equation \eqref{eq:like}, we consider these two cases of $\delta_i$
+seperately to obtain the result in Theorem \ref{thm:loglike_total}.
 
 \textbf{Case 1}: If the $i$-th system is right-censored ($\delta_i = 0$),
 $$
@@ -732,13 +766,18 @@ $$
 $$
 
 \textbf{Case 2}: If the $i$-th system's component cause of failure is masked but the failure time is known ($\delta_i = 1$),
-\begin{align*}
-\ell_i(\v\theta)
-    &= \log R_{\T_i}(s_i;\v\theta) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr) \\
-    &= \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
-\end{align*}
-By Condition \ref{cond:masked_indept_theta}, we may ignore the term $\log \beta_i$ in the MLE since it does not
-depend on $\v\theta$. This gives us the result in Theorem \ref{thm:loglike_total}.
+$$
+\ell_i(\v\theta) = \log R_{\T_i}(s_i;\v\theta) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr).
+$$
+We replace $R_{\T_i}(s_i;\v\theta)$ with its component-wise definition and by Condition \ref{cond:masked_indept_theta},
+we may discard\footnote{Adding or substracting a function by a constant does not change where it obtains a maximum, so we
+are free to discard such terms from the log-likelihood function.} the $\log \beta_i$ term since it does not depend on
+$\v\theta$, giving us the result
+$$
+\ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
+$$
+
+Combining these two cases gives us the result in Theorem \ref{thm:loglike_total}.
 \end{proof}
 
 The MLE, $\hat{\v\theta}$, is often found by solving a system of equations derived from setting the derivative of the log-likelihood function to zero, i.e.,
@@ -749,11 +788,13 @@ The MLE, $\hat{\v\theta}$, is often found by solving a system of equations deriv
 for each component $\theta_j$ of the parameter $\v\theta$ \citep{bain}. When there's no closed-form solution,
 we resort to numerical methods like the Newton-Raphson method.
 
-MLE has desirable asymptotic properties that underpin statistical inference, namely that it is asymptotically unbiased,
-unique, and normally distributed, with a variance given by the inverse of the Fisher Information Matrix (FIM) \citep{casella2002statistical}.
-However, for smaller samples or complex models, these asymptotic properties may not yield accurate approximations. Hence, we propose to use
-the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE.
-
+Assuming some regularity conditions, such as the likelihood function being identifiable, the MLE has many desirable
+asymptotic properties that underpin statistical inference, namely that it is an asymptotically unbiased estimator
+of the parameter $\v\theta$ and it is normally distributed with a variance given by the inverse of the Fisher
+Information Matrix (FIM) \citep{casella2002statistical}.
+However, for smaller samples, these asymptotic properties may not yield accurate approximations. We propose to use
+the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE, in particular for
+computing confidence intervals.
 
 Bias-Corrected and Accelerated Bootstrap Confidence Intervals {#sec:boot}
 ===============================================================
@@ -1065,7 +1106,7 @@ of the bootstrap method for estimating the sampling distribution of the MLE
 for a Weibull series system with $m=5$ components under our proposed
 likelihood model.
 
-## Realistic System Designs {#sec:reliability}
+## Component Reliabilities {#sec:reliability}
 ```{r sim-study-design, echo = F}
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
@@ -1078,10 +1119,14 @@ scales <- theta[grepl("scale", names(theta))]
 ```
 
 A series system is only as reliable as its least reliable component. 
-In order to make the simulation study representative of real-world scenarios, at least
-for systems designed to be reliable, we choose parameter values that are representative of
-real-world systems where there is no single component that is much less reliable than the
-others.
+In our simulation study, we consider two kinds of scenarios:
+
+1. The components are all approximately equally reliable, which is the case
+   for many real-world systems that are designed to be reliable.
+
+2. One of the components is significantly less reliable or more reliable
+   than the others. This is a pathological case, but it is useful to
+   consider since it poses a challenge to our likelihood model.
 
 We consider two definitions of reliability, the mean time to failure (MTTF) and the
 probability of component cause of failure. The MTTF for the $j$\textsuperscript{th}
@@ -1093,7 +1138,73 @@ which for the Weibull distribution has the closed-form expression
 $$
 \text{MTTF}_j = \lambda_j \, \Gamma(1 + 1/k_j),
 $$
-where $\Gamma$ is the gamma function. The probability that the $j$\textsuperscript{th}
+where $\Gamma$ is the gamma function. If the components ...
+
+
+
+```{r exp_weib_haz, fig.align="center", fig.width=8, fig.height=4, fig.cap="Two components (in series configuration). All components have the same MTTF. On the top, both components have a similiar aging process. On the bottom, the red component has a burn-in process and the blue component has an aging process.", warning = FALSE, echo = FALSE}
+shapes1 <- c(2, 1.75)
+scales1 <- c(50, 49.7535)
+
+funs <- c(
+  paste0("(", shapes1[1], ",", round(scales1[1], digits=2), ")"),
+  paste0("(", shapes1[2], ",", round(scales1[2], digits=2), ")"))
+
+ts <- seq(0,100,by=.1)
+h.wei1 <- Vectorize(function(t) (shapes1[1]/scales1[1])*(t/scales1[1])^(shapes1[1]-1))
+h.wei2 <- Vectorize(function(t) (shapes1[2]/scales1[2])*(t/scales1[2])^(shapes1[2]-1))
+
+df.haz <- data.frame(
+    t=ts,
+    y=c(h.wei1(ts),h.wei2(ts)),
+    fun=rep(funs, each=length(ts)))
+
+R.wei1 <- Vectorize(function(t) exp(-(t/scales1[1])^shapes1[1]))
+R.wei2 <- Vectorize(function(t) exp(-(t/scales1[2])^shapes1[2]))
+
+df.R <- data.frame(
+    t=ts,
+    y=c(R.wei1(ts),R.wei2(ts)),
+    fun=rep(funs, each=length(ts)))
+
+shapes2 <- c(2, 0.5)
+scales2 <- c(50, 22.1557)
+
+funs_r <- c(
+  paste0("(", shapes2[1], ", ", round(scales2[1], digits=2), ")"),
+  paste0("(", shapes2[2], ", ", round(scales2[2], digits=2), ")"))
+
+h.wei1_r <- Vectorize(function(t) (shapes2[1]/scales2[1])*(t/scales1[1])^(shapes1[1]-1))
+h.wei2_r <- Vectorize(function(t) (shapes2[2]/scales2[2])*(t/scales2[2])^(shapes2[2]-1))
+df.haz_r <- data.frame(
+    t=ts,
+    y=c(h.wei1_r(ts),h.wei2_r(ts)),
+    fun=rep(funs_r, each=length(ts)))
+
+R.wei1_r <- Vectorize(function(t) exp(-(t/scales2[1])^shapes2[1]))
+R.wei2_r <- Vectorize(function(t) exp(-(t/scales2[2])^shapes2[2]))
+df.R_r <- data.frame(
+    t=ts,
+    y=c(R.wei1_r(ts),R.wei2_r(ts)),
+    fun=rep(funs_r, each=length(ts)))
+
+create_plot <- function(df, y_label, x_label = "Weibull Component Lifetimes") {
+  ggplot(df, aes(x = t, y = y, color = fun)) +
+    geom_line() +
+    labs(y = y_label, x = x_label, color = "(Shape, Scale)") +
+    theme_bw() +
+    theme(panel.grid = element_blank())
+}
+
+p1 <- create_plot(df.haz, "Hazard")
+p2 <- create_plot(df.R, "Survival")
+p3 <- create_plot(df.haz_r, "Hazard")
+p4 <- create_plot(df.R_r, "Survival")
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+
+The probability that the $j$\textsuperscript{th}
 component is the cause of failure for the $i$\textsuperscript{th} series system 
 is the probability that a component is the cause of failure of the series system,
 which is given by
@@ -1101,7 +1212,7 @@ $$
 \Pr\{K_i = j\} = \int_{0}^\infty f_{\T_i, K_i}(t, j ; \v\theta) dt.
 $$
 
-We consider the data from [@Huairu-2013], which includes a study of the reliability of a series system
+We consider the data from @Huairu-2013, which includes a study of the reliability of a series system
 with three Weibull components with shape and scale parameters given by
 \begin{equation}
 \begin{aligned}

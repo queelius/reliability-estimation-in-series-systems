@@ -1,7 +1,6 @@
 ---
-title: "Bootstrapping confidence intervals (BCa) of the maximum likelihood estimator of components in a series systems from masked failure data"
+title: "Component Cause of Failure in a Series System with Masked Component Cause of Failure"
 author: "Alex Towell"
-abstract: "We estimate the parameters of a series system with Weibull component lifetimes from relatively small samples consisting of right-censored system lifetimes and masked component cause of failure. Under a set of conditions that permit us to ignore how the component cause of failures are masked, we assess the bias and variance of the estimator. Then, we assess the accuracy of the boostrapped variance and calibration of the confidence intervals of the MLE under a variety of scenarios."
 output:
     pdf_document:
         toc: yes
@@ -28,20 +27,7 @@ biblio-style: apalike
 \renewcommand{\v}[1]{\boldsymbol{#1}}
 \numberwithin{equation}{section}
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts = list(width.cutoff = 65))
-library(md.tools)
-library(algebraic.mle)
-library(wei.series.md.c1.c2.c3)
-library(dplyr)
-library(ggplot2)
-library(gridExtra)
-library(grid)
-library(glue)
-library(png)
-```
-
-### Conditional distribution of $K_i$ given $\T_i$ and $\mathcal{C}_i$
+## Probability of Component Cause of System Failure
 
 This subsection is not necessary in our likelihood model, but it derives a useful
 result for making predictions about the component cause of failure.
