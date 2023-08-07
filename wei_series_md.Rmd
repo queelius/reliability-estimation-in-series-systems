@@ -43,7 +43,10 @@ library(png)
 
 Introduction
 ============
-Accurately estimating the reliability of individual components in multi-component systems is an important problem in many engineering domains. However, component lifetimes and failure causes are often not directly observable. In a series system, only the system-level failure time may be recorded along with limited information about which component failed. Such *masked* data poses challenges for estimating component reliability. 
+Accurately estimating the reliability of individual components in
+multi-component systems is an important problem in many engineering domains.
+However, component lifetimes and failure causes are often not directly
+observable. In a series system, only the system-level failure time may be recorded along with limited information about which component failed. Such *masked* data poses challenges for estimating component reliability. 
 
 In this paper, we develop a maximum likelihood approach to estimate component reliability in series systems using right-censored lifetime data and candidate sets that contain the failed component. The key contributions are:
 
@@ -1138,9 +1141,14 @@ which for the Weibull distribution has the closed-form expression
 $$
 \text{MTTF}_j = \lambda_j \, \Gamma(1 + 1/k_j),
 $$
-where $\Gamma$ is the gamma function. If the components ...
+where $\Gamma$ is the gamma function. If the components have the same shape parameter,
+then the MTTF is proportional to the scale parameter, $\text{MTTF}_j \propto \lambda_j$,
+and the component with the smallest scale parameter is the least reliable by both definitions,
+the MTTF and the probability of component cause of failure.
 
-
+Same if the components have the same scale parameter, then the MTTF increases as the shape
+parameter decreases, $\text{MTTF}_j \propto \Gamma(1 + 1/k_j)$, and the component with the
+largest shape parameter is the least reliable by both definitions.
 
 ```{r exp_weib_haz, fig.align="center", fig.width=8, fig.height=4, fig.cap="Two components (in series configuration). All components have the same MTTF. On the top, both components have a similiar aging process. On the bottom, the red component has a burn-in process and the blue component has an aging process.", warning = FALSE, echo = FALSE}
 shapes1 <- c(2, 1.75)
@@ -1203,6 +1211,42 @@ p4 <- create_plot(df.R_r, "Survival")
 grid.arrange(p1, p2, p3, p4, ncol = 2)
 ```
 
+
+
+
+```{r exp_weib_haz-2, fig.align="center", fig.width=8, fig.height=4, fig.cap="Two components (in series configuration). All components have the same MTTF. On the top, both components have a similiar aging process. On the bottom, the red component has a burn-in process and the blue component has an aging process.", warning = FALSE, echo = FALSE}
+shapes1 <- c(.1, .5)
+scales1 <- c(1, 1)
+mttf1 <- wei.series.md.c1.c2.c3::wei_mttf(shapes1[1], scales1[1])
+mttf2 <- wei.series.md.c1.c2.c3::wei_mttf(shapes1[2], scales1[2])
+print(c(mttf1, mttf2))
+
+funs <- c(
+  paste0("(", shapes1[1], ",", round(scales1[1], digits=2), ")"),
+  paste0("(", shapes1[2], ",", round(scales1[2], digits=2), ")"))
+
+ts <- seq(0,10,by=1)
+h.wei1 <- Vectorize(function(t) (shapes1[1]/scales1[1])*(t/scales1[1])^(shapes1[1]-1))
+h.wei2 <- Vectorize(function(t) (shapes1[2]/scales1[2])*(t/scales1[2])^(shapes1[2]-1))
+
+df.haz <- data.frame(
+    t=ts,
+    y=c(h.wei1(ts),h.wei2(ts)),
+    fun=rep(funs, each=length(ts)))
+
+R.wei1 <- Vectorize(function(t) exp(-(t/scales1[1])^shapes1[1]))
+R.wei2 <- Vectorize(function(t) exp(-(t/scales1[2])^shapes1[2]))
+
+df.R <- data.frame(
+    t=ts,
+    y=c(R.wei1(ts),R.wei2(ts)),
+    fun=rep(funs, each=length(ts)))
+
+
+p1 <- create_plot(df.haz, "Hazard")
+p2 <- create_plot(df.R, "Survival")
+grid.arrange(p1, p2, ncol = 2)
+```
 
 The probability that the $j$\textsuperscript{th}
 component is the cause of failure for the $i$\textsuperscript{th} series system 
