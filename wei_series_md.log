@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  6 AUG 2023 07:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2023.7.23)  7 AUG 2023 18:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -665,43 +665,141 @@ File: pgfmodulematrix.code.tex 2021/05/15 v3.1.9a (3.1.9a)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2021/05/15 v3.1.9a (3.1.9a)
-))) (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+))) (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2021/10/04 v2.5f Tabular extension package (FMi)
+\col@sep=\dimen288
+\ar@mcellbox=\box71
+\extrarowheight=\dimen289
+\NC@list=\toks47
+\extratabsurround=\skip64
+\backup@length=\skip65
+\ar@cellbox=\box72
+) (/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip66
+\multirow@cntb=\count322
+\multirow@dima=\skip67
+\bigstrutjot=\dimen290
+) (/usr/share/texlive/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen291
+\WF@size=\dimen292
+\c@WF@wrappedlines=\count323
+\WF@box=\box73
+\WF@everypar=\toks48
+Package: wrapfig 2003/01/31  v 3.6
+) (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count324
+\float@exts=\toks49
+\float@box=\box74
+\@float@everytoks=\toks50
+\@floatcapt=\box75
+) (/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2020/01/04 v1.0e Color table columns (DPC)
+\everycr=\toks51
+\minrowclearance=\skip68
+) (/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+Package: pdflscape 2019/12/05 v0.12 Display of landscape pages in PDF (HO)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+) (/usr/share/texlive/texmf-dist/tex/latex/tabu/tabu.sty
+Package: tabu 2019/01/11 v2.9 - flexible LaTeX tabulars (FC+tabu-fixed) + inter
+mediate FMi
+(/usr/share/texlive/texmf-dist/tex/latex/varwidth/varwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box76
+\sift@deathcycles=\count325
+\@vwid@loff=\dimen293
+\@vwid@roff=\dimen294
+)
+\c@taburow=\count326
+\tabu@nbcols=\count327
+\tabu@cnt=\count328
+\tabu@Xcol=\count329
+\tabu@alloc=\count330
+\tabu@nested=\count331
+\tabu@target=\dimen295
+\tabu@spreadtarget=\dimen296
+\tabu@naturalX=\dimen297
+\tabucolX=\dimen298
+\tabu@Xsum=\dimen299
+\extrarowdepth=\dimen300
+\abovetabulinesep=\dimen301
+\belowtabulinesep=\dimen302
+\tabustrutrule=\dimen303
+\tabu@thebody=\toks52
+\tabu@footnotes=\toks53
+\tabu@box=\box77
+\tabu@arstrutbox=\box78
+\tabu@hleads=\box79
+\tabu@vleads=\box80
+\tabu@cellskip=\skip69
+) (/usr/share/texlive/texmf-dist/tex/latex/threeparttable/threeparttable.sty
+Package: threeparttable 2003/06/13  v 3.0
+\@tempboxb=\box81
+) (/usr/share/texlive/texmf-dist/tex/latex/threeparttablex/threeparttablex.sty
+Package: threeparttablex 2013/07/23 v0.3 by daleif
+(/usr/share/texlive/texmf-dist/tex/latex/environ/environ.sty
+Package: environ 2014/05/04 v0.3 A new way to define environments
+(/usr/share/texlive/texmf-dist/tex/latex/trimspaces/trimspaces.sty
+Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
+))
+\TPTL@width=\skip70
+) (/usr/share/texlive/texmf-dist/tex/generic/ulem/ulem.sty
+\UL@box=\box82
+\UL@hyphenbox=\box83
+\UL@skip=\skip71
+\UL@hook=\toks54
+\UL@height=\dimen304
+\UL@pe=\count332
+\UL@pixel=\dimen305
+\ULC@box=\box84
+Package: ulem 2019/11/18
+\ULdepth=\dimen306
+) (/usr/share/texlive/texmf-dist/tex/latex/makecell/makecell.sty
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+\rotheadsize=\dimen307
+\c@nlinenum=\count333
+\TeXr@lab=\toks55
+) (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-01-12 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count322
-\l__pdf_internal_box=\box71
+\l__color_backend_stack_int=\count334
+\l__pdf_internal_box=\box85
 ) (./wei_series_md.aux)
 \openout1 = `wei_series_md.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Info: Redefining \microtypecontext on input line 118.
-Package microtype Info: Applying patch `item' on input line 118.
-Package microtype Info: Applying patch `toc' on input line 118.
-Package microtype Info: Applying patch `eqnum' on input line 118.
-Package microtype Info: Applying patch `footnote' on input line 118.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Info: Redefining \microtypecontext on input line 132.
+Package microtype Info: Applying patch `item' on input line 132.
+Package microtype Info: Applying patch `toc' on input line 132.
+Package microtype Info: Applying patch `eqnum' on input line 132.
+Package microtype Info: Applying patch `footnote' on input line 132.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 118.
+LaTeX Info: Redefining \showhyphens on input line 132.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -710,17 +808,17 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 (RS)
 ) (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count323
-\scratchdimen=\dimen288
-\scratchbox=\box72
-\nofMPsegments=\count324
-\nofMParguments=\count325
-\everyMPshowfont=\toks47
-\MPscratchCnt=\count326
-\MPscratchDim=\dimen289
-\MPnumerator=\count327
-\makeMPintoPDFobject=\count328
-\everyMPtoPDFconversion=\toks48
+\scratchcounter=\count335
+\scratchdimen=\dimen308
+\scratchbox=\box86
+\nofMPsegments=\count336
+\nofMParguments=\count337
+\everyMPshowfont=\toks56
+\MPscratchCnt=\count338
+\MPscratchDim=\dimen309
+\MPnumerator=\count339
+\makeMPintoPDFobject=\count340
+\everyMPtoPDFconversion=\toks57
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -729,7 +827,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 118.
+Package hyperref Info: Link coloring OFF on input line 132.
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
@@ -737,11 +835,11 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ) (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count329
+\c@section@level=\count341
 )
-LaTeX Info: Redefining \ref on input line 118.
-LaTeX Info: Redefining \pageref on input line 118.
-LaTeX Info: Redefining \nameref on input line 118.
+LaTeX Info: Redefining \ref on input line 132.
+LaTeX Info: Redefining \pageref on input line 132.
+LaTeX Info: Redefining \nameref on input line 132.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -777,39 +875,39 @@ LaTeX Info: Redefining \nameref on input line 118.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-20.
+34.
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-20.
+34.
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-120.
+134.
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-120.
+134.
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 120.
+(Font)              <12> on input line 134.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 120.
+(Font)              <8> on input line 134.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 120.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 120
+(Font)              <6> on input line 134.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 134
 .
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 120
+LaTeX Font Info:    Trying to load font information for U+msb on input line 134
 .
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -822,129 +920,213 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 3.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 3.
-[1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}])
+)
 \tf@toc=\write5
 \openout5 = `wei_series_md.toc'.
 
-\c@definition=\count330
-\c@theorem=\count331
-\c@corollary=\count332
-\c@condition=\count333
-[2] [3] [4] [5] [6]
+\c@definition=\count342
+\c@theorem=\count343
+\c@corollary=\count344
+\c@condition=\count345
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5] [6]
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 5
-64.
+78.
 (/usr/share/texmf/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 ) (./image/dep_model.tex
-\du=\skip64
+\du=\skip72
 )
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[7] [8] [9] [10] [11] [12] [13] [14] [15]
-<wei_series_md_files/figure-latex/exp_weib_haz-1.pdf, id=334, 562.1pt x 279.042
+[7] [8pdfTeX warning (ext4): destination with the same identifier (name{figure.
+1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.762 
+      ] [9] [10] [11] [12] [13] [14] [15] [16]
+<image/test-flat-likelihood.pdf, id=331, 722.7pt x 361.35pt>
+File: image/test-flat-likelihood.pdf Graphic file (type pdf)
+<use image/test-flat-likelihood.pdf>
+Package pdftex.def Info: image/test-flat-likelihood.pdf  used on input line 152
+2.
+(pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
+[17]
+
+LaTeX Warning: Hyper reference `app:flat-like-code' on page 18 undefined on inp
+ut line 1573.
+
+[18pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
+ has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1626   W
+          e can bias the MLE towards particular values or constraints, such as 
+<./image/test-flat-likelihood.pdf>]
+
+LaTeX Warning: Hyper reference `app:augment-code' on page 19 undefined on input
+ line 1663.
+
+[19pdfTeX warning (ext4): destination with the same identifier (name{table.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1730 
+       ] [20]
+
+LaTeX Warning: Reference `sec:data-gen' on page 21 undefined on input line 1835
+.
+
+<image/plot-n-vs-stats-p215-scale.pdf, id=401, 1011.78pt x 1300.86pt>
+File: image/plot-n-vs-stats-p215-scale.pdf Graphic file (type pdf)
+<use image/plot-n-vs-stats-p215-scale.pdf>
+Package pdftex.def Info: image/plot-n-vs-stats-p215-scale.pdf  used on input li
+ne 1919.
+(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
+[21]
+<image/plot-p-vs-stats-scale-n90.pdf, id=419, 1011.78pt x 1300.86pt>
+File: image/plot-p-vs-stats-scale-n90.pdf Graphic file (type pdf)
+<use image/plot-p-vs-stats-scale-n90.pdf>
+Package pdftex.def Info: image/plot-p-vs-stats-scale-n90.pdf  used on input lin
+e 2014.
+(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
+<image/plot-p-vs-stats-shapes-n90.pdf, id=420, 1011.78pt x 1300.86pt>
+File: image/plot-p-vs-stats-shapes-n90.pdf Graphic file (type pdf)
+<use image/plot-p-vs-stats-shapes-n90.pdf>
+Package pdftex.def Info: image/plot-p-vs-stats-shapes-n90.pdf  used on input li
+ne 2023.
+(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
+[22] [23pdfTeX warning (ext4): destination with the same identifier (name{figur
+e.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2041 \]
+          where \(\Gamma\) is the gamma function. If the components have the <.
+/image/plot-n-vs-stats-p215-scale.pdf>] [24pdfTeX warning (ext4): destination w
+ith the same identifier (name{figure.4}) has been already used, duplicate ignor
+ed
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2041 \]
+          where \(\Gamma\) is the gamma function. If the components have the <.
+/image/plot-p-vs-stats-scale-n90.pdf>] [25pdfTeX warning (ext4): destination wi
+th the same identifier (name{figure.5}) has been already used, duplicate ignore
+d
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2041 \]
+          where \(\Gamma\) is the gamma function. If the components have the <.
+/image/plot-p-vs-stats-shapes-n90.pdf>]
+<wei_series_md_files/figure-latex/exp_weib_haz-1.pdf, id=626, 562.1pt x 279.042
 5pt>
 File: wei_series_md_files/figure-latex/exp_weib_haz-1.pdf Graphic file (type pd
 f)
 <use wei_series_md_files/figure-latex/exp_weib_haz-1.pdf>
 Package pdftex.def Info: wei_series_md_files/figure-latex/exp_weib_haz-1.pdf  u
-sed on input line 1429.
+sed on input line 2084.
 (pdftex.def)             Requested size: 469.75067pt x 233.19763pt.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-436.
-(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-<wei_series_md_files/figure-latex/exp_weib_haz-2-1.pdf, id=335, 562.1pt x 279.0
-425pt>
-File: wei_series_md_files/figure-latex/exp_weib_haz-2-1.pdf Graphic file (type 
-pdf)
-<use wei_series_md_files/figure-latex/exp_weib_haz-2-1.pdf>
-Package pdftex.def Info: wei_series_md_files/figure-latex/exp_weib_haz-2-1.pdf 
- used on input line 1442.
-(pdftex.def)             Requested size: 469.75067pt x 233.19763pt.
-[16] [17 <./wei_series_md_files/figure-latex/exp_weib_haz-1.pdf> <./wei_series_
-md_files/figure-latex/exp_weib_haz-2-1.pdf>] [18]
-<image/test-flat-likelihood.pdf, id=387, 722.7pt x 361.35pt>
-File: image/test-flat-likelihood.pdf Graphic file (type pdf)
-<use image/test-flat-likelihood.pdf>
-Package pdftex.def Info: image/test-flat-likelihood.pdf  used on input line 163
-7.
-(pdftex.def)             Requested size: 469.76045pt x 234.88023pt.
-[19]
-
-LaTeX Warning: Hyper reference `app:flat-like-code' on page 20 undefined on inp
-ut line 1683.
-
-[20 <./image/test-flat-likelihood.pdf>] [21] [22]
-<image/plot-n-vs-stats-p215-scale.pdf, id=457, 1011.78pt x 1300.86pt>
-File: image/plot-n-vs-stats-p215-scale.pdf Graphic file (type pdf)
-<use image/plot-n-vs-stats-p215-scale.pdf>
-Package pdftex.def Info: image/plot-n-vs-stats-p215-scale.pdf  used on input li
-ne 1950.
-(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-[23] [24 <./image/plot-n-vs-stats-p215-scale.pdf>]
-<image/plot-p-vs-stats-scale-n90.pdf, id=531, 1011.78pt x 1300.86pt>
-File: image/plot-p-vs-stats-scale-n90.pdf Graphic file (type pdf)
-<use image/plot-p-vs-stats-scale-n90.pdf>
-Package pdftex.def Info: image/plot-p-vs-stats-scale-n90.pdf  used on input lin
-e 2045.
-(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-<image/plot-p-vs-stats-shapes-n90.pdf, id=532, 1011.78pt x 1300.86pt>
-File: image/plot-p-vs-stats-shapes-n90.pdf Graphic file (type pdf)
-<use image/plot-p-vs-stats-shapes-n90.pdf>
-Package pdftex.def Info: image/plot-p-vs-stats-shapes-n90.pdf  used on input li
-ne 2054.
-(pdftex.def)             Requested size: 469.76266pt x 603.98058pt.
-
-LaTeX Warning: Reference `?' on page 25 undefined on input line 2064.
-
-<image/plot-scale3-vs-stats.pdf, id=534, 1445.4pt x 1445.4pt>
+[26pdfTeX warning (ext4): destination with the same identifier (name{figure.6})
+ has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2104 
+        <./wei_series_md_files/figure-latex/exp_weib_haz-1.pdf>]
+<image/plot-scale3-vs-stats.pdf, id=642, 1445.4pt x 1445.4pt>
 File: image/plot-scale3-vs-stats.pdf Graphic file (type pdf)
 <use image/plot-scale3-vs-stats.pdf>
-Package pdftex.def Info: image/plot-scale3-vs-stats.pdf  used on input line 207
-5.
+Package pdftex.def Info: image/plot-scale3-vs-stats.pdf  used on input line 210
+7.
 (pdftex.def)             Requested size: 469.74944pt x 469.74944pt.
-[25] [26 <./image/plot-p-vs-stats-scale-n90.pdf>] [27 <./image/plot-p-vs-stats-
-shapes-n90.pdf>] [28 <./image/plot-scale3-vs-stats.pdf>] [29]
+[27pdfTeX warning (ext4): destination with the same identifier (name{figure.7})
+ has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2124 
+        <./image/plot-scale3-vs-stats.pdf>] [28]
+<image/loess_smoothed_n_100_p_0_q_1_probs_0.0_-_0.55.pdf, id=714, 1011.78pt x 8
+67.24pt>
+File: image/loess_smoothed_n_100_p_0_q_1_probs_0.0_-_0.55.pdf Graphic file (typ
+e pdf)
+<use image/loess_smoothed_n_100_p_0_q_1_probs_0.0_-_0.55.pdf>
+Package pdftex.def Info: image/loess_smoothed_n_100_p_0_q_1_probs_0.0_-_0.55.pd
+f  used on input line 2244.
+(pdftex.def)             Requested size: 469.76266pt x 402.65372pt.
+[29pdfTeX warning (ext4): destination with the same identifier (name{table.3}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2344   I
+          n order to make it more likely to see component 1 as the cause of] [3
+0pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2344   I
+          n order to make it more likely to see component 1 as the cause ofpdfT
+eX warning (ext4): destination with the same identifier (name{table.4}) has bee
+n already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2344   I
+          n order to make it more likely to see component 1 as the cause of <./
+image/loess_smoothed_n_100_p_0_q_1_probs_0.0_-_0.55.pdf>]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
+455.
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [31pdfTeX warning (ext4): destination with the same identifier (name{table.5}
+) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2461 \begin{Shaded}
+                     ]
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-2249.
+2463.
 (/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2256.
-[30] [31] [32]
-Underfull \vbox (badness 10000) detected at line 2524
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2470.
+[32pdfTeX warning (ext4): destination with the same identifier (name{table.6}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.2510 \begin{Shaded}
+                     ] [33]
+Overfull \vbox (0.48535pt too high) detected at line 2739
+ []
+
+[34]
+Underfull \vbox (badness 10000) detected at line 2739
  []
 
 
-Underfull \vbox (badness 10000) detected at line 2524
+Underfull \vbox (badness 10000) detected at line 2739
  []
 
-[33]
-Underfull \vbox (badness 10000) detected at line 2524
+[35]
+Underfull \vbox (badness 10000) detected at line 2739
  []
 
 
-Underfull \vbox (badness 10000) detected at line 2524
+Underfull \vbox (badness 10000) detected at line 2739
  []
 
-[34] [35] (./wei_series_md.bbl) [36] (./wei_series_md.aux)
+[36] [37] (./wei_series_md.bbl) [38] (./wei_series_md.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 25236 strings out of 478287
- 461131 string characters out of 5849289
- 778198 words of memory out of 5000000
- 42461 multiletter control sequences out of 15000+600000
- 569509 words of font info for 218 fonts, out of 8000000 for 9000
+ 26797 strings out of 478287
+ 487477 string characters out of 5849289
+ 803563 words of memory out of 5000000
+ 43949 multiletter control sequences out of 15000+600000
+ 569876 words of font info for 222 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,20n,80p,1095b,962s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 84i,20n,80p,1223b,964s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
 ips/lm/lm-ts1.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/te
 xmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ma
@@ -965,10 +1147,10 @@ exmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/l
 msy5.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fo
 nts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb>
-Output written on wei_series_md.pdf (36 pages, 721075 bytes).
+Output written on wei_series_md.pdf (38 pages, 742896 bytes).
 PDF statistics:
- 1049 PDF objects out of 1200 (max. 8388607)
- 742 compressed objects within 8 object streams
- 223 named destinations out of 1000 (max. 500000)
- 53528 words of extra memory for PDF output out of 61914 (max. 10000000)
+ 1076 PDF objects out of 1200 (max. 8388607)
+ 723 compressed objects within 8 object streams
+ 230 named destinations out of 1000 (max. 500000)
+ 53464 words of extra memory for PDF output out of 61914 (max. 10000000)
 

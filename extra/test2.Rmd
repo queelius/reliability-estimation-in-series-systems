@@ -330,3 +330,61 @@ f_{K_i,T_i}(j,t;\v\theta)
 \end{align*}
 Generalizing from this completes the proof.
 \end{proof}
+
+
+
+
+# Appendix E: Parameter rescaling {-}
+When the parameters under investigation span different
+orders of magnitude, parameter rescaling can significantly improve the performance
+and reliability of optimization algorithms. Parameter rescaling gives an optimizer a
+sense of the typical size of each parameter, enabling it to adjust its steps
+accordingly. This is crucial in scenarios like ours, where shape and scale parametes
+are a few orders of magnitude apart. Without rescaling, the optimization routine may
+struggle, taking numerous small steps for larger parameters and overshooting for
+smaller ones. For more information, see \citep{nocedal2006numerical}.
+
+Speed of convergence was particularly important in our case, since in our simulation
+study, we employ the bootstrap method to estimate the sampling distribution of the
+MLE, which requires us to estimate the MLE for many data sets. We found that
+parameter rescaling significantly improved the speed of convergence, which allowed
+us to run our simulation study in a tractable amount of time.
+
+# Appendix F: Model Verification {-}
+
+To verify that our likelihood model is correct, we load the Table 2 data from
+[@Huairu-2013] and fit the Weibull series model to the data to see if we can
+recover the MLE they reported. When we fit the Weibull series model to this data by
+maximizing the likelihood function, we obtain the following fit for the shape and
+scale parameters given respectively by
+$$
+    \hat{k}_1 = `r theta["shape1"]`,
+    \hat{k}_2 = `r theta["shape2"]`,
+    \hat{k}_3 = `r theta["shape3"]`,
+$$
+and
+$$
+    \hat{\lambda}_1 = `r theta["scale1"]`,
+    \hat{\lambda}_2 = `r theta["scale2"]`,
+    \hat{\lambda}_3 = `r theta["scale3"]`,
+$$
+which is in agreement with the MLE they reported. Satisfied that our likelihood model
+is correct, we proceed with the simulation study.
+
+
+
+# Future Work
+
+## Parametric Bootstrap
+
+There is an alternative form of the bootstrap called the parametric bootstap,
+where the bootstrap samples are generated from a parametric distribution.
+However, this parametric bootstrap is not appropriate for our analysis
+because we do not assume a parametric form for the distribution of the
+candidate sets $\mathcal{C}_i$.
+
+However, it would be possible to employ a semi-parametric bootstrap, where
+the bootstrap samples are generated from a parametric distribution for the
+system lifetimes $\T_i$ and a non-parametric distribution for the candidate
+sets $\mathcal{C}_i | \T_i, K_i$, e.g., the empirical distribution with
+some discretization of $\T_i$ used.
