@@ -17,7 +17,7 @@ shapes3 <- rep(c(0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9), 1000)
 N <- c(100)
 P <- c(0.215)
 Q <- c(0.825)
-R <- 5
+R <- 5  # 9 aug 23 alton office  building B across alton memorial parking 
 B <- 1000
 max_iter <- 125L
 max_boot_iter <- 125L
