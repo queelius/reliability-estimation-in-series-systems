@@ -22,7 +22,7 @@ B <- 1000
 max_iter <- 125L
 max_boot_iter <- 125L
 total_retries <- 10000L
-n_cores <- 3L
+n_cores <- 2L
 
 experiment.name <- "boot-prob-shape1-vary-unmasked"
 csv.out <- paste0(experiment.name, ".csv")
