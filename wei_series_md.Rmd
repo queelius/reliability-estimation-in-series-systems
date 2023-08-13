@@ -908,6 +908,13 @@ given respectively by
 \end{align}
 where $t > 0$ is the lifetime, $\lambda_j > 0$ is the scale parameter and $k_j > 0$
 is the shape parameter.
+
+The mean-time-to-failure (MTTF) of the $j$\textsuperscript{th} Weibull component is
+given by
+$$
+    E[T_{i j}] = \lambda_j \Gamma\biggl(1 + \frac{1}{k_j}\biggr).
+$$
+
 The lifetime of the series system composed of $m$ Weibull components
 has a reliability function given by
 \begin{equation}
@@ -955,6 +962,53 @@ Plugging in the failure rate and reliability functions given respectively by
 Equations \eqref{eq:sys_weibull_reliability_function} and
 \eqref{eq:sys_weibull_failure_rate_function} completes the proof.
 \end{proof}
+
+## Weibull Series System
+
+A series system composed of $m$ Weibull components is not in general a Weibull system
+unless they all have the shape.
+\begin{theorem}
+If the shape parameters of the components are identical, then the system is a Weibull
+with a shape parameter given by the shape parameter of the components and a scale parameter
+given by
+\begin{equation}
+\label{eq:sys_weibull_scale}
+\lambda = \biggl(\sum_{j=1}^{m} \lambda_j^{-k}\biggr)^{-1/k}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Given $m$ Weibull lifetimes $T_{i 1}, \ldots, T_{i m}$ with the same shape parameter $k > 0$
+and scale parameters $\lambda_1, \ldots, \lambda_m$, the survival function of the series
+system is
+$$
+R(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k}\biggr\}.
+$$
+To make this a Weibull system, we need to find a single scale parameter $\lambda$ such that
+$$
+R(t;\v\theta) = \exp\biggl\{-\biggl(\frac{t}{\lambda}\biggr)^{k}\biggr\},
+$$
+which has the solution
+$$
+\lambda = \frac{1}{\left(\frac{1}{\lambda_1^k} + \ldots + \frac{1}{\lambda_m^k}\right)^{\frac{1}{k}}}.
+$$
+\end{proof}
+
+In a well-designed series system, the components are chosen such that the failure characteristcs
+of the components are similar, which suggests the shape parameters of the components are
+similar. In this case, the system is approximately Weibull.
+The MTTF of the system is approximately given by
+\begin{equation}
+\label{eq:sys_weibull_mttf}
+E[T_i] = \lambda \Gamma\biggl(1 + \frac{1}{\bar{k}}\biggr),
+\end{equation}
+where $\lambda$ is given by Equation \eqref{eq:sys_weibull_scale} and $\bar{k}$ is the average
+shape parameter of the components. 
+
+The component cause of failure also simplifies to
+$$
+    \Pr\{K_i = j | \T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-\bar{k}}}{\sum_{l=1}^{m} \lambda_l^{-\bar{k}}},
+$$
+which is independent of the system failure time $t_i$.
 
 ## Weibull Likelihood Model for Masked Data
 In Section \ref{sec:like_model}, we discussed two separate kinds of likelihood
@@ -1095,18 +1149,23 @@ In our simulation study, we consider two kinds of scenarios:
 1. The components are all approximately equally reliable, which is the case
    for many real-world systems that are designed to be reliable.
 
-   In this scenario, we mainly focus on assessing the accuracy and
-   precision of the BCa bootstrap method for estimating the sampling
-   distribution of the MLE for a (Weibull) series system with $m=5$
-   components that have approximately equal reliabilities.
+   In this part of the paper, we assess the accuracy and precision of the MLE
+    and the BCa bootstrap method for computing 95% confidence intervals for a
 
 2. One of the components is significantly less reliable or more reliable
    than the others. This is a pathological case, but it is useful to
    consider since it poses a challenge to our likelihood model.
 
-   In this part of the paper, we mainly focus our attention on assessing
-   the impact changing the reliability of a single component has on the
-   bias of the MLE.
+   In this part of the paper, we assess sensitivity of the MLE with respect
+   to changing the reliability of a single component. The reliability of the
+   component varies from being much more reliable to being much less reliable
+   than the other components, where we define the reliability of a component
+   as the probability it is is the cause of a system failure.
+
+In both scenarios, we assess the accuracy and precision of the MLE and the
+BCa bootstrap method for computing 95% confidence intervals for a 
+series system with $m=5$ Weibull components.
+
 
 ## Data Generating Process {#sec:data_gen}
 
@@ -1154,111 +1213,63 @@ method, which we call the *Bernoulli candidate set model*. In this model, each
 non-failed component is included in the candidate set with
 a fixed probability $p$, independently of all other components and independently
 of $\v\theta$, and the failed component is always included in the candidate set.
+See Appendic G for the R code that implements this model.
 
-## Issues with Convergence to the MLE {#sec:opt_rescale}
+## Effect of Masking on the MLE {#sec:masking}
 
-The surface of the log-likelihood function can be quite complex with
-many local maxima and ridges. This makes it difficult to find the MLE
-using local search methods like Newton-Raphson. In this section, we
-discuss some of the issues we encountered when estimating the MLE.
+Estimating latent components' parameters can be challenging.
+\footnote{In our simulation study, we began the
+optimization at the known true parameter value $\v\theta$. In
+real-world scenarios, the true value is unknown, requiring an
+initial guess. A poor initial guess may further complicate the
+process, neccessitating the use of global optimization methods
+such as simulated annealing to find a good initial guess
+\citep{mclachlan2007algorithm}.}
+The surface of the log-likelihood function may have multiple local
+maxima and ridges, which make it more challengnig to find the MLE,
+and in some cases, there is no unique MLE due to insufficient data
+in the presence of masking and right-censoring.
+We seek to explore some of these issues in this section.
 
-Since this is a simulation study, we knew
-the true parameter value $\v\theta$ and so started the optimization routine
-at the true parameter value. This is not the case in real-world scenarios,
-where the true parameter value is unknown, and so the optimization routine
-must start at some initial guess. We would have encountered even more issues
-if we had started the optimization routine at a poor initial guess.
+1. **Candidate Sets Construction**: The candidate sets are constructed such
+   that component $1$ is present if and only if component $2$ is present,
+   it becomes impossible to estimate their parameters separately. This may
+   occur if an analyst can only identify a larger failed component without
+   specifying the smaller components within it.\footnote{In this case,
+   we may want to combine the components into a single component and estimate
+   the parameters of the reduced system.}
+   
+   In our Bernoulli candidate set model, this is something that can arise only
+   by chance. In Section \ref{sec:effect-masking}, we explore this issue by
+   assessing the effect of varying the masking probability $p$ in the Bernoulli
+   candidate set model on the MLE. It is not the pathological case discussed
+   above, where the parameters of the components are not identifiable, except
+   in the case where $p$ is large enough that the candidate set always contain
+   every component.
 
-### Identifiability {-}
-When estimating the parameters, it may sometimes be the case that the likelihood
-function is not maximized at a unique point. This is known as the *identifiability*
-problem. If the likelihood function is not maximized at a unique point, then a lot of the
-theory we have developed so far breaks down \citep{mclachlan2007algorithm}.
+2. **Least Reliable Component**: If a series system has a significantly less
+   reliable component that causes every system failure, the data may only
+   contain information about that component's parameters.
 
-In our case, since we are estimating the parameters of latent components,
-identifiability is not guaranteed. We consider two examples where this
-might occur, but there are many more.
+   We explore this issue in Section \ref{sec:effect-reliability} by assessing
+   the effect of varying the reliability of a single component on the MLE.
 
-1. The candidate sets could have been constructed in a way that
-   prevents us from distinguishing between some of the components. For example,
-   if the candidate sets in a sample have the characteristic that
-   component $1$ is in a candidate set if and only if component $2$ is in
-   a candidate set, then we do not have enough information to estimate the
-   parameters of component $1$ and component $2$ separately. This could
-   happen, for instance, if the failure analysis is done by a human, and
-   he or she is only able to identity that a larger component failed, but
-   not which of the smaller components inside it had failed. In this case,
-   we may want to combine the two components into one component, and estimate
-   the parameters of the combined component.
+3. **Aggressive Right-Censoring**: If the right-censoring time $\tau$ is
+   too short, the data may not contain enough information to estimate the
+   parameters of any of the components.
 
-   In our Bernoulli candidate set model, this is something that can arise
-   only by chance, and is unlikely to occur in practice, particularly for
-   reasonably large samples.
+   We do not explore this issue, but it is something to keep in mind when
+   designing experiments. We do comment on the expected effect of right-censoring
+   on the MLE in Section \ref{sec:effect-censoring}.
 
-2. The series system has a component that is the
-least reliable by a significant margin and is most likely the component cause
-of failure and is in every candidate set. In this case, our data may not be
-informative enough to estimate the parameters of the other components. 
-
-```{r flat-loglike-prof, echo = F, fig.align = "center", fig.cap="Log-likelihood Profile vs Shape Parameter for Component 1 ($k_1$): Non-unique MLE vs Unique MLE.\nBlue Dashed Line is the True Shape $k_1$."}
-knitr::include_graphics("image/test-flat-likelihood.pdf")
-```
-
-We constructed a quick experiment to demonstrate (2) above. In this
-experiment, we performed the following steps:
-
-1. We use the the series system from [@Huairu-2013] as a base, but tweak it
-slightly to design the MTTF of the last component (component 3) be be two
-orders of magnitude smaller than the others. We did this by changing its
-scale parameter to $\lambda_3 = 4.1141$.
-
-2. Generated a data set of size $n = 30$ from this system with a right-censoring time
-of $\tau = 6.706782$, corresponding to the $82.5\%$ quantile of the system's
-lifetime, and with a masking probability $p = 0.215$ using the Bernoulli
-candidate set model.
-
-3. We found an MLE by maximizing the log-likelihood function
-   with the data set generated in step 2. 
-   As shown in the left plot in Figure \ref{fig:flat-loglike-prof}, the log-likelihood
-   function is flat, and therefore there there is no unique MLE. It appears any
-   value of $\hat k_1$ larger than $1.5$ will maximize the log-likelihood function.
-
-   For a possible reason, we see that *every* candidate set in the data set contains
-   component 3 because it was the component cause of failure in every system failure
-   due to its significantly shorter MTTF. 
-
-4. We tweaked the data set in step 2 by removing component 3 from the candidate set
-in the first observation and adding component 1. This is permissible because the
-observation was not right-censored, and so must have a non-empty candidate set.
-This is a very small change to the data set, but as shown in the right plot in
-Figure \ref{fig:flat-loglike-prof}, the log-likelihood function is no longer flat,
-and there is a unique MLE. We also see that it is a much better estimate of the
-true parameter value for $k_1$, although we did not do the analysis to assess whether
-this generally holds.
-
-However, by introducing this modification, we not only made the likelihood function
-identifiable, but we also nudged the likelihood to peak at a smaller value to make
-the shape parameter of the first component more likely to produce earlier failures.
-
-See \hyperref[app:flat-like-code]{Appendix D} for the R code used to generate the data
-set for this experiment.
-
-According to this experiment, one could potentially justify either excluding these data
-sets from the analysis, or tweak them slightly as we had done, since otherwise they
-do not provide a unique MLE. In our simulation study, we mitgated these issues by
-choosing parameter values that are representative of real-world systems where there is
-no single component that is much less reliable than the others. We also use the Bernoulli
-candidate set model, which is unlikely to produce candidate sets that are not informative
-enough to estimate the parameters of the components, unless of course the masking
-probability $p$ is very large.
-
-After taking these precautions, we largely ignored identifiability issues in our simulation
+To 
+We largely ignored identifiability issues in our simulation
 study, with the exception that we discarded any data sets that did not converge to a solution
-after 150 iterations.\footnote{The choice of $150$ iterations was driven by the computational demands of the
-simulation study combined with the subsequent bootstrapping of the confidence intervals.
-} A log-likelihood function that is flat can cause our convergence
+after 125 iterations.\footnote{The choice of $125$ iterations was driven by the computational demands of the
+simulation study combined with the subsequent bootstrapping of the confidence intervals.}
+A log-likelihood function that is flat can cause our convergence
 criteria to take a long time to reach a solution. Therefore, a failure to converge within
-150 iterations could be seen as evidence of potential identifiability issues.
+125 iterations could be seen as evidence of potential identifiability issues.
 
 Nonetheless, such scenarios occurred infrequently. During the bootstrapping of
 confidence intervals, we included all MLEs, even those that did not converge. This worst-case analysis
@@ -1266,43 +1277,6 @@ approach was adopted because our main objective was to assess the performance of
 We were concerned that if we took any additional steps, we may unintentionally
 bias the results in favor of producing narrow BCa confidence intervals with good coverage
 probabilities.
-
-### Data Augmentation {-}
-
-The profile of the likelihood function in Figure \ref{fig:flat-loglike-prof} has a large flat region
-the obtains the maximum, and thus any value in that region -- any value greater than $1.5$ -- is an MLE.
-There just was not enough information to identify a unique point, which would ideally be a point closer to the true
-value $k_1 = 1.26$.
-
-If we augment the sample with additional data, then we can in theory accomplish two things:
-
-1. We can make the likelihood function identifiable, and thus make the MLE unique. This may or may
-   not have any particular advantages by itelf.
-
-2. We can bias the MLE towards particular values or constraints, such as the prior belief that
-   the components are approximately equally reliable.\footnote{We could also add constraints or
-   regularization to the optimization problem to accomplish a similar goal, but we do not
-   investigate this approach in this paper.}
-
-If we have the prior belief that it is more likely that the components within a series system
-are approximately of equal reliability, we can bias the MLE towards identical shape and scale
-parameters by augmenting samples with additional data. We propose the following procedure to
-augment samples with data that is compatible with this prior belief.
-For each component, perform the following steps:
-
-1. Resample $R$ system lifetimes from the original sample.
-2. Add a bit of noise to each of the $R$ resampled system lifetimes, to make them slightly
-   different from the original system lifetime and prevent identifiability issues for occuring.
-3. Assign the component as the cause of the $R$ resampled and slightly altered system lifetimes.
-
-As $R$ increases, the stronger the bias towards identical shape and scale parameters.
-To just ensure an identifiable likelihood function, we can let $R = 1$, but depending
-on the design of the system and the sample size, even this can have a significant effect
-on the MLE. If the prior belief of nearly equal reliability among the components is reasonable,
-these augmented samples might yield more precise and accurate estimates, otherwise
-the augmentation may have an adverse effect.
-
-See \hyperref[app:augment-code]{Appendix E} for the R code that may be used to augment the data.
 
 ## Assessing the Impact of Sample Size, Masking, and Censoring on the MLE
 
@@ -1339,14 +1313,13 @@ more components with shape and scale parameters given by
 \end{equation}
 
 ```{r table-2, table.attr = "style='width:50%;'", echo = F, results = 'asis', fig.cap = "Component Reliability", fig.align = "center"}
-
-# let's also show the MTTF of the entire series system
 mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
     shapes=shapes) }, lower=0, upper=Inf)$value
-mttf <- gamma(1 + 1/shapes) * scales
+mttf.sys <- round(mttf.sys, digits=3)
+mttf <- round(gamma(1 + 1/shapes) * scales, digits=3)
 components <- data.frame(
   "MTTF" = mttf,
-  "Failure Probability" = wei_series_cause(1L:5L, scales=scales, shapes=shapes),
+  "Failure Probability" = round(wei_series_cause(1L:5L, scales=scales, shapes=shapes), digits=3),
   row.names = paste("Component", 1:5)
 )
 
@@ -1355,10 +1328,8 @@ names(components) <- gsub("\\.", " ", names(components))
 knitr::kable(components, caption = "Mean Time To Failure (MTTF) and Probability of Component Failure of Weibull Components in Series Configuration")
 ```
 
-As shown by Table 2, there are no components that are significantly less reliable
-than any of the others.
-
-Before we begin our simulation study, we first explain what we expect the simulations
+As shown by Table \ref{tab:table-2}, there are no components that are significantly less reliable
+than any of the others. Before we begin our simulation study, we first explain what we expect the simulations
 to demonstrate and offer an explanation for why we expect this to be the case.
 
 ### Effect of Right-Censoring {#sec:effect-censoring}
@@ -1366,9 +1337,19 @@ to demonstrate and offer an explanation for why we expect this to be the case.
 In all of our simulation studies, we use a fixed right-censoring time $\tau = 377.71$,
 which is the $82.5\%$ quantile of the series system. This means that $82.5\%$ of the
 series systems are expected to fail before time $\tau$ and $17.5\%$ of the series are
-expected to be right-censored. This represents a situation in which an experiment is run
-for a fixed amount of time $\tau$, and all systems that have not failed by the end of
-the experiment are right-censored.
+expected to be right-censored. To solve for the $82.5\%$ quantile of the series system,
+we solve for $\tau$ in the equation
+\begin{equation}
+\label{eq:quantile}
+F_{\T_i}(\tau;\v\theta) = 0.825
+\end{equation}
+using the Newton-Raphson method to find the root of $g(\tau) = F_{\T_i}(\tau;\v\theta) - 0.825$,
+which has the unique solution $\tau = 377.71$.
+
+
+Having a fixed right-censoring lifetime $\tau$ represents a situation in which an experiment
+is run for a fixed amount of time $\tau$, and all systems under observation that have not
+failed by the end of the experiment are right-censored.
 
 Right-censoring introduces a source of bias in the MLE. Right-censoring has the
 effect of pushing the MLE to estimate a larger MTTF for each of the components,
@@ -1384,7 +1365,7 @@ is increased. The mean time to failure (MTTF) for the $j$\textsuperscript{th}
 component in a Weibull distribution is given by
 \begin{equation}
 \label{eq:mttf-wei}
-\text{MTTF} = \lambda_j \Gamma(1 + 1/k_j),
+\text{MTTF}_j = \lambda_j \Gamma(1 + 1/k_j),
 \end{equation}
 therefore, in order to increase the MTTF of the components, lower values for the shape parameters
 are chosen and higher values for the scale parameters are chosen.
@@ -1421,6 +1402,12 @@ Conversely, we see that the MTTF decreases as we increase the shape parameter $k
 Therefore, if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
 to appear in in the candidate set, its shape parameter should be increased, potentially
 biasing the MLE for the shape parameter upwards.
+
+> NOTE TO SELF: The right-censoring has an effect best seen by the MTTF of the series system,
+> and consequently the components. The masking probability, on the other hand, has an effect
+> best seen by the probability of component failure. Additionally, when looking at the
+> plots in the sim study where we vary $k_3$, we see that the effect of masking is more
+> pronounced for ... finish these thoughts after looking at the plots.
 
 ### Assessing the Bootstrapped Confidence Intervals
 
@@ -1961,11 +1948,7 @@ knitr::kable(df, format = "latex",
 
 Here are some key observations:
 
-- As the scale parameter of component 1 increases, the probability of component 1 being the cause of failure
-  decreases, and the probability of component 2 and 3 being the cause of failure increases. This is also in
-  alignment with the reasoning that, in this case, increasing the MTTF of a component decreases its probability
-  of being the cause of failure. However, when we vary the shape parameter of component 1, the relationship is
-  more complex, as previously discussed.
+- For a given shape parameter, if we increase the scale parameter, 
 
 # Conclusion
 
@@ -2081,24 +2064,20 @@ confidence intervals of the MLE using the bootstrap method.
 
 ```{r bootstrap-sim-code, eval=FALSE}
 #### Setup simulation parameters here ####
-
-# Set the theta parameter. It contains shape and scale parameters. Add as many
-# components as you desire. We show the default values for the 5-component
-# in our paper.
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
+           shape3 = NA,     scale3 = 840.1141,
            shape4 = 1.1802, scale4 = 940.1342,
            shape5 = 1.2034, scale5 = 923.1631)
 
-N <- c(30, 60, 100)     # Sample sizes to simulate
+shapes3 <- c(1.1308)    # shape 3 true parameter values to simulate
+N <- c(30, 60, 100)     # sample sizes to simulate
 P <- c(.215, .333)      # masking probabilities to simulate
 Q <- c(.825)            # right censoring probabilities to simulate
 R <- 100                # number of simulations per scenario
-B <- 750L               # number of bootstrap samples
-max_iter <- 150L        # max iterations for MLE
-max_boot_iter <- 150L   # max iterations for bootstrap MLE
-total_retries <- 10000L # total number of retries for each scenario
+B <- 1000L              # number of bootstrap samples
+max_iter <- 125L        # max iterations for MLE
+max_boot_iter <- 125L   # max iterations for bootstrap MLE
 n_cores <- detectCores() - 1 # number of cores to use for parallel processing
 filename <- "data-boot-tau-fixed-bca-p-vs-ci" # filename prefix for output files
 ci_method <- "bca"      # bootstrap CI method. See ?boot::boot.ci for details.
@@ -2133,6 +2112,7 @@ cat("   number of components: ", m, "\n")
 cat("   scale parameters: ", scales, "\n")
 cat("   shape parameters: ", shapes, "\n")
 cat("simulation parameters:\n")
+cat("   shapes3: ", shapes3, "\n")
 cat("   N: ", N, "\n")
 cat("   P: ", P, "\n")
 cat("   Q: ", Q, "\n")
@@ -2141,161 +2121,129 @@ cat("   B: ", B, "\n")
 cat("   max_iter: ", max_iter, "\n")
 cat("   max_boot_iter: ", max_boot_iter, "\n")
 cat("   n_cores: ", n_cores, "\n")
-cat("   total_retries: ", total_retries, "\n")
 sink()
 
-for (n in N) {
-    for (p in P) {
-        for (q in Q) {
-            cat("[starting scenario: n = ", n, ", p = ", p, ", q = ", q, "]\n")
-            tau <- qwei_series(p = q, scales = scales, shapes = shapes)
+for (shape3 in shapes3) {
+    for (n in N) {
+        for (p in P) {
+            for (q in Q) {
+                shapes[3] <- shape3
+                theta["shape3"] <- shape3
 
-            # we compute R MLEs for each scenario
-            shapes.mle <- matrix(NA, nrow = R, ncol = m)
-            scales.mle <- matrix(NA, nrow = R, ncol = m)
-            shapes.lower <- matrix(NA, nrow = R, ncol = m)
-            shapes.upper <- matrix(NA, nrow = R, ncol = m)
-            scales.lower <- matrix(NA, nrow = R, ncol = m)
-            scales.upper <- matrix(NA, nrow = R, ncol = m)
-            logliks <- rep(0, R)
+                cat("[starting scenario: shape3 = ", shape3, ", n = ", n, ", p = ", p, ", q = ", q, "]\n")
+                tau <- qwei_series(p = q, scales = scales, shapes = shapes)
 
-            iter <- 0L
-            retries <- 0L
-            repeat {
-                retry <- FALSE
-                tryCatch({
-                    repeat {
-                        df <- generate_guo_weibull_table_2_data(
-                            shapes = shapes, scales = scales, n = n, p = p, tau = tau)
+                # we compute R MLEs for each scenario
+                shapes.mle <- matrix(NA, nrow = R, ncol = m)
+                scales.mle <- matrix(NA, nrow = R, ncol = m)
+                shapes.lower <- matrix(NA, nrow = R, ncol = m)
+                shapes.upper <- matrix(NA, nrow = R, ncol = m)
+                scales.lower <- matrix(NA, nrow = R, ncol = m)
+                scales.upper <- matrix(NA, nrow = R, ncol = m)
+                logliks <- rep(0, R)
 
-                        sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-                            theta0 = theta, df = df, hessian = FALSE,
-                            control = list(maxit = max_iter, parscale = theta))
-                        if (sol$convergence == 0) {
-                            break
+                iter <- 0L
+                repeat {
+                    retry <- FALSE
+                    tryCatch({
+                        repeat {
+                            df <- generate_guo_weibull_table_2_data(
+                                shapes = shapes, scales = scales, n = n, p = p, tau = tau)
+
+                            sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+                                theta0 = theta, df = df, hessian = FALSE,
+                                control = list(maxit = max_iter, parscale = theta))
+                            if (sol$convergence == 0) {
+                                break
+                            }
+                            cat("[", iter, "] MLE did not converge, retrying.\n")
                         }
-                        cat("[", iter, "] MLE did not converge, retrying.\n")
-                    }
 
-                    mle_solver <- function(df, i) {
-                        mle_lbfgsb_wei_series_md_c1_c2_c3(
-                            theta0 = sol$par, df = df[i, ], hessian = FALSE,
-                            control = list(maxit = max_boot_iter, parscale = sol$par))$par
-                    }
+                        mle_solver <- function(df, i) {
+                            mle_lbfgsb_wei_series_md_c1_c2_c3(
+                                theta0 = sol$par, df = df[i, ], hessian = FALSE,
+                                control = list(maxit = max_boot_iter, parscale = sol$par))$par
+                        }
 
-                    # do the non-parametric bootstrap
-                    sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
-                },
-                error = function(e) {
-                    cat("Error: ", conditionMessage(e), "\n")
-                    retries <<- retries + 1L
-                    if (retries < total_retries) {
-                        cat("[scenario: n = ", n, ", p = ", p, ", q = ", q, "]: ",
-                            retries, "/", total_retries, " retries\n")
+                        # do the non-parametric bootstrap
+                        sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
+                    },
+                    error = function(e) {
+                        cat("[error] ", conditionMessage(e), "\n")
+                        cat("[retrying scenario: n = ", n, ", p = ", p, ", q = ", q, "\n")
                         retry <<- TRUE
+                    })
+                    if (retry) {
+                        next
                     }
-                })
-                if (retries > total_retries) {
-                    break
+                    iter <- iter + 1L
+                    shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
+                    scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
+                    logliks[iter] <- sol$value
+
+                    tryCatch({
+                        ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
+                        shapes.ci <- ci[seq(1, length(theta), 2), ]
+                        scales.ci <- ci[seq(2, length(theta), 2), ]
+                        shapes.lower[iter, ] <- shapes.ci[, 1]
+                        shapes.upper[iter, ] <- shapes.ci[, 2]
+                        scales.lower[iter, ] <- scales.ci[, 1]
+                        scales.upper[iter, ] <- scales.ci[, 2]
+                    }, error = function(e) {
+                        cat("[error] ", conditionMessage(e), "\n")
+                    })
+                    if (iter %% 10 == 0) {
+                        cat("[iteration ", iter, "] shapes = ", shapes.mle[iter,], "scales = ", scales.mle[iter, ], "\n")
+                    }
+
+                    if (iter == R) {
+                        break
+                    }
                 }
 
-                if (retry) {
-                    next
-                }
-                iter <- iter + 1L
-                shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
-                scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
-                logliks[iter] <- sol$value
+                df <- data.frame(
+                    n = rep(n, R), rep(shape3, R), p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
+                    shapes = shapes.mle, scales = scales.mle,
+                    shapes.lower = shapes.lower, shapes.upper = shapes.upper,
+                    scales.lower = scales.lower, scales.upper = scales.upper, logliks = logliks)
 
-                tryCatch({
-                    ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
-                    shapes.ci <- ci[seq(1, length(theta), 2), ]
-                    scales.ci <- ci[seq(2, length(theta), 2), ]
-                    shapes.lower[iter, ] <- shapes.ci[, 1]
-                    shapes.upper[iter, ] <- shapes.ci[, 2]
-                    scales.lower[iter, ] <- scales.ci[, 1]
-                    scales.upper[iter, ] <- scales.ci[, 2]
-                }, error = function(e) {
-                    cat("[error] ", conditionMessage(e), "\n")
-                })
-                if (iter %% 10 == 0) {
-                    cat("[iteration ", iter, "] shapes = ", shapes.mle[iter,], "scales = ", scales.mle[iter, ], "\n")
-                }
-
-                if (iter == R) {
-                    break
-                }
+                write.table(df, file = file.csv, sep = ",", row.names = FALSE,
+                    col.names = !file.exists(file.csv), append = TRUE)
             }
-
-            df <- data.frame(n = rep(n, R), p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
-                shapes = shapes.mle, scales = scales.mle, shapes.lower = shapes.lower, shapes.upper = shapes.upper,
-                scales.lower = scales.lower, scales.upper = scales.upper, logliks = logliks)
-
-            write.table(df, file = file.csv, sep = ",", row.names = FALSE,
-                col.names = !file.exists(file.csv), append = TRUE)
         }
     }
 }
 ```
 
-# Appendix D: Flat Log-likelihood Experiment {-}
-\label{app:flat-like_code}
-Here is the code to generate the data set for Figure \ref{fig:flat-loglike-prof}.
 
-```{r flat-likelihood-code, eval=FALSE}
-library(wei.series.md.c1.c2.c3)
+# Appendix D: Bernoulli Candidate Set Model {-}
 
-# changed scale3 to make MTTF of component 3 much smaller than the others
-theta <- c(shape1 = 1.2576, scale1 = 994.3661,
-           shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 4.1141) 
-shapes <- theta[seq(1, length(theta), 2)]
-scales <- theta[seq(2, length(theta), 2)]
-
-n <- 30
-p <- .215
-q <- .825
-set.seed(151234)
-tau <- qwei_series(p = q, scales = scales, shapes = shapes)
-df <- generate_guo_weibull_table_2_data(
-    shapes = shapes, scales = scales, n = n, p = p, tau = tau)
-df.tweaked <- df
-df.tweaked[1,"x3"] <- FALSE # remove component 3 from first observation
-df.tweaked[1,"x1"] <- TRUE  # add component 1 to first observation
-
-sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-    theta0 = theta, df = df, hessian = FALSE,
-    control = list(maxit = 1000))
-sol.tweaked <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-    theta0 = theta, df = df.tweaked, hessian = FALSE,
-    control = list(maxit = 1000))
-l <- Vectorize(function(shape1) {
-    theta <- sol$par
-    theta[1] <- shape1
-    loglik_wei_series_md_c1_c2_c3(df, theta)
-}, vectorize.args = "shape1")
-l.tweaked <- Vectorize(function(shape1) {
-    theta <- sol.tweaked$par
-    theta[1] <- shape1
-    loglik_wei_series_md_c1_c2_c3(df.tweaked, theta)
-}, vectorize.args = "shape1")
-```
-
-# Appendix E: Data Augmentation {-}
-```{r, eval=FALSE}
-equal_reliability_augmentation <- function(df, R = 1) {
-
-    df.censored <- df[df$delta == FALSE, ]
-    df <- df[df$delta == TRUE, ]
-    C <- md.tools::md_decode_matrix(df, "x")
-    m <- ncol(C)
-
-    for (k in 1:m) {
-        obs <- df[sample(nrow(df), R, replace = TRUE), ]
-        obs[, paste0("x", 1:m)] <- FALSE
-        obs[, paste0("x", k)] <- TRUE
-        df <- rbind(df, obs)
-    }
-    rbind(df, df.censored)
+```{r, eval = FALSE}
+#' Bernoulli candidate set model is a particular type of *uninformed* model.
+#' This model satisfies conditions C1, C2, and C3.
+#' The failed component will be in the corresponding candidate set with
+#' probability 1, and the remaining components will be in the candidate set
+#' with probability `p` (the same probability for each component). `p` 
+#' may be different for each system, but it is assumed to be the same for
+#' each component within a system, so `p` can be a vector such that the
+#' length of `p` is the number of systems in the data set (with recycling
+#' if necessary).
+#'
+#' @param df masked data.
+#' @param p a vector of probabilities (p[j] is the probability that the jth
+#'          system will include a non-failed component in its candidate set,
+#'          assuming the jth system is not right-censored).
+#' @importFrom md.tools md_decode_matrix md_encode_matrix
+#' @importFrom dplyr %>% bind_cols
+#' @export
+md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
+    n <- nrow(df)
+    p <- rep(p, length.out = n)
+    Tm <- md_decode_matrix(df, comp)
+    m <- ncol(Tm)
+    Q <- matrix(p, nrow = n, ncol = m)
+    Q[cbind(1:n, apply(Tm, 1, which.min))] <- 1
+    Q[!df[[right_censoring_indicator]], ] <- 0
+    df %>% bind_cols(md_encode_matrix(Q, prob))
 }
 ```
