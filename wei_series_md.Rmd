@@ -96,8 +96,8 @@ $$
 The failure rate is given by the dividing this equation by the length of the time
 interval, $\Delta t$:
 $$
-\frac{\Pr\{t < T < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T > t\}} =
-    \frac{R_T(t) - R(t+\Delta t)}{R_T(t)}.
+\frac{\Pr\{t < \T_i < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{\T_i > t\}} =
+    \frac{R_{\T_i}(t) - R_{\T_i}(t+\Delta t)}{R_{\T_i}(t)}.
 $$
 The hazard function $h_{\T_i}(t)$ for $T_i$ is the instantaneous failure rate at time $t$, which is given by
 \begin{equation}
@@ -115,12 +115,10 @@ $$
     \v\theta = (\v{\theta_1},\ldots,\v{\theta_m}).
 $$
 
-When a random variable $T$ is parameterized by a particular $\v\theta$, we denote the
-reliability function by $R_T(t;\v\theta)$, and the same for other distribution functions.
-If it is clear from the context which random variable a distribution function is for, we
-drop the subscripts, e.g., $R(t)$ instead of $R_T(t)$.
-As a special case, we denote the pdf of the $j$\textsuperscript{th} component by
-$f_j(t;\v{\theta_j})$ and its reliability function by $R_j(t;\v{\theta_j})$.
+When a random variable $X$ is parameterized by a particular $\v\theta$, we denote the
+reliability function by $R_X(t;\v\theta)$, and the same for the other distribution functions.
+As a special case, for the components in the series system, we subscript by their labels, e.g,
+the $j$\textsuperscript{th} component's pdf is denoted by $f_j(t;\v{\theta_j})$.
 
 Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
 Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
@@ -145,31 +143,31 @@ We begin with the reliability function of the series system, as given by the fol
 The series system has a reliability function given by
 \begin{equation}
 \label{eq:sys_reliability_function}
-  R(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+  R_{\T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
 \end{equation}
 \end{theorem}
 \begin{proof}
 The reliability function is defined as
 $$
-  R(t;\v\theta) = \Pr\{\T_i > t\}
+  R_{\T_i}(t;\v\theta) = \Pr\{\T_i > t\}
 $$
 which may be rewritten as
 $$
-  R(t;\v\theta) = \Pr\{\min\{T_{i 1},\ldots,T_{i m}\} > t\}.
+  R_{\T_i}(t;\v\theta) = \Pr\{\min\{T_{i 1},\ldots,T_{i m}\} > t\}.
 $$
 For the minimum to be larger than $t$, every component must be larger than $t$,
 $$
-  R(t;\v\theta) = \Pr\{T_{i 1} > t,\ldots,T_{i m} > t\}.
+  R_{\T_i}(t;\v\theta) = \Pr\{T_{i 1} > t,\ldots,T_{i m} > t\}.
 $$
 Since the component lifetimes are independent, by the product rule the above may
 be rewritten as
 $$
-  R(t;\v\theta) = \Pr\{T_{i 1} > t\} \times \cdots \times \Pr\{T_{i m} > t\}.
+  R_{\T_i}(t;\v\theta) = \Pr\{T_{i 1} > t\} \times \cdots \times \Pr\{T_{i m} > t\}.
 $$
 By definition, $R_j(t;\v\theta) = \Pr\{T_{i j} > t\}$.
 Performing this substitution obtains the result
 $$
-  R(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+  R_{\T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
 $$
 \end{proof}
 
@@ -181,18 +179,18 @@ Next, we turn our attention to the pdf of the system lifetime, described in the 
 The series system has a pdf given by
 \begin{equation}
 \label{eq:sys_pdf}
-f(t;\v\theta) = \sum_{j=1}^m f_j(t;\v{\theta_j})
+f_{\T_i}(t;\v\theta) = \sum_{j=1}^m f_j(t;\v{\theta_j})
     \prod_{\substack{k=1\\k\neq j}}^m R_k(t;\v{\theta_j}).
 \end{equation}
 \end{theorem}
 \begin{proof}
 By definition, the pdf may be written as
 $$
-    f(t;\v\theta) = -\frac{d}{dt} \prod_{j=1}^m R_j(t;\v{\theta_j}).
+    f_{\T_i}(t;\v\theta) = -\frac{d}{dt} \prod_{j=1}^m R_j(t;\v{\theta_j}).
 $$
 By the product rule, this may be rewritten as
 \begin{align*}
-  f(t;\v\theta)
+  f_{\T_i}(t;\v\theta)
     &= -\frac{d}{dt} R_1(t;\v{\theta_1})\prod_{j=2}^m R_j(t;\v{\theta_j}) -
       R_1(t;\v{\theta_1}) \frac{d}{dt} \prod_{j=2}^m R_j(t;\v{\theta_j})\\
     &= f_1(t;\v\theta) \prod_{j=2}^m R_j(t;\v{\theta_j}) -
@@ -200,13 +198,13 @@ By the product rule, this may be rewritten as
 \end{align*}
 Recursively applying the product rule $m-1$ times results in
 $$
-f(t;\v\theta) = \sum_{j=1}^{m-1} f_j(t;\v{\theta_j})
+f_{\T_i}(t;\v\theta) = \sum_{j=1}^{m-1} f_j(t;\v{\theta_j})
     \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k}) -
     \prod_{j=1}^{m-1} R_j(t;\v{\theta_j}) \frac{d}{dt} R_m(t;\v{\theta_m}),
 $$
 which simplifies to
 $$
-f(t;\v\theta)= \sum_{j=1}^m f_j(t;\v{\theta_j})
+f_{\T_i}(t;\v\theta)= \sum_{j=1}^m f_j(t;\v{\theta_j})
     \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k}).
 $$
 \end{proof}
@@ -218,23 +216,23 @@ We continue with the hazard function of the system lifetime, defined in the next
 The series system has a hazard function given by
 \begin{equation}
 \label{eq:sys_failure_rate}
-  h(t;\v\theta) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
+  h_{\T_i}(t;\v\theta) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 \end{equation}
 \end{theorem}
 \begin{proof}
 By Equation \eqref{eq:failure_rate}, the $i$\textsuperscript{th} series system lifetime has a hazard function defined as
 $$
-  h(t;\v\theta) = \frac{f_{\T_i}(t;\v\theta)}{R_{\T_i}(t;\v\theta)}.
+  h_{\T_i}(t;\v\theta) = \frac{f_{\T_i}(t;\v\theta)}{R_{\T_i}(t;\v\theta)}.
 $$
 Plugging in expressions for these functions results in
 $$
-  h(t;\v\theta) = \frac{\sum_{j=1}^m f_j(t;\v{\theta_j})
+  h_{\T_i}(t;\v\theta) = \frac{\sum_{j=1}^m f_j(t;\v{\theta_j})
     \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k})}
       {\prod_{j=1}^m R_j(t;\v{\theta_j})},
 $$
 which can be simplified to
 $$
-h(t;\v\theta) = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})} = \sum_{j=1}^m h_j(t;\v{\theta_j}).
+h_{\T_i}(t;\v\theta) = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})} = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
 \end{proof}
 
@@ -243,13 +241,13 @@ Theorem \ref{thm:sys_failure_rate} reveals that the system's hazard function is 
 By definition, the hazard function is the ratio of the pdf to the reliability
 function,
 $$
-h(t;\v\theta) = \frac{f(t;\v\theta)}{R(t;\v\theta)},
+h_{\T_i}(t;\v\theta) = \frac{f_{\T_i}(t;\v\theta)}{R_{\T_i}(t;\v\theta)},
 $$
 and we can rearrange this to get
 \begin{equation}
 \label{eq:sys_pdf_2}
 \begin{split}
-f(t;\v\theta) &= h(t;\v\theta) R(t;\v\theta)\\
+f_{\T_i}(t;\v\theta) &= h_{\T_i}(t;\v\theta) R_{\T_i}(t;\v\theta)\\
               &= \biggl\{\sum_{j=1}^m h_j(t;\v{\theta_j})\biggr\}
                  \biggl\{ \prod_{j=1}^m R_j(t;\v{\theta_j}) \biggr\},
 \end{split}
@@ -725,8 +723,28 @@ L_i(\v\theta) =
 \end{cases}
 $$
 
-We use this result in the next section to derive the maximum likelihood
-estimator of $\v\theta$.
+We use this result in Section \ref{sec:mle} to derive the maximum likelihood
+estimator (MLE) of $\v\theta$.
+
+## Identifiability Issues
+
+Identifiability refers to the unique mapping of the model parameters to the likelihood
+function. Lack of identifiability can lead to multiple sets of parameters that explain
+the data equally well, making inference about the true parameters challenging. This
+can arise in our likelihood model in some situations.
+
+For instance, if an analyst has a procedure that identifies when a larger component has
+failed, but not which of the smaller components failed in that larger component, then the
+parameters of the components in that larger component are interchangeable.
+
+For instance, suppose we observe the following sample in Table \ref{tab:identifiability}.
+
+System | Right-censoring time ($S_i$) | Right censoring indicator ($\delta_i$) | Candidate set ($\mathcal{C}_i$) |
+------ | ---------------------------- | --------------------------- | --------------------- |
+   1   | $2.1$                        | 1                           | $\{1,2\}$             |
+   2   | $1.6$                        | 1                           | $\{2\}$               |
+   
+
 
 Maximum Likelihood Estimation {#sec:mle}
 ========================================
@@ -872,30 +890,16 @@ particularly as it relates to coverage probabilities.
 
 Series System with Weibull Components {#sec:weibull}
 ====================================================
-In the real world, systems are quite complex:
 
-1. They are not perfect series systems.
-
-2. The components in a system are not independent.
-
-3. The lifetimes of the components are not precisely modeled by
-   any named probability distributions.
-   
-4. The components may depend on many other unobserved factors.
-
-With these caveats in mind, we model the data as coming from a Weibull series
-system of $m = 5$ components, and other factors, like ambient temperature, are
-either negligible (on the distribution of component lifetimes) or are more or less
-constant.
+** Introduce Weibull here **
 
 The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
 lifetime distribution given by
 $$
-    T_{i j} \sim \operatorname{WEI}(\v{\theta_j})
+    T_{i j} \sim \operatorname{Weibull}(k_j,\lambda_j) \qquad \text{for } i = 1,\ldots,n \text{ and } j = 1,\ldots,m,
 $$
-where $\v{\theta_j} = (k_j, \lambda_j)$ for $j=1,\ldots,m$.
-Thus, $\v\theta = (\v{\theta_1},\ldots,\v{\theta_m})' = \bigl(k_1,\lambda_1,\ldots,k_m,\lambda_m\bigr)$.
-The random variable $T_{i j}$ has a reliability function, pdf, and hazard function
+where $\lambda_j > 0$ is the scale parameter and $k_j > 0$ is the shape parameter.
+The $j$\textsuperscript{th} component has a reliability function, pdf, and hazard function
 given respectively by
 \begin{align}
     R_j(t;\lambda_j,k_j)
@@ -904,31 +908,35 @@ given respectively by
         &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
         \exp\biggl\{-\left(\frac{t}{\lambda_j}\right)^{k_j} \biggr\},\\
     h_j(t;\lambda_j,k_j) \label{eq:weibull_haz}
-        &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
+        &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}.
 \end{align}
-where $t > 0$ is the lifetime, $\lambda_j > 0$ is the scale parameter and $k_j > 0$
-is the shape parameter.
 
-The mean-time-to-failure (MTTF) of the $j$\textsuperscript{th} Weibull component is
-given by
-$$
-    E[T_{i j}] = \lambda_j \Gamma\biggl(1 + \frac{1}{k_j}\biggr).
-$$
+The shape parameter of the Weibull distribtion is of particular importance:
+\begin{enumerate}
+\item[$k_j < 1$] The hazard function decreases with respect to time. For instance,
+  this may occur as a result of defective components being weeded out early.
+\item[$k_j = 1$] The hazard function is constant with respect to time. This is an
+  idealized case that is rarely observed in practice, but may be useful for modeling
+  purposes.
+\item[$k_j > 1$] The hazard function increases with respect to time. For instance,
+  this may occur as a result of components wearing out or aging.
+\end{enumerate}
+
 
 The lifetime of the series system composed of $m$ Weibull components
 has a reliability function given by
 \begin{equation}
 \label{eq:sys_weibull_reliability_function}
-R(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+R_{\T_i}(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
 \end{equation}
 \begin{proof}
 By Theorem \ref{thm:sys_reliability_function},
 $$
-R(t;\v\theta) = \prod_{j=1}^{m} R_j(t;\lambda_j,k_j).
+R_{\T_i}(t;\v\theta) = \prod_{j=1}^{m} R_j(t;\lambda_j,k_j).
 $$
 Plugging in the Weibull component reliability functions obtains the result
 \begin{align*}
-R(t;\v\theta)
+R_{\T_i}(t;\v\theta)
     &= \prod_{j=1}^{m} \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}\\
     &= \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
 \end{align*}
@@ -937,14 +945,14 @@ R(t;\v\theta)
 The Weibull series system's hazard function is given by
 \begin{equation}
 \label{eq:sys_weibull_failure_rate_function}
-h(t;\v\theta) =
+h_{\T_i}(t;\v\theta) =
     \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1},
 \end{equation}
 whose proof follows from Theorem \ref{thm:sys_failure_rate}.
 The pdf of the series system is given by
 \begin{equation}
 \label{eq:sys_weibull_pdf}
-f(t;\v\theta) =
+f_{\T_i}(t;\v\theta) =
 \biggl\{
     \sum_{j=1}^m \frac{k_j}{\lambda_j}\left(\frac{t}{\lambda_j}\right)^{k_j-1}
 \biggr\}
@@ -956,36 +964,37 @@ f(t;\v\theta) =
 \begin{proof}
 By definition,
 $$
-f(t;\v\theta) = h(t;\v\theta) R(t;\v\theta).
+f_{\T_i}(t;\v\theta) = h_{\T_i}(t;\v\theta) R_{\T_i}(t;\v\theta).
 $$
 Plugging in the failure rate and reliability functions given respectively by
 Equations \eqref{eq:sys_weibull_reliability_function} and
 \eqref{eq:sys_weibull_failure_rate_function} completes the proof.
 \end{proof}
 
-## Weibull Series System
+## Special Case: Series System That Is Weibull
 
-A series system composed of $m$ Weibull components is not in general a Weibull system
-unless they all have the shape.
+A series system composed of Weibull components is not generally Weibull unless the
+shape parameters of the components are identical.
 \begin{theorem}
-If the shape parameters of the components are identical, then the system is a Weibull
-with a shape parameter given by the shape parameter of the components and a scale parameter
-given by
+If the shape parameters of the components are identical, then the series system is Weibull
+with a shape parameter $k$ given by the shape parameter of the components and a scale
+parameter $\lambda$ given by
 \begin{equation}
 \label{eq:sys_weibull_scale}
-\lambda = \biggl(\sum_{j=1}^{m} \lambda_j^{-k}\biggr)^{-1/k}.
+\lambda = \biggl(\sum_{j=1}^{m} \lambda_j^{-k}\biggr)^{-1/k},
 \end{equation}
 \end{theorem}
+where $\lambda_j$ is the scale parameter of the $j$\textsuperscript{th} component.
 \begin{proof}
-Given $m$ Weibull lifetimes $T_{i 1}, \ldots, T_{i m}$ with the same shape parameter $k > 0$
+Given $m$ Weibull lifetimes $T_{i 1}, \ldots, T_{i m}$ with the same shape parameter $k$
 and scale parameters $\lambda_1, \ldots, \lambda_m$, the survival function of the series
 system is
 $$
-R(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k}\biggr\}.
+R_{\T_i}(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k}\biggr\}.
 $$
 To make this a Weibull system, we need to find a single scale parameter $\lambda$ such that
 $$
-R(t;\v\theta) = \exp\biggl\{-\biggl(\frac{t}{\lambda}\biggr)^{k}\biggr\},
+R_{\T_i}(t;\v\theta) = \exp\biggl\{-\biggl(\frac{t}{\lambda}\biggr)^{k}\biggr\},
 $$
 which has the solution
 $$
@@ -993,22 +1002,73 @@ $$
 $$
 \end{proof}
 
-In a well-designed series system, the components are chosen such that the failure characteristcs
-of the components are similar, which suggests the shape parameters of the components are
-similar. In this case, the system is approximately Weibull.
-The MTTF of the system is approximately given by
-\begin{equation}
-\label{eq:sys_weibull_mttf}
-E[T_i] = \lambda \Gamma\biggl(1 + \frac{1}{\bar{k}}\biggr),
-\end{equation}
-where $\lambda$ is given by Equation \eqref{eq:sys_weibull_scale} and $\bar{k}$ is the average
-shape parameter of the components. 
+\begin{theorem}
+If the series system has Weibull components with identical shape parameters, the component cause of
+failure is conditionally independent of the system failure time:
+$$
+    \Pr\{K_i = j | \T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-k}}{\sum_{l=1}^{m} \lambda_l^{-k}}.
+$$
+\end{theorem}
+\begin{proof}
+By Theorem \ref{sec:test}, the conditional probability of the $j$\textsuperscript{th} component being the
+cause of failure given the system failure time is given by
+$$
+\Pr\{K_i = j | \T_i = t\} = \frac{h_j(t;\v{\theta_j})}{\sum_{l=1}^m h_l(t;\v{\theta_l})}
+    = \frac{\frac{k}{\lambda_j}\bigl(\frac{t}{\lambda_j}\bigr)^{k-1}}
+        {\sum_{l=1}^m \frac{k}{\lambda_;}\bigl(\frac{t}{\lambda_l}\bigr)^{k-1}},
+$$
+which simplifies to the result given in the theorem.
+\end{proof}
 
-The component cause of failure also simplifies to
+If the scale parameters of the components are also identical, then scale
+parameter $\lambda^*$ is given by
 $$
-    \Pr\{K_i = j | \T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-\bar{k}}}{\sum_{l=1}^{m} \lambda_l^{-\bar{k}}},
+    \lambda^* = \frac{\lambda}{m^{1/k}}.
 $$
-which is independent of the system failure time $t_i$.
+In this case, the probability of the component cause of failure for any component
+is given by $1/m$.
+
+## System and Component Reliabilities
+
+In addition to the survival function, a common measure of reliability is
+mean time to failure (MTTF). The MTTF for the $j$\textsuperscript{th}
+component is given by
+\begin{equation}
+\label{mttf-weibull}
+\text{MTTF}_j = E(T_{i j}) = \lambda_j \Gamma\biggl(1 + \frac{1}{k_j}\biggr),
+\end{equation}
+where $\Gamma$ is the gamma function.
+
+Components may have similar MTTFs, but some components may be more likely to fail
+early and others may be more likely to fail late, depending upon their shapes.
+A good measure of the *relative* reliability of the components is given by the
+probability of component failure as described in Theorem \ref{thm:}. For Weibull
+components, this is given by
+\begin{equation}
+\label{eq:sys_weibull_component_failure_probability}
+\Pr\{K_i = j\} = \int_0^\infty \frac{h_j(t;\v{\theta_j})}{\sum_{l=m}} dt
+    =
+\end{equation}
+\begin{proof}
+By Theorem \ref{thm:}, the probability of component failure is given by
+$$
+\Pr\{K_i = j\} = E_{\v\theta}\biggl\{\frac{h_j(\T_i;\v{\theta_j})}
+    {\sum_{l=1}^m h_l(\T_i;\v{\theta_l})}\biggr\}.
+$$
+\end{proof}
+
+In a well-designed series system, the component failure characteristics are similar:
+they have a similar MTTF and a similar probability of being the component cause of
+failure, i.e., they have similar shapes and scales, so that system failures are not
+dominated by some subset of components.
+
+As we discussed in the previous section, if the shapes are similar, the series system
+is approximately Weibull. In our simulation study, we analyze a series system with
+Weibull components that have similar shape parameters (except in those studies where
+we vary the shape parameters to test the sensitivity of the MLE to different component
+failure characteristics).
+
+
 
 ## Weibull Likelihood Model for Masked Data
 In Section \ref{sec:like_model}, we discussed two separate kinds of likelihood
@@ -1167,6 +1227,87 @@ BCa bootstrap method for computing 95% confidence intervals for a
 series system with $m=5$ Weibull components.
 
 
+```{r sim-study-design, echo = F}
+theta <- c(shape1 = 1.2576, scale1 = 994.3661,
+           shape2 = 1.1635, scale2 = 908.9458,
+           shape3 = 1.1308, scale3 = 840.1141,
+           shape4 = 1.1802, scale4 = 940.1342,
+           shape5 = 1.2034, scale5 = 923.1631)
+
+shapes <- theta[grepl("shape", names(theta))]
+scales <- theta[grepl("scale", names(theta))]
+```
+
+We consider the data from @Huairu-2013, which includes a study of the reliability of a series system
+with three Weibull components with shape and scale parameters given by
+\begin{equation}
+\begin{aligned}
+    k_1 = `r theta["shape1"]` &\quad \lambda_1 = `r theta["scale1"]`\\
+    k_2 = `r theta["shape2"]` &\quad \lambda_2 = `r theta["scale2"]`\\
+    k_3 = `r theta["shape3"]` &\quad \lambda_3 = `r theta["scale3"]`.
+\end{aligned}
+\end{equation}
+Our approach is to extend this system to a five component system by adding two
+more components with shape and scale parameters given by
+\begin{equation}
+\begin{aligned}
+    k_4 = `r theta["shape4"]` &\quad \lambda_4 = `r theta["scale4"]`\\
+    k_5 = `r theta["shape5"]` &\quad \lambda_5 = `r theta["scale5"]`.
+\end{aligned}
+\end{equation}
+
+```{r table-2, table.attr = "style='width:50%;'", echo = F, results = 'asis', fig.cap = "Component Reliability", fig.align = "center"}
+mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
+    shapes=shapes) }, lower=0, upper=Inf)$value
+mttf.sys <- round(mttf.sys, digits=3)
+mttf <- round(gamma(1 + 1/shapes) * scales, digits=3)
+components <- data.frame(
+  "MTTF" = mttf,
+  "Failure Probability" = round(wei_series_cause(1L:5L, scales=scales, shapes=shapes), digits=3),
+  row.names = paste("Component", 1:5)
+)
+
+components <- rbind(components, "Series System" = c(mttf.sys, NA))
+names(components) <- gsub("\\.", " ", names(components))
+knitr::kable(components, caption = "Mean Time To Failure (MTTF) and Probability of Component Failure of Weibull Components in Series Configuration")
+```
+
+As shown by Table \ref{tab:table-2}, there are no components that are significantly less reliable
+than any of the others. 
+
+## Simulation Scenarios
+
+We define a simulation scenario to be some combination of $n$, $p$, $k_3$, and $\lambda_3$.
+We are interested in choosing a small number of scenarios that are
+representative of real-world scenarios and that are interesting to analyze.
+
+Here is an outline of the simulation study analysis:
+
+1. Fix a combination of simulation parameters to some value, and vary the remaining parameter, e.g.,
+   fix $p$, $k_3$, $\lambda_3$, and vary the sample size $n$.
+
+2. Simulate $R$ datasets from the Data Generating Process (DGP) described in
+   Section \ref{sec:data-gen}.
+
+3. For each of these $R$ datasets, compute the MLE.
+
+4. For each of these $R$ datasets, perform bootstrap resampling $B$ times to create
+   a set of bootstrap samples.
+
+5. Calculate the MLE for each of these bootstrap samples. This generates an empirical
+   distribution of the MLE, which is used to construct a confidence interval for
+   the MLE.
+
+6. For each dataset, determine whether the true parameter value falls within the
+   computed CI. Aggregate this information across all $R$ datasets to estimate the
+   coverage probability of the CI and the bias of the MLE at that particular
+   combination of simulation parameters.
+
+7. Interpret the results and discuss the performance of the MLE estimator
+   under the chosen scenarios.
+
+For how we generate a scenario, see Appendix A.
+
 ## Data Generating Process {#sec:data_gen}
 
 In this section, we describe the data generating process for our simulation studies.
@@ -1204,6 +1345,20 @@ $$
 So, after we generate the system failure time $\T_i$, we generate the censoring
 time $S_i$ by taking the minimum of $\T_i$ and $\tau$.
 
+In our simulation study, we parmaterize the right-censoring time $\tau$ by the
+quantile $q = 0.825$ of the series system,
+$$
+    \tau = F_{\T_i}^{-1}(q).
+$$
+This means that $82.5\%$ of the series systems are expected to fail before time $\tau$
+and $17.5\%$ of the series are expected to be right-censored. To solve for the $82.5\%$
+quantile of the series system, we define the function $g$ as
+$$
+g(\tau) = F_{\T_i}(\tau;\v\theta) - q
+$$
+and find its root using the Newton-Raphson method. See Appendix H for the R code that
+implements this procedure.
+
 ### Masking Model for Component Cause of Failure {-}
 
 We must generate data that satisfies the masking conditions described in
@@ -1213,39 +1368,97 @@ method, which we call the *Bernoulli candidate set model*. In this model, each
 non-failed component is included in the candidate set with
 a fixed probability $p$, independently of all other components and independently
 of $\v\theta$, and the failed component is always included in the candidate set.
-See Appendic G for the R code that implements this model.
+See Appendix G for the R code that implements this model.
 
-## Effect of Masking on the MLE {#sec:masking}
+## Sensitivity of the MLE to Simulation Parameters
 
-Estimating latent components' parameters can be challenging.
-\footnote{In our simulation study, we began the
-optimization at the known true parameter value $\v\theta$. In
-real-world scenarios, the true value is unknown, requiring an
-initial guess. A poor initial guess may further complicate the
-process, neccessitating the use of global optimization methods
-such as simulated annealing to find a good initial guess
-\citep{mclachlan2007algorithm}.}
-The surface of the log-likelihood function may have multiple local
-maxima and ridges, which make it more challengnig to find the MLE,
-and in some cases, there is no unique MLE due to insufficient data
-in the presence of masking and right-censoring.
-We seek to explore some of these issues in this section.
+Estimating component parameters in the presence of masking,
+censoring, and other issues like poorly designed systems can
+be challenging, e.g., multiple local maxima, ridges, and flat regions
+on the surface of the likelihood function.
 
-1. **Candidate Sets Construction**: The candidate sets are constructed such
-   that component $1$ is present if and only if component $2$ is present,
-   it becomes impossible to estimate their parameters separately. This may
-   occur if an analyst can only identify a larger failed component without
-   specifying the smaller components within it.\footnote{In this case,
-   we may want to combine the components into a single component and estimate
-   the parameters of the reduced system.}
+### Issues Influencing the MLE
+
+1. **Masking Probability**: These aspects significantly
+impact the MLE's accuracy and precision. By varying the shape or scale parameter of a
+single component, we explore how they affect the sensitivity of the sampling distribution
+of the MLE. Sections \ref{sec:effect-masking} and \ref{sec:effect-reliability} delve
+into these areas.
+
+2. **Masking Probability**: Candidate sets can be
+constructed in many ways, and our likelihood model is not robust to all of them. 
+
+Identifiability refers to the unique mapping of the model parameters to the likelihood
+function. Lack of identifiability can lead to multiple sets of parameters that explain
+the data equally well, making inference about the true parameters challenging. This
+can arise in our likelihood model in some situations.
+
+For instance, if an analyst has a procedure that identifies when a larger component has
+failed, but not which of the smaller components failed in that larger component, then the
+parameters of the components in that larger component are interchangeable.
+
+
+
+when candidate sets are constructed in a way that
+makes the likelihood function flat or nearly flat. For example, if the candidate set
+
+
+his can lead to non-identifiability in the
+likelihood model, where the parameters of some components are indiscernible. Although
+such occurrences might arise by chance in our Bernoulli candidate set model, they can
+introduce bias in the MLE, especially as the masking probability $p$ increases.
+
+3. **Right-Censoring**: While we do not explore this empirically, the presence of
+aggressive right-censoring can lead to bias in the MLE by pushing it to estimate larger
+MTTF (Mean Time To Failure) for the system components. The phenomenon is well-documented,
+and readers can refer to \cite{klein2005survival} for further insights. This potential
+bias is something to keep in mind during experimental design.
+
+### Addressing Non-Identifiability and Convergence
+
+A flat or nearly flat likelihood function can cause numerical methods like Newton-Raphson to take a long time to converge. We mostly disregarded identifiability issues in our simulation study, only discarding datasets that failed to converge within 125 iterations. Extreme masking probabilities were the exceptions.
+
+### Effect of Masking the Component Cause of Failure {#sec:effect-masking}
+
+Masking the component cause of failure can introduce biases in the MLE. The effect can be more pronounced for components frequently appearing in candidate sets. Details on how this bias affects the MLE for the shape and scale parameters of a Weibull component are provided in this section, including the interplay between masking and right-censoring effects.
+
+## Other Considerations
+
+These aspects mentioned above comprise some of the challenges in estimating the parameters of the components in our likelihood model. We must also consider the impact of simulation parameters like sample size, which will be further discussed in the relevant parts of the simulation study. The broader implications, combined with subsequent bootstrapping of confidence intervals, shape our assessment of the performance of the BCa confidence intervals and the overall method.
+
+
+
+
+## Sensitivity of the MLE to Simulation Parameters
+
+
+
+### Challenges and Issues Explored in Our Simulation Study
+In our simulation study, we explore the sensitivity of the sampling
+distribution of the MLE, not just to the sample size, but to the
+masking probability $p$ and the presence of a least reliable component
+by varying the shape parameter or scale parameter of a single component.
+
+Briefly, we consider some examples which may arise that make it
+difficult to estimate the parameters of the components of a series
+system under our likelihood model:
+
+1. **Candidate Sets Construction**: Candidate sets are constructed such
+   that component $1$ is present if and only if component $2$ is present.
+   In this case, the parameters of components $1$ and $2$ are not
+   identifiable in our likelihood model. This may occur if an analyst can
+   only identify a larger failed component without specifying the smaller
+   components within it.\footnote{It may be possible to combine the
+   components into a single larger component to make the model identifiable.}
    
-   In our Bernoulli candidate set model, this is something that can arise only
-   by chance. In Section \ref{sec:effect-masking}, we explore this issue by
-   assessing the effect of varying the masking probability $p$ in the Bernoulli
-   candidate set model on the MLE. It is not the pathological case discussed
-   above, where the parameters of the components are not identifiable, except
-   in the case where $p$ is large enough that the candidate set always contain
-   every component.
+   In our Bernoulli candidate set model, such constructions for candidate sets
+   can arise only by chance. In Section \ref{sec:effect-masking}, we explore
+   this issue by assessing the effect of varying the masking probability $p$
+   in the Bernoulli candidate set model on the MLE. It is not the pathological
+   case discussed above, where the parameters of the components are not
+   identifiable, but as the masking probability $p$ increases, the MLE
+   becomes less accurate and precise since there is less information in the
+   data set about component causes of failure.
 
 2. **Least Reliable Component**: If a series system has a significantly less
    reliable component that causes every system failure, the data may only
@@ -1256,100 +1469,33 @@ We seek to explore some of these issues in this section.
 
 3. **Aggressive Right-Censoring**: If the right-censoring time $\tau$ is
    too short, the data may not contain enough information to estimate the
-   parameters of any of the components.
+   parameters of any of the components. This is a problem with the design
+   of the experiment, not with the likelihood model.
 
    We do not explore this issue, but it is something to keep in mind when
    designing experiments. We do comment on the expected effect of right-censoring
    on the MLE in Section \ref{sec:effect-censoring}.
 
-To 
+Due to censoring and masking, by chance it may be the case that the likelihood Function
+conditioned on particular data sets is flat (non-identifiable) or nearly flat, which
+can cause numerical methods like Newton-Raphson to take a long time to converge to a solution.
 We largely ignored identifiability issues in our simulation
 study, with the exception that we discarded any data sets that did not converge to a solution
 after 125 iterations.\footnote{The choice of $125$ iterations was driven by the computational demands of the
 simulation study combined with the subsequent bootstrapping of the confidence intervals.}
-A log-likelihood function that is flat can cause our convergence
-criteria to take a long time to reach a solution. Therefore, a failure to converge within
-125 iterations could be seen as evidence of potential identifiability issues.
+A failure to converge within 125 iterations could be seen as evidence of potential
+identifiability issues, in which case one might argue that this data set is not informative
+enough about the parameters of the components in our likelihood model.
 
-Nonetheless, such scenarios occurred infrequently. During the bootstrapping of
-confidence intervals, we included all MLEs, even those that did not converge. This worst-case analysis
-approach was adopted because our main objective was to assess the performance of the BCa confidence intervals.
-We were concerned that if we took any additional steps, we may unintentionally
-bias the results in favor of producing narrow BCa confidence intervals with good coverage
-probabilities.
-
-## Assessing the Impact of Sample Size, Masking, and Censoring on the MLE
-
-```{r sim-study-design, echo = F}
-theta <- c(shape1 = 1.2576, scale1 = 994.3661,
-           shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1342,
-           shape5 = 1.2034, scale5 = 923.1631)
-
-shapes <- theta[grepl("shape", names(theta))]
-scales <- theta[grepl("scale", names(theta))]
-```
-
-
-In this section, we focus our attention on well-engineered systems in which the component
-reliabilities are approximately identical.
-We consider the data from @Huairu-2013, which includes a study of the reliability of a series system
-with three Weibull components with shape and scale parameters given by
-\begin{equation}
-\begin{aligned}
-    k_1 = `r theta["shape1"]` &\quad \lambda_1 = `r theta["scale1"]`\\
-    k_2 = `r theta["shape2"]` &\quad \lambda_2 = `r theta["scale2"]`\\
-    k_3 = `r theta["shape3"]` &\quad \lambda_3 = `r theta["scale3"]`.
-\end{aligned}
-\end{equation}
-Our approach is to extend this system to a five component system by adding two
-more components with shape and scale parameters given by
-\begin{equation}
-\begin{aligned}
-    k_4 = `r theta["shape4"]` &\quad \lambda_4 = `r theta["scale4"]`\\
-    k_5 = `r theta["shape5"]` &\quad \lambda_5 = `r theta["scale5"]`.
-\end{aligned}
-\end{equation}
-
-```{r table-2, table.attr = "style='width:50%;'", echo = F, results = 'asis', fig.cap = "Component Reliability", fig.align = "center"}
-mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
-    shapes=shapes) }, lower=0, upper=Inf)$value
-mttf.sys <- round(mttf.sys, digits=3)
-mttf <- round(gamma(1 + 1/shapes) * scales, digits=3)
-components <- data.frame(
-  "MTTF" = mttf,
-  "Failure Probability" = round(wei_series_cause(1L:5L, scales=scales, shapes=shapes), digits=3),
-  row.names = paste("Component", 1:5)
-)
-
-components <- rbind(components, "Series System" = c(mttf.sys, NA))
-names(components) <- gsub("\\.", " ", names(components))
-knitr::kable(components, caption = "Mean Time To Failure (MTTF) and Probability of Component Failure of Weibull Components in Series Configuration")
-```
-
-As shown by Table \ref{tab:table-2}, there are no components that are significantly less reliable
-than any of the others. Before we begin our simulation study, we first explain what we expect the simulations
-to demonstrate and offer an explanation for why we expect this to be the case.
+Nonetheless, such scenarios occurred infrequently, usually less than 1%, except in extreme cases
+where the masking probability was upwards of 75%. However, during the bootstrapping of
+confidence intervals, we included all solutions, whether they converged to a solution or not. This
+worst-case analysis approach was adopted because a primary objective was to assess the performance
+of the BCa confidence intervals. We were concerned that if we took any additional steps, we may
+unintentionally bias the results in favor of producing narrow BCa confidence intervals with good
+coverage.
 
 ### Effect of Right-Censoring {#sec:effect-censoring}
-
-In all of our simulation studies, we use a fixed right-censoring time $\tau = 377.71$,
-which is the $82.5\%$ quantile of the series system. This means that $82.5\%$ of the
-series systems are expected to fail before time $\tau$ and $17.5\%$ of the series are
-expected to be right-censored. To solve for the $82.5\%$ quantile of the series system,
-we solve for $\tau$ in the equation
-\begin{equation}
-\label{eq:quantile}
-F_{\T_i}(\tau;\v\theta) = 0.825
-\end{equation}
-using the Newton-Raphson method to find the root of $g(\tau) = F_{\T_i}(\tau;\v\theta) - 0.825$,
-which has the unique solution $\tau = 377.71$.
-
-
-Having a fixed right-censoring lifetime $\tau$ represents a situation in which an experiment
-is run for a fixed amount of time $\tau$, and all systems under observation that have not
-failed by the end of the experiment are right-censored.
 
 Right-censoring introduces a source of bias in the MLE. Right-censoring has the
 effect of pushing the MLE to estimate a larger MTTF for each of the components,
@@ -1360,15 +1506,16 @@ of pushing the MLE to estimate a larger MTTF for the system so that it is more
 likely to fail after the censoring time. See \cite{klein2005survival} for more
 information on this phenomenon.
 
-To increase the MTTF of a series system, the MTTF of each component
-is increased. The mean time to failure (MTTF) for the $j$\textsuperscript{th}
-component in a Weibull distribution is given by
-\begin{equation}
-\label{eq:mttf-wei}
+To increase the MTTF of a series system, the mean time to failure (MTTF) of each component
+is increased. By Equation \eqref{eq:mttf-wei}, The MTTF for the $j$\textsuperscript{th}
+is given by
+$$
 \text{MTTF}_j = \lambda_j \Gamma(1 + 1/k_j),
-\end{equation}
+$$
 therefore, in order to increase the MTTF of the components, lower values for the shape parameters
-are chosen and higher values for the scale parameters are chosen.
+are chosen and higher values for the scale parameters are chosen. Depending on the values of the
+shape and scale parameters, either the shape or scale parameter may have a larger effect on the
+MTTF.
 
 ### Effect of Masking the Component Cause of Failure {#sec:effect-masking}
 
@@ -1409,6 +1556,14 @@ biasing the MLE for the shape parameter upwards.
 > plots in the sim study where we vary $k_3$, we see that the effect of masking is more
 > pronounced for ... finish these thoughts after looking at the plots.
 
+
+
+## Assessing the Impact of Sample Size
+
+In this section, we focus our attention on well-engineered systems in which the component
+reliabilities are approximately identical.
+
+
 ### Assessing the Bootstrapped Confidence Intervals
 
 Our primary interest is in assessing the performance of the BCa confidence intervals
@@ -1425,41 +1580,6 @@ probability by generating $R$ datasets from the Data Generating Process (DGP) an
 computing the coverage probability for each dataset. We will then aggregate this
 information across all $R$ datasets to estimate the coverage probability.
 
-### Simulation Scenarios
-
-We used a fixed right sensoring time of $\tau$, which we defined to be the $82.5\%$
-quantile of the series system such that $82.5\%$ of
-the sytems are expected to fail before time $\tau$$ and $17.5\%$ of the
-series systems are expected to be right-censored.
-
-We define a simulation scenario to be some comination of $n$ and 
-$p$. We are interested in choosing a small number of scenarios that are
-representative of real-world scenarios and that are interesting to analyze.
-
-Here is an outline of the simulation study analysis:
-
-1. Choose a sample size $n$ and a masking probability $p$ (with $\tau$ fixed)
-   and simulate $R$ datasets from the Data Generating Process (DGP) described in
-   Section \ref{sec:data-gen}.
-
-2. For each of these $R$ datasets, compute the MLE.
-
-3. For each of these $R$ datasets, perform bootstrap resampling $B$ times to create
-   a set of bootstrap samples.
-
-4. Calculate the MLE for each of these bootstrap samples. This generates an empirical
-   distribution of the MLE, which is used to construct a confidence interval for
-   the MLE.
-
-5. For each dataset, determine whether the true parameter value falls within the
-   computed CI. Aggregate this information across all $R$ datasets to estimate the
-   coverage probability of the CI.
-
-6. Interpret the results and discuss the performance of the MLE estimator
-   under the chosen scenarios.
-
-For how we generate a scenario, see Appendix A.
-Now, we will discuss the results of the simulation study.
 
 ### Coverage Probability vs Sample Size
 
@@ -1567,38 +1687,6 @@ knitr::include_graphics("image/plot-p-vs-stats-shapes-n90.pdf")
 
 ## Assessing the Impact of Different Component Reliabilities {#sec:mttf-c3}
 
-We consider two definitions of reliability, the mean time to failure (MTTF) and the
-probability of component cause of failure. The MTTF for the $j$\textsuperscript{th}
-component is given by its expected value,
-$$
-\text{MTTF}_j = E(T_{i j})
-$$
-which for the Weibull distribution has the closed-form expression
-$$
-\text{MTTF}_j = \lambda_j \, \Gamma(1 + 1/k_j),
-$$
-where $\Gamma$ is the gamma function. If the components have the same shape parameter,
-then the MTTF is proportional to the scale parameter, $\text{MTTF}_j \propto \lambda_j$,
-and the component with the smallest scale parameter is the least reliable by both definitions,
-the MTTF and the probability of component cause of failure.
-
-The same is true if the components have the same scale parameter, then the MTTF increases as the shape
-parameter decreases, $\text{MTTF}_j \propto \Gamma(1 + 1/k_j)$, and the component with the
-largest shape parameter is the least reliable by both definitions.
-
-However, the shape parameter $k$ of the Weibull distribtion is of particular importance:
-\begin{enumerate}
-\item[$k_j < 1$] The hazard function decreases with respect to time. For instance,
-  this may occur as a result of defective components being weeded out early.
-\item[$k_j = 1$] The hazard function is constant with respect to time. This is an
-  idealized case that is rarely observed in practice, but may be useful for modeling
-  purposes.
-\item[$k_j > 1$] The hazard function increases with respect to time. For instance,
-  this may occur as a result of components wearing out or aging.
-\end{enumerate}
-
-A system with a mixture of components, some with decreasing and some with increasing
-failure rates is more difficult to understand and model.
 
 In Figure \ref{fig:exp_weib_haz}, the top row shows two components with roughly
 the same shape and scale parameters, and the bottom row shows two components with
@@ -1608,8 +1696,7 @@ of being the cause of a system failure). The top system is well-designed, with n
 weak link in the chain, while the bottom system is poorly designed and difficult
 to understand.
 
-We focus our attention on systems in which all components have increasing, or all
-components have decreasing, failure rates, and then we vary the scale or shape
+In this section, we vary the scale or shape
 parameter of one of the components to examine the effect this has on the MLE and its
 sampling distribution.
 
@@ -2233,9 +2320,6 @@ for (shape3 in shapes3) {
 #' @param p a vector of probabilities (p[j] is the probability that the jth
 #'          system will include a non-failed component in its candidate set,
 #'          assuming the jth system is not right-censored).
-#' @importFrom md.tools md_decode_matrix md_encode_matrix
-#' @importFrom dplyr %>% bind_cols
-#' @export
 md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
     n <- nrow(df)
     p <- rep(p, length.out = n)
@@ -2247,3 +2331,29 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
     df %>% bind_cols(md_encode_matrix(Q, prob))
 }
 ```
+
+# Appendix E: Series System Quantile Function
+
+```{r, eval=FALSE}
+#' Quantile function (inverse of the cdf).
+#' By definition, the quantile `p` * 100% for a strictly monotonically increasing
+#' cdf `F` is the value `t` that satisfies `F(t) - p = 0`.
+#' We solve for `t` using newton's method.
+#'
+#' @param p vector of probabilities.
+#' @param shapes vector of weibull shape parameters for weibull lifetime
+#'               components
+#' @param scales vector of weibull scale parameters for weibull lifetime
+#'               components
+qwei_series <- function(p, shapes, scales) {
+    t0 <- 1
+    repeat {
+        t1 <- t0 - sum((t0/scales)^shapes) + log(1-p) /
+            sum(shapes*t0^(shapes-1)/scales^shapes)
+        if (abs(t1 - t0) < tol) {
+            break
+        }
+        t0 <- t1
+    }
+    return(t1)
+}

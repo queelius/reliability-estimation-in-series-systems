@@ -1,0 +1,15 @@
+
+
+In a well-designed series system, the components are chosen such that the failure characteristcs
+of the components are similar, which suggests the shape parameters of the components are
+similar. If we fit an MLE to the constrained likelihood model where the shape parameters are
+constrained to be equal, then the MLE of the shape parameter ...
+
+
+In this case, the series system itself is (approximately) Weibull and the component cause of failure
+is approximately given by
+$$
+    \Pr\{K_i = j | \T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-\bar{k}}}{\sum_{l=1}^{m} \lambda_l^{-k}},
+$$
+which is independent of the system failure time $t_i$.
+
