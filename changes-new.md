@@ -5,7 +5,10 @@
   i use 125 iteration limit as a catch-all for potential convergence and identifiability issues (flat likelihood)
 
 - provided some new material on weibull components yielding a weibull system when shapes are approximately the same.
-  in this case, some interesting results: Pr(K_i = j|T_i = t_i) = Pr(K_i = j).
+  in this case, some interesting results: Pr(K_i = j|T_i = t_i) = Pr(K_i = j). see
+  section "Special Case: Series System That Is Weibull". I'm not sure we want to keep this section, but is interesting
+  and I put it there for your review, since you had mentioned that you wanted to see if and when
+  the series system is Weibull.
 
 - removed the flat likelhood graphs and in-depth discussion.
 
