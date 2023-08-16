@@ -19,7 +19,7 @@ options(digits = 5, scipen = 999)
 
 N <- c(90)
 P <- c(.215)
-Q <- c(.6, .7125, .9, 1)
+Q <- rep(c(.6, .7125, .9, 1), 500)
 R <- 3
 B <- 1000L
 max_iter <- 100L

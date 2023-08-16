@@ -726,25 +726,24 @@ $$
 We use this result in Section \ref{sec:mle} to derive the maximum likelihood
 estimator (MLE) of $\v\theta$.
 
-## Identifiability Issues
+## Identifiability and Convergence Issues
 
-Identifiability refers to the unique mapping of the model parameters to the likelihood
-function. Lack of identifiability can lead to multiple sets of parameters that explain
-the data equally well, making inference about the true parameters challenging. This
-can arise in our likelihood model in some situations.
+In our likelihood model, masking and right-censoring can lead to issues related
+to identifiability and flat likelihood regions.
+Identifiability refers to the unique mapping of the model parameters to the
+likelihood function, and lack of identifiability can lead
+to multiple sets of parameters that explain the data equally well, making inference
+about the true parameters challenging \citep{lehmann1998theory}, while 
+flat likelihood regions can complicate convergence \citep{wu1983convergence}.
 
-For instance, if an analyst has a procedure that identifies when a larger component has
-failed, but not which of the smaller components failed in that larger component, then the
-parameters of the components in that larger component are interchangeable.
+In our simulation study, we address these challenges in a pragmatic way. Specifically,
+failure to converge to a solution within a maximum of 125 iterations is interpreted as
+evidence of the aforementioned issues, leading to the discarding of the sample, with
+the process then repeated with a new synthetic sample.
 
-For instance, suppose we observe the following sample in Table \ref{tab:identifiability}.
-
-System | Right-censoring time ($S_i$) | Right censoring indicator ($\delta_i$) | Candidate set ($\mathcal{C}_i$) |
------- | ---------------------------- | --------------------------- | --------------------- |
-   1   | $2.1$                        | 1                           | $\{1,2\}$             |
-   2   | $1.6$                        | 1                           | $\{2\}$               |
-   
-
+This strategy helps ensure the robustness of the results, while acknowledging the
+inherent complexities of likelihood-based estimation in models characterized by
+masking and right-censoring.
 
 Maximum Likelihood Estimation {#sec:mle}
 ========================================
@@ -845,19 +844,18 @@ applies two corrections to the standard bootstrap method:
   Since we have a number of different shape parameters, $k_1,\ldots,k_m$, we may expect the shape of the
   distribution of the MLE to change as a function of the true parameter, making this correction potentially useful.
 
-Since we are primarly interested in generating confidence intervals for small samples (otherwise the inverse FIM would
-be a good approximation) for a potentially biased MLE for the parameters of Weibull components in a series configuration
-(see Sections \ref{sec:effect-censoring} and \ref{sec:effect-masking}), we think the BCa method is a good choice for our
-analysis. For more details on BCa, see \cite{efron1987better}.
+Since we are primarly interested in generating confidence intervals for small samples for a
+potentially biased MLE, the BCa method may be a good choice for our analysis. For more details
+on BCa, see \cite{efron1987better}.
 
 In our simulation study, we will assess the performance of the bootstrapped
 confidence intervals by computing the coverage probability of the confidence
-intervals. A 95% confidence interval should contain the true
-value 95% of the time. If the confidence interval is too narrow, it will have
+intervals. A well-calibrated 95% confidence interval contains the true
+value around 95% of the time. If the confidence interval is too narrow, it will have
 a coverage probability less than 95%, which conveys a sort of false confidence
 in the precision of the MLE. If the confidence interval is too wide, it will
 have a coverage probability greater than 95%, which conveys a lack of confidence
-in the precision of the MLE. Thus, we want the confidence interval to be as
+in the precision of the MLE. We want confidence intervals to be as
 narrow as possible while still having a coverage probability close to the
 nominal level, 95%.
 
@@ -915,11 +913,9 @@ The shape parameter of the Weibull distribtion is of particular importance:
 \begin{enumerate}
 \item[$k_j < 1$] The hazard function decreases with respect to time. For instance,
   this may occur as a result of defective components being weeded out early.
-\item[$k_j = 1$] The hazard function is constant with respect to time. This is an
-  idealized case that is rarely observed in practice, but may be useful for modeling
-  purposes.
+\item[$k_j = 1$] The hazard function is constant with respect to time.
 \item[$k_j > 1$] The hazard function increases with respect to time. For instance,
-  this may occur as a result of components wearing out or aging.
+  this may occur as a result of components wearing out or aging over time.
 \end{enumerate}
 
 
@@ -973,6 +969,10 @@ Equations \eqref{eq:sys_weibull_reliability_function} and
 
 ## Special Case: Series System That Is Weibull
 
+> Dr. Agustin: I can expand these proofs if you wish to keep this section.
+> It's interesting, but the paper doesn't really exploit it,
+> with the exception that it connects to the well-designed system discussion.
+
 A series system composed of Weibull components is not generally Weibull unless the
 shape parameters of the components are identical.
 \begin{theorem}
@@ -1003,35 +1003,32 @@ $$
 \end{proof}
 
 \begin{theorem}
-If the series system has Weibull components with identical shape parameters, the component cause of
-failure is conditionally independent of the system failure time:
+If a series system has Weibull components with identical shape parameters, the component
+cause of failure is conditionally independent of the system failure time:
 $$
     \Pr\{K_i = j | \T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-k}}{\sum_{l=1}^{m} \lambda_l^{-k}}.
 $$
 \end{theorem}
 \begin{proof}
-By Theorem \ref{sec:test}, the conditional probability of the $j$\textsuperscript{th} component being the
+The conditional probability of the $j$\textsuperscript{th} component being the
 cause of failure given the system failure time is given by
-$$
-\Pr\{K_i = j | \T_i = t\} = \frac{h_j(t;\v{\theta_j})}{\sum_{l=1}^m h_l(t;\v{\theta_l})}
+\begin{align*}
+\Pr\{K_i = j | \T_i = t\}
+    &= \frac{f_{K_i, \T_i}(j, t;\v\theta)}{f_{\T_i}(t;\v\theta)}
+    = \frac{h_j(t;k,\lambda_j) R_{\T_i}(t;\v\theta)}
+        {h_{\T_i}(t;\v{\theta_j}) R_{\T_i}(t;\v\theta)}\\
+    &= \frac{h_j(t;k,\lambda_j)}{\sum_{l=1}^m h_l(t;k,\lambda_l)}
     = \frac{\frac{k}{\lambda_j}\bigl(\frac{t}{\lambda_j}\bigr)^{k-1}}
-        {\sum_{l=1}^m \frac{k}{\lambda_;}\bigl(\frac{t}{\lambda_l}\bigr)^{k-1}},
-$$
-which simplifies to the result given in the theorem.
+        {\sum_{l=1}^m \frac{k}{\lambda_l}\bigl(\frac{t}{\lambda_l}\bigr)^{k-1}}
+    = \frac{\bigl(\frac{1}{\lambda_j}\bigr)^k}
+        {\sum_{l=1}^m \bigl(\frac{1}{\lambda_l}\bigr)^k}.
+\end{align*}
 \end{proof}
-
-If the scale parameters of the components are also identical, then scale
-parameter $\lambda^*$ is given by
-$$
-    \lambda^* = \frac{\lambda}{m^{1/k}}.
-$$
-In this case, the probability of the component cause of failure for any component
-is given by $1/m$.
 
 ## System and Component Reliabilities {#sec:sys_weibull_reliability}
 
-In addition to the survival function, a common measure of reliability is
-mean time to failure (MTTF). The MTTF for the $j$\textsuperscript{th}
+In addition to the reliability (survival) function, a common measure of
+reliability is mean time to failure (MTTF). The MTTF for the $j$\textsuperscript{th}
 component is given by
 \begin{equation}
 \label{mttf-weibull}
@@ -1042,20 +1039,7 @@ where $\Gamma$ is the gamma function.
 Components may have similar MTTFs, but some components may be more likely to fail
 early and others may be more likely to fail late, depending upon their shapes.
 A good measure of the *relative* reliability of the components is given by the
-probability of component failure as described in Theorem \ref{thm:}. For Weibull
-components, this is given by
-\begin{equation}
-\label{eq:sys_weibull_component_failure_probability}
-\Pr\{K_i = j\} = \int_0^\infty \frac{h_j(t;\v{\theta_j})}{\sum_{l=m}} dt
-    =
-\end{equation}
-\begin{proof}
-By Theorem \ref{thm:}, the probability of component failure is given by
-$$
-\Pr\{K_i = j\} = E_{\v\theta}\biggl\{\frac{h_j(\T_i;\v{\theta_j})}
-    {\sum_{l=1}^m h_l(\T_i;\v{\theta_l})}\biggr\}.
-$$
-\end{proof}
+probability of component failure given by Equation \eqref{eq:prob_k}.
 
 In a well-designed series system, the component failure characteristics are similar:
 they have a similar MTTF and a similar probability of being the component cause of
@@ -1254,19 +1238,34 @@ means components are unlikely to fail early.
 ```{r series-sys, table.attr = "style='width:50%;'", echo = F, fig.align = "center"}
 mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
     shapes=shapes) }, lower=0, upper=Inf)$value
+
 mttf.sys <- round(mttf.sys, digits=3)
 mttf <- round(gamma(1 + 1/shapes) * scales, digits=3)
+probs <- round(wei_series_cause(1L:5L, scales=scales, shapes=shapes), digits=3)
+tau <- qwei_series(p=0.825, scales=scales, shapes=shapes)
+surv.sys <- round(surv_wei_series(tau, scales=scales, shapes=shapes), digits=3)
+surv <- round(pweibull(tau, shape = shapes, scale = scales, lower.tail = FALSE), digits=3)
 components <- data.frame(
-  "Shape" = shapes,
-  "Scale" = scales,  
-  "MTTF" = mttf,
-  "Failure Probability" = round(wei_series_cause(1L:5L, scales=scales, shapes=shapes), digits=3),
+  Shape = shapes,
+  Scale = scales,  
+  MTTF = mttf,
+  Prob = probs,
+  Survival = surv,
   row.names = paste("Component", 1:5)
 )
 
-components <- rbind(components, "Series System" = c(NA, NA, mttf.sys, NA))
+components <- rbind(components, "Series System" = c(NA, NA, mttf.sys, NA, surv.sys))
 names(components) <- gsub("\\.", " ", names(components))
-knitr::kable(components, caption = "Shape, Scale, Mean Time To Failure (MTTF), and Probability of Component Failure of Weibull Components in Series Configuration")
+names(components)[1] <- "Shape ($k_j$)"
+names(components)[2] <- "Scale ($\\lambda_j$)"
+names(components)[3] <- "MTTF$_j$"
+names(components)[4] <- "$\\Pr\\{K_i = j\\}$"
+names(components)[5] <- "$R_j(\\tau;k_j,\\lambda_j)$"
+knitr::kable(
+    components,
+    caption = "Weibull Components in Series Configuration",
+    escape = FALSE # Add this line to allow raw LaTeX
+)
 ```
 
 
@@ -1522,8 +1521,19 @@ There are several interesting observations that we can make about Figure \ref{fi
 ### Scenario #4: Assessing the Impact of Changing the Shape Parameter of a Component {#sec:shape-vs-mttf}
 
 When the shape parameters in a series system are approxiamtely equal, as is the case in our
-base series system defined in Table \ref{tab:series-sys}, then the MTTF of the components
-are proprotional to their scale parameters. However, when the shape parameters are not
+base series system defined in Table \ref{tab:series-sys}, then a larger scale parameter yields
+a larger MTTF and smaller probability of component failure. However, when the shape parameters
+are not equal, then the relationship between the scale parameter and the MTTF is more complex.
+
+There are two effects taking place in the presence of masking and right-censoring. In the case
+of right-censoring, we want to increase the reliability $R_{\T_i}(\tau)$ to make it more likely
+that the system is still functioning at time $\tau$. This can be accomplished by increasing the
+
+
+
+
+
+
 
 
 The shape parameter of the Weibull distribution has a non-linear relationship to its MTTF.
@@ -1566,7 +1576,6 @@ This means that component 1 is more likely to fail early in its lifetime (high i
 to fail later in its lifetime (low aging). This means that component 1 is more likely to be the cause of failure
 than the other components, even though it has a larger MTTF.
 
-#### Ideal Case: No Right-Censoring and No Masking of Component Cause of Failure
 ```{r n100-p0-q1, fig.cap=c("Probability of Component 1 Failure vs Bias (p = 0, q = 1)"), fig.align="center", echo = F}
 knitr::include_graphics("image/loess_smoothed_n_100_p_0_q_1_probs_0.0_-_0.55.pdf")
 ```
@@ -1663,19 +1672,23 @@ To analyze the behavior of the scale parameter bias, we show the effect of varyi
 1 on the probability of component failure and the MTTF of the components and the system in
 Table \ref{tab:table-vary-lam1}.
 
-```{r table-vary-lam1, echo = FALSE}
+```{r table-vary-lam1, echo = FALSE, eval=F}
 lambda <- seq(1, 4, by = 1)
 P1 <- rep(NA, length(lambda))
 P2 <- rep(NA, length(lambda))
 P3 <- rep(NA, length(lambda))
+P4 <- rep(NA, length(lambda))
+P5 <- rep(NA, length(lambda))
 mttf1 <- rep(NA, length(lambda))
 mttfsys <- rep(NA, length(lambda))
-shapes <- c(.5,.5,.5)
 
 for (i in 1:length(lambda)) {
-    P1[i] <- wei_series_cause(1, scales = c(lambda[i], 1, 1), shapes = shapes)
+    scales_i <- c(lambda[i], 1, 1)
+    P1[i] <- wei_series_cause(1, scales = scales_i, shapes = shapes)
     P2[i] <- wei_series_cause(2, scales = c(lambda[i], 1, 1), shapes = shapes)
-    P3[i] <- wei_series_cause(2, scales = c(lambda[i], 1, 1), shapes = shapes)
+    P3[i] <- wei_series_cause(3, scales = c(lambda[i], 1, 1), shapes = shapes)
+    P4[i] <- wei_series_cause(4, scales = c(lambda[i], 1, 1), shapes = shapes)
+    P5[i] <- wei_series_cause(5, scales = c(lambda[i], 1, 1), shapes = shapes)
     mttf1[i] <- wei_mttf(scale = lambda[i], shape = shapes[1])
     mttfsys[i] <- wei_series_mttf(scales = c(lambda[i], 1, 1), shapes = shapes)
 }
@@ -1683,7 +1696,9 @@ for (i in 1:length(lambda)) {
 mttf23 <- wei_mttf(scale = 1, shape = shapes[2])
 
 # make a table of these values
-df <- data.frame(lambda1 = lambda, P1 = P1, P2 = P2, P3 = P3, MTTF1 = mttf1, MTTF2 = mttf23, MTTF3 = mttf23, MTTF = mttfsys)
+df <- data.frame(
+    lambda1 = lambda,
+    P1 = P1, P2 = P2, P3 = P3, MTTF1 = mttf1, MTTF2 = mttf23, MTTF3 = mttf23, MTTF = mttfsys)
 colnames(df) <- c("$\\lambda_1$", "$P_1$", "$P_2$", "$P_3$", "MTTF$_1$", "MTTF$_2$", "MTTF$_3$", "System MTTF")
 knitr::kable(df, format = "latex",
     caption = "Probability of Component Failures and Mean Time To Failures As We Vary the Scale Parameter of Component 1",
@@ -1707,50 +1722,6 @@ Here are some key observations about Table \ref{tab:table-vary-lam1}:
   a complex linear relationship the merits further investigation. This is what we see in the the figure, as the bias
   decreases (the MLE for the scale parameter of component 1 is nudged down).
 
-To examine this further, we show the effect of varying the scale parameter of component 1 and the shape
-parameter of component 1 on the probability of component failure and the MTTF of the components and the system in
-Table \ref{tab:table-vary-lam-shape}.
-
-```{r table-vary-lam-shape, echo = FALSE}
-lambda <- seq(1, 3, by = 1)
-shapes <- seq(0.25, .75, by = 0.25)
-
-P1 <- rep(NA, length(lambda))
-P2 <- rep(NA, length(lambda))
-P3 <- rep(NA, length(lambda))
-mttf1 <- rep(NA, length(lambda))
-mttfsys <- rep(NA, length(lambda))
-
-# now we want to vary the scale parameter of component 1
-# and the shape parameter of component 1 jointly to see
-# the dymamics of the probability of component failure
-# and the MTTF of the components and the system
-
-cross <- expand.grid(shapes = shapes, lambda = lambda)
-# now we iterate over the rows of the cross product
-for (i in 1:nrow(cross)) {
-    P1[i] <- wei_series_cause(1, scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
-    P2[i] <- wei_series_cause(2, scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
-    P3[i] <- wei_series_cause(2, scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
-    mttf1[i] <- wei_mttf(scale = cross[i, "lambda"], shape = cross[i, "shapes"])
-    mttfsys[i] <- wei_series_mttf(scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
-}
-
-mttf23 <- wei_mttf(scale = 1, shape = shapes[2])
-# print table
-df <- data.frame(shapes1 = cross$shapes, lambda1 = cross$lambda,
-    P1 = P1, P2 = P2, P3 = P3,
-    MTTF1 = mttf1, MTTF2 = mttf23, MTTF3 = mttf23, MTTF = mttfsys)
-colnames(df) <- c("$k_1$", "$\\lambda_1$", "$P_1$", "$P_2$", "$P_3$", "MTTF$_1$", "MTTF$_2$", "MTTF$_3$", "System MTTF")
-knitr::kable(df, format = "latex",
-    caption = "Probability of Component Failures and Mean Time To Failures As We Vary the Scale Parameter of Component 1 and the Shape Parameter of Component 1",
-    digits = 2, escape = FALSE) %>%
-    kable_styling(latex_options = "striped", full_width = FALSE)
-```
-
-Here are some key observations:
-
-- For a given shape parameter, if we increase the scale parameter, 
 
 # Conclusion
 
@@ -1861,8 +1832,8 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
 
 # Appendix C: R Code For Simulation of Scenarios For Assessing Bootstrapped (BCa) Confidence Intervals {-}
 
-The following code is the Monte-carlo simulation code for estimating the
-confidence intervals of the MLE using the bootstrap method.
+The following code is the Monte-carlo simulation code for running the scenarios
+described in Section \ref{sec:simstudy}.
 
 ```{r bootstrap-sim-code, eval=FALSE}
 #### Setup simulation parameters here ####
@@ -1873,17 +1844,16 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape5 = 1.2034, scale5 = 923.1631)
 
 shapes3 <- c(1.1308)    # shape 3 true parameter values to simulate
+scales3 <- c(840.1141)  # scale 3 true parameter values to simulate
 N <- c(30, 60, 100)     # sample sizes to simulate
-P <- c(.215, .333)      # masking probabilities to simulate
+P <- c(.215)            # masking probabilities to simulate
 Q <- c(.825)            # right censoring probabilities to simulate
-R <- 100                # number of simulations per scenario
+R <- 1000L              # number of simulations per scenario
 B <- 1000L              # number of bootstrap samples
 max_iter <- 125L        # max iterations for MLE
 max_boot_iter <- 125L   # max iterations for bootstrap MLE
 n_cores <- detectCores() - 1 # number of cores to use for parallel processing
-filename <- "data-boot-tau-fixed-bca-p-vs-ci" # filename prefix for output files
-ci_method <- "bca"      # bootstrap CI method. See ?boot::boot.ci for details.
-ci_level <- 0.95        # confidence interval level
+filename <- "data"      # filename prefix for output files
 
 #### Simulation code below here ####
 library(tidyverse)
@@ -1915,6 +1885,7 @@ cat("   scale parameters: ", scales, "\n")
 cat("   shape parameters: ", shapes, "\n")
 cat("simulation parameters:\n")
 cat("   shapes3: ", shapes3, "\n")
+cat("   scales3: ", scales3, "\n")
 cat("   N: ", N, "\n")
 cat("   P: ", P, "\n")
 cat("   Q: ", Q, "\n")
@@ -1925,92 +1896,94 @@ cat("   max_boot_iter: ", max_boot_iter, "\n")
 cat("   n_cores: ", n_cores, "\n")
 sink()
 
-for (shape3 in shapes3) {
-    for (n in N) {
-        for (p in P) {
-            for (q in Q) {
-                shapes[3] <- shape3
-                theta["shape3"] <- shape3
+for (scale3 in scales3) {
+    for (shape3 in shapes3) {
+        for (n in N) {
+            for (p in P) {
+                for (q in Q) {
+                    shapes[3] <- shape3
+                    theta["shape3"] <- shape3
 
-                cat("[starting scenario: shape3 = ", shape3, ", n = ", n, ", p = ", p, ", q = ", q, "]\n")
-                tau <- qwei_series(p = q, scales = scales, shapes = shapes)
+                    cat("[starting scenario: scale3 = ", scale3, ",
+                        shape3 = ", shape3, ", n = ", n, ", p = ", p, ", q = ", q, "]\n")
+                    tau <- qwei_series(p = q, scales = scales, shapes = shapes)
 
-                # we compute R MLEs for each scenario
-                shapes.mle <- matrix(NA, nrow = R, ncol = m)
-                scales.mle <- matrix(NA, nrow = R, ncol = m)
-                shapes.lower <- matrix(NA, nrow = R, ncol = m)
-                shapes.upper <- matrix(NA, nrow = R, ncol = m)
-                scales.lower <- matrix(NA, nrow = R, ncol = m)
-                scales.upper <- matrix(NA, nrow = R, ncol = m)
-                logliks <- rep(0, R)
+                    # we compute R MLEs for each scenario
+                    shapes.mle <- matrix(NA, nrow = R, ncol = m)
+                    scales.mle <- matrix(NA, nrow = R, ncol = m)
+                    shapes.lower <- matrix(NA, nrow = R, ncol = m)
+                    shapes.upper <- matrix(NA, nrow = R, ncol = m)
+                    scales.lower <- matrix(NA, nrow = R, ncol = m)
+                    scales.upper <- matrix(NA, nrow = R, ncol = m)
 
-                iter <- 0L
-                repeat {
-                    retry <- FALSE
-                    tryCatch({
-                        repeat {
-                            df <- generate_guo_weibull_table_2_data(
-                                shapes = shapes, scales = scales, n = n, p = p, tau = tau)
+                    iter <- 0L
+                    repeat {
+                        retry <- FALSE
+                        tryCatch({
+                            repeat {
+                                df <- generate_guo_weibull_table_2_data(
+                                    shapes = shapes, scales = scales, n = n, p = p, tau = tau)
 
-                            sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-                                theta0 = theta, df = df, hessian = FALSE,
-                                control = list(maxit = max_iter, parscale = theta))
-                            if (sol$convergence == 0) {
-                                break
+                                sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+                                    theta0 = theta, df = df, hessian = FALSE,
+                                    control = list(maxit = max_iter, parscale = theta))
+                                if (sol$convergence == 0) {
+                                    break
+                                }
+                                cat("[", iter, "] MLE did not converge, retrying.\n")
                             }
-                            cat("[", iter, "] MLE did not converge, retrying.\n")
+
+                            mle_solver <- function(df, i) {
+                                mle_lbfgsb_wei_series_md_c1_c2_c3(
+                                    theta0 = sol$par, df = df[i, ], hessian = FALSE,
+                                    control = list(maxit = max_boot_iter, parscale = sol$par))$par
+                            }
+
+                            # do the non-parametric bootstrap
+                            sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
+                        },
+                        error = function(e) {
+                            cat("[error] ", conditionMessage(e), "\n")
+                            cat("[retrying scenario: n = ", n, ", p = ", p, ", q = ", q, "\n")
+                            retry <<- TRUE
+                        })
+                        if (retry) {
+                            next
+                        }
+                        iter <- iter + 1L
+                        shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
+                        scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
+
+                        tryCatch({
+                            ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
+                            shapes.ci <- ci[seq(1, length(theta), 2), ]
+                            scales.ci <- ci[seq(2, length(theta), 2), ]
+                            shapes.lower[iter, ] <- shapes.ci[, 1]
+                            shapes.upper[iter, ] <- shapes.ci[, 2]
+                            scales.lower[iter, ] <- scales.ci[, 1]
+                            scales.upper[iter, ] <- scales.ci[, 2]
+                        }, error = function(e) {
+                            cat("[error] ", conditionMessage(e), "\n")
+                        })
+                        if (iter %% 5 == 0) {
+                            cat("[iteration ", iter, "] shapes = ", shapes.mle[iter,], "scales = ", scales.mle[iter, ], "\n")
                         }
 
-                        mle_solver <- function(df, i) {
-                            mle_lbfgsb_wei_series_md_c1_c2_c3(
-                                theta0 = sol$par, df = df[i, ], hessian = FALSE,
-                                control = list(maxit = max_boot_iter, parscale = sol$par))$par
+                        if (iter == R) {
+                            break
                         }
-
-                        # do the non-parametric bootstrap
-                        sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
-                    },
-                    error = function(e) {
-                        cat("[error] ", conditionMessage(e), "\n")
-                        cat("[retrying scenario: n = ", n, ", p = ", p, ", q = ", q, "\n")
-                        retry <<- TRUE
-                    })
-                    if (retry) {
-                        next
-                    }
-                    iter <- iter + 1L
-                    shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
-                    scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
-                    logliks[iter] <- sol$value
-
-                    tryCatch({
-                        ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
-                        shapes.ci <- ci[seq(1, length(theta), 2), ]
-                        scales.ci <- ci[seq(2, length(theta), 2), ]
-                        shapes.lower[iter, ] <- shapes.ci[, 1]
-                        shapes.upper[iter, ] <- shapes.ci[, 2]
-                        scales.lower[iter, ] <- scales.ci[, 1]
-                        scales.upper[iter, ] <- scales.ci[, 2]
-                    }, error = function(e) {
-                        cat("[error] ", conditionMessage(e), "\n")
-                    })
-                    if (iter %% 10 == 0) {
-                        cat("[iteration ", iter, "] shapes = ", shapes.mle[iter,], "scales = ", scales.mle[iter, ], "\n")
                     }
 
-                    if (iter == R) {
-                        break
-                    }
+                    df <- data.frame(
+                        n = rep(n, R), rep(scale3, R), rep(shape3, R),
+                        p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
+                        shapes = shapes.mle, scales = scales.mle,
+                        shapes.lower = shapes.lower, shapes.upper = shapes.upper,
+                        scales.lower = scales.lower, scales.upper = scales.upper)
+
+                    write.table(df, file = file.csv, sep = ",", row.names = FALSE,
+                        col.names = !file.exists(file.csv), append = TRUE)
                 }
-
-                df <- data.frame(
-                    n = rep(n, R), rep(shape3, R), p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
-                    shapes = shapes.mle, scales = scales.mle,
-                    shapes.lower = shapes.lower, shapes.upper = shapes.upper,
-                    scales.lower = scales.lower, scales.upper = scales.upper, logliks = logliks)
-
-                write.table(df, file = file.csv, sep = ",", row.names = FALSE,
-                    col.names = !file.exists(file.csv), append = TRUE)
             }
         }
     }

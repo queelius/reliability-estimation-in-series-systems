@@ -1,3 +1,175 @@
+---
+title: "Sensitivity of the MLE"
+author: "Alex Towell"
+output:
+    pdf_document:
+        toc: yes
+        toc_depth: 2
+        number_sections: true
+        extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
+        df_print: kable
+        keep_tex: true
+        citation_package: natbib
+indent: true
+header-includes:
+   - \hypersetup{linktoc=all}
+   - \AtBeginDocument{\renewcommand{\refname}{References}}
+bibliography: refs.bib
+biblio-style: apalike
+#csl: the-annals-of-statistics.csl
+---
+
+\newcommand{\T}{T}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{condition}{Condition}
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\numberwithin{equation}{section}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts = list(width.cutoff = 65))
+library(md.tools)
+library(algebraic.mle)
+library(wei.series.md.c1.c2.c3)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(glue)
+library(png)
+library(kableExtra)
+```
+
+
+# Right-Censoring Effect on the MLE
+
+When a system is right-censored at the right-censoring time occurs at $\tau$,
+the MLE wants to nudge the probability that the series system survives past
+$\tau$, i.e., it wants to increase $R_{T_i}(\tau;\v\theta)$.
+
+The best way to do that is to move $\v\theta$ in a direction that increases
+$R_{T_i}(\tau;\v\theta)$, which is given by
+$$
+\frac{\partial}{\partial \v\theta} R_{T_i}(\tau;\v\theta)
+$$
+
+The MTTF is not the correct measure of the MLE's sensitivity to the right-censoring
+effect. The MTTF is a function of the shape and scale parameters of the component
+lifetime distributions, and the MLE is not sensitive to the right-censoring effect
+in the same way for all values of the shape and scale parameters.
+
+The MLE is more sensitive to the right-censoring effect when the shape parameter
+is small and the scale parameter is large. The MLE is less sensitive to the
+right-censoring effect when the shape parameter is large and the scale parameter
+is small.
+
+```{r}
+theta <- c(shape1 = 1.2576, scale1 = 994.3661,
+           shape2 = 1.1635, scale2 = 908.9458,
+           shape3 = 1.1308, scale3 = 840.1141,
+           shape4 = 1.1802, scale4 = 940.1342,
+           shape5 = 1.2034, scale5 = 923.1631)
+
+shapes <- theta[grepl("shape", names(theta))]
+scales <- theta[grepl("scale", names(theta))]
+
+
+wei_series_mttf(shapes = shapes, scales = scales)
+
+(tau <- qwei_series(0.825, shapes = shapes, scales = scales))
+
+surv <- function(theta) {
+    shapes <- theta[seq(1, length(theta), 2)]
+    scales <- theta[seq(2, length(theta), 2)]
+    surv_wei_series(tau, shapes = shapes, scales = scales)
+}
+numDeriv::grad(surv, theta)
+
+surv2 <- function(theta) {
+    shapes <- theta[seq(1, length(theta), 2)]
+    scales <- theta[seq(2, length(theta), 2)]
+    s <- 0
+    for (i in 1:length(shapes)) {
+        s <- s + pweibull(tau, shape = shapes[i], scale = scales[i], lower.tail = FALSE, log.p=TRUE) 
+    }
+    s    
+}
+numDeriv::grad(surv2, theta)
+
+
+mttf <- function(theta) {
+    shapes <- theta[seq(1, length(theta), 2)]
+    scales <- theta[seq(2, length(theta), 2)]
+    wei_series_mttf(shapes = shapes, scales = scales)
+}
+numDeriv::grad(mttf, theta)
+
+
+mttf.j <- function(theta) {
+    shape <- theta[1]
+    scale <- theta[2]
+    wei_mttf(shape = shape, scale = scale)
+}
+numDeriv::grad(mttf.j, c(shapes[1],scales[1]))
+
+tau.j <- qweibull(0.825, shape = shapes[1], scale = scales[1])
+
+R.j <- function(theta) {
+    shape <- theta[1]
+    scale <- theta[2]
+    tau.j <- qweibull(0.64, shape = shapes[1], scale = scales[1])
+    pweibull(q = tau.j, shape = shape, scale = scale, lower.tail = FALSE, log.p = FALSE)
+}
+numDeriv::grad(R.j, c(shapes[1],scales[1]))
+tau.j
+shapes[1]
+scales[1]
+```
+
+If the right-censoring time $\tau$ is very large (that is, the system is
+extremely likely to fail before $\tau$), then the MLE is not very sensitive
+to the right-censoring effect since so few observations will be right-censored.
+
+Otherwise, if $\tau$ is not too unlikely, the right-censoring effect on
+the MLE can be substantial and complicated.
+The MLE wants to increase the probability that the system survives past $\tau$,
+but it is not simply a matter of increasing the MTTF, because a system
+can have an extremely large MTTF, but still have a very small probability
+of surviving past $\tau$, and conversely a system can have a very small
+MTTF, but still have a very large probability of surviving past $\tau$, due
+to the shape parameters controlling the tail of the distribution.
+
+On the one hand, if the right censoring time $\tau$ is relatively small
+(that is, the system is very unlikely to fail before $\tau$), then the
+MLE wants to decrease the probability of early failure by increasing
+the shape parameter. This actually decreases the MTTF, but it increases
+the probability of surviving past $\tau$.
+
+On the other hand, if the right censoring time $\tau$ is relatively large
+(that is, the system is very likely to fail before $\tau$), then this
+event does not occur too often, but to the extent that it does occur,
+the MLE wants to increase the probability of surviving past $\tau$ by
+making the distribution longer-tailed, which increases the MTTF,
+but of course also increases the probability of early failure.
+
+We have chosen a right-censoring time $\tau$ that occurs with probability
+$0.825$, which is relatively large, but for each of the components, the
+probability of surviving past $\tau$ is quite large, so the MLE wants to
+nudge the shape parameters up a little, which will cause a slight positive
+bias for the shape parameters in the MLE. It also wants to nudge the scale
+parameters up a little, which will cause a slight positive bias for the
+scale parameters in the MLE.
+
+
+
+
+
+
+
+
+
+
 ### Assessing the Bootstrapped Confidence Intervals
 
 Our primary interest is in assessing the performance of the BCa confidence intervals
