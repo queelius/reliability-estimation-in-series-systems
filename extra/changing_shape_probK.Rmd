@@ -1,0 +1,236 @@
+### Scenario #4: Assessing the Impact of Changing the Shape Parameter of a Component {#sec:shape-vs-mttf}
+
+When the shape parameters in a series system are approxiamtely equal, as is the case in our
+base series system defined in Table \ref{tab:series-sys}, then the MTTF of the components
+are proprotional to their scale parameters and the probability of component failure is
+inversely proportional to the MTTF.
+
+
+
+
+
+The shape parameter of the Weibull distribution has a non-linear relationship to its MTTF.
+The non-linearity complicates any analysis, and so instead we use a more relevant definition of
+reliability for a series system, the probability of a component being the cause of failure.
+The probability that the $j$\textsuperscript{th} component is the cause of failure is given by
+$$
+\Pr\{K_i = j\} = \int_{0}^\infty f_{\T_i, K_i}(t, j ; \v\theta) dt.
+$$
+
+We consider $m=3$ Weibull components in a series configuration. We will vary the shape
+parameter of component 1, $k_1$, and observe the bias in the scale and shape parameters
+for components 1 and 2.
+The shape and scale parameters are given by
+\begin{equation}
+\begin{aligned}
+    0.1 \leq k_1 &< 0.55    &\quad \lambda_1 = 1\\
+             k_2 &= 0.5     &\quad \lambda_2 = 1\\
+             k_3 &= 0.5     &\quad \lambda_3 = 1.
+\end{aligned}
+\end{equation}
+
+```{r table-3, table.attr = "style='width:50%;'", echo = F, results = 'asis', fig.cap = "Component Reliability", fig.align = "center"}
+mttf <- gamma(1 + 1/c(0.2,0.5,0.5)) * c(1,1,1)
+components <- data.frame(
+  "MTTF" = mttf,
+  "Failure Probability" = wei_series_cause(1L:3L, scales=c(1,1,1), shapes=c(0.2,0.5,0.5)),
+  row.names = paste("Component", 1:3)
+)
+names(components) <- gsub("\\.", " ", names(components))
+knitr::kable(components, caption = "Mean Time To Failure (MTTF) and Probability of Component Failure of Weibull Components in Series Configuration")
+```
+
+As shown by Table 3, the MTTF of component 1 can be significantly larger than the MTTF of the other components,
+but the probability of component 1 being the cause of failure is significantly larger. In fact, as the MTTF
+of component 1 increases as we decrease its shape parameter, the probability of component 1 being the cause of
+failure increases. This is because the shape parameter of component 1 is less than 1, and so the hazard function
+decreases with respect to time.
+This means that component 1 is more likely to fail early in its lifetime (high infant mortality) and less likely
+to fail later in its lifetime (low aging). This means that component 1 is more likely to be the cause of failure
+than the other components, even though it has a larger MTTF.
+
+#### Ideal Case: No Right-Censoring and No Masking of Component Cause of Failure
+```{r n100-p0-q1, fig.cap=c("Probability of Component 1 Failure vs Bias (p = 0, q = 1)"), fig.align="center", echo = F}
+knitr::include_graphics("image/loess_smoothed_n_100_p_0_q_1_probs_0.0_-_0.55.pdf")
+```
+
+Figure \ref{fig:n100-p0-q1} depict the bias of the scale and shape parameters of components 1
+and 2 in relation to the failure probability of component 1 in the series system when we
+have a sample with no right censoring and no masking of the component cause of failure.
+This represents an ideal scenario.
+The green dashed line represents the true value of the parameters, and the red line shows the
+bias.
+
+The bias (red line) shows a non-linear behavior as the probability
+of component 1 failure changes. For both the scale and shape parameters, the bias fluctuates
+and does not remain constant.
+
+It is difficult to understand the pattern of the bias for the shape and scale parameters as the
+probability of component 1 failure changes. We expected the MLE of the shape parameter
+to become more positively biased as the probability of component 1 failure increases in order
+to nudge its MTTF down. Similarly, we expected the MLE of the scale parameter to become more
+negatively biased as the probability of component 1 failure increases in order to nudge its
+MTTF down. However, we observe the exact opposite. The bias of the shape and scale parameters
+for component 2 are more in line with what we expected for component 1. For the same reason,
+for component 2, we expected to see the bias of the shape parameter become more negative
+and bias of the scale parameter to become more positive as the probability of component 1 failure
+increases in order to nudge the MTTF of component 2 upwards, but we see the exact opposite.
+
+
+To understand these graphs, we must better understand the relationship between the probability
+of component 1 failure and the shape parameter of the components.
+
+In the following analysis, we fix the shape parameters of components 1 and 2 to $0.5$ ($k_2 = k_3 = 0.5$)
+and vary the shape parameter of component 1 ($k_1$) to observe how the probability of component failure
+changes in relation to the shape parameter of component 1 ($k_1$). We also show the MTTF of the components
+and the system.
+
+Let $P_j$ denote the probability that the $j$\textsuperscript{th} component is the cause of the system
+failure ($\Pr\{K_i = j\}$), where we use the notation $K_i$ to denote the component cause of failure
+for the $i$\textsuperscript{th} system. Then,
+$$
+    P_j = \int_{0}^\infty f_{\T_i, K_i}(t, j ; \v\theta) dt =
+        E_{\v\theta}\biggl\{ \frac{h_j(\T_i;\v{\theta_j})}{h_{\T_i}(\T_i;\v\theta)} \biggr\}.
+$$
+Since this is a complex integral, we use numerical integration to compute the probability of component
+failure for different values of $k_1$.
+
+In Table \ref{tab:table-vary-k1}, we show these results for different values of $k_1$:
+
+```{r table-vary-k1, echo = FALSE}
+shapes <- seq(0.1, 1, by = 0.1)
+P1 <- rep(NA, length(shapes))
+P2 <- rep(NA, length(shapes))
+P3 <- rep(NA, length(shapes))
+mttf1 <- rep(NA, length(shapes))
+mttf23 <- rep(NA, length(shapes))
+mttfsys <- rep(NA, length(shapes))
+
+for (i in 1:length(shapes)) {
+    P1[i] <- wei_series_cause(1, scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
+    P2[i] <- wei_series_cause(2, scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
+    P3[i] <- wei_series_cause(2, scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
+    mttf1[i] <- wei_mttf(scale = 1, shape = shapes[i])
+    mttfsys[i] <- wei_series_mttf(scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
+}
+
+# make a table of these values
+df <- data.frame(k1 = shapes, P1 = P1, P2 = P2, P3 = P3, MTTF1 = mttf1, MTTF2 = 2, MTTF3 = 2, MTTF = mttfsys)
+colnames(df) <- c("$k_1$", "$P_1$", "$P_2$", "$P_3$", "MTTF$_1$", "MTTF$_2$", "MTTF$_3$", "System MTTF")
+knitr::kable(df, format = "latex",
+    caption = "Probability of Component Failures and Mean Time To Failures As We Vary the Shape Parameter of Component 1",
+    digits = 2, escape = FALSE) %>%
+    kable_styling(latex_options = "striped", full_width = FALSE)
+```
+
+
+Here are some key observations:
+
+- As $k_1$ increases, $\Pr\{K_i = 3\}$ decreases. This may seem unexpected, as it *decreases* the MTTF of component $j$.
+  However, this is because the shape parameter of component 1 is less than 1, and so the hazard function decreases
+  with respect to time. This means that component 1 is more likely to fail early in its lifetime (high infant mortality)
+  and less likely to fail later in its lifetime (low aging). This means that component 1 is more likely to be the cause
+  of failure than the other components, even though it has a larger MTTF.
+
+- In order to make it more likely to see component 1 as the cause of system failure, therefore we must decrease
+  $k_1$. In Figure \ref{fig:n100-p0-q1}, the MLE nudges $k_1$ down. This is what we see in the the figure, as the bias
+  decreases (the MLE for $k_1$ is nudged down).
+
+- Conversely, if you want to nudge the probability of component 2 and 3 not being a cause of component failure,
+  you should increase $k_2$ and $k_3$. This is what we see in Figure \ref{fig:n100-p0-q1} for the bias of $k_2$,
+  where the MLE is nudging its bias upwards. Alternatively, you can keep it the same while only decreasing the
+  shape parameter for component 1. This may indicate that the MLE is more sensitive to the shape parameter of
+  component 1 than the shape parameter of component 2.
+
+To analyze the behavior of the scale parameter bias, we show the effect of varying the scale parameter of component
+1 on the probability of component failure and the MTTF of the components and the system in
+Table \ref{tab:table-vary-lam1}.
+
+```{r table-vary-lam1, echo = FALSE}
+lambda <- seq(1, 4, by = 1)
+P1 <- rep(NA, length(lambda))
+P2 <- rep(NA, length(lambda))
+P3 <- rep(NA, length(lambda))
+mttf1 <- rep(NA, length(lambda))
+mttfsys <- rep(NA, length(lambda))
+shapes <- c(.5,.5,.5)
+
+for (i in 1:length(lambda)) {
+    P1[i] <- wei_series_cause(1, scales = c(lambda[i], 1, 1), shapes = shapes)
+    P2[i] <- wei_series_cause(2, scales = c(lambda[i], 1, 1), shapes = shapes)
+    P3[i] <- wei_series_cause(2, scales = c(lambda[i], 1, 1), shapes = shapes)
+    mttf1[i] <- wei_mttf(scale = lambda[i], shape = shapes[1])
+    mttfsys[i] <- wei_series_mttf(scales = c(lambda[i], 1, 1), shapes = shapes)
+}
+
+mttf23 <- wei_mttf(scale = 1, shape = shapes[2])
+
+# make a table of these values
+df <- data.frame(lambda1 = lambda, P1 = P1, P2 = P2, P3 = P3, MTTF1 = mttf1, MTTF2 = mttf23, MTTF3 = mttf23, MTTF = mttfsys)
+colnames(df) <- c("$\\lambda_1$", "$P_1$", "$P_2$", "$P_3$", "MTTF$_1$", "MTTF$_2$", "MTTF$_3$", "System MTTF")
+knitr::kable(df, format = "latex",
+    caption = "Probability of Component Failures and Mean Time To Failures As We Vary the Scale Parameter of Component 1",
+    digits = 2, escape = FALSE) %>%
+    kable_styling(latex_options = "striped", full_width = FALSE)
+```
+
+Here are some key observations about Table \ref{tab:table-vary-lam1}:
+
+- The relationship is more linear and intuitive when we vary the scale parameter of component 1.
+  As the scale parameter of component 1 increases, the probability of component 1 being the cause
+  of failure decreases, and the probability of component 2 and 3 being the cause of failure
+  increases. This is also in alignment with the reasoning that, in this case, increasing the MTTF
+  of a component decreases its probability of being the cause of failure. However, when we vary
+  the shape parameter of component 1, the relationship is more complex, as previously discussed.
+
+- To increase the probability of component 1 being the cause of failure, we must decrease the
+  scale parameter of component 1. This is not, however, what we see in Figure \ref{fig:n100-p0-q1}.
+  The MLE nudges the scale parameter of component 1 upwards (increasing bias). It could be due to
+  a conflict between nudging the scale parameter and nudging the shape parameter. It may be
+  a complex linear relationship the merits further investigation. This is what we see in the the figure, as the bias
+  decreases (the MLE for the scale parameter of component 1 is nudged down).
+
+To examine this further, we show the effect of varying the scale parameter of component 1 and the shape
+parameter of component 1 on the probability of component failure and the MTTF of the components and the system in
+Table \ref{tab:table-vary-lam-shape}.
+
+```{r table-vary-lam-shape, echo = FALSE}
+lambda <- seq(1, 3, by = 1)
+shapes <- seq(0.25, .75, by = 0.25)
+
+P1 <- rep(NA, length(lambda))
+P2 <- rep(NA, length(lambda))
+P3 <- rep(NA, length(lambda))
+mttf1 <- rep(NA, length(lambda))
+mttfsys <- rep(NA, length(lambda))
+
+# now we want to vary the scale parameter of component 1
+# and the shape parameter of component 1 jointly to see
+# the dymamics of the probability of component failure
+# and the MTTF of the components and the system
+
+cross <- expand.grid(shapes = shapes, lambda = lambda)
+# now we iterate over the rows of the cross product
+for (i in 1:nrow(cross)) {
+    P1[i] <- wei_series_cause(1, scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
+    P2[i] <- wei_series_cause(2, scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
+    P3[i] <- wei_series_cause(2, scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
+    mttf1[i] <- wei_mttf(scale = cross[i, "lambda"], shape = cross[i, "shapes"])
+    mttfsys[i] <- wei_series_mttf(scales = c(cross[i, "lambda"], 1, 1), shapes = c(cross[i, "shapes"], 0.5, 0.5))
+}
+
+mttf23 <- wei_mttf(scale = 1, shape = shapes[2])
+# print table
+df <- data.frame(shapes1 = cross$shapes, lambda1 = cross$lambda,
+    P1 = P1, P2 = P2, P3 = P3,
+    MTTF1 = mttf1, MTTF2 = mttf23, MTTF3 = mttf23, MTTF = mttfsys)
+colnames(df) <- c("$k_1$", "$\\lambda_1$", "$P_1$", "$P_2$", "$P_3$", "MTTF$_1$", "MTTF$_2$", "MTTF$_3$", "System MTTF")
+knitr::kable(df, format = "latex",
+    caption = "Probability of Component Failures and Mean Time To Failures As We Vary the Scale Parameter of Component 1 and the Shape Parameter of Component 1",
+    digits = 2, escape = FALSE) %>%
+    kable_styling(latex_options = "striped", full_width = FALSE)
+```
+
+Here are some key observations:
+
+- For a given shape parameter, if we increase the scale parameter, 

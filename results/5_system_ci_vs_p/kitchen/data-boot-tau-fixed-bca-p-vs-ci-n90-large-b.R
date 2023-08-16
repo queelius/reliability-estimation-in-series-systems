@@ -1,3 +1,18 @@
+#
+# This is an experiment to see how masking probability effects the sampling distribution of the MLE
+# Of course, as always, we are interested in assessing the coverage probability and CI in general.
+# But, since it's an MC simulation too, we can also see the bias plotted on the graph that results
+# from this. Whenever censoring occurs, whether component cause of failure, or right censoring,
+# the parameters of the components are going to be biased in a way that increases the MTTF of the
+# component. Why? Because we only know that a component (if right censored, all components) survived
+# longer than some time. this is interesting. we will not examine the effect of tau, we keep that fixed,
+# at q = .825 (quantile of the series system). however, we do change masking probability p. when
+# we increase this, it's interesting to see the effect.
+#
+# another experiment i'm running is making one of the components the weakest link in the chain,
+# and so dominates the component cause of failure. this will increase the bias of the other
+# components, but the weak component will be estimated quite well.
+
 library(tidyverse)
 library(parallel)
 library(boot)
@@ -18,12 +33,13 @@ scales <- theta[seq(2, length(theta), 2)]
 options(digits = 5, scipen = 999)
 
 N <- c(90)
-P <- c(.215)
-Q <- rep(c(.6, .7125, .9, 1), 500)
-R <- 3
+P <- rep(c(.1, .25, .4, .55, .7, .85), 100)
+# .1, .25, .4, .55, .7, .85
+Q <- c(.825)
+R <- 10
 B <- 1000L
-max_iter <- 100L
-max_boot_iter <- 150L
+max_iter <- 125L
+max_boot_iter <- 125L
 n_cores <- detectCores() - 1
 
 cat("Simulation parameters:\n")
@@ -56,6 +72,9 @@ for (n in N) {
             scales.lower <- matrix(NA, nrow = R, ncol = m)
             scales.upper <- matrix(NA, nrow = R, ncol = m)
 
+            # for each MLE, we compute the log-likelihood
+            logliks <- rep(0, R)
+
             iter <- 0L
             repeat {
                 retry <- FALSE
@@ -72,20 +91,11 @@ for (n in N) {
                         }
                         cat("[", iter, "] MLE did not converge, retrying...\n")
                     }
-                    conv_count <- 0L
-                    b.iter <- 0L
+
                     mle_solver <- function(df, i) {
-                        sol.b <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+                        mle_lbfgsb_wei_series_md_c1_c2_c3(
                             theta0 = sol$par, df = df[i, ], hessian = FALSE,
-                            control = list(maxit = max_boot_iter, parscale = sol$par))
-                        b.iter <<- b.iter + 1L
-                        if (sol.b$convergence == 0L) {
-                            conv_count <<- conv_count + 1L
-                        }
-                        if (b.iter %% 10 == 0) {
-                            cat("convergence rate: ", conv_count / b.iter, "\n")
-                        }
-                        return(sol.b$par)
+                            control = list(maxit = max_boot_iter, parscale = sol$par))$par
                     }
 
                     # do the non-parametric bootstrap
@@ -103,6 +113,7 @@ for (n in N) {
                 iter <- iter + 1L
                 shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
                 scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
+                logliks[iter] <- sol$value
 
                 tryCatch({
                     ci <- confint(mle_boot(sol.boot), type = "bca", level = 0.95)
@@ -115,7 +126,7 @@ for (n in N) {
                 }, error = function(e) {
                     cat("[bootstrap error] ", conditionMessage(e), "\n")
                 })
-                if (iter %% 1 == 0) {
+                if (iter %% 5 == 0) {
                     cat("[iteration ", iter, "] shape mle = ", shapes.mle[iter,], ", scale mle = ", scales.mle[iter, ], "\n")
                 }
 
@@ -135,10 +146,11 @@ for (n in N) {
                 shapes.lower = shapes.lower,
                 shapes.upper = shapes.upper,
                 scales.lower = scales.lower,
-                scales.upper = scales.upper)
+                scales.upper = scales.upper,
+                logliks = logliks)
 
-            write.table(df, file = "data-boot-tau-fixed-bca-tau-vs-ci-large-b.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data-boot-tau-fixed-bca-tau-vs-ci-large-b.csv"), append = TRUE)
+            write.table(df, file = "data-boot-tau-fixed-bca-p-vs-ci-large-b.csv", sep = ",", row.names = FALSE,
+                col.names = !file.exists("data-boot-tau-fixed-bca-p-vs-ci-large-b.csv"), append = TRUE)
         }
     }
 }
