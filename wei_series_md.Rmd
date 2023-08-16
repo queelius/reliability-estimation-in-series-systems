@@ -64,20 +64,24 @@ The remainder of this paper is organized as follows. First, we detail the series
 
 Series System Model {#sec:statmod}
 ==================================
-Consider a system composed of $m$ components arranged in a series configuration. Each component and system has two possible states, functioning or failed.
+Consider a system composed of $m$ components arranged in a series configuration.
+Each component and system has two possible states, functioning or failed.
 We have $n$ systems whose lifetimes are independent and identically distributed (i.i.d.).
 The lifetime of the $i$\textsuperscript{th} system denoted by the random variable $T_{i}$.
-The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system is denoted by the random variable $T_{i j}$.
+The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th}
+system is denoted by the random variable $T_{i j}$.
 We assume the component lifetimes in a single system are statistically independent and non-identically distributed.
-Here, lifetime is defined as the elapsed time from when the new, functioning component (or system) is put into operation until it fails for the first time.
-A series system fails when any component fails, thus the lifetime of the $i$\textsuperscript{th} system is given by the component with the shortest lifetime,
+Here, lifetime is defined as the elapsed time from when the new, functioning component
+(or system) is put into operation until it fails for the first time.
+A series system fails when any component fails, thus the lifetime of the $i$\textsuperscript{th}
+system is given by the component with the shortest lifetime,
 $$
     \T_i = \min\bigr\{T_{i 1},T_{i 2}, \ldots, T_{i m} \bigr\}.
 $$
 
-There are three particularly important distribution functions in survival analysis: the
-survival function, the probability density function, and the hazard function.
-The survival function, $R_{\T_i}(t)$, is the
+There are three particularly important distribution functions in reliability analysis: the
+reliability function, the probability density function, and the hazard function.
+The reliability function, $R_{\T_i}(t)$, is the
 probability that the $i$\textsuperscript{th} system has a lifespan larger than a duration $t$,
 \begin{equation}
 R_{\T_i}(t) = \Pr\{\T_i > t\}\\
@@ -339,8 +343,51 @@ By Theorem \ref{thm:f_k_and_t}, this is equivalent to
     &= E_{\v\theta}\bigl[h_j(\T_i;\v{\theta_j}) / \sum_{l=1}^m h_l(\T_i ; \v{\theta_l})\bigr].
 \end{align*}
 \end{proof}
-We use this result in the simulation study to analyze the impact of having a series system
-with a much "weaker" or "stronger" component.
+
+## System and Component Reliabilities {#sec:reliability}
+
+A common measure of reliability is mean time to failure (MTTF). The
+MTTF is defined as the expectation of the lifetime,
+\begin{equation}
+\label{mttf-sys}
+\text{MTTF} = E_{\v\theta}\{\T_i\},
+\end{equation}
+which if certain assumptions are satisfied\footnote{$\T_i$ is non-negative and continuous, $R_{\T_i}(t;\v\theta)$ is a
+well-defined, continuous, and differential function for $t > 0$,
+and $\int_0^\infty R_{\T_i}(t;\v\theta) dt$ converges.}
+is equivalent to the integration of the reliability function over its support.
+
+While the MTTF provides a summary measure of reliability, it is not a complete description.
+Depending on the failure characteristics, MTTF can be misleading. For example,
+a system that has a high likelihood of failing early in its life may still have a
+large MTTF if it is fat-tailed.\footnote{A "fat-tailed" distribution refers to a probability
+distribution with tails that decay more slowly than those of the exponential family,
+such as the case with the Weibull when its shape parameter is greater than $1$. This means
+that extreme values are more likely to occur, and the distribution is more prone to
+"black swan" events or rare occurrences. In the context of reliability, a fat-tailed
+distribution might imply a higher likelihood of unusually long lifetimes, which can
+skew measures like the MTTF. See, for example, \cite{taleb2007black}.}
+
+The reliability of the components in the series system determines the reliability
+of the system. We denote the MTTF of the $j$\textsuperscript{th} component by
+$\text{MTTF}_j$ and, according to Equation \eqref{eq:prob_k}, the probability
+that the $j$\textsuperscript{th} component is the cause of failure is given by
+$\Pr\{K_i = j\}$. In a well-designed series system, there is no component that is
+the "weakest link" that either has a much shorter MTTF or a much higher
+probability of being the component cause of failure than any of
+the other components, e.g., $\Pr\{K_i = j\} \approx \Pr\{K_i = k\}$ and
+and MTTF$_j \approx$ MTTF$_k$ for all $j$ and $k$. This just means that the components
+should have similar reliabilities and failure characteristics.
+
+We use these results in the simulation study in Section \ref{sec:sim_study}, where we
+assess the sensitivity of the MLE with respect to varying the reliability
+of one of the Weibull components. We vary its reliability in two different ways:
+
+1. We vary its shape parameter (keeping its scale parameter constant), which determines
+   the failure characteristics of the component and also affects its MTTF.
+
+2. We vary its scale parameter (keeping its shape parameter constant), which scales
+   its MTTF while retaining the same failure characteristics.
 
 Likelihood Model for Masked Data {#sec:like_model}
 ==================================================
@@ -487,7 +534,7 @@ The likelihood contribution of the $i$-th system is given by
 L_i(\v\theta) = R_{\T_i}(s_i;\v\theta) \biggl(\beta_i \sum_{j \in c_i} h_j(s_i;\v{\theta_j}) \biggr)^{\delta_i}
 \end{equation}
 where $R_{\T_i}(s_i;\v\theta) = \prod_{j=1}^m R_j(s_i;\v{\theta_j})$
-is the survival function of the series system evaluted at $s_i$, $\delta_i = 0$ indicates the
+is the reliability function of the series system evaluted at $s_i$, $\delta_i = 0$ indicates the
 $i$\textsuperscript{th} system is
 right-censored at time $s_i$, and $\delta_i = 1$ indicates the $i$\textsuperscript{th} system
 is observed to have failed at time $s_i$ with a component cause of failure
@@ -889,7 +936,17 @@ particularly as it relates to coverage probabilities.
 Series System with Weibull Components {#sec:weibull}
 ====================================================
 
-** Introduce Weibull here **
+The Weibull distribution, introduced by Waloddi Weibull in 1937, has been
+instrumental in reliability analysis due to its ability to model a wide range
+of failure behaviors. Reflecting on its utility, Weibull
+modestly noted that it "[...] may sometimes render good service."
+(Source: "New Weibull Handbook"). In the context of our study, we utilize the Weibull
+to model a system as originating from Weibull components in a series configuration,
+producing a specific form of the likelihood model described in Section \ref{sec:like_model},
+which deals with challenges such as right censoring and masked component cause of failure.
+In Section \ref{sec:sim_study}, we conduct a simulation study to assess the sensivity
+of this model to variations in masking probabilities, sample size, and differentiated
+component reliabilities.
 
 The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
 lifetime distribution given by
@@ -987,7 +1044,7 @@ parameter $\lambda$ given by
 where $\lambda_j$ is the scale parameter of the $j$\textsuperscript{th} component.
 \begin{proof}
 Given $m$ Weibull lifetimes $T_{i 1}, \ldots, T_{i m}$ with the same shape parameter $k$
-and scale parameters $\lambda_1, \ldots, \lambda_m$, the survival function of the series
+and scale parameters $\lambda_1, \ldots, \lambda_m$, the reliability function of the series
 system is
 $$
 R_{\T_i}(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k}\biggr\}.
@@ -1052,7 +1109,7 @@ Weibull components that have similar shape parameters (except in those studies w
 we vary the shape parameters to test the sensitivity of the MLE to different component
 failure characteristics).
 
-## Weibull Likelihood Model for Masked Data
+## Likelihood Model {#sec:sys_weibull_likelihood}
 In Section \ref{sec:like_model}, we discussed two separate kinds of likelihood
 contributions, masked component cause of failure data (with exact system failure
 times) and right-censored data. The likelihood contribution of the
@@ -1180,16 +1237,18 @@ sample is given by
 \nabla \ell(\v\theta) = \sum_{i=1}^n \nabla \ell_i(\v\theta).
 \end{equation}
 
-Simulation Study {#simstudy}
-============================
+Simulation Study {#sec:sim_study}
+================================
 
 
 ```{r sim-study-design, echo = F}
-theta <- c(shape1 = 1.2576, scale1 = 994.3661,
-           shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1342,
-           shape5 = 1.2034, scale5 = 923.1631)
+theta <- c(
+    shape1 = 1.2576, scale1 = 994.3661,
+    shape2 = 1.1635, scale2 = 908.9458,
+    shape3 = 1.1308, scale3 = 840.1141,
+    shape4 = 1.1802, scale4 = 940.1342,
+    shape5 = 1.2034, scale5 = 923.1631
+)
 
 shapes <- theta[grepl("shape", names(theta))]
 scales <- theta[grepl("scale", names(theta))]
@@ -1236,22 +1295,26 @@ being similar for each component. In addition, the shapes are larger than $1$, w
 means components are unlikely to fail early.
 
 ```{r series-sys, table.attr = "style='width:50%;'", echo = F, fig.align = "center"}
-mttf.sys <- integrate(function(t) { t * dwei_series(t, scales=scales,
-    shapes=shapes) }, lower=0, upper=Inf)$value
+mttf.sys <- integrate(function(t) {
+    t * dwei_series(t,
+        scales = scales,
+        shapes = shapes
+    )
+}, lower = 0, upper = Inf)$value
 
-mttf.sys <- round(mttf.sys, digits=3)
-mttf <- round(gamma(1 + 1/shapes) * scales, digits=3)
-probs <- round(wei_series_cause(1L:5L, scales=scales, shapes=shapes), digits=3)
-tau <- qwei_series(p=0.825, scales=scales, shapes=shapes)
-surv.sys <- round(surv_wei_series(tau, scales=scales, shapes=shapes), digits=3)
-surv <- round(pweibull(tau, shape = shapes, scale = scales, lower.tail = FALSE), digits=3)
+mttf.sys <- round(mttf.sys, digits = 3)
+mttf <- round(gamma(1 + 1 / shapes) * scales, digits = 3)
+probs <- round(wei_series_cause(1L:5L, scales = scales, shapes = shapes), digits = 3)
+tau <- qwei_series(p = 0.825, scales = scales, shapes = shapes)
+surv.sys <- round(surv_wei_series(tau, scales = scales, shapes = shapes), digits = 3)
+surv <- round(pweibull(tau, shape = shapes, scale = scales, lower.tail = FALSE), digits = 3)
 components <- data.frame(
-  Shape = shapes,
-  Scale = scales,  
-  MTTF = mttf,
-  Prob = probs,
-  Survival = surv,
-  row.names = paste("Component", 1:5)
+    Shape = shapes,
+    Scale = scales,
+    MTTF = mttf,
+    Prob = probs,
+    Survival = surv,
+    row.names = paste("Component", 1:5)
 )
 
 components <- rbind(components, "Series System" = c(NA, NA, mttf.sys, NA, surv.sys))
@@ -1557,11 +1620,11 @@ The shape and scale parameters are given by
 \end{equation}
 
 ```{r table-3, table.attr = "style='width:50%;'", echo = F, results = 'asis', fig.cap = "Component Reliability", fig.align = "center"}
-mttf <- gamma(1 + 1/c(0.2,0.5,0.5)) * c(1,1,1)
+mttf <- gamma(1 + 1 / c(0.2, 0.5, 0.5)) * c(1, 1, 1)
 components <- data.frame(
-  "MTTF" = mttf,
-  "Failure Probability" = wei_series_cause(1L:3L, scales=c(1,1,1), shapes=c(0.2,0.5,0.5)),
-  row.names = paste("Component", 1:3)
+    "MTTF" = mttf,
+    "Failure Probability" = wei_series_cause(1L:3L, scales = c(1, 1, 1), shapes = c(0.2, 0.5, 0.5)),
+    row.names = paste("Component", 1:3)
 )
 names(components) <- gsub("\\.", " ", names(components))
 knitr::kable(components, caption = "Mean Time To Failure (MTTF) and Probability of Component Failure of Weibull Components in Series Configuration")
@@ -1633,19 +1696,21 @@ mttf23 <- rep(NA, length(shapes))
 mttfsys <- rep(NA, length(shapes))
 
 for (i in 1:length(shapes)) {
-    P1[i] <- wei_series_cause(1, scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
-    P2[i] <- wei_series_cause(2, scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
-    P3[i] <- wei_series_cause(2, scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
+    P1[i] <- wei_series_cause(1, scales = rep(1, 3), shapes = c(shapes[i], 0.5, 0.5))
+    P2[i] <- wei_series_cause(2, scales = rep(1, 3), shapes = c(shapes[i], 0.5, 0.5))
+    P3[i] <- wei_series_cause(2, scales = rep(1, 3), shapes = c(shapes[i], 0.5, 0.5))
     mttf1[i] <- wei_mttf(scale = 1, shape = shapes[i])
-    mttfsys[i] <- wei_series_mttf(scales = rep(1,3), shapes = c(shapes[i], 0.5, 0.5))
+    mttfsys[i] <- wei_series_mttf(scales = rep(1, 3), shapes = c(shapes[i], 0.5, 0.5))
 }
 
 # make a table of these values
 df <- data.frame(k1 = shapes, P1 = P1, P2 = P2, P3 = P3, MTTF1 = mttf1, MTTF2 = 2, MTTF3 = 2, MTTF = mttfsys)
 colnames(df) <- c("$k_1$", "$P_1$", "$P_2$", "$P_3$", "MTTF$_1$", "MTTF$_2$", "MTTF$_3$", "System MTTF")
-knitr::kable(df, format = "latex",
+knitr::kable(df,
+    format = "latex",
     caption = "Probability of Component Failures and Mean Time To Failures As We Vary the Shape Parameter of Component 1",
-    digits = 2, escape = FALSE) %>%
+    digits = 2, escape = FALSE
+) %>%
     kable_styling(latex_options = "striped", full_width = FALSE)
 ```
 
@@ -1698,11 +1763,14 @@ mttf23 <- wei_mttf(scale = 1, shape = shapes[2])
 # make a table of these values
 df <- data.frame(
     lambda1 = lambda,
-    P1 = P1, P2 = P2, P3 = P3, MTTF1 = mttf1, MTTF2 = mttf23, MTTF3 = mttf23, MTTF = mttfsys)
+    P1 = P1, P2 = P2, P3 = P3, MTTF1 = mttf1, MTTF2 = mttf23, MTTF3 = mttf23, MTTF = mttfsys
+)
 colnames(df) <- c("$\\lambda_1$", "$P_1$", "$P_2$", "$P_3$", "MTTF$_1$", "MTTF$_2$", "MTTF$_3$", "System MTTF")
-knitr::kable(df, format = "latex",
+knitr::kable(df,
+    format = "latex",
     caption = "Probability of Component Failures and Mean Time To Failures As We Vary the Scale Parameter of Component 1",
-    digits = 2, escape = FALSE) %>%
+    digits = 2, escape = FALSE
+) %>%
     kable_styling(latex_options = "striped", full_width = FALSE)
 ```
 
@@ -1806,12 +1874,12 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
         # Initialize mask terms to 0
         mask.term.shapes <- rep(0, m)
         mask.term.scales <- rep(0, m)
-        
+
         if (delta[i]) {
-            cindex <- C[i,]
+            cindex <- C[i, ]
             denom <- sum(shapes[cindex] / scales[cindex] * (t[i] / scales[cindex])^(shapes[cindex] - 1))
-            
-            numer.shapes <- 1/t[i] * (t[i] / scales[cindex])^shapes[cindex] *
+
+            numer.shapes <- 1 / t[i] * (t[i] / scales[cindex])^shapes[cindex] *
                 (1 + shapes[cindex] * log(t[i] / scales[cindex]))
             mask.term.shapes[cindex] <- numer.shapes / denom
 
@@ -1833,27 +1901,29 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
 # Appendix C: R Code For Simulation of Scenarios For Assessing Bootstrapped (BCa) Confidence Intervals {-}
 
 The following code is the Monte-carlo simulation code for running the scenarios
-described in Section \ref{sec:simstudy}.
+described in Section \ref{sec:sim_study}.
 
 ```{r bootstrap-sim-code, eval=FALSE}
 #### Setup simulation parameters here ####
-theta <- c(shape1 = 1.2576, scale1 = 994.3661,
-           shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = NA,     scale3 = 840.1141,
-           shape4 = 1.1802, scale4 = 940.1342,
-           shape5 = 1.2034, scale5 = 923.1631)
+theta <- c(
+    shape1 = 1.2576, scale1 = 994.3661,
+    shape2 = 1.1635, scale2 = 908.9458,
+    shape3 = NA, scale3 = 840.1141,
+    shape4 = 1.1802, scale4 = 940.1342,
+    shape5 = 1.2034, scale5 = 923.1631
+)
 
-shapes3 <- c(1.1308)    # shape 3 true parameter values to simulate
-scales3 <- c(840.1141)  # scale 3 true parameter values to simulate
-N <- c(30, 60, 100)     # sample sizes to simulate
-P <- c(.215)            # masking probabilities to simulate
-Q <- c(.825)            # right censoring probabilities to simulate
-R <- 1000L              # number of simulations per scenario
-B <- 1000L              # number of bootstrap samples
-max_iter <- 125L        # max iterations for MLE
-max_boot_iter <- 125L   # max iterations for bootstrap MLE
+shapes3 <- c(1.1308) # shape 3 true parameter values to simulate
+scales3 <- c(840.1141) # scale 3 true parameter values to simulate
+N <- c(30, 60, 100) # sample sizes to simulate
+P <- c(.215) # masking probabilities to simulate
+Q <- c(.825) # right censoring probabilities to simulate
+R <- 1000L # number of simulations per scenario
+B <- 1000L # number of bootstrap samples
+max_iter <- 125L # max iterations for MLE
+max_boot_iter <- 125L # max iterations for bootstrap MLE
 n_cores <- detectCores() - 1 # number of cores to use for parallel processing
-filename <- "data"      # filename prefix for output files
+filename <- "data" # filename prefix for output files
 
 #### Simulation code below here ####
 library(tidyverse)
@@ -1865,10 +1935,10 @@ library(wei.series.md.c1.c2.c3) # for `mle_lbfgsb_wei_series_md_c1_c2_c3` etc
 file.meta <- paste0(filename, ".txt")
 file.csv <- paste0(filename, ".csv")
 if (file.exists(file.meta)) {
-  stop("File already exists: ", file.meta)
+    stop("File already exists: ", file.meta)
 }
 if (file.exists(file.csv)) {
-  stop("File already exists: ", file.csv)
+    stop("File already exists: ", file.csv)
 }
 
 shapes <- theta[seq(1, length(theta), 2)]
@@ -1919,54 +1989,62 @@ for (scale3 in scales3) {
                     iter <- 0L
                     repeat {
                         retry <- FALSE
-                        tryCatch({
-                            repeat {
-                                df <- generate_guo_weibull_table_2_data(
-                                    shapes = shapes, scales = scales, n = n, p = p, tau = tau)
+                        tryCatch(
+                            {
+                                repeat {
+                                    df <- generate_guo_weibull_table_2_data(
+                                        shapes = shapes, scales = scales, n = n, p = p, tau = tau
+                                    )
 
-                                sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-                                    theta0 = theta, df = df, hessian = FALSE,
-                                    control = list(maxit = max_iter, parscale = theta))
-                                if (sol$convergence == 0) {
-                                    break
+                                    sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+                                        theta0 = theta, df = df, hessian = FALSE,
+                                        control = list(maxit = max_iter, parscale = theta)
+                                    )
+                                    if (sol$convergence == 0) {
+                                        break
+                                    }
+                                    cat("[", iter, "] MLE did not converge, retrying.\n")
                                 }
-                                cat("[", iter, "] MLE did not converge, retrying.\n")
-                            }
 
-                            mle_solver <- function(df, i) {
-                                mle_lbfgsb_wei_series_md_c1_c2_c3(
-                                    theta0 = sol$par, df = df[i, ], hessian = FALSE,
-                                    control = list(maxit = max_boot_iter, parscale = sol$par))$par
-                            }
+                                mle_solver <- function(df, i) {
+                                    mle_lbfgsb_wei_series_md_c1_c2_c3(
+                                        theta0 = sol$par, df = df[i, ], hessian = FALSE,
+                                        control = list(maxit = max_boot_iter, parscale = sol$par)
+                                    )$par
+                                }
 
-                            # do the non-parametric bootstrap
-                            sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
-                        },
-                        error = function(e) {
-                            cat("[error] ", conditionMessage(e), "\n")
-                            cat("[retrying scenario: n = ", n, ", p = ", p, ", q = ", q, "\n")
-                            retry <<- TRUE
-                        })
+                                # do the non-parametric bootstrap
+                                sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
+                            },
+                            error = function(e) {
+                                cat("[error] ", conditionMessage(e), "\n")
+                                cat("[retrying scenario: n = ", n, ", p = ", p, ", q = ", q, "\n")
+                                retry <<- TRUE
+                            }
+                        )
                         if (retry) {
                             next
                         }
                         iter <- iter + 1L
-                        shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
-                        scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
+                        shapes.mle[iter, ] <- sol$par[seq(1, length(theta), 2)]
+                        scales.mle[iter, ] <- sol$par[seq(2, length(theta), 2)]
 
-                        tryCatch({
-                            ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
-                            shapes.ci <- ci[seq(1, length(theta), 2), ]
-                            scales.ci <- ci[seq(2, length(theta), 2), ]
-                            shapes.lower[iter, ] <- shapes.ci[, 1]
-                            shapes.upper[iter, ] <- shapes.ci[, 2]
-                            scales.lower[iter, ] <- scales.ci[, 1]
-                            scales.upper[iter, ] <- scales.ci[, 2]
-                        }, error = function(e) {
-                            cat("[error] ", conditionMessage(e), "\n")
-                        })
+                        tryCatch(
+                            {
+                                ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
+                                shapes.ci <- ci[seq(1, length(theta), 2), ]
+                                scales.ci <- ci[seq(2, length(theta), 2), ]
+                                shapes.lower[iter, ] <- shapes.ci[, 1]
+                                shapes.upper[iter, ] <- shapes.ci[, 2]
+                                scales.lower[iter, ] <- scales.ci[, 1]
+                                scales.upper[iter, ] <- scales.ci[, 2]
+                            },
+                            error = function(e) {
+                                cat("[error] ", conditionMessage(e), "\n")
+                            }
+                        )
                         if (iter %% 5 == 0) {
-                            cat("[iteration ", iter, "] shapes = ", shapes.mle[iter,], "scales = ", scales.mle[iter, ], "\n")
+                            cat("[iteration ", iter, "] shapes = ", shapes.mle[iter, ], "scales = ", scales.mle[iter, ], "\n")
                         }
 
                         if (iter == R) {
@@ -1979,10 +2057,13 @@ for (scale3 in scales3) {
                         p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
                         shapes = shapes.mle, scales = scales.mle,
                         shapes.lower = shapes.lower, shapes.upper = shapes.upper,
-                        scales.lower = scales.lower, scales.upper = scales.upper)
+                        scales.lower = scales.lower, scales.upper = scales.upper
+                    )
 
-                    write.table(df, file = file.csv, sep = ",", row.names = FALSE,
-                        col.names = !file.exists(file.csv), append = TRUE)
+                    write.table(df,
+                        file = file.csv, sep = ",", row.names = FALSE,
+                        col.names = !file.exists(file.csv), append = TRUE
+                    )
                 }
             }
         }
@@ -1998,7 +2079,7 @@ for (scale3 in scales3) {
 #' This model satisfies conditions C1, C2, and C3.
 #' The failed component will be in the corresponding candidate set with
 #' probability 1, and the remaining components will be in the candidate set
-#' with probability `p` (the same probability for each component). `p` 
+#' with probability `p` (the same probability for each component). `p`
 #' may be different for each system, but it is assumed to be the same for
 #' each component within a system, so `p` can be a vector such that the
 #' length of `p` is the number of systems in the data set (with recycling

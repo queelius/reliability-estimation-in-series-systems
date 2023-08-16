@@ -10,9 +10,19 @@
   and I put it there for your review, since you had mentioned that you wanted to see if and when
   the series system is Weibull.
 
+- created a new section "System and Component Reliabilities" under the "Series System Model" (section 2) that
+  takes a deeper dive into the concept of reliability, MTTF, and some issues with it. Then, i discuss the
+  components and how a well-designed system should have components with similar reliabilities, and provide
+  a brief discussion on how i use these insights in my simulation study to assess the sensitivity the MLE
+  has to varying the reliability of a single component. I think this is a good place for this material, and brings these
+  ideas to the forefront, instead of burying them in the simulation section.
+
 - removed the flat likelhood graphs and in-depth discussion.
 
 - removed data augmentation section.
+
+- fixed Bain references/citation (i think), also added more citations for things like how the MTTF can be misleading and
+  MLE convergence issues.
 
 - TODO: write R as R_{T_i} everywhere. let's not use special notation, except R_j for components. No need to let
   the reader infer (even if it seems obvious which distribution the distribution function is for) the meaning.
