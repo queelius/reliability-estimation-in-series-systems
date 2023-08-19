@@ -19,11 +19,11 @@ options(digits = 5, scipen = 999)
 
 N <- c(90)
 P <- c(.215)
-Q <- rep(c(.6, .7125, .9, 1), 500)
-R <- 3
+Q <- rep(c(.25, .5, .6, .7125, .9, 1), 500)
+R <- 10
 B <- 1000L
 max_iter <- 100L
-max_boot_iter <- 150L
+max_boot_iter <- 125L
 n_cores <- detectCores() - 1
 
 cat("Simulation parameters:\n")
@@ -137,8 +137,8 @@ for (n in N) {
                 scales.lower = scales.lower,
                 scales.upper = scales.upper)
 
-            write.table(df, file = "data-boot-tau-fixed-bca-tau-vs-ci-large-b.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data-boot-tau-fixed-bca-tau-vs-ci-large-b.csv"), append = TRUE)
+            write.table(df, file = "boot-bca-tau-large-b-base.csv", sep = ",", row.names = FALSE,
+                col.names = !file.exists("boot-bca-tau-large-b-base.csv"), append = TRUE)
         }
     }
 }
