@@ -1,6 +1,8 @@
 .Rproj.user
 /doc/
 /Meta/
+/_bookdown*
 *.log
 wei_series_md.tex
 wei_series_md_files
+_main*

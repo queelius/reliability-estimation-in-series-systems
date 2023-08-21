@@ -3,31 +3,29 @@ title: "Bootstrapping confidence intervals (BCa) of the maximum likelihood estim
 author: "Alex Towell"
 abstract: "We estimate the parameters of a series system with Weibull component lifetimes from relatively small samples consisting of right-censored system lifetimes and masked component cause of failure. Under a set of conditions that permit us to ignore how the component cause of failures are masked, we assess the bias and variance of the estimator. Then, we assess the accuracy of the boostrapped variance and calibration of the confidence intervals of the MLE under a variety of scenarios."
 output:
-    pdf_document:
-        toc: yes
-        toc_depth: 3
+    #bookdown::pdf_document2:
+    #bookdown::html_document2:
+    bookdown::gitbook:
+    #pdf_document:
+        #toc: yes
+        #toc_depth: 3
         number_sections: true
-        extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
+        #extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
+        extra_dependencies: ["tikz"]
         df_print: kable
         keep_tex: true
         citation_package: natbib
 indent: true
 header-includes:
-   - \hypersetup{linktoc=all}
+   - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
+   - \AtBeginDocument{\newtheorem{condition}{Condition}}
    - \AtBeginDocument{\renewcommand{\refname}{References}}
 bibliography: refs.bib
-biblio-style: apalike
 ---
 
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
-\newtheorem{condition}{Condition}
-\renewcommand{\v}[1]{\boldsymbol{#1}}
-\numberwithin{equation}{section}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts = list(width.cutoff = 65))
+knitr::opts_chunk$set(echo = TRUE)
 library(md.tools)
 library(algebraic.mle)
 library(wei.series.md.c1.c2.c3)
@@ -38,6 +36,12 @@ library(grid)
 library(glue)
 library(png)
 library(kableExtra)
+
+#\newtheorem{definition}{Definition}
+#\newtheorem{theorem}{Theorem}
+#\newtheorem{corollary}{Corollary}
+#\numberwithin{equation}{section}
+
 ```
 
 Introduction
@@ -45,19 +49,34 @@ Introduction
 Accurately estimating the reliability of individual components in
 multi-component systems is an important problem in many engineering domains.
 However, component lifetimes and failure causes are often not directly
-observable. In a series system, only the system-level failure time may be recorded along with limited information about which component failed. Such *masked* data poses challenges for estimating component reliability. 
+observable. In a series system, only the system-level failure time may be recorded along
+with limited information about which component failed. Such *masked* data poses challenges
+for estimating component reliability. 
 
-In this paper, we develop a maximum likelihood approach to estimate component reliability in series systems using right-censored lifetime data and candidate sets that contain the failed component. The key contributions are:
+In this paper, we develop a maximum likelihood approach to estimate component reliability
+in series systems using right-censored lifetime data and candidate sets that contain the
+failed component. The key contributions are:
 
-1. Deriving a likelihood model that accounts for right-censoring and masked failure causes through candidate sets. This allows the available masked data to be used for estimation.
+1. Deriving a likelihood model that accounts for right-censoring and masked failure causes
+through candidate sets. This allows the available masked data to be used for estimation.
 
-2. Validating the accuracy, precision, and robustness of the maximum likelihood estimator through an extensive simulation study under different sample sizes, masking probabilities, and censoring levels. 
+2. Validating the accuracy, precision, and robustness of the maximum likelihood estimator
+through an extensive simulation study under different sample sizes, masking probabilities,
+and censoring levels. 
 
-3. Demonstrating that bootstrapping provides well-calibrated confidence intervals for the MLEs even with small samples.
+3. Demonstrating that bootstrapping provides well-calibrated confidence intervals for the
+MLEs even with small samples.
 
-Together, these contributions provide a statistically rigorous methodology for learning about latent component properties from series system data. The methods are shown to work well even when failure information is significantly masked. This capability expands the range of applications where component reliability can be quantified from limited observations.
+Together, these contributions provide a statistically rigorous methodology for learning
+about latent component properties from series system data. The methods are shown to work
+well even when failure information is significantly masked. This capability expands the
+range of applications where component reliability can be quantified from limited observations.
 
-The remainder of this paper is organized as follows. First, we detail the series system and masked data models. Next, we present the likelihood construction and maximum likelihood theory. We then describe the bootstrap approach for variance and confidence interval estimation. Finally, we validate the methods through simulation studies under various data scenarios and sample sizes.
+The remainder of this paper is organized as follows. First, we detail the series system and
+masked data models. Next, we present the likelihood construction and maximum likelihood
+theory. We then describe the bootstrap approach for variance and confidence interval
+estimation. Finally, we validate the methods through simulation studies under various data
+scenarios and sample sizes.
 
 
 Series System Model {#sec:statmod}
@@ -1255,7 +1274,7 @@ series system, and the same is done for the score and hessian of the log-likelih
 We wish to conduct a hypothesis test to determine if there is statistically significant
 evidence that the shape parameters are homogeneous:
 \begin{align*}
-H_0 &: \text{all shape parameters equal.}
+H_0 &: \text{all shape parameters equal.}\\
 H_1 &: \text{not all shape parameters are equal.}
 \end{align*}
 We will use the likelihood ratio test (LRT) to test this hypothesis. The LRT statistic is
@@ -1331,7 +1350,7 @@ slightly more complex, we add two more components to this series system,
 with shape and scale parameters given by the last two components in Table
 \ref{tab:series-sys}. We will refer to this system as the **base** system.
 
-In Section \ref{sec:sys_weibull_reliability}, we defined a well-designed series
+In Section \ref{sec:reliability}, we defined a well-designed series
 system as one that consists of components with similar reliabilities, where we define
 reliability in two ways, the mean time to failure (MTTF) and the probability that a
 specific component will be the cause of failure. All things else being equal,
@@ -1444,7 +1463,7 @@ method, which we call the *Bernoulli candidate set model*. In this model, each
 non-failed component is included in the candidate set with
 a fixed probability $p$, independently of all other components and independently
 of $\v\theta$, and the failed component is always included in the candidate set.
-See Appendix \ref{app:cand-model} for the R code that implements this model.
+See Appendix \@ref(app:cand-model) for the R code that implements this model.
 
 ## Impacts on the MLE
 
@@ -1517,7 +1536,7 @@ it is not clear which one will dominate
 
 In what follows, we explain how the bias induced by masking the component cause of failure
 effects the MLE for the shape and scale parameters of a Weibull component.
-Assessing Equation \eqref{eq:mttf-wei}, we see that the MTTF of a Weibull component is
+Assessing Equation \eqref{eq:mttf-weibull}, we see that the MTTF of a Weibull component is
 proportional to its scale parameter $\lambda_j$, which means when we decrease
 the scale parameter $\lambda_j$ (keeping the shape parameter $k_j$ constant), the MTTF decreases.
 Therefore, if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
@@ -1904,8 +1923,7 @@ increases and thus have more informationa bout $k_3$ for our estimate.
 
 In this paper, we have presented a likelihood model for a series system with masked component...
 
-# Appendix A: R Code For Log-likelihood Function {-# app:loglike-code #}
-\label{app:loglike-code}
+# Appendix A: R Code For Log-likelihood Function {-}
 
 The following code is the log-likelihood function for the Weibull series system
 with a likelihood model that includes masked component cause of failure and right-censoring.
@@ -1946,8 +1964,7 @@ loglik_wei_series_md_c1_c2_c3 <- function(df, theta) {
 ```
 
 
-# Appendix B: R Code For Score Function {-# app:score-code #}
-\label{app:score-code}
+# Appendix B: R Code For Score Function {-}
 
 The following code is the score function (gradient of the log-likelihood function with respect to $\v\theta$) for the Weibull series system
 with a likelihood model that includes masked component cause of failure and right-censoring.
@@ -2007,7 +2024,7 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
 }
 ```
 
-# Appendix C: R Code For Simulation of Scenarios {-# app:sim-code #}
+# Appendix C: R Code For Simulation of Scenarios {-}
 
 The following code is the Monte-carlo simulation code for running the scenarios
 described in Section \ref{sec:sim_study}.
@@ -2181,7 +2198,7 @@ for (scale3 in scales3) {
 ```
 
 
-# Appendix D: Bernoulli Candidate Set Model {-# app:cand-model #}
+# Appendix D: Bernoulli Candidate Set Model {-}
 
 ```{r, eval = FALSE}
 #' Bernoulli candidate set model is a particular type of *uninformed* model.
@@ -2210,7 +2227,7 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 }
 ```
 
-# Appendix E: Series System Quantile Function {-# app:series-quantile #}
+# Appendix E: Series System Quantile Function {-}
 
 ```{r, eval=FALSE}
 #' Quantile function (inverse of the cdf).
@@ -2235,3 +2252,4 @@ qwei_series <- function(p, shapes, scales) {
     }
     return(t1)
 }
+```
