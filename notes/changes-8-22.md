@@ -1,5 +1,13 @@
 
-## Meeting notes
+## Change Log
+
+- Updated the proof for the componant cause of failure probability Pr(K_i = j), Equation 8 in Section 2.1, to make the expectation
+  step more explict. Btw, should I include the proof for Pr(K_i = j | T_i = t) in the paper? I don't actually use it in the paper.
+  If we wanted to add a prediction section, where we show how we may apply these results.
+  I have a more general proof for Pr(K_i = j | T_i = t, C_i = c), which reduces to Pr(K_i = j | T_i = t) when c = {1, ..., m}.
+  I think I'll leave it out for now, but I can add it later if we want to add a prediction section. (Note that the predictions can also
+  use Bootstrapping to construct prediction intervals which account for the uncertainty in the parameter estimates and the
+  irreducible uncertainty in the model.)
 
 - TODO: Likelihood ratio test. Fit to series system that is Weibull (same shape for all components)
     * Consider same scale too, if we find that for some small $n$ the same shape system fits data well.
