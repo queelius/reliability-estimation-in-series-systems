@@ -137,8 +137,8 @@ for (n in N) {
                 scales.lower = scales.lower,
                 scales.upper = scales.upper)
 
-            write.table(df, file = "boot-bca-tau-large-b-base.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("boot-bca-tau-large-b-base.csv"), append = TRUE)
+            write.table(df, file = "boot-bca-tau-large-b.csv", sep = ",", row.names = FALSE,
+                col.names = !file.exists("boot-bca-tau-large-b.csv"), append = TRUE)
         }
     }
 }
