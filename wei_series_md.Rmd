@@ -3,9 +3,9 @@ title: "Bootstrapping confidence intervals (BCa) of the maximum likelihood estim
 author: "Alex Towell"
 abstract: "We estimate the parameters of a series system with Weibull component lifetimes from relatively small samples consisting of right-censored system lifetimes and masked component cause of failure. Under a set of conditions that permit us to ignore how the component cause of failures are masked, we assess the bias and variance of the estimator. Then, we assess the accuracy of the boostrapped variance and calibration of the confidence intervals of the MLE under a variety of scenarios."
 output:
-    #bookdown::pdf_document2:
+    bookdown::pdf_document2:
     #bookdown::html_document2:
-    bookdown::gitbook:
+    #bookdown::gitbook:
     #pdf_document:
         #toc: yes
         #toc_depth: 3
@@ -356,7 +356,7 @@ By Theorem \ref{thm:f_k_and_t}, this is equivalent to
 \begin{align*}
 \Pr\{K_i = j\}
     &= \int_0^{\infty} h_j(t;\v{\theta_j}) R_{T_i}(t;\v\theta) dt\\
-    &= \int_0^{\infty} h_j(t;\v{\theta_j}) / h_{T_i}(t ; \v\theta) f_{T_i}(t ; \v\theta)dt\\
+    &= \int_0^{\infty} \biggl(\frac{h_j(t;\v{\theta_j})}{h_{T_i}(t ; \v\theta)}\bigr) f_{T_i}(t ; \v\theta) dt\\
     &= E_{\v\theta}\bigl[h_j(T_i;\v{\theta_j}) / \sum_{l=1}^m h_l(T_i ; \v{\theta_l})\bigr].
 \end{align*}
 \end{proof}
@@ -1037,59 +1037,7 @@ Equations \eqref{eq:sys_weibull_reliability_function} and
 \eqref{eq:sys_weibull_failure_rate_function} completes the proof.
 \end{proof}
 
-## Special Case: Series System That Is Weibull
-
-A series system composed of Weibull components is not generally Weibull unless the
-shape parameters of the components are homogeneous.
-\begin{theorem}
-If the shape parameters of the components are identical, then the series system is Weibull
-with a shape parameter $k$ given by the shape parameter of the components and a scale
-parameter $\lambda$ given by
-\begin{equation}
-\label{eq:sys_weibull_scale}
-\lambda = \biggl(\sum_{j=1}^{m} \lambda_j^{-k}\biggr)^{-1/k},
-\end{equation}
-\end{theorem}
-where $\lambda_j$ is the scale parameter of the $j$\textsuperscript{th} component.
-\begin{proof}
-Given $m$ Weibull lifetimes $T_{i 1}, \ldots, T_{i m}$ with the same shape parameter $k$
-and scale parameters $\lambda_1, \ldots, \lambda_m$, the reliability function of the series
-system is
-$$
-R_{T_i}(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k}\biggr\}.
-$$
-To make this a Weibull system, we need to find a single scale parameter $\lambda$ such that
-$$
-R_{T_i}(t;\v\theta) = \exp\biggl\{-\biggl(\frac{t}{\lambda}\biggr)^{k}\biggr\},
-$$
-which has the solution
-$$
-\lambda = \frac{1}{\left(\frac{1}{\lambda_1^k} + \ldots + \frac{1}{\lambda_m^k}\right)^{\frac{1}{k}}}.
-$$
-\end{proof}
-
-\begin{theorem}
-If a series system has Weibull components with identical shape parameters, the component
-cause of failure is conditionally independent of the system failure time:
-$$
-    \Pr\{K_i = j | T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-k}}{\sum_{l=1}^{m} \lambda_l^{-k}}.
-$$
-\end{theorem}
-\begin{proof}
-The conditional probability of the $j$\textsuperscript{th} component being the
-cause of failure given the system failure time is given by
-\begin{align*}
-\Pr\{K_i = j | T_i = t\}
-    &= \frac{f_{K_i, T_i}(j, t;\v\theta)}{f_{T_i}(t;\v\theta)}
-    = \frac{h_j(t;k,\lambda_j) R_{T_i}(t;\v\theta)}
-        {h_{T_i}(t;\v{\theta_j}) R_{T_i}(t;\v\theta)}\\
-    &= \frac{h_j(t;k,\lambda_j)}{\sum_{l=1}^m h_l(t;k,\lambda_l)}
-    = \frac{\frac{k}{\lambda_j}\bigl(\frac{t}{\lambda_j}\bigr)^{k-1}}
-        {\sum_{l=1}^m \frac{k}{\lambda_l}\bigl(\frac{t}{\lambda_l}\bigr)^{k-1}}
-    = \frac{\bigl(\frac{1}{\lambda_j}\bigr)^k}
-        {\sum_{l=1}^m \bigl(\frac{1}{\lambda_l}\bigr)^k}.
-\end{align*}
-\end{proof}
+## Reliability
 
 In Section \ref{sec:reliability}, we discussed the concept of reliability.
 In the case of Weibull components, the MTTF of the $j$\textsuperscript{th}
@@ -1103,24 +1051,18 @@ where $\Gamma$ is the gamma function.
 We mentioned that the MTTF can sometimes be a poor measure of reliability, e.g.,
 the MTTF and the probability of failing early can be large. The Weibull is a good
 example of this phenomenon. If $k > 1$, the Weibull is a fat-tailed distribution,
-and it will exhibit both a large MTTF and a high 
-
+and it can exhibit both a large MTTF and a high probability of failing early.
 
 Components may have similar MTTFs, but some components may be more likely to fail
-early and others may be more likely to fail late, depending upon their shapes.
-A good measure of the *relative* reliability of the components is given by the
-probability of component failure given by Equation \eqref{eq:prob_k}.
+early and others may be more likely to fail late, depending upon their failure
+characterstics (shape parameters), and so the probability of component failure given by
+Equation \eqref{eq:prob_k} is a useful measure of component reliability compared to
+the other components in the system.
 
 In a well-designed series system, the component failure characteristics are similar:
 they have a similar MTTF and a similar probability of being the component cause of
 failure, i.e., they have similar shapes and scales, so that system failures are not
 dominated by some subset of components.
-
-As we discussed in the previous section, if the shapes are similar, the series system
-is approximately Weibull. In our simulation study, we analyze a series system with
-Weibull components that have similar shape parameters (except in those studies where
-we vary the shape parameters to test the sensitivity of the MLE to different component
-failure characteristics).
 
 ## Likelihood Model {#sec:sys_weibull_likelihood}
 In Section \ref{sec:like_model}, we discussed two separate kinds of likelihood
@@ -1251,61 +1193,83 @@ sample is given by
 \end{equation}
 
 
-Weibull Series Model with Homogeneous Shape Parameters
-======================================================
+Reduced Model: Weibull Series System Due to Homogeneous Shape Parameters
+========================================================================
 
-Before condcuting a simulation study for the full Weibull series model, where no assumptions
-about the shape parameters of the components are made, we first consider the special case
-where the shape parameters are homogeneous, i.e., $k_1 = \cdots = k_m = k$. This reduces the
+A series system composed of Weibull components is not generally Weibull unless the
+shape parameters of the components are homogeneous.
+\begin{theorem}
+If the shape parameters of the components are identical, then the series system is Weibull
+with a shape parameter $k$ given by the shape parameter of the components and a scale
+parameter $\lambda$ given by
+\begin{equation}
+\label{eq:sys_weibull_scale}
+\lambda = \biggl(\sum_{j=1}^{m} \lambda_j^{-k}\biggr)^{-1/k},
+\end{equation}
+\end{theorem}
+where $\lambda_j$ is the scale parameter of the $j$\textsuperscript{th} component.
+\begin{proof}
+Given $m$ Weibull lifetimes $T_{i 1}, \ldots, T_{i m}$ with the same shape parameter $k$
+and scale parameters $\lambda_1, \ldots, \lambda_m$, the reliability function of the series
+system is
+$$
+R_{T_i}(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k}\biggr\}.
+$$
+To make this a Weibull system, we need to find a single scale parameter $\lambda$ such that
+$$
+R_{T_i}(t;\v\theta) = \exp\biggl\{-\biggl(\frac{t}{\lambda}\biggr)^{k}\biggr\},
+$$
+which has the solution
+$$
+\lambda = \frac{1}{\left(\frac{1}{\lambda_1^k} + \ldots + \frac{1}{\lambda_m^k}\right)^{\frac{1}{k}}}.
+$$
+\end{proof}
+
+\begin{theorem}
+If a series system has Weibull components with identical shape parameters, the component
+cause of failure is conditionally independent of the system failure time:
+$$
+    \Pr\{K_i = j | T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-k}}{\sum_{l=1}^{m} \lambda_l^{-k}}.
+$$
+\end{theorem}
+\begin{proof}
+The conditional probability of the $j$\textsuperscript{th} component being the
+cause of failure given the system failure time is given by
+\begin{align*}
+\Pr\{K_i = j | T_i = t\}
+    &= \frac{f_{K_i, T_i}(j, t;\v\theta)}{f_{T_i}(t;\v\theta)}
+    = \frac{h_j(t;k,\lambda_j) R_{T_i}(t;\v\theta)}
+        {h_{T_i}(t;\v{\theta_j}) R_{T_i}(t;\v\theta)}\\
+    &= \frac{h_j(t;k,\lambda_j)}{\sum_{l=1}^m h_l(t;k,\lambda_l)}
+    = \frac{\frac{k}{\lambda_j}\bigl(\frac{t}{\lambda_j}\bigr)^{k-1}}
+        {\sum_{l=1}^m \frac{k}{\lambda_l}\bigl(\frac{t}{\lambda_l}\bigr)^{k-1}}
+    = \frac{\bigl(\frac{1}{\lambda_j}\bigr)^k}
+        {\sum_{l=1}^m \bigl(\frac{1}{\lambda_l}\bigr)^k}.
+\end{align*}
+\end{proof}
+
+
+As we discussed in the previous section, if the shapes are similar, the series system
+is approximately Weibull. In our simulation study, we analyze a series system with
+Weibull components that have similar shape parameters (except in those studies where
+we vary the shape parameters to test the sensitivity of the MLE to different component
+failure characteristics).
+
+
+ This reduces the
 series system to a known distribution, the Weibull distribution, which is particularly useful
 for analysis and interpretation, especially in the context of small samples, since instead of
 estimating $2m$ parameters we only need to estimate $m+1$ parameters, one shape parameter and
 $m$ scale parameters.
 
-The log-likelihood function for the reduced series system, $\ell_R$, the series system with
-homogeneous shape parameters, is given by
+We denote the full model log-likelihood function by $\ell_F$ and the reduced model log-likelihood
+by $\ell_R$. The reduced model is obtained by setting the shape parameter of each component to
+be the same, i.e., $k_1 = \cdots = k_m = k$. Thus, the reduced model log-likelihood function is given by
 $$
 \ell_R(k, \lambda_1, \lambda_2, \cdots, \lambda_m) =
-        \ell(k, \lambda_1, k, \lambda_2, \ldots, k, \lambda_m),
+        \ell_F(k, \lambda_1, k, \lambda_2, \ldots, k, \lambda_m),
 $$
-i.e., we just plug the same shape parameter $k$ into each component of the
-series system, and the same is done for the score and hessian of the log-likelihood functions.
-
-We wish to conduct a hypothesis test to determine if there is statistically significant
-evidence that the shape parameters are homogeneous:
-\begin{align*}
-H_0 &: \text{all shape parameters equal.}\\
-H_1 &: \text{not all shape parameters are equal.}
-\end{align*}
-We will use the likelihood ratio test (LRT) to test this hypothesis. The LRT statistic is
-given by
-$$
-\Lambda = -2 \log \frac{\ell_R}{\ell_F},
-$$
-where $\ell_R$ is the log-likelihood function of the null (reduced) model
-and $\ell_F$ is the log-likelihood function of the full model. Under the null model,
-the LRT statistic is asymptotically distributed chi-squared with $m-1$ degrees of freedom,
-where $m$ is the number of components in the series system,
-$$
-\Lambda \sim \chi^2_{m-1}.
-$$
-If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
-degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, then we find the data to be incompatible with the null
-hypothesis $H_0$, otherwise we find the data to be compatible with the null hypothesis $H_0$.
-
-## Results of the Comparison
-
-The comparison between the full and reduced models yields a chi-squared value of [Insert Value], with
-a corresponding p-value of [Insert Value]. The interpretation of these results indicates that
-[Insert Interpretation, e.g., the data supports/rejects the Weibull homogeneity in the reduced model].
-This finding has implications for [Insert specific implications relevant to your study].
-
-### Conclusion {-}
-
-This analysis further illuminates the properties of the reduced model in relation to the full model. By examining Weibull homogeneity through the LRT, we gain insights that enrich the overall understanding of [Insert broader context or subject matter of the paper].
-
-
-
+The same is done for the score and hessian of the log-likelihood functions.
 
 Simulation Study {#sec:sim_study}
 ================================
@@ -1465,13 +1429,104 @@ a fixed probability $p$, independently of all other components and independently
 of $\v\theta$, and the failed component is always included in the candidate set.
 See Appendix \@ref(app:cand-model) for the R code that implements this model.
 
-## Impacts on the MLE
 
-Before we present the results of our simulation studies, we discuss some of the
-potential impacts of the candidate set model and right-censoring on the MLE of the
-series system.
+## Full Model Versus Reduced Model
 
-### Effect of Right-Censoring {-#sec:effect-censoring}
+We described the full model in Section \ref{sec:wei-series} and we described the reduced model
+in Section \ref{sec:reduced-model}. In this section, we seek to ascertain when the reduced
+model is appropriate.
+
+In the reduced model, series system to a known distribution, the Weibull distribution, which is particularly useful
+for analysis and interpretation, especially in the context of small samples, since instead of
+estimating $2m$ parameters we only need to estimate $m+1$ parameters, one shape parameter and
+$m$ scale parameters.
+
+
+
+All things else being equal, particularly for small samples, we prefer simpler models over
+more complex models. The reduced model is simpler than the full model because it has fewer
+parameters. However, we must be careful to ensure that the reduced model is not too simple.
+If the reduced model is too simple, then it may not be able to adequately describe the data.
+In this case, the full model is preferred. This is in keeping with the principle of Ockham's
+razor, the simplest model that adequately describes the data is preferred.
+
+### Likelihood Ratio Test
+In order to determine if the reduced model is appropriate, we will conduct a hypothesis test.
+We wish to conduct a hypothesis test to determine if there is statistically significant
+evidence that the shape parameters are homogeneous:
+\begin{align*}
+H_0 &: \text{all shape parameters equal.}\\
+H_1 &: \text{not all shape parameters are equal.}
+\end{align*}
+We will use the likelihood ratio test (LRT) to test this hypothesis. The LRT statistic is
+given by
+$$
+\Lambda = -2 \log \frac{\ell_R}{\ell_F},
+$$
+where $\ell_R$ is the log-likelihood function of the null (reduced) model
+and $\ell_F$ is the log-likelihood function of the full model. Under the null model,
+the LRT statistic is asymptotically distributed chi-squared with $m-1$ degrees of freedom,
+where $m$ is the number of components in the series system,
+$$
+\Lambda \sim \chi^2_{m-1}.
+$$
+If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
+degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, then we find the data to be incompatible with the null
+hypothesis $H_0$, otherwise we find the data to be compatible with the null hypothesis $H_0$.
+
+### Sample Size Analysis
+
+We wish to determine the sample size required to detect a statistically significant difference in the
+shape parameters of the components for our well-defined series system described in Section \ref{}.
+We will use the LRT statistic to determine the sample size required to detect a difference
+in the shape parameters of the components with a given power and significance level.
+
+### Conclusion and Justification for Full Model
+This analysis further illuminates the properties of the reduced model in relation to the full model. By
+examining Weibull homogeneity through the LRT, we gain insights that enrich the overall understanding of
+the model for well-designed series systems with Weibull components. We find that the reduced model is
+appropriate for well-designed series systems with Weibull components with homogenous shapes for sample
+sizes less than $n = 50$ in our DGP. For sample sizes greater than $n = 50$, the reduced model becomes
+increasingly incompatible with the data. This is because the reduced model assumes that the shape
+parameters of the components are equal, but in our DGP, the shape parameters are only approximately
+equal, and these slight differences become more pronounced as the sample size increases. Therefore,
+we conclude that the full model is preferred for well-designed series systems with Weibull components
+with sample sizes greater than $n = 50$ in our DGP. We will conduct a simulation study where we largely
+use sample sizes larger than $n = 50$, so we will use the full model in our simulation study.
+
+## Simulation Scenarios
+
+We define a simulation scenario to be some combination of $n$, $p$, $k_3$, and $\lambda_3$.
+We are interested in choosing a small number of scenarios that are
+representative of real-world scenarios and that are interesting to analyze.
+
+Here is an outline of the simulation study analysis:
+
+1. Fix a combination of simulation parameters to some value, and vary the remaining parameter, e.g.,
+   fix $p$, $k_3$, $\lambda_3$, and vary the sample size $n$.
+
+2. Simulate $R$ datasets from the Data Generating Process (DGP) described in
+   Section \ref{sec:data_gen}.
+
+3. For each of these $R = 500$ datasets, compute the MLE.
+
+4. For each of these $R$ datasets, perform bootstrap resampling $B = 1000$ times to create
+   a set of bootstrap samples (replicates).
+
+5. Calculate the MLE for each of these bootstrap samples. This generates an empirical
+   distribution of the MLE, which is used to construct a confidence interval for
+   the MLE.
+
+6. For each dataset, determine whether the true parameter value falls within the
+   computed CI. Aggregate this information across all $R$ datasets to estimate the
+   coverage probability of the CI and the bias of the MLE at that particular
+   combination of simulation parameters.
+
+Once we generate the data for a simulation scenario, we plot the results and discuss
+the performance of the MLE estimator under the chosen scenario.
+For how we run a simulation scenario, see Appendix \ref{app:sim-code}.
+
+### Scenario: Assessing the Impact of Right-Censoring on the MLE {{-#sec:effect-censoring}}
 
 In all of our simulation studies, we use a fixed right-censoring quantile of $82.5\%$
 for the series system.
@@ -1513,88 +1568,7 @@ in our well-designed system is more likely to be affected by right-censoring
 than the shape parameter.
 
 
-### Effect of Masking the Component Cause of Failure {- #sec:effect-masking}
-
-When we observe a system failure, we know that one of the components in the candidate set
-caused the system to fail, but we do not know which one. This uncertainty has the effect
-of pushing the MLE to estimate either a smaller MTTF or a higher infant mortality rate
-for each of the components in the candidate set, depending upon the failure characteristics.
-
-For components that are frequently in candidate sets but proportionally not more
-likely to be a component cause of failure, the effect is more pronounced, which may
-introduce a source of bias in the MLE for such components.
-
-In our Bernoulli candidate set model, the masking probability $p$ determines how commonly each
-non-failed component is in the candidate set, and so we expect that as $p$ increases, this will become a
-more pronoucned source of bias.\footnote{In a more complicated candidate set model, it is possible
-that masking could introduce a significant source of bias for some components, and none at all
-for others.}
-However, note that the effect of masking, which pushes
-the MLE to estimate a smaller MTTF, has opposite effect to that of right-censoring,
-which pushes the MLE to estimate a larger MTTF. As these two sources of bias compete with each other,
-it is not clear which one will dominate
-
-In what follows, we explain how the bias induced by masking the component cause of failure
-effects the MLE for the shape and scale parameters of a Weibull component.
-Assessing Equation \eqref{eq:mttf-weibull}, we see that the MTTF of a Weibull component is
-proportional to its scale parameter $\lambda_j$, which means when we decrease
-the scale parameter $\lambda_j$ (keeping the shape parameter $k_j$ constant), the MTTF decreases.
-Therefore, if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
-to appear in the candidate set, its scale parameter should be decreased, potentially
-biasing the MLE for the scale parameter downwards.
-
-The shape parameter is more complicated, since it determines the failure characteristics
-of the components. In our well-designed system, the shape parameters are larger than $1$,
-and in this case, since the MTTF decreases as we increase the shape parameter $k_j$,
-if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
-to appear in in the candidate set, its shape parameter is nudged upwards, potentially
-positively biasing the MLE for the shape parameter. However, we can also decrease the
-shape parameter, which will increase the MTTF, but also increase the infant morality
-rate, which is another way to increase the probability of a component appearing in
-the candidate set. It is not clear which of these two effects will dominate in general.
-
-
-### Effect of Differentiated Scales {- #sec:effect-differentiated-scales}
-
-...
-
-### Effect of Differentiated Shapes {- #sec:effect-differentiated-shapes}
-
-...
-
-## Simulation Scenarios
-
-We define a simulation scenario to be some combination of $n$, $p$, $k_3$, and $\lambda_3$.
-We are interested in choosing a small number of scenarios that are
-representative of real-world scenarios and that are interesting to analyze.
-
-Here is an outline of the simulation study analysis:
-
-1. Fix a combination of simulation parameters to some value, and vary the remaining parameter, e.g.,
-   fix $p$, $k_3$, $\lambda_3$, and vary the sample size $n$.
-
-2. Simulate $R$ datasets from the Data Generating Process (DGP) described in
-   Section \ref{sec:data_gen}.
-
-3. For each of these $R = 500$ datasets, compute the MLE.
-
-4. For each of these $R$ datasets, perform bootstrap resampling $B = 1000$ times to create
-   a set of bootstrap samples (replicates).
-
-5. Calculate the MLE for each of these bootstrap samples. This generates an empirical
-   distribution of the MLE, which is used to construct a confidence interval for
-   the MLE.
-
-6. For each dataset, determine whether the true parameter value falls within the
-   computed CI. Aggregate this information across all $R$ datasets to estimate the
-   coverage probability of the CI and the bias of the MLE at that particular
-   combination of simulation parameters.
-
-Once we generate the data for a simulation scenario, we plot the results and discuss
-the performance of the MLE estimator under the chosen scenario.
-For how we run a simulation scenario, see Appendix \ref{app:sim-code}.
-
-### Scenario #1: Assessing the Impact of Sample Size on the MLE {-}
+### Scenario: Assessing the Impact of Sample Size on the MLE {-}
 
 In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
 Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (small masking),
@@ -1726,7 +1700,7 @@ Here are several key observations:
   scenario appear to be more sensitive to the data than the scale parameters. We speculate
   that this is 
 
-### Scenario #2: Assessing the Impact of Masking Probability for Component Cause of Failure {- #sec:p-vs-mttf}
+### Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {- #sec:p-vs-mttf}
 
 In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
 Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (reasonable sample size) and 
@@ -1777,7 +1751,50 @@ knitr::include_graphics("image/plot-p-vs-scales.1-n90-large.pdf")
 knitr::include_graphics("image/plot-p-vs-shapes.1-n90-large.pdf")
 ```
 
-### Scenario #3: Assessing the Impact of Changing the Scale Parameter of a Component {- #sec:scale-vs-mttf}
+
+#### Analysis
+
+When we observe a system failure, we know that one of the components in the candidate set
+caused the system to fail, but we do not know which one. This uncertainty has the effect
+of pushing the MLE to estimate either a smaller MTTF or a higher infant mortality rate
+for each of the components in the candidate set, depending upon the failure characteristics.
+
+For components that are frequently in candidate sets but proportionally not more
+likely to be a component cause of failure, the effect is more pronounced, which may
+introduce a source of bias in the MLE for such components.
+
+In our Bernoulli candidate set model, the masking probability $p$ determines how commonly each
+non-failed component is in the candidate set, and so we expect that as $p$ increases, this will become a
+more pronoucned source of bias.\footnote{In a more complicated candidate set model, it is possible
+that masking could introduce a significant source of bias for some components, and none at all
+for others.}
+However, note that the effect of masking, which pushes
+the MLE to estimate a smaller MTTF, has opposite effect to that of right-censoring,
+which pushes the MLE to estimate a larger MTTF. As these two sources of bias compete with each other,
+it is not clear which one will dominate
+
+In what follows, we explain how the bias induced by masking the component cause of failure
+effects the MLE for the shape and scale parameters of a Weibull component.
+Assessing Equation \eqref{eq:mttf-weibull}, we see that the MTTF of a Weibull component is
+proportional to its scale parameter $\lambda_j$, which means when we decrease
+the scale parameter $\lambda_j$ (keeping the shape parameter $k_j$ constant), the MTTF decreases.
+Therefore, if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
+to appear in the candidate set, its scale parameter should be decreased, potentially
+biasing the MLE for the scale parameter downwards.
+
+The shape parameter is more complicated, since it determines the failure characteristics
+of the components. In our well-designed system, the shape parameters are larger than $1$,
+and in this case, since the MTTF decreases as we increase the shape parameter $k_j$,
+if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
+to appear in in the candidate set, its shape parameter is nudged upwards, potentially
+positively biasing the MLE for the shape parameter. However, we can also decrease the
+shape parameter, which will increase the MTTF, but also increase the infant morality
+rate, which is another way to increase the probability of a component appearing in
+the candidate set. It is not clear which of these two effects will dominate in general.
+
+
+
+### Scenario: Assessing the Impact of Changing the Scale Parameter of a Component {- #sec:scale-vs-mttf}
 
 We see that the MTTF is proportional to the scale parameter $\lambda_j$, which means when we decrease
 the scale parameter of a component, we proportionally decrease the MTTF.
@@ -1824,6 +1841,10 @@ There are several interesting observations that we can make about Figure \ref{fi
    be positive for the scale parameter and negative for the shape parameter. We believed this because if component 3 is not the component cause of failure,
    then the system is more likely to fail due to the failure of one of the other components, which would cause the system to fail sooner. This would cause
    
+
+#### Analysis
+
+???
 
 ### Scenario #4: Assessing the Impact of Changing the Shape Parameter of a Component {- #sec:shape3-vary}
 
@@ -1919,6 +1940,10 @@ the coverage probabilities are very well-calibrated for all values of $\Pr\{K_i 
 as $\Pr\{K_i = 3\}$ increases due to the fact that we observe more failures of component 3 as $\Pr\{K_i = 3\}$
 increases and thus have more informationa bout $k_3$ for our estimate.
 
+#### Analysis
+
+???
+
 # Conclusion
 
 In this paper, we have presented a likelihood model for a series system with masked component...
@@ -1933,7 +1958,7 @@ It is implemented in the R library `wei.series.md.c1.c2.c3` and is available on
 For clarity and brevity, we removed some of the functionality that is not relevant to the
 analysis in this paper.
 
-```{r}
+```{r, eval = FALSE}
 #' Generates a log-likelihood function for a Weibull series system with respect
 #' to parameter `theta` (shape, scale) for masked data with candidate sets
 #' that satisfy conditions C1, C2, and C3 and right-censored data.
@@ -2227,7 +2252,7 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 }
 ```
 
-# Appendix E: Series System Quantile Function {-}
+# Appendix E: Series System Quantile Function {#app:series-quantile}
 
 ```{r, eval=FALSE}
 #' Quantile function (inverse of the cdf).
