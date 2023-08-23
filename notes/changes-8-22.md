@@ -1,7 +1,21 @@
 
 ## Change Log
 
-- Updated the proof for the componant cause of failure probability Pr(K_i = j), Equation 8 in Section 2.1, to make the expectation
+- I've added a new simulation, "8.4 Assessing the Impact of Right-Censoring" on the MLE. Since I already had an interpretation of what
+  the effect of the right-censoring would be on the MLE, it didn't seem appropriate to include that without actual evidence to support
+  the interpretation. So, I ran a simulation to assess the impact of right-censoring on the MLE. This also gave me an opportunity
+  to move the content related to "Impacts on MLE" in Section 8.2 to the appropriate locations in the Simulation Study.,
+
+- Moved content related to "8.2 Impacts on MLE" to the appropriate locations in the Simulation Scenarios subsections, e.g.,
+  the subsection "Effect on Right-Censoring" in is now in section "8.4 Scenario: Assessing the Impact of Right-Censoring" in the "Analysis"
+  subsection, where I analyze the results and report the findings and interpretation of the findings. I consider a new way to
+  analyze these impacts, namely by also viewing it through the lens of the reliability function of the system evaluated at
+  right-censoring time tau, i.e., R_{T_i}(tau), and taking the partials to determine how to move the shape and scale parameters
+  in a direction (along the gradient) that increases R_{T_i}(tau) the most. However, I've also expanded / clarified the analysis
+  by considering the MTTF and Pr(K_i = j) as well, arguing that the MLE wants to nudge the shape and scale parameters in a direction
+  that decreases Pr(K_i = j) and increases MTTF_j for all components j = 1 to 5.
+
+- Updated the proof for the component cause of failure probability Pr(K_i = j), Equation 8 in Section 2.1, to make the expectation
   step more explict. Btw, should I include the proof for Pr(K_i = j | T_i = t) in the paper? I don't actually use it in the paper.
   If we wanted to add a prediction section, where we show how we may apply these results.
   I have a more general proof for Pr(K_i = j | T_i = t, C_i = c), which reduces to Pr(K_i = j | T_i = t) when c = {1, ..., m}.

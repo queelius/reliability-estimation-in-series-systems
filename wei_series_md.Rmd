@@ -917,6 +917,32 @@ in the precision of the MLE. We want confidence intervals to be as
 narrow as possible while still having a coverage probability close to the
 nominal level, 95%.
 
+
+## Additional Performance Metrics
+- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of the MLEs
+                        get narrower as the sample size increases. This is an indicator of
+                        the increased precision in the estimates as more data is available.
+                        We call it a *Confidence Band*, but it is actually an estimate of the
+                        quantile range of the MLEs. The shaded region provides insight into
+                        the distribution of the MLEs.
+
+- *IQR of Bootstrapped CIs*: The vertical blue bars represent the Interquartile Range (IQR)
+                             of the actual bootstrapped Confidence Intervals (CIs). Since in
+                             practice we only have one sample and consequently one MLE, we
+                             use bootstrapping to resample and compute multiple CIs. The IQR
+                             then represents the middle 50% range of these bootstrapped CIs.
+
+- *Mean of the MLEs*: The mean of the MLEs is a good indicator of the bias in the estimates.
+                      If the mean of the MLEs is close to the true value, then the MLEs are,
+                      on average, unbiased.
+
+The distinction between the shaded region (95% range of MLEs) and the blue vertical bars
+(IQR of bootstrapped CIs) is important. The shaded region provides insight into the
+distribution of the MLEs, whereas the blue vertical bars provide information about the
+variation in the bootstrapped CIs. Both are relevant for understanding the behavior of the
+estimations.
+
+
 ## Issues with Resampling from the Observed Data
 
 While the bootstrap method provides a robust and flexible tool for statistical
@@ -1386,13 +1412,11 @@ is defined as
 $$
     T_i = \min\{T_{i 1}, \ldots, T_{i m}\}.
 $$
-
 To generate a data set, we first generate the $m$ component failure times,
 by efficiently sampling from their respective distributions, and we then set
 the failure time $t_i$ of the system to the minimum of the component failure times.
 
 ### Right-Censoring Model {-}
-
 We employ a simple right-censoring model, where the right-censoring time
 $\tau$ is fixed at some known value, e.g., an experiment is run for a fixed
 amount of time $\tau$, and all systems that have not failed by the end of the
@@ -1403,7 +1427,6 @@ $$
 $$
 So, after we generate the system failure time $T_i$, we generate the censoring
 time $S_i$ by taking the minimum of $T_i$ and $\tau$.
-
 In our simulation study, we parmaterize the right-censoring time $\tau$ by the
 quantile $q = 0.825$ of the series system,
 $$
@@ -1434,14 +1457,10 @@ See Appendix \@ref(app:cand-model) for the R code that implements this model.
 
 We described the full model in Section \ref{sec:wei-series} and we described the reduced model
 in Section \ref{sec:reduced-model}. In this section, we seek to ascertain when the reduced
-model is appropriate.
-
-In the reduced model, series system to a known distribution, the Weibull distribution, which is particularly useful
-for analysis and interpretation, especially in the context of small samples, since instead of
-estimating $2m$ parameters we only need to estimate $m+1$ parameters, one shape parameter and
-$m$ scale parameters.
-
-
+model is appropriate. In the reduced model, series system to a known distribution, the Weibull
+distribution, which is particularly useful for analysis and interpretation, especially in the
+context of small samples, since instead of estimating $2m$ parameters we only need to estimate
+$m+1$ parameters, one shape parameter and $m$ scale parameters.
 
 All things else being equal, particularly for small samples, we prefer simpler models over
 more complex models. The reduced model is simpler than the full model because it has fewer
@@ -1526,108 +1545,96 @@ Once we generate the data for a simulation scenario, we plot the results and dis
 the performance of the MLE estimator under the chosen scenario.
 For how we run a simulation scenario, see Appendix \ref{app:sim-code}.
 
-### Scenario: Assessing the Impact of Right-Censoring on the MLE {{-#sec:effect-censoring}}
-
-In all of our simulation studies, we use a fixed right-censoring quantile of $82.5\%$
-for the series system.
-So, in our simulation studies, we do not isolate the effect of right-censoring.
-However, we can still discuss the effect of right-censoring on the MLE of the series
-system. Right-censoring introduces a source of bias in the MLE.
-
-> Dr. Agustin: I'm reworking this section. It's generally true for
-> our "well-designed system", which approximately the same shape and
-> scale parameters, with the shapes larger than 1, but when one or more
-> components have a shape less than 1, early deaths are more common
-> but the MTTF may be significantly larger than the
-> censoring time and the other components. In these cases, the MLE
-> for that component's shape parameter is nudged upwards, which
-> decreases MTTF but decreases the likelihood of early deaths before
-> the right-censoring time.
-
-In the case of our well-designed system with components that have approximately
-the same shape and scale, and each system wears out with age (shapes larger than
-$1$), right-censoring has the effect of pushing the MLE to estimate a larger MTTF
-for each of the components, so that the series system has a larger MTTF. This is
-because when we observe a right-censoring event, we know that the system failed
-after the censoring time, but we do not know precisely when it will fail. This
-uncertainty has the effect of pushing the MLE to estimate a larger MTTF for the
-system so that it is more likely to fail after the censoring time. See
-\cite{klein2005survival} for more information on this phenomenon.
-
-To increase the MTTF of a series system, the MTTF of each component
-is increased. By Equation \eqref{}, the mean time to failure (MTTF)
-for the $j$\textsuperscript{th} Weibull component is given by
-$$
-\text{MTTF}_j = \lambda_j \Gamma(1 + 1/k_j),
-$$
-therefore, in order to increase the MTTF of the components, higher values for the
-scale parameters are chosen. The effect on the shape parameter is more nuanced,
-as if the MTTF is increased by decreasing the shape, it also increases the
-probability of early failures. Therefore, we speculate that the scale parameter
-in our well-designed system is more likely to be affected by right-censoring
-than the shape parameter.
-
-
-### Scenario: Assessing the Impact of Sample Size on the MLE {-}
+## Scenario: Assessing the Impact of Right-Censoring {#sec:effect-censoring}
 
 In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
-Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (small masking),
-we fix the right-censoring quantile to $q = 0.825$, and we vary the sample size $n$ from
-$50$ to $1000$.
+Table \ref{tab:series-sys}, and we vary the right-censoring quantile ($q$) from $25\%$ (significant
+right-censoring) to $100\%$ (no right-censoring), with a component cause of failure masking
+probability of $21.5\%$ (moderate masking) and sample size $n = 100$ (moderate sample size).
 
-For each observation, we then mask the component cause of failure with candidate sets that
-satisfy the three primary conditions of the likelihood model, e.g., the failed component is
-always in the candidate set. For each synthetic data set, we then compute the MLEs of the
-shape and scale parameters of the Weibull distribution. We then use the MLEs to compute the
-BCa bootstrapped 95% CIs.
-
-In what follows, we analyze the performance of the BCa bootstrapped CIs for the shape and
-scale parameters under different masking conditions ($p$) for the component cause of failure.
-We will focus on the following statistics:
-
-- *Coverage Probability (CP)*: The CP is the proportion of the bootstrapped CIs that contain
-                               the true value of the parameter. The CP is a good indicator of
-                               the reliability of the estimates as previously discussed.
-
-- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of the MLEs
-                        get narrower as the sample size increases. This is an indicator of
-                        the increased precision in the estimates as more data is available.
-                        We call it a *Confidence Band*, but it is actually an estimate of the
-                        quantile range of the MLEs. The shaded region provides insight into
-                        the distribution of the MLEs.
-
-- *IQR of Bootstrapped CIs*: The vertical blue bars represent the Interquartile Range (IQR)
-                             of the actual bootstrapped Confidence Intervals (CIs). Since in
-                             practice we only have one sample and consequently one MLE, we
-                             use bootstrapping to resample and compute multiple CIs. The IQR
-                             then represents the middle 50% range of these bootstrapped CIs.
-
-- *Mean of the MLEs*: The mean of the MLEs is a good indicator of the bias in the estimates.
-                      If the mean of the MLEs is close to the true value, then the MLEs are,
-                      on average, unbiased.
-
-The distinction between the shaded region (95% range of MLEs) and the blue vertical bars
-(IQR of bootstrapped CIs) is important. The shaded region provides insight into the
-distribution of the MLEs, whereas the blue vertical bars provide information about the
-variation in the bootstrapped CIs. Both are relevant for understanding the behavior of the
-estimations.
-
-#### Scale Parameters {-}
-```{r samp-size-n-vs-stats-p215-scale, fig.cap=c("Sample Size vs Bootstrapped Scale CI Statistics ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-n-vs-stats-p215-scale.pdf")
+```{r q-vs-stats-p215-shape, out.width='100%', cache = T, fig.cap=c("Right-Censoring Quantile vs MLE ($p = 0.215, n = 100$)","Right-Qensoring Quantile ($q$) vs MLEs"), fig.align="center", echo = F}
+knitr::include_graphics("image/tau/plot-q-vs-mle.pdf")
 ```
 
-For the components 2, 3, and 4, Figure \ref{fig:samp-size-n-vs-stats-p215-scale} shows
-the distribution of the MLEs for the scale parameters and the bootstrapped CIs for different
-sample sizes with a component cause of failrue masking probaility of $p = 0.215$ (each
-non-failed component is in the candidate set with a $21.5\%$ probabiltiy) and a right-censoring
-quantile of $q = 0.825$.
+### Analysis {-}
 
-The distinction between the shaded region (95% range of MLEs) and the blue vertical bars
-(IQR of bootstrapped CIs) is important. The shaded region provides insight into the
-distribution of the MLEs, whereas the blue vertical bars provide information about the
-variation in the bootstrapped CIs. Both are relevant for understanding the behavior of
-the estimations.
+When a right-censoring event occurs, in order to increase the likelihood of the data, the MLE
+is nudged in a direction that increases the probability of a right-censoring event at time $\tau$,
+which is given by $R_{T_i}(t;\v\theta)$, representing a source of bias in the estimate.
+
+To increase $R_{T_i}(\tau)$, we move in the direction (gradient) of these partial derivatives.
+The partial derivatives of $R_{T_i}(\tau)$
+are given by
+\begin{align*}
+\frac{\partial R_{T_i}(\tau)}{\partial \lambda_j} &= R_{T_i}(\tau;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \frac{k_j}{\lambda_j},\\
+\frac{\partial R_{T_i}(\tau)}{\partial k_j}       &= R_{T_i}(\tau;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \left(\log \lambda_j - \log \tau\right),
+\end{align*}
+for $j = 1, \ldots, m$. We see that these partial derivatives are related to the score of a right-censored likelihood contribution in
+Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
+
+- As $\tau$ increases, $R_{T_i}(\tau;\v\theta)$ decreases, and so the effect right-censoring has on the MLE decreases. This is what we see in
+  Figure \ref{fig:q-vs-stats-p215-shape}.
+
+- The partial derivatives with respect to the scale parameters are always positive, so right-censoring positively bias the scale parameter
+  estimates to make right-censoring events more likely. The more right-censoring, the more the positive bias. We see this in Figure \ref{fig:q-vs-stats-p215-shape},
+  where the scale parameter bias decreases as we decrase the probability ($1-q$) of a right-censoring event.
+
+- The partial derivative with respect to the shape parameter of the $j$\textsuperscript{th} component, $k_j$, is
+  non-negative if $\lambda_j \geq \tau$ and otherwise negative. In our well-designed series system, the scale parameters
+  are large compared to most of the right-censoring times for $\tau(q)$, so the MLE nudges the shape parameter estimates
+  in a positive direction to increase the probability of a right-censoring event $R_{T_i}(\tau)$ at time $\tau$. We see this
+  in Figure \ref{fig:q-vs-stats-p215-shape}, where the shape parameter estimates are positively biased for most of the quantiles
+  $q$.
+  
+An alternative way to reason about the effect right-censoring has on the MLE is give by the
+following. When a right-censoring event occurs, to make the estimates more compatible
+with the right-censoring event, the estimate is nudged in a direction that increases the
+MTTF of the components and decreases the probability of component
+failures before the censoring time $\tau$. In the case of our well-designed system,
+for most of the right-censoring quatiles $q$, this is accomplished by nudging the
+shape and scale parameters in a positive direction, which causes the MLE to be positively
+biased in the prescence of these censoring times. As the right-censoring quantile $q$
+increases, the effect of right-censoring on the MLE decreases.
+
+Here are several key observations:
+
+- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
+  nominal 95% level across different right-censoring quantiles. This suggests that the
+  bootstrapped CIs will contain the true value of the parameters with the specified confidence
+  level. The CIs are neither too wide nor too narrow.
+
+- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of
+  the MLEs get narrower as the right-censoring quantile increases. This is an indicator of the
+  increased precision in the estimates as more data is available due to decreased
+  censoring.
+
+- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in
+  sample size. This suggests that the bootstrapped CIs are getting more consistent and
+  focused around a narrower range with larger samples while maintaining a good coverage
+  probability. As we get more data, the bootstrapped CIs are more likely to be closer
+  to each other and the true value of the parameters.
+
+  For small right-censoring quantiles (small right-censoring times), they are quite
+  large, but to maintain well-calibrated CIs, this  was necessary. The estimator is quite
+  sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
+  sensitivity when the sample contains insufficient information due to censoring.
+
+- *Mean of MLEs*: The red dashed line indicating the mean of MLEs initially is quite biased,
+  but quickly diminshes to neglible levels for scale parameters. The estimates for the shape
+  parameters never reaches zero, but this is potentially due to masking. At a larger sample
+  size, we anticipate the bias in the shape estimates would also decrease to zero.
+
+## Scenario: Assessing the Impact of Sample Size {#sec:effect-samp-size}
+
+In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
+Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
+we fix the right-censoring quantile to $q = 0.825$ (moderate censoring), and we vary the sample
+size $n$ from $50$ (small sample size) to $1000$ (very large sample size).
+
+```{r samp-size-n-vs-stats-p215-scale, fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
+knitr::include_graphics("image/plot-n-vs-stats-p215-scale.pdf")
+knitr::include_graphics("image/plot-n-vs-stats-p215-shape.pdf")
+```
 
 Here are several key observations:
 
@@ -1651,56 +1658,16 @@ Here are several key observations:
   CIs are quite wide to account for this sensitivity when the sample size is small and
   not necessarily representative of the true distribution.
 
-- *Mean of MLEs*: The red dashed line indicating the mean of MLEs remains stable across
+- *Mean of MLEs for Scales*: The red dashed line indicating the mean of MLEs remains stable across
   different sample sizes and close to the true value, suggesting that the scale MLEs are, on
   average, reasonably unbiased.
 
-#### Shape Parameters {-}
-```{r samp-size-n-vs-stats-p215-shape, fig.cap=c("Sample Size vs Bootstrapped Scale CI Statistics ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs ($p = 0.215, q = 0.825$)"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-n-vs-stats-p215-shape.pdf")
-```
-
-For components 2, 3, and 4, Figure \ref{fig:samp-size-n-vs-stats-p215-shape} shows the
-distribution of the MLEs for the shape parameters and the bootstrapped CIs for different
-sample sizes with a component cause of failrue masking probaility of $p = 0.215$ (each
-non-failed component is in the candidate set with a $21.5\%$ probabiltiy) and a right-censoring
-quantile of $q = 0.825$.
-
-The distinction between the shaded region (95% range of MLEs) and the blue vertical bars
-(IQR of bootstrapped CIs) is important. The shaded region provides insight into the
-distribution of the MLEs, whereas the blue vertical bars provide information about the
-variation in the bootstrapped CIs. Both are relevant for understanding the behavior of the
-estimations.
-
-Here are several key observations:
-
-- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
-  nominal 95% level across different sample sizes. This suggests that the bootstrapped
-  CIs will contain the true value of the shape parameter with the specified confidence
-  level. The CIs are neither too wide nor too narrow.
-
-- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of
-  the MLEs get narrower as the sample size increases. This is an indicator of the
-  increased precision in the estimates as more data is available. 
-
-- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in
-  sample size. This suggests that the bootstrapped CIs are getting more consistent and
-  focused around a narrower range with larger samples while maintaining a good coverage
-  probability. As we get more data, the bootstrapped CIs are more likely to be closer
-  to each other and the true value of the scale parameter.
-
-  For small sample sizes, they are quite large, but to maintain well-calibrated CIs,
-  this was necessary. The estimator is quite sensitive to the data, and so the
-  bootstrapped CIs are quite wide to account for this sensitivity when the sample size
-  is small and not necessarily representative of the true distribution.
-
-- *Mean of MLEs*: The red dashed line is the mean of shape MLEs. Unlike the scale MLEs,
+- *Mean of MLEs for Shapes*: The red dashed line is the mean of shape MLEs. Unlike the scale MLEs,
   we see that for small samples, particularly less than $200$, we observe a significant
   amount of positive bias for shape MLEs. The MLE for the shape parameters in this
-  scenario appear to be more sensitive to the data than the scale parameters. We speculate
-  that this is 
+  scenario appear to be more sensitive to the data than the scale parameters.
 
-### Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {- #sec:p-vs-mttf}
+## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
 
 In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
 Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (reasonable sample size) and 
@@ -1711,7 +1678,7 @@ from $p$ from $0.1$ (very slight masking the component cause of failure) to $0.8
 Since the effect was identical on each of the components, we only show the results for
 the shape and scale parameters of component 1.
 
-#### Scale Parameter {-}
+### Scale Parameter {-}
 
 In Figures \ref{fig:masking-prob-vs-stats-scale}, we show the effect of the masking probability
 $p$ on the MLE and the bootstrapped BCa confidence intervals for the scale parameter of component 1. At this
@@ -1724,7 +1691,7 @@ only 77% despite the very wide CIs.
 This Figure is consistent with the our analysis in Section \ref{sec:effect-masking}, where we indicated
 we expected a positive bias on the scale parameter to push the component's MTTF estimate upwards.
 
-#### Shape Parameters {-}
+### Shape Parameters {-}
 In Figures \ref{fig:masking-prob-vs-stats-shape}, we show the effect of the masking probability $p$ on the
 MLE and bootstrapped BCa confidence intervals for the shape parameter of component 1. We see almost the
 exact same pattern as we did for the scale parameter. The MLE is relatively unbiased for small $p$, although
@@ -1752,7 +1719,7 @@ knitr::include_graphics("image/plot-p-vs-shapes.1-n90-large.pdf")
 ```
 
 
-#### Analysis
+### Analysis
 
 When we observe a system failure, we know that one of the components in the candidate set
 caused the system to fail, but we do not know which one. This uncertainty has the effect
@@ -1794,7 +1761,7 @@ the candidate set. It is not clear which of these two effects will dominate in g
 
 
 
-### Scenario: Assessing the Impact of Changing the Scale Parameter of a Component {- #sec:scale-vs-mttf}
+## Scenario: Assessing the Impact of Changing the Scale Parameter of a Component {#sec:scale-vs-mttf}
 
 We see that the MTTF is proportional to the scale parameter $\lambda_j$, which means when we decrease
 the scale parameter of a component, we proportionally decrease the MTTF.
@@ -1842,11 +1809,11 @@ There are several interesting observations that we can make about Figure \ref{fi
    then the system is more likely to fail due to the failure of one of the other components, which would cause the system to fail sooner. This would cause
    
 
-#### Analysis
+### Analysis
 
 ???
 
-### Scenario #4: Assessing the Impact of Changing the Shape Parameter of a Component {- #sec:shape3-vary}
+## Scenario: Assessing the Impact of Changing the Shape Parameter of a Component {#sec:shape3-vary}
 
 We vary the shape paramenter of component 3 from $0.1$ to $1.9$ and observe the effect it has on the MLE and the
 bootstrapped confidence intervals (BCa). The shape parameter determines the failure characteristics
@@ -1865,7 +1832,7 @@ We analyze the effect of component 3's shape parameter on the MLE and the bootst
 shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
 on the scale parameter.
 
-#### Scales
+### Scales
 ```{r prob3-vs-scales, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs Scale Statistics"), fig.align="center", echo = F}
 # show in a 2x1 grid
 image1 <- readPNG("image/prob3-vs-scale1.png")
@@ -1900,7 +1867,7 @@ for the scale parameter of component 3 increases. This may be because, as $\Pr\{
 are more likely to observe a failure of component 3, and so we have more information about its parameters
 and are able to estimate them more accurately.
 
-#### Shapes
+### Shapes
 
 Now, we look at the effect of the shape parameter of component 3 on the MLE and the bootstrapped confidence intervals
 for the shape parameters of components 1 and 3.
@@ -1940,7 +1907,7 @@ the coverage probabilities are very well-calibrated for all values of $\Pr\{K_i 
 as $\Pr\{K_i = 3\}$ increases due to the fact that we observe more failures of component 3 as $\Pr\{K_i = 3\}$
 increases and thus have more informationa bout $k_3$ for our estimate.
 
-#### Analysis
+### Analysis
 
 ???
 
