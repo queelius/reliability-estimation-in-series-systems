@@ -1631,9 +1631,8 @@ Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moder
 we fix the right-censoring quantile to $q = 0.825$ (moderate censoring), and we vary the sample
 size $n$ from $50$ (small sample size) to $1000$ (very large sample size).
 
-```{r samp-size-n-vs-stats-p215-scale, fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-n-vs-stats-p215-scale.pdf")
-knitr::include_graphics("image/plot-n-vs-stats-p215-shape.pdf")
+```{r samp-size-n-vs-stats-p215-scale, out.width='70%', fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
+knitr::include_graphics("image/n-vs-mles.pdf")
 ```
 
 Here are several key observations:
@@ -1645,7 +1644,9 @@ Here are several key observations:
 
 - *Dispersion of MLEs*: The shaded regions representing the 95% probability range of
   the MLEs get narrower as the sample size increases. This is an indicator of the
-  increased precision in the estimates as more data is available. 
+  increased precision in the estimates when provided with more data. This is consistent
+  with the asymptotic properties of the MLE when the regularity conditions are satisfied,
+  e.g., converges in probability to the true value of the parameter as $n$ goes to infinity.
 
 - *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in
   sample size. This suggests that the bootstrapped CIs are getting more consistent and
@@ -1666,6 +1667,20 @@ Here are several key observations:
   we see that for small samples, particularly less than $200$, we observe a significant
   amount of positive bias for shape MLEs. The MLE for the shape parameters in this
   scenario appear to be more sensitive to the data than the scale parameters.
+
+  In Section \ref{sec:effect-censoring}, right-censoring was shown to have a very small
+  effect of positively biasing the shape parameter estimates for right-censoring quantiles 
+  arond $q = 0.82%, but not for the scale parameters. This may partly explain the positive
+  bias in the shape parameter estimates for small sample sizes. However, in Section \ref{},
+  we show that it may also be related to the masking probability $p = 0.215$. When the sample
+  size is small, the data is not sufficient to overcome the masking effect, and so the MLE is
+  positively biased due to the uncertainty about which component caused the system to fail.
+    
+This scenario successfully illustrates the importance of sample size in estimating parameters.
+The findings align with statistical theory and provide insights into the behavior of these estimators
+for different sample sizes. In particular, it highlights the sensitivity of the shape parameter
+estimates to right-censoring and masking for small sample sizes and the importance of having
+sufficient data to overcome these effects.
 
 ## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
 
