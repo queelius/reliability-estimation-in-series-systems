@@ -1631,7 +1631,7 @@ Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moder
 we fix the right-censoring quantile to $q = 0.825$ (moderate censoring), and we vary the sample
 size $n$ from $50$ (small sample size) to $1000$ (very large sample size).
 
-```{r samp-size-n-vs-stats-p215-scale, out.width='70%', fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
+```{r samp-size-n-vs-stats-p215-scale, out.width='100%', fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
 knitr::include_graphics("image/n-vs-mles.pdf")
 ```
 
@@ -1690,144 +1690,99 @@ we fix the right-censoring quantile to $q = 0.825$, and we vary the masking prob
 from $p$ from $0.1$ (very slight masking the component cause of failure) to $0.85$
 (extreme masking of the component cause of failure).
 
-Since the effect was identical on each of the components, we only show the results for
-the shape and scale parameters of component 1.
+In Figure \ref{fig:masking-prob-vs-stats}, we show the effect of the masking probability
+$p$ on the MLE for the shape and scale parameters. The top four plots only show the effect
+on the MLEs for the the shape and scale parameters of components $1$ and $4$, since the
+rest were essentially identical, and the bottom two plots show the coverage probabilities for
+all parameters.
 
-### Scale Parameter {-}
+### Analysis {-}
 
-In Figures \ref{fig:masking-prob-vs-stats-scale}, we show the effect of the masking probability
-$p$ on the MLE and the bootstrapped BCa confidence intervals for the scale parameter of component 1. At this
-sample size, we see that the MLE is relatively unbiased for small $p$, but as $p$ increases,
-the MLE becomes increasingly positively biased. We also see the confidence interval width seems stable
-until the masking becomes significant at $p > 0.4$. The confidence intervals were well-calibrated
-at all masking probabilities except $p = 0.85$, at which point the coverage probability was
-only 77% despite the very wide CIs.
+Here are several key observations:
 
-This Figure is consistent with the our analysis in Section \ref{sec:effect-masking}, where we indicated
-we expected a positive bias on the scale parameter to push the component's MTTF estimate upwards.
+- *Coverage Probability (CP)*: For the scale parameters, the 95% CI is well-calibrated
+  for masking probabilities up to $p = 0.725$, which is really quite significant,
+  obtaining coverages over $90%, but drops precipitously after that point.
+  
+  For the shape parameters, the 95% CI is well-calibrated for masking probabilities only
+  up to $p = 0.4$, which is still large, obtaining coverages generally over $90%$, but
+  begins to drop slowly after that point.
+  
+  The bootstrapped (BCa) confidence intervals seem fairly well-calibrated for most realistic
+  masking probabilities, constructing CIs that are neither too wide nor too narrow,
+  but when the masking is essentially a fair coin flip, one should probably take the CIs with
+  a grain of salt.
 
-### Shape Parameters {-}
-In Figures \ref{fig:masking-prob-vs-stats-shape}, we show the effect of the masking probability $p$ on the
-MLE and bootstrapped BCa confidence intervals for the shape parameter of component 1. We see almost the
-exact same pattern as we did for the scale parameter. The MLE is relatively unbiased for small $p$, although
-there is a slight positive bias (potentially due to the right-censoring effect). As $p$ increases past
-$p = 0.55$, the MLE becomes increasingly positively biased. Again, the confidence intervals are
-well-calibrated at all masking probabilities except $p = 0.85$, at which point the coverage probability was
-around 65% despite the very wide CIs.
+- *Dispersion of MLEs*: The shaded regions representing the 95% quantile of
+  the MLEs become wider as the masking probability increases. This is an indicator of the
+  decreased precision in the estimates when provided with more ambiguous data about the
+  component cause of failure. However, even for fairly significant masking, $p \leq 0.55$,
+  the 95% quantiles are relatively narrow and the CP is well-calibrated, indicating that
+  the MLEs are still relatively precise and accurate.
 
-This Figure is also consistent with our analysis in Section \ref{sec:effect-masking}, where we indicated
-we expected a positive bias on the shape parameter to push the component's MTTF estimate upwards in the case
-of the well-designed series system. Note, however, that we might expect a different result if a component had
-a different failure distribution (e.g., a Weibull with a shape parameter less than 1).
+- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) show that the bootstrapped BCa
+  CIs are becoming more spread out as the masking probability increases. They are also
+  asymmetric, with the lower bound being more spread out than the upper bound, but this
+  is consistent with the actual behavior of the dispersion of the MLEs, which exhibits
+  the same pattern. The width of the CIs consistently increase as the masking probability
+  increases, which we intuitively expected given the increased uncertanity about the
+  component cause of failure.
 
-Overall, for both parameter types, we see that as the masking probability increases, the IQR of the bootstrapped CIs,
-the dispersion of the MLEs,a the bias increases, which indicates that the masking probability effects the precision
-and accuracy of the estimates. As the masking probability increases, we have less certainty about the
-component cause of failure, and thus less certainty about the estimates for the component parameters.
+  Afte a masking probability of $p = 0.4$, the widht of the CIs rapidly increase, which is
+  apparently necessary for the CPs to remain well-calibrated.
 
-```{r masking-prob-vs-stats-scale, fig.cap=c("Component Cause of Failure Masking (p) vs Scale CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Scale MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-p-vs-scales.1-n90-large.pdf")
+- *Mean of MLEs*: The red dashed line indicating the mean of the MLEs remains
+  stable across different masking probabilities, only showing a significant positive bias
+  when the masking probability $p$ becomes quite significant.
+
+```{r masking-prob-vs-stats, fig.cap=c("Component Cause of Failure Masking (p) vs MLE", "Component Cause of Failure Masking Probability (p) vs. MLE"), fig.align="center", echo = F}
+knitr::include_graphics("image/p-vs-mle.pdf")
 ```
-
-```{r masking-prob-vs-stats-shape, fig.cap=c("Component Cause of Failure Masking (p) vs Shape CI Statistics", "Component Cause of Failure Masking Probability (p) vs. Coverage Probability, IQR of Bootstrapped CIs and 95% Confidence Band of Shape MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-p-vs-shapes.1-n90-large.pdf")
-```
-
-
-### Analysis
-
-When we observe a system failure, we know that one of the components in the candidate set
-caused the system to fail, but we do not know which one. This uncertainty has the effect
-of pushing the MLE to estimate either a smaller MTTF or a higher infant mortality rate
-for each of the components in the candidate set, depending upon the failure characteristics.
-
-For components that are frequently in candidate sets but proportionally not more
-likely to be a component cause of failure, the effect is more pronounced, which may
-introduce a source of bias in the MLE for such components.
-
-In our Bernoulli candidate set model, the masking probability $p$ determines how commonly each
-non-failed component is in the candidate set, and so we expect that as $p$ increases, this will become a
-more pronoucned source of bias.\footnote{In a more complicated candidate set model, it is possible
-that masking could introduce a significant source of bias for some components, and none at all
-for others.}
-However, note that the effect of masking, which pushes
-the MLE to estimate a smaller MTTF, has opposite effect to that of right-censoring,
-which pushes the MLE to estimate a larger MTTF. As these two sources of bias compete with each other,
-it is not clear which one will dominate
-
-In what follows, we explain how the bias induced by masking the component cause of failure
-effects the MLE for the shape and scale parameters of a Weibull component.
-Assessing Equation \eqref{eq:mttf-weibull}, we see that the MTTF of a Weibull component is
-proportional to its scale parameter $\lambda_j$, which means when we decrease
-the scale parameter $\lambda_j$ (keeping the shape parameter $k_j$ constant), the MTTF decreases.
-Therefore, if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
-to appear in the candidate set, its scale parameter should be decreased, potentially
-biasing the MLE for the scale parameter downwards.
-
-The shape parameter is more complicated, since it determines the failure characteristics
-of the components. In our well-designed system, the shape parameters are larger than $1$,
-and in this case, since the MTTF decreases as we increase the shape parameter $k_j$,
-if the $j$\textsuperscript{th} component is in the candidate set, to make it more likely
-to appear in in the candidate set, its shape parameter is nudged upwards, potentially
-positively biasing the MLE for the shape parameter. However, we can also decrease the
-shape parameter, which will increase the MTTF, but also increase the infant morality
-rate, which is another way to increase the probability of a component appearing in
-the candidate set. It is not clear which of these two effects will dominate in general.
-
-
 
 ## Scenario: Assessing the Impact of Changing the Scale Parameter of a Component {#sec:scale-vs-mttf}
 
-We see that the MTTF is proportional to the scale parameter $\lambda_j$, which means when we decrease
-the scale parameter of a component, we proportionally decrease the MTTF.
-In this section, we will explore this phenomenon in more detail by manipulating the MTTF of
-component 3 and observing the effect it has on the MLE and the bootstrapped confidence intervals
-for component 3 and component 1.\footnote{Since the other components had a similiar MTTF, we
-will arbitrarily choose component 1 to represent the other components.}
+By Equation \eqref{eq:mttf-wei}, we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
+when we decrease the scale parameter of a component, we proportionally decrease the MTTF.
+In this scenario, we start with the well-designed series system described in Section \ref{sec:sim_study},
+Table \ref{tab:series-sys}, and we will manipulate the MTTF of component 3 by changing its scale parameter,
+$\lambda_3$, and observing the effect this has on the MLE. Since the other components had a similiar MTTF,
+we will arbitrarily choose component 1 to represent the other components.
+
+We vary the MTTF of component 3 from around $300$ to $1500$ and the other components have their MTTFs fixed
+at around 900, as show in Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
+the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample size to $n = 100$ (moderate sample size).
+
+### Analysis {-}
 
 ```{r mttf-vs-ci, fig.cap=c("MTTF vs Parameter Statistics"), fig.align="center", echo = F}
 knitr::include_graphics("image/plot-scale3-vs-stats.pdf")
 ```
 
-In Figure \ref{fig:mttf-vs-ci}, we show the effect of the MTTF of component 3 on the MLE and the bootstrapped confidence intervals for the shape and scale
-parameters for components 1 and 3 (the component we are varying).
-We simulate samples with a sample size of $n = 100$, a right-censoring quantile of $q = 0.825$, and a masking probability of $p = 0.215$.
-(Note that while $q$ is fixed, $\tau$ varies as we change the MTTF of component 3.)
-The MTTF of component 3 varies from around $300$ to $1500$ and MTTF of the other components, including component 2, is around $900$.
-There are several interesting observations that we can make about Figure \ref{fig:mttf-vs-ci}:
+We make two observations about Figure \ref{fig:mttf-vs-ci}:
 
-1. When the MTTF of component 3 is much smaller than the other components, the estimate of parameters of component 3 is precise (narrow CIs with high Probability
-   coverage) and accurate (the MLE is close to the true value). This is because component 3 is the component cause of failure in nearly every system failure,
-   and so the data is very informative about the parameters of component 3. Conversely, the estimates of the parameters of the other components is quite poor,
-   with wide CIs and large positive bias. Nonetheless, the coverage probability of the CIs for the other components is still well-calibrated, which means that
-   the CIs will contain the true value of the parameter with a probability around the specified confidence level. So, while we may not have a good point estimates
-   for the parameters, we can still be confident that CIs contain them. That is to say, we have properly quantified our uncertainty about the parameters of the
-   other components.
+- When the MTTF of component 3 is much smaller than the other components, the estimate of parameters of component 3 is precise (narrow CIs with high Probability
+  coverage) and accurate (the MLE is close to the true value). This is because component 3 is the component cause of failure in nearly every system failure,
+  and so the data is very informative about the parameters of component 3. Conversely, the estimates of the parameters of the other components is quite poor,
+  with wide CIs and large positive bias. Nonetheless, the coverage probability of the CIs for the other components is still well-calibrated, which means that
+  the CIs will contain the true value of the parameter with a probability around the specified confidence level. So, while we may not have a good point estimates
+  for the parameters, we can still be confident that CIs contain them. That is to say, we have properly quantified our uncertainty about the parameters of the
+  other components.
 
-1. When the MTTF of component 3 is much larger than the MTTF of the other components, then component 3 is much less likely to be the component cause of failure,
-   and with a masking probability of $p = 0.215$, it will be in the candidate set with approximately $21.5\%$ probability, but it will generally be a false
-   candidate. The end result is that the estimates of the parameters of component 3 are quite poor, with wide CIs and large positive bias. However, the estimates
-   of the parameters of the other components are quite good, with narrow CIs and small positive bias. The coverage probability of the CIs for the other components
-   are, in comparison, quite good. As the MTTF of component 3 increases and it becomes less likely to be the component cause of failure, the estimates of the
-   parameters of the other components become more precise and accurate.
+- When the MTTF of component 3 is much larger than the MTTF of the other components, then component 3 is much less likely to be the component cause of failure,
+  and with a masking probability of $p = 0.215$, it will be in the candidate set with approximately $21.5\%$ probability, but it will generally be a false
+  candidate. The end result is that the estimates of the parameters of component 3 are quite poor, with wide CIs and large positive bias. However, the estimates
+  of the parameters of the other components are quite good, with narrow CIs and small positive bias. The coverage probability of the CIs for the other components
+  are, in comparison, quite good. As the MTTF of component 3 increases and it becomes less likely to be the component cause of failure, the estimates of the
+  parameters of the other components become more precise and accurate.
 
-   We also see that the bias is positive for both parameters of component 3. We had not necessarily expected this, but we knew there would be a complex
-   relationship given the presence of right-censoring and masking. When a system is right-censored, or the exact time of failure is observed but the component
-   cause of failure is masked and component 3 is not in the candidate set, then to make component 3 more likely to not be the component cause of failure,
-   its failure rate at that observed time is pushed down and its MTTF is pushed to the right by the MLE. Thus, $\hat\lambda_3$ being positively biased is
-   expected. However, $k_3$ being positively biased is not necessarily expected, but the fact is, decreasing $k_3$ only has a small impact on the MTTF compared
-   to the scale parameter $\lambda_3$, and the shape parameter may be more particular about when the failures occur. For example, if the shape parameter is
-    large, then the failures may be more likely to occur at the beginning of the lifetime, which would cause the MTTF to be pushed to the right. This is
+  We also see that the bias is positive for both parameters of component 3. We had not necessarily expected this, but we knew there would be a complex
+  relationship given the presence of right-censoring and masking. When a system is right-censored, or the exact time of failure is observed but the component
+  cause of failure is masked and component 3 is not in the candidate set, then to make component 3 more likely to not be the component cause of failure,
+  its failure rate at that observed time is pushed down and its MTTF is pushed to the right by the MLE. Thus, $\hat\lambda_3$ being positively biased is
+  expected. However, $k_3$ being positively biased is not necessarily expected, but the fact is, decreasing $k_3$ only has a small impact on the MTTF compared
+  to the scale parameter $\lambda_3$, and the shape parameter may be more particular about when the failures occur. For example, if the shape parameter is
+  large, then the failures may be more likely to occur at the beginning of the lifetime, which would cause the MTTF to be pushed to the right. This is
    
-   anticipated this: from our preliminary analysis, we had expected that the bias would
-   be positive for the scale parameter and negative for the shape parameter. We believed this because if component 3 is not the component cause of failure,
-   then the system is more likely to fail due to the failure of one of the other components, which would cause the system to fail sooner. This would cause
-   
-
-### Analysis
-
-???
-
 ## Scenario: Assessing the Impact of Changing the Shape Parameter of a Component {#sec:shape3-vary}
 
 We vary the shape paramenter of component 3 from $0.1$ to $1.9$ and observe the effect it has on the MLE and the
@@ -1838,7 +1793,6 @@ When $k_3 < 1$, this indicates infant mortality, with a decreasing failure rate 
 it has a high failure rate at the beginning of its lifetime, it has a low failure rate at the end of its
 lifetime and its MTTF is much higher than the other components even though it has a higher
 probability of failing first.
-
 When $k_3 > 1$, this indicates wear-out failures, with an increasing failure rate over time, so even though
 it has a low failure rate at the beginning of its lifetime, it has a high failure rate at the end of its
 lifetime and it has a lower probability of failing first.
@@ -1847,7 +1801,7 @@ We analyze the effect of component 3's shape parameter on the MLE and the bootst
 shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
 on the scale parameter.
 
-### Scales
+### Scales Analysis
 ```{r prob3-vs-scales, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs Scale Statistics"), fig.align="center", echo = F}
 # show in a 2x1 grid
 image1 <- readPNG("image/prob3-vs-scale1.png")
@@ -1862,7 +1816,6 @@ grid.arrange(first_row, g3, nrow = 2)
 
 In Figure \ref{fig:prob3-vs-shapes}, we show the effect of the shape parameter of component 3 on the
 MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
-
 We see that the mean MLE, in green, is relatively close to the true value, in red, for the scale parameter
 of both components. There is a slight positive bias, which may be due to the fact that the data is right-censored
 with moderate masking of the component cause of failure. We see that as the probability of component 3 being the
@@ -1882,7 +1835,7 @@ for the scale parameter of component 3 increases. This may be because, as $\Pr\{
 are more likely to observe a failure of component 3, and so we have more information about its parameters
 and are able to estimate them more accurately.
 
-### Shapes
+### Shapes Analysis
 
 Now, we look at the effect of the shape parameter of component 3 on the MLE and the bootstrapped confidence intervals
 for the shape parameters of components 1 and 3.
@@ -1897,7 +1850,6 @@ g3 <- rasterGrob(image3)
 first_row <- arrangeGrob(g1, g2, ncol = 2)
 grid.arrange(first_row, g3, nrow = 2)
 ```
-
 
 In Figure \ref{fig:prob3-vs-shapes}, we show the effect of the shape parameter of component 3 on the
 MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
@@ -1922,13 +1874,6 @@ the coverage probabilities are very well-calibrated for all values of $\Pr\{K_i 
 as $\Pr\{K_i = 3\}$ increases due to the fact that we observe more failures of component 3 as $\Pr\{K_i = 3\}$
 increases and thus have more informationa bout $k_3$ for our estimate.
 
-### Analysis
-
-???
-
-# Conclusion
-
-In this paper, we have presented a likelihood model for a series system with masked component...
 
 # Appendix A: R Code For Log-likelihood Function {-}
 
