@@ -58,7 +58,7 @@ true_params = {
     'shapes.3': 1.1308,
     'scales.3': 840.1141,
     'shapes.4': 1.1802,
-    'scales.4': 940.1342,
+    'scales.4': 940.1342,   
     'shapes.5': 1.2034,
     'scales.5': 923.1631
 }
@@ -66,7 +66,7 @@ true_params = {
 params = ['scales.1', 'shapes.1', 'scales.2', 'shapes.2', 'scales.3', 'shapes.3', 'scales.4', 'shapes.4', 'scales.5', 'shapes.5']
 param_labels = ['\lambda_1', 'k_1', '\lambda_2', 'k_2', '\lambda_3', 'k_3', '\lambda_4', 'k_4', '\lambda_5', 'k_5']
 
-data = pd.read_csv('./results/5_system_ci_vs_p/data-boot-tau-fixed-bca-p-vs-ci-large-b-base.csv')
+data = pd.read_csv('data-boot-tau-fixed-bca-p-vs-ci-large-b-base.csv')
 # remove nan values
 data = data.dropna()
 
