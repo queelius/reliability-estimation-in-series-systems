@@ -17,14 +17,10 @@ shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 options(digits = 5, scipen = 999)
 
-N <- rep(c(50, 500), 100)
+N <- rep(c(50, 100, 200, 500, 1000), 100)
 P <- c(.215)
 Q <- c(.825)
-<<<<<<< HEAD
-R <- 3
-=======
 R <- 2
->>>>>>> 5f6f6a232c2e056147d8312b4a94650a63d26c67
 B <- 500L
 max_iter <- 100L
 max_boot_iter <- 125L
