@@ -906,7 +906,7 @@ Since we are primarly interested in generating confidence intervals for small sa
 potentially biased MLE, the BCa method may be a good choice for our analysis. For more details
 on BCa, see \cite{efron1987better}.
 
-In our simulation study, we will assess the performance of the bootstrapped
+In our simulation study, we will assess the performance of the bootstrapped BCa
 confidence intervals by computing the coverage probability of the confidence
 intervals. A well-calibrated 95% confidence interval contains the true
 value around 95% of the time. If the confidence interval is too narrow, it will have
@@ -916,32 +916,6 @@ have a coverage probability greater than 95%, which conveys a lack of confidence
 in the precision of the MLE. We want confidence intervals to be as
 narrow as possible while still having a coverage probability close to the
 nominal level, 95%.
-
-
-## Additional Performance Metrics
-- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of the MLEs
-                        get narrower as the sample size increases. This is an indicator of
-                        the increased precision in the estimates as more data is available.
-                        We call it a *Confidence Band*, but it is actually an estimate of the
-                        quantile range of the MLEs. The shaded region provides insight into
-                        the distribution of the MLEs.
-
-- *IQR of Bootstrapped CIs*: The vertical blue bars represent the Interquartile Range (IQR)
-                             of the actual bootstrapped Confidence Intervals (CIs). Since in
-                             practice we only have one sample and consequently one MLE, we
-                             use bootstrapping to resample and compute multiple CIs. The IQR
-                             then represents the middle 50% range of these bootstrapped CIs.
-
-- *Mean of the MLEs*: The mean of the MLEs is a good indicator of the bias in the estimates.
-                      If the mean of the MLEs is close to the true value, then the MLEs are,
-                      on average, unbiased.
-
-The distinction between the shaded region (95% range of MLEs) and the blue vertical bars
-(IQR of bootstrapped CIs) is important. The shaded region provides insight into the
-distribution of the MLEs, whereas the blue vertical bars provide information about the
-variation in the bootstrapped CIs. Both are relevant for understanding the behavior of the
-estimations.
-
 
 ## Issues with Resampling from the Observed Data
 
@@ -1480,7 +1454,7 @@ H_1 &: \text{not all shape parameters are equal.}
 We will use the likelihood ratio test (LRT) to test this hypothesis. The LRT statistic is
 given by
 $$
-\Lambda = -2 \log \frac{\ell_R}{\ell_F},
+\Lambda = -2 (\ell_R - \ell_F)
 $$
 where $\ell_R$ is the log-likelihood function of the null (reduced) model
 and $\ell_F$ is the log-likelihood function of the full model. Under the null model,
@@ -1495,23 +1469,34 @@ hypothesis $H_0$, otherwise we find the data to be compatible with the null hypo
 
 ### Sample Size Analysis
 
-We wish to determine the sample size required to detect a statistically significant difference in the
+Roughly, we seek to determine the sample size required to detect a statistically significant difference in the
 shape parameters of the components for our well-defined series system described in Section \ref{}.
 We will use the LRT statistic to determine the sample size required to detect a difference
 in the shape parameters of the components with a given power and significance level.
 
-### Conclusion and Justification for Full Model
-This analysis further illuminates the properties of the reduced model in relation to the full model. By
-examining Weibull homogeneity through the LRT, we gain insights that enrich the overall understanding of
-the model for well-designed series systems with Weibull components. We find that the reduced model is
-appropriate for well-designed series systems with Weibull components with homogenous shapes for sample
-sizes less than $n = 50$ in our DGP. For sample sizes greater than $n = 50$, the reduced model becomes
-increasingly incompatible with the data. This is because the reduced model assumes that the shape
-parameters of the components are equal, but in our DGP, the shape parameters are only approximately
-equal, and these slight differences become more pronounced as the sample size increases. Therefore,
-we conclude that the full model is preferred for well-designed series systems with Weibull components
-with sample sizes greater than $n = 50$ in our DGP. We will conduct a simulation study where we largely
-use sample sizes larger than $n = 50$, so we will use the full model in our simulation study.
+We generate samples from size $50$ to size $400$ from the well-designed series system described in
+Section \ref{sec:sim_study}, Table \ref{tab:series-sys}, and we compute the LRT statistic for each
+sample. We plot the results in Figure \ref{fig:lrt}.
+
+```{r out.width='50%', fig.align="center", echo = F, fig.cap="Likelihood Ratio Test Statistic vs Sample Size"}
+knitr::include_graphics("image/lrt.png")
+```
+
+The variability in $p$-values across different sample sizes may reflect the
+complexity of the models being compared and the underlying data generating process.
+The absence of a clear trend in the mean $p$-values suggests that the test's power
+and significance levels may be influenced by other factors beyond sample size,
+notably right-censoring and masking of component cause of failure.
+
+Further investigation may include analyzing what happens when we vary
+right-censoring and masking of component cause of failure, as well as considering
+series systems which are not so well-designed, e.g., series systems with components
+that have very different shapes and scales. It may also be interesting to consider
+series systems with more components, e.g., $m = 20$.
+
+The current analysis suggests that the reduced model is appropriate for the DGP
+and sample sizes. With that said, we proceed to investigate the full model in
+our simulation study.
 
 ## Simulation Scenarios
 
@@ -2179,7 +2164,7 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 }
 ```
 
-# Appendix E: Series System Quantile Function {#app:series-quantile}
+# Appendix E: Series System Quantile Function {-#app:series-quantile}
 
 ```{r, eval=FALSE}
 #' Quantile function (inverse of the cdf).
