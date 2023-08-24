@@ -17,7 +17,7 @@ shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 options(digits = 5, scipen = 999)
 
-N <- rep(c(50, 500), 100)
+N <- rep(c(50, 100, 200, 500, 1000), 100)
 P <- c(.215)
 Q <- c(.825)
 R <- 2

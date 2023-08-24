@@ -17,11 +17,11 @@ shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 options(digits = 5, scipen = 999)
 
-N <- rep(c(50, 500), 100)
+N <- rep(c(50,500,1000), 1000)
 P <- c(.215)
 Q <- c(.825)
-R <- 2
-B <- 500L
+R <- 2L
+B <- 500L 
 max_iter <- 100L
 max_boot_iter <- 125L
 n_cores <- detectCores() - 1
@@ -110,7 +110,7 @@ for (n in N) {
                 }, error = function(e) {
                     cat("[bootstrap error] ", conditionMessage(e), "\n")
                 })
-                if (iter %% 5 == 0) {
+                if (iter %% 1 == 0) {
                     cat("[iteration ", iter, "] shape mle = ", shapes.mle[iter,], ", scale mle = ", scales.mle[iter, ], "\n")
                 }
 
