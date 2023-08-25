@@ -19,7 +19,7 @@ scales3 <- rep(scales3, 100)
 N <- c(100)
 P <- c(0.215)
 Q <- c(0.825)
-R <- 2  # 9 aug 23 alton office  building B across alton memorial parking 
+R <- 2 
 B <- 1000
 max_iter <- 100L
 max_boot_iter <- 125L
@@ -47,7 +47,6 @@ for (scale3 in scales3) {
     })
 }
 
-options(digits = 5, scipen = 999)
 for (scale3 in scales3) {
     for (n in N) {
         for (p in P) {

@@ -15,7 +15,8 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
-options(digits = 5, scipen = 999)
+
+csv_file <- "data-boot-bca-n.csv"
 
 N <- rep(c(50, 100, 200, 500, 1000), 100)
 P <- c(.215)
@@ -133,8 +134,8 @@ for (n in N) {
                 scales.upper = scales.upper,
                 logliks = logliks)
 
-            write.table(df, file = "data-boot-bca-n.csv", sep = ",", row.names = FALSE,
-                col.names = !file.exists("data-boot-bca-n.csv"), append = TRUE)
+            write.table(df, file = csv_file, sep = ",", row.names = FALSE,
+                col.names = !file.exists(csv_file), append = TRUE)
         }
     }
 }
