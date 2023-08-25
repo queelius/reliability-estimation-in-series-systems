@@ -13,30 +13,32 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
-m <- length(shapes.mle)
-options(digits = 5, scipen = 999)
+m <- length(shapes)
 
-csv.file <- "data-lrt.csv"
-N <- rep(seq(50, 500, by = 25), 100)
+csv.file <- "data-lrt-masked.csv"
+N <- rep(c(50, 60, 70, 80, 90, 100), 100)
+#p <- c(0,.215)
+#q <- c(.825, 1)
 p <- .215
 q <- .825
-max_iter <- 10000L
+max_iter <- 1000L
 tau <- qwei_series(p = q, scales = scales, shapes = shapes)
 
 for (n in N) {
     df <- generate_guo_weibull_table_2_data(
         shapes = shapes, scales = scales, n = n, p = p, tau = tau)
 
-    start <- mle_sann_wei_series_md_c1_c2_c3(
-        theta0 = theta, df = df, hessian = FALSE,
-        control = list(maxit = 1000L, parscale = theta))
+#    start <- mle_sann_wei_series_md_c1_c2_c3(
+ #       theta0 = theta, df = df, hessian = FALSE,
+  #      control = list(maxit = 200L, parscale = theta))
 
     sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-        theta0 = start$par, df = df, hessian = FALSE,
+        theta0 = theta, df = df, hessian = FALSE,
         control = list(maxit = max_iter, parscale = theta))
 
     if (sol$convergence != 0) {
-        stop("mle_lbfgsb_wei_series_md_c1_c2_c3() did not converge")
+        cat("Failed to converge, retrying.\n")
+        continue
     }
     shapes.mle <- sol$par[seq(1, length(theta), 2)]
     scales.mle <- sol$par[seq(2, length(theta), 2)]
@@ -72,7 +74,7 @@ for (n in N) {
 
     # write this data to a CSV file    
     write.table(
-        x = data.frame(n = n, p.value = p.value, Lambda = Lambda,
+        x = data.frame(n = n, pmask = p, q = q, p.value = p.value, Lambda = Lambda,
                        loglik.F = sol$value, loglik.R = sol.R$value),
         file = csv.file, sep = ",", append = TRUE,
         row.names = FALSE, col.names = FALSE)

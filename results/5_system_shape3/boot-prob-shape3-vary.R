@@ -9,7 +9,7 @@ library(wei.series.md.c1.c2.c3)
 
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
+           shape3 = NA,     scale3 = 840.1141,
            shape4 = 1.1802, scale4 = 940.1342,
            shape5 = 1.2034, scale5 = 923.1631)
 
@@ -17,13 +17,14 @@ shapes3 <- rep(c(0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9), 1000)
 N <- c(100)
 P <- c(0.215)
 Q <- c(0.825)
-R <- 5  # 9 aug 23 alton office  building B across alton memorial parking 
+R <- 5
 B <- 1000
-max_iter <- 100L
+max_iter <- 125L
 max_boot_iter <- 125L
-n_cores <- 3L
+total_retries <- 10000L
+n_cores <- 2L
 
-experiment.name <- "boot-prob-shape1-vary-unmasked"
+experiment.name <- "boot-prob-shape3-vary"
 csv.out <- paste0(experiment.name, ".csv")
 
 probs3_fn <- list()
@@ -33,15 +34,16 @@ for (shape3 in shapes3) {
     theta["shape3"] <- shape3
     shapes <- theta[seq(1, length(theta), 2)]
     scales <- theta[seq(2, length(theta), 2)]
+
     tryCatch({
-        probs1_fn[[as.character(shape3)]] <- wei.series.md.c1.c2.c3::wei_series_cause(k = 1L, shapes = shapes, scales = scales)
+        probs1_fn[[as.character(shape3)]] <- wei.series.md.c1.c2.c3::wei_series_cause(k = 1L, shape = shapes, scale = scales)
         probs3_fn[[as.character(shape3)]] <- wei.series.md.c1.c2.c3::wei_series_cause(k = 3L, shapes = shapes, scales = scales)
     },
     error = function(e) {
         probs1_fn[[as.character(shape3)]] <<- wei.series.md.c1.c2.c3::wei_series_cause(k = 1L, shapes = shapes, scales = scales,
-            mc = TRUE, n = 200000L)
+            mc = TRUE, n = 300000L)
         probs3_fn[[as.character(shape3)]] <<- wei.series.md.c1.c2.c3::wei_series_cause(k = 3L, shapes = shapes, scales = scales,
-            mc = TRUE, n = 200000L)
+            mc = TRUE, n = 300000L)
     })
 }
 
@@ -94,10 +96,8 @@ for (shape3 in shapes3) {
                     },
                     error = function(e) {
                         cat("[error] ", conditionMessage(e), "\n")
-                        cat("[retrying] scenario(n = ", n, ", p = ", p, ", q = ", q, ")\n")
-                        retry <<- TRUE
+                        cat("[retrying scenario n = ", n, ", p = ", p, ", q = ", q, "]")
                     })
-
                     if (retry) {
                         next
                     }
@@ -115,7 +115,7 @@ for (shape3 in shapes3) {
                         scales.lower[iter, ] <- scales.ci[, 1]
                         scales.upper[iter, ] <- scales.ci[, 2]
                     }, error = function(e) {
-                        cat("[error] ", conditionMessage(e), "\n")
+                        cat("[bootstrap error: ", conditionMessage(e), "]\n")
                     })                    
 
                     if (iter %% 1 == 0) {
@@ -132,8 +132,8 @@ for (shape3 in shapes3) {
                     p = rep(p, R),
                     q = rep(q, R),
                     prob3 = rep(probs3_fn[[as.character(shape3)]], R),
+                    mttf3 = rep(wei.series.md.c1.c2.c3::wei_mttf(shape = shapes[3], scale = scales[3]) R),
                     prob1 = rep(probs1_fn[[as.character(shape3)]], R),
-                    mttf3 = rep(wei.series.md.c1.c2.c3::wei_mttf(shape = shapes[3], scale = scales[3]), R),
                     mttf1 = rep(wei.series.md.c1.c2.c3::wei_mttf(shape = shapes[1], scale = scales[1]), R),
                     mttf = rep(wei.series.md.c1.c2.c3::wei_series_mttf(shapes = shapes, scales = scales), R),
                     tau = rep(tau, R),
