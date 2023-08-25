@@ -7,17 +7,18 @@ library(wei.series.md.c1.c2.c3)
 
 theta <- c(shape1 = 1.2576, scale1 = 994.3661,
            shape2 = 1.1635, scale2 = 908.9458,
-           shape3 = 1.1308, scale3 = 840.1141,
+           shape3 = NA,     scale3 = 840.1141,
            shape4 = 1.1802, scale4 = 940.1342,
            shape5 = 1.2034, scale5 = 923.1631)
 
 csv.file <- "data-lrt-masked-reduced-3.csv"
-shapes3 <- rep(c(0.25, 0.5, .75, 1, 1.1308, 1.25, 1.5, 1.75, 2, 5, 10, 20, 40, 100), 1000)
-n <- 200
+shapes3 <- c(0.25, 0.5, .75, 1, 1.1308, 1.25, 1.5, 1.75, 2, 5, 10, 20, 40, 100)
+N <- rep(c(50, 100, 200, 300, 400, 500), 1000)
 p <- .215
 q <- .825
 max_iter <- 1000L
 
+for (n in N) {
 for (shape3 in shapes3) {
     theta['shape3'] <- shape3
     shapes <- theta[seq(1, length(theta), 2)]
@@ -68,4 +69,5 @@ for (shape3 in shapes3) {
             row.names = FALSE, col.names = FALSE)
 
     }, error = function(e) { print(e) })
+}
 }
