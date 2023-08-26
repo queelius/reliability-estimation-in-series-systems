@@ -16,9 +16,7 @@ scales <- theta[seq(2, length(theta), 2)]
 m <- length(shapes)
 
 csv.file <- "data-lrt-masked-reduced-1.csv"
-N <- rep(c(10000, 15000, 20000), 100)
-#p <- c(0,.215)
-#q <- c(.825, 1)
+N <- rep(c(10000, 15000, 20000, 25000, 30000), 100)
 p <- .215
 q <- .825
 max_iter <- 1000L
