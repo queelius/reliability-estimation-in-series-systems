@@ -18,7 +18,7 @@ scales <- theta[seq(2, length(theta), 2)]
 
 csv_file <- "data-boot-bca-n.csv"
 
-N <- rep(c(250, 500, 1000), 200)
+N <- rep(c(250, 500, 750, 1000), 200)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
@@ -60,7 +60,7 @@ for (n in N) {
             # for each MLE, we compute the log-likelihood
             logliks <- rep(0, R)
 
-            iter <- 0L
+            iter <- 1L
             repeat {
                 retry <- FALSE
                 tryCatch({
@@ -95,7 +95,6 @@ for (n in N) {
                 if (retry) {
                     next
                 }
-                iter <- iter + 1L
                 shapes.mle[iter,] <- sol$par[seq(1, length(theta), 2)]
                 scales.mle[iter,] <- sol$par[seq(2, length(theta), 2)]
                 logliks[iter] <- sol$value
@@ -110,14 +109,17 @@ for (n in N) {
                     scales.upper[iter, ] <- scales.ci[, 2]
                 }, error = function(e) {
                     cat("[bootstrap error] ", conditionMessage(e), "\n")
+                    retry <<- TRUE
                 })
-                if (iter %% 5 == 0) {
-                    cat("[iteration ", iter, "] shape mle = ", shapes.mle[iter,], ", scale mle = ", scales.mle[iter, ], "\n")
+                if (retry) {
+                    next
                 }
 
+                cat("[iteration ", iter, "] shape mle = ", shapes.mle[iter,], ", scale mle = ", scales.mle[iter, ], "\n")
                 if (iter == R) {
                     break
                 }
+                iter <- iter + 1L
             }
 
             df <- data.frame(
