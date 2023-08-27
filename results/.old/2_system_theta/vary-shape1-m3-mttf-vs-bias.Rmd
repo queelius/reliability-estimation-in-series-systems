@@ -1,0 +1,87 @@
+# Probability of Component 1 Failing First vs Bias
+
+Here I plot the bias in the scale and shape parameters for components 1 and 2, with the x-axis representing the
+probability that component 1 fails first. The scenario considered is where the sample size $n=100$ and no masking the
+component cause of failure ($p=0$) and no right-censoring ($q = 1$, or $\tau = \infty$).
+
+```{r fig.align="center",  fig.height=6, fig.width=8, width.out=.75, fig.show='hold', fig.pos='htb'}
+knitr::include_graphics("./new-plots/prob-vs-bias-n100-p0-q1-instability.png")
+```
+
+- Top Left: Bias in Scale Parameter for Component 1
+- Top Right: Bias in Scale Parameter for Component 2
+- Bottom Left: Bias in Shape Parameter for Component 1
+- Bottom Right: Bias in Shape Parameter for Component 2
+
+These plots provide insights into how the bias in the estimated parameters
+changes with the probability of component 1 failing first.
+
+## Observations
+
+### Instabilities
+We see some instability starting around the probability of component 1 being the
+cause of failure (x-axis) at around $\Pr\{K_i = 1\} = 0.55$. At this point, the bias
+in the scale parameter for component 1 starts exhibiting eradic behavior. This is
+most likely due numerical instability issues. This is a pathological case where
+the MTTF of component 1 is very large, and the MTTF of components 2 and 3 are
+only $2$. For instance, the MTTF at $\Pr\{K_i = 1\} = 0.624$ is around $10^158$,
+such that component $1$ either fails immediately, or can be expected to last
+for a very long time.
+
+Since we are dealing with very large and very small numbers in complex calculations
+using floating-point arithmetic, numerical instability
+issues are not unexpected, since errors propagate through calculations,
+leading to incorrect or imprecise results.
+
+
+Note that while the MTTF of component 1 is very large, the MTTF of components 2
+and 3 are only $2$. There is a non-linear relationship between the MTTF of a
+component, and its probability of being the component cause of failrue, particularly
+if some components have increasing failure rates and others have decreasing failure
+rates. In this scenario, every component has a decreasing failure rate, and we vary
+the the failure rate, and the component cause of failure, of component 1  to see how
+it impacts the bias of the MLEs.
+
+### Bias in Scale Parameter for Component 1
+We see that the bias for the scale parameter for component 1 is generally positive
+and it is increasing with the probability of component 1 being the cause of failure.
+This is expected, since the scale parameter for component 1.
+
+
+
+
+
+
+
+
+
+
+# MTTF vs Bias
+We consider $m=3$ Weibull components in a series configuration. We will vary the shape parameter of component 1, $k_1$, to change its MTTF / probability of component failure, and observe the bias in the scale and shape parameters for components 1 and 2. We will also vary the masking probability $p$ and observe the effect on the bias in the scale and shape parameters for components 1 and 2.
+
+We will create two sets of subplots:
+
+## For MTTF values where probs ≤ 0.333
+
+We will filter the data to include only rows where the computed probability that component 1 fails first (probs) is less than or equal to 0.333.
+For MTTF values where probs 
+
+```{r fig.align="center",  fig.height=6, fig.width=8, width.out=.75, fig.show='hold', fig.pos='htb'}
+knitr::include_graphics("./new-plots/mttf-vs-bias-n100-p0-q1.png")
+```
+
+All plots use logarithmic scales for both the x-axis (representing the mean time to failure, MTTF, of component 1) and the y-axis. The scenario considered is where the sample size $n = 100$ and the masking probability $p=0$.
+These plots focus on the range of MTTF values corresponding to the specified probability range, $p \leq 0.333$, and provide insights into how the bias in the estimated parameters changes with the MTTF of component 1.
+
+
+## For MTTF values where probs ≥ 0.333
+
+We will filter the data to include only rows where the computed probability that component 1 fails first (probs) is greater than or equal to 0.333.
+
+Both sets of subplots will show the bias in the scale and shape parameters for components 1 and 2, with both the x-axis (MTTF of component 1) and the y-axis on a logarithmic scale. The scenario considered is where the sample size $n = 100$ and the masking probability $p=0$.
+
+```{r}
+```
+
+All plots use logarithmic scales for both the x-axis (representing the mean time to failure, MTTF, of component 1) and the y-axis. The scenario considered is where the sample size $n = 100$ and the masking probability $p=0$.
+These plots focus on the range of MTTF values corresponding to the specified probability range, $p > 0.333$, and provide insights into how the bias in the estimated parameters changes with the MTTF of component 1.
