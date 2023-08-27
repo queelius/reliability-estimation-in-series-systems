@@ -18,7 +18,7 @@ scales <- theta[seq(2, length(theta), 2)]
 
 csv_file <- "data-boot-bca-n.csv"
 
-N <- rep(c(250, 500, 750, 1000), 200)
+N <- rep(c(500, 750), 200)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
