@@ -132,7 +132,7 @@ for (shape3 in shapes3) {
                     p = rep(p, R),
                     q = rep(q, R),
                     prob3 = rep(probs3_fn[[as.character(shape3)]], R),
-                    mttf3 = rep(wei.series.md.c1.c2.c3::wei_mttf(shape = shapes[3], scale = scales[3]) R),
+                    mttf3 = rep(wei.series.md.c1.c2.c3::wei_mttf(shape = shapes[3], scale = scales[3]), R),
                     prob1 = rep(probs1_fn[[as.character(shape3)]], R),
                     mttf1 = rep(wei.series.md.c1.c2.c3::wei_mttf(shape = shapes[1], scale = scales[1]), R),
                     mttf = rep(wei.series.md.c1.c2.c3::wei_series_mttf(shapes = shapes, scales = scales), R),
