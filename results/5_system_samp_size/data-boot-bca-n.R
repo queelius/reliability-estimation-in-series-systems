@@ -16,9 +16,9 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
-csv_file <- "data-boot-bca-n-fail.csv"
+csv_file <- "data-boot-bca-n.csv"
 
-N <- rep(100, 1000)
+N <- rep(c(50, 100, 200, 500, 1000), 1000)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
