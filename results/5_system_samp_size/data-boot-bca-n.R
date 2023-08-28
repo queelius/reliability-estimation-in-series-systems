@@ -17,7 +17,7 @@ shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
 csv_file <- "data-boot-bca-n-large.csv"
-N <- rep(c(1000, 2500), 1000)
+N <- rep(c(750, 1000, 2500), 1000)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
