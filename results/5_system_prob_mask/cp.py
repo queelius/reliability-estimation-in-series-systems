@@ -1,9 +1,10 @@
 # Importing required libraries
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 
 # Loading the data from the CSV file
-file_path = "data.csv"
+file_path = "data-small.csv"
 data = pd.read_csv(file_path)
 
 # Extracting relevant columns for shape, scale, and their confidence intervals
@@ -22,17 +23,19 @@ def compute_coverage(row, j):
 for j in range(1, 6):
     relevant_data[[f'shape_coverage.{j}', f'scale_coverage.{j}']] = relevant_data.apply(lambda row: compute_coverage(row, j), axis=1)
 
-# Grouping by 'p' and computing the average coverage probability
+
+# Grouping by 'n' and computing the average coverage probability
 coverage_columns = [f'shape_coverage.{j}' for j in range(1, 6)] + [f'scale_coverage.{j}' for j in range(1, 6)]
 coverage_probabilities = relevant_data.groupby('p')[coverage_columns].mean().reset_index()
 
-# Renaming columns for clarity
-coverage_probabilities.columns = ['p'] + [f'shape_coverage_prob_{j}' for j in range(1, 6)] + [f'scale_coverage_prob_{j}' for j in range(1, 6)]
+print(coverage_probabilities)
 
+# Renaming columns for clarity
+coverage_probabilities.columns = ['p'] + [f'shape_coverage.{j}' for j in range(1, 6)] + [f'scale_coverage.{j}' for j in range(1, 6)]
 
 # Extracting the columns containing the coverage probabilities for shape and scale parameters
-shape_coverage_columns = [f'shape_coverage_prob_{j}' for j in range(1, 6)]
-scale_coverage_columns = [f'scale_coverage_prob_{j}' for j in range(1, 6)]
+shape_coverage_columns = [f'shape_coverage.{j}' for j in range(1, 6)]
+scale_coverage_columns = [f'scale_coverage.{j}' for j in range(1, 6)]
 
 # Computing the mean coverage probabilities for shape and scale parameters
 mean_shape_coverage_prob = coverage_probabilities[shape_coverage_columns].mean(axis=1)
@@ -41,42 +44,35 @@ mean_scale_coverage_prob = coverage_probabilities[scale_coverage_columns].mean(a
 # Adding the mean coverage probabilities to the DataFrame
 coverage_probabilities['mean_shape_coverage_prob'] = mean_shape_coverage_prob
 coverage_probabilities['mean_scale_coverage_prob'] = mean_scale_coverage_prob
-
+print(coverage_probabilities)
 
 # Plotting coverage probabilities for shape parameters
 plt.figure(figsize=[4,4])
 for j in range(1, 6):
-    plt.plot(coverage_probabilities['p'], coverage_probabilities[f'shape_coverage_prob_{j}'], label=f'$k_{j}$')
+    plt.plot(coverage_probabilities['p'], coverage_probabilities[f'shape_coverage.{j}'], label=f'$k_{j}$')
 plt.plot(coverage_probabilities['p'], coverage_probabilities['mean_shape_coverage_prob'], color='magenta', linewidth=3, label='Mean Shape')
 plt.axhline(y=0.95, color='r', linestyle='--', label='Nominal 95% Level')
-plt.xlabel('Component Masking Probability ($p$)')
+plt.xlabel('Masking Probability ($p$)')
 plt.ylabel('Coverage Probability (CP)')
-plt.title('Coverage Probabilities for Shape Parameters')
-plt.legend()
-plt.grid(True)
-
-# x range is from 0 to 1
-plt.xlim(0.1, .85)
-plt.ylim(0.5, 1)
-
-# save
-#plt.savefig('shapes-cp.png', dpi=150)
+plt.title('Coverage Probabilities for Shapes')
+plt.legend(loc='lower left', fontsize='small')
+plt.tight_layout()  # Adjust layout to prevent clipping
+plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
 plt.savefig('shapes-cp.pdf')
-
 
 
 # Plotting coverage probabilities for scale parameters
 plt.figure(figsize=[4,4])
 for j in range(1, 6):
-    plt.plot(coverage_probabilities['p'], coverage_probabilities[f'scale_coverage_prob_{j}'], label=f'$\lambda_{j}$')
+    plt.plot(coverage_probabilities['p'], coverage_probabilities[f'scale_coverage.{j}'], label=f'$\lambda_{j}$')
 plt.plot(coverage_probabilities['p'], coverage_probabilities['mean_scale_coverage_prob'], color='magenta', linewidth=3, label='Mean Scale')
 plt.axhline(y=0.95, color='r', linestyle='--', label='Nominal 95% Level')
-plt.xlabel('Component Masking Probability ($p$)')
+plt.xlabel('Masking Probability ($p$)')
 plt.ylabel('Coverage Probability (CP)')
-plt.title('Coverage Probabilities for Scale Parameters')
-plt.legend()
-plt.grid(True)
-plt.xlim(0.1, .85)
-plt.ylim(0.5, 1)
-#plt.savefig('scales-cp.png', dpi=150)
+plt.title('Coverage Probabilities for Scales')
+# postion legend on the top right
+# and make it a bit smaller
+plt.legend(loc='lower left', fontsize='small')
+plt.tight_layout()  # Adjust layout to prevent clipping
+plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
 plt.savefig('scales-cp.pdf')

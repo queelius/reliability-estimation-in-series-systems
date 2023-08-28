@@ -41,7 +41,7 @@ def plot_mles_and_cis(raw_data, x_col, true_params, param, param_label):
         lower_quantile.append(np.percentile(data[param_mle], 5))
         upper_quantile.append(np.percentile(data[param_mle], 95))
 
-        plt.vlines(i, lower_q3, upper_q1, color='blue', alpha=0.5, label='Interquartile Range of CIs' if i == 0 else "")
+        plt.vlines(i, lower_q3, upper_q1, color='blue', alpha=0.5, label='IQR of CIs' if i == 0 else "")
         plt.plot(i, mean_mle, 'ro', label='Mean of MLEs' if i == 0 else "")
 
     plt.plot(np.arange(len(x_values)), [true_params[param]] * len(x_values), 'g-', label=f'True Value')
@@ -52,13 +52,14 @@ def plot_mles_and_cis(raw_data, x_col, true_params, param, param_label):
         lower_quantile, upper_quantile,
         color='blue', alpha=0.15, label='95% Quantile Range')
 
+    # angle the x-axis labels
     plt.xticks(np.arange(len(x_values)), x_values)
     plt.xlabel('Sample Size ($n$)')
     plt.ylabel(f'Statistics for ${param_label}$')
     plt.title(f'MLE for ${param_label}$')
 
     
-    plt.legend(loc='upper right', fontsize='large')
+    plt.legend(loc='upper right')
 
     # decrease text side of legend
     leg = plt.gca().get_legend()
@@ -67,6 +68,10 @@ def plot_mles_and_cis(raw_data, x_col, true_params, param, param_label):
 
     plt.tight_layout(h_pad=4.0, w_pad=2.5)
     #plt.savefig(f'plot-{x_col}-vs-{param}.png', dpi=150)
+
+    # make it so that the gaps between x-axis ticks scale with the distance between the ticks
+    
+
     plt.savefig(f'plot-{x_col}-vs-{param}.pdf')
     plt.close()
 
@@ -87,9 +92,11 @@ x_col = 'n'
 params = ['scale.1', 'shape.1', 'scale.2', 'shape.2', 'scale.3', 'shape.3', 'scale.4', 'shape.4', 'scale.5', 'shape.5']
 param_labels = ['\lambda_1', 'k_1', '\lambda_2', 'k_2', '\lambda_3', 'k_3', '\lambda_4', 'k_4', '\lambda_5', 'k_5']
 
-data = pd.read_csv('n_vs_mle.csv', na_values=['NA', 'nan', 'NaN', 'NAN'])
+#data = pd.read_csv('5_system_samp_size.csv', na_values=['NA', 'nan', 'NaN', 'NAN'])
+data = pd.read_csv('cleaned-theta-small-2.csv')
+#data = pd.read_csv('5_system_samp_size.csv')
 # remove nan values
-data = data.dropna()
+#data = data.dropna()
 
 print("Number of rows in data =", data.shape[0])
 

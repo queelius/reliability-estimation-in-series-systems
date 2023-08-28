@@ -88,7 +88,7 @@ x_col = 'p'
 params = ['scale.1', 'shape.1', 'scale.2', 'shape.2', 'scale.3', 'shape.3', 'scale.4', 'shape.4', 'scale.5', 'shape.5']
 param_labels = ['\lambda_1', 'k_1', '\lambda_2', 'k_2', '\lambda_3', 'k_3', '\lambda_4', 'k_4', '\lambda_5', 'k_5']
 
-data = pd.read_csv('data.csv', na_values=['NA', 'nan', 'NaN', 'NAN'])
+data = pd.read_csv('data-small.csv', na_values=['NA', 'nan', 'NaN', 'NAN'])
 # remove nan values
 data = data.dropna()
 
