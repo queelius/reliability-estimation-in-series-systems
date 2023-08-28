@@ -84,13 +84,12 @@ for (n in N) {
                             theta0 = sol$par, df = df[i, ], hessian = FALSE,
                             control = list(maxit = max_boot_iter, parscale = sol$par))
                         if (sol.b$convergence == 0) {
-                            cat("[boostrap convergence] ", sol.b$par, "\n")
                             convergence_count <<- convergence_count + 1L
                         } else {
+                            #cat("convergence rate: ", convergence_count, " / ",  inner_it, "\n")
+                            inner_it <<- inner_it + 1L
                             cat("[FAILED bootstrap] ", sol.b$par, "\n")
                         }
-                        #cat("convergence rate: ", convergence_count, " / ",  inner_it, "\n")
-                        inner_it <<- inner_it + 1L
                         sol.b$par
                     }
 
@@ -111,7 +110,7 @@ for (n in N) {
                 logliks[iter] <- sol$value
 
                 tryCatch({
-                    ci <- confint(mle_boot(sol.boot), type = "basic", level = 0.95)
+                    ci <- confint(mle_boot(sol.boot), type = "bca", level = 0.95)
                     #ci <- boot.ci(sol.boot, type = "bca", index.t = rep(0, length(boot_result$t)))
 
                     shapes.ci <- ci[seq(1, length(theta), 2), ]
