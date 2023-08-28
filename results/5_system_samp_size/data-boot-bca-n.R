@@ -16,13 +16,13 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
-csv_file <- "data-boot-bca-n.csv"
+csv_file <- "data-boot-bca-n-stud.csv"
 
-N <- rep(c(50, 100, 200, 500, 1000), 1000)
+N <- rep(c(1000, 2500), 1000)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
-B <- 20L
+B <- 500L
 max_iter <- 100L
 max_boot_iter <- 125L
 n_cores <- detectCores() - 1
@@ -86,10 +86,9 @@ for (n in N) {
                         if (sol.b$convergence == 0) {
                             convergence_count <<- convergence_count + 1L
                         } else {
-                            #cat("convergence rate: ", convergence_count, " / ",  inner_it, "\n")
-                            inner_it <<- inner_it + 1L
-                            cat("[FAILED bootstrap] ", sol.b$par, "\n")
+                            cat("[FAILED bootstrap: convergence(", convergence_count / inner_it, ")] ", sol.b$par, "\n")
                         }
+                        inner_it <<- inner_it + 1L
                         sol.b$par
                     }
 
@@ -110,7 +109,7 @@ for (n in N) {
                 logliks[iter] <- sol$value
 
                 tryCatch({
-                    ci <- confint(mle_boot(sol.boot), type = "bca", level = 0.95)
+                    ci <- confint(mle_boot(sol.boot), type = "basic", level = 0.95)
                     #ci <- boot.ci(sol.boot, type = "bca", index.t = rep(0, length(boot_result$t)))
 
                     shapes.ci <- ci[seq(1, length(theta), 2), ]
