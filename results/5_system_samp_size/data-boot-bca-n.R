@@ -16,9 +16,9 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
-csv_file <- "data-boot-bca-n.csv"
+csv_file <- "data-boot-bca-n-stud.csv"
 
-N <- rep(c(50, 100, 200, 500, 1000), 1000)
+N <- rep(c(1000, 2500), 1000)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
@@ -77,10 +77,19 @@ for (n in N) {
                         cat("[", iter, "] MLE did not converge, retrying...\n")
                     }
 
+                    inner_it <- 1L
+                    convergence_count <- 0L
                     mle_solver <- function(df, i) {
-                        mle_lbfgsb_wei_series_md_c1_c2_c3(
+                        sol.b <- mle_lbfgsb_wei_series_md_c1_c2_c3(
                             theta0 = sol$par, df = df[i, ], hessian = FALSE,
-                            control = list(maxit = max_boot_iter, parscale = sol$par))$par
+                            control = list(maxit = max_boot_iter, parscale = sol$par))
+                        if (sol.b$convergence == 0) {
+                            convergence_count <<- convergence_count + 1L
+                        } else {
+                            cat("[FAILED bootstrap: convergence(", convergence_count / inner_it, ")] ", sol.b$par, "\n")
+                        }
+                        inner_it <<- inner_it + 1L
+                        sol.b$par
                     }
 
                     # do the non-parametric bootstrap
@@ -100,7 +109,9 @@ for (n in N) {
                 logliks[iter] <- sol$value
 
                 tryCatch({
-                    ci <- confint(mle_boot(sol.boot), type = "bca", level = 0.95)
+                    ci <- confint(mle_boot(sol.boot), type = "basic", level = 0.95)
+                    #ci <- boot.ci(sol.boot, type = "bca", index.t = rep(0, length(boot_result$t)))
+
                     shapes.ci <- ci[seq(1, length(theta), 2), ]
                     scales.ci <- ci[seq(2, length(theta), 2), ]
                     shapes.lower[iter, ] <- shapes.ci[, 1]
