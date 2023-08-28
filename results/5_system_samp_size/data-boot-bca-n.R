@@ -16,9 +16,8 @@ theta <- c(shape1 = 1.2576, scale1 = 994.3661,
 shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
-csv_file <- "data-boot-bca-n-stud.csv"
-
-N <- rep(c(1000, 2500), 1000)
+csv_file <- "data-boot-bca-n-large.csv"
+N <- rep(c(750, 1000, 2500), 1000)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
@@ -110,8 +109,6 @@ for (n in N) {
 
                 tryCatch({
                     ci <- confint(mle_boot(sol.boot), type = "basic", level = 0.95)
-                    #ci <- boot.ci(sol.boot, type = "bca", index.t = rep(0, length(boot_result$t)))
-
                     shapes.ci <- ci[seq(1, length(theta), 2), ]
                     scales.ci <- ci[seq(2, length(theta), 2), ]
                     shapes.lower[iter, ] <- shapes.ci[, 1]
