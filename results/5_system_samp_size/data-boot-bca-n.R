@@ -17,8 +17,7 @@ shapes <- theta[seq(1, length(theta), 2)]
 scales <- theta[seq(2, length(theta), 2)]
 
 csv_file <- "data-boot-bca-n-large.csv"
-
-N <- rep(c(750, 1000, 2500, 5000), 200)
+N <- rep(c(1000, 2500), 1000)
 P <- c(.215)
 Q <- c(.825)
 R <- 2
@@ -77,10 +76,19 @@ for (n in N) {
                         cat("[", iter, "] MLE did not converge, retrying...\n")
                     }
 
+                    inner_it <- 1L
+                    convergence_count <- 0L
                     mle_solver <- function(df, i) {
-                        mle_lbfgsb_wei_series_md_c1_c2_c3(
+                        sol.b <- mle_lbfgsb_wei_series_md_c1_c2_c3(
                             theta0 = sol$par, df = df[i, ], hessian = FALSE,
-                            control = list(maxit = max_boot_iter, parscale = sol$par))$par
+                            control = list(maxit = max_boot_iter, parscale = sol$par))
+                        if (sol.b$convergence == 0) {
+                            convergence_count <<- convergence_count + 1L
+                        } else {
+                            cat("[FAILED bootstrap: convergence(", convergence_count / inner_it, ")] ", sol.b$par, "\n")
+                        }
+                        inner_it <<- inner_it + 1L
+                        sol.b$par
                     }
 
                     # do the non-parametric bootstrap
