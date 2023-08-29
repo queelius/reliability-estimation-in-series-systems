@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load the data from the uploaded CSV file
-file_path = 'data-k.csv'
+file_path = 'data-shape3-lt-3.csv'
 data = pd.read_csv(file_path)
 
 # Group the data by 'n' and 'shape3', and compute the median for each group
@@ -40,3 +40,4 @@ plt.tight_layout()
 
 # save the plot
 plt.savefig('contour_plot.pdf', bbox_inches='tight')
+plt.savefig('contour_plot.png', bbox_inches='tight')
