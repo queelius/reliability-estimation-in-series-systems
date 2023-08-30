@@ -5,11 +5,12 @@ from matplotlib.ticker import FuncFormatter
 
 # Load data
 file_path = "data.csv"
-x_col = 'shape.3'
+#x_col = 'shape.3'
+x_col = 'prob3'
 data = pd.read_csv(file_path)
 
 # Extract columns
-relevant_columns = [f'shape.{i}' for i in range(1, 6)] + [f'scale.{i}' for i in range(1, 6)] + \
+relevant_columns = [x_col] + [f'shape.{i}' for i in range(1, 6)] + [f'scale.{i}' for i in range(1, 6)] + \
                    [f'shape.lower.{i}' for i in range(1, 6)] + [f'shape.upper.{i}' for i in range(1, 6)] + \
                    [f'scale.lower.{i}' for i in range(1, 6)] + [f'scale.upper.{i}' for i in range(1, 6)]
 relevant_data = data[relevant_columns].copy()
@@ -41,20 +42,21 @@ scale_cmap = plt.colormaps['Reds']
 line_styles = ['-', '--', '-.', ':', '-']
 markers = ['o', 's', '^', 'x', 'D']
 
-# make the line for `shape.3` thicker and green
-plt.plot(coverage_probabilities[x_col], coverage_probabilities['shape_coverage.3'], label='Shape $k_3$', color='darkgreen', linestyle='-', marker='o', linewidth=4)
-
 
 for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)), line_styles, markers):
     if (j == 3):
-        continue
-    plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'shape_coverage.{j}'], label=f'Shape $k_{j}$', color=color, linestyle=ls, marker=mk)
+        plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'shape_coverage.{j}'], label=f'Shape $k_{j}$', color=color, linestyle=ls, marker=mk, linewidth=6)
+    else:
+        plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'shape_coverage.{j}'], label=f'Shape $k_{j}$', color=color, linestyle=ls, marker=mk)
 
 for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)), line_styles, markers):
-    plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'scale_coverage.{j}'], label=f'Scale $\lambda_{j}$', color=color, linestyle=ls, marker=mk)
+    if (j == 3):
+        plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'scale_coverage.{j}'], label=f'Scale $\lambda_{j}$', color=color, linestyle=ls, marker=mk, linewidth=6)
+    else:
+        plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'scale_coverage.{j}'], label=f'Scale $\lambda_{j}$', color=color, linestyle=ls, marker=mk)
 
-plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_shape_coverage_prob'], color='darkblue', linewidth=4, linestyle='-', label='Mean Shape')
-plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_scale_coverage_prob'], color='darkred', linewidth=4, linestyle='-', label='Mean Scale')
+plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_shape_coverage_prob'], color='darkblue', linewidth=6, linestyle='-', label='Mean Shape')
+plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_scale_coverage_prob'], color='darkred', linewidth=6, linestyle='-', label='Mean Scale')
 
 plt.axhline(y=0.95, color='grey', linestyle='--', label='Nominal 95% Level')
 plt.xlabel('Probability of 3rd Component Failure ($\Pr\{K_i = 3\}$)')

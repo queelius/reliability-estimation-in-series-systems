@@ -56,6 +56,12 @@ def plot_mles_and_cis(raw_data, x_col, param, param_label):
         lower_quantile, upper_quantile,
         color='blue', alpha=0.15, label='95% Quantile Range')
 
+    if "scale" in param:
+        plt.ylim(200, 3500)
+
+    if "shape" in param:
+        plt.ylim(0.5, 2.5)
+
     # angle the x-axis labels
     # and round the values to 2 decimal places
     plt.xticks(np.arange(len(x_values)), [round(x, 2) for x in x_values], rotation=45)
@@ -63,7 +69,10 @@ def plot_mles_and_cis(raw_data, x_col, param, param_label):
     plt.ylabel(f'Statistics for ${param_label}$')
     plt.title(f'MLE for ${param_label}$')
     
-    plt.legend(loc='upper right')
+    if (param == 'scale.3' or param == 'shape.3'):
+        plt.legend(loc='upper left')
+    else:
+        plt.legend(loc='upper right')
     leg = plt.gca().get_legend()
     for text in leg.get_texts():
         plt.setp(text, fontsize='small')

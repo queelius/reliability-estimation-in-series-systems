@@ -50,13 +50,18 @@ def plot_mles_and_cis(raw_data, x_col, param, param_label):
         plt.vlines(i, lower_q3, upper_q1, color='blue', alpha=0.5, label='IQR of CIs' if i == 0 else "")
         plt.plot(i, mean_mle, 'ro', label='Mean of MLEs' if i == 0 else "")
 
-    plt.plot(np.arange(len(x_values)), y_values, 'g*', label='True Parameter Value')
-
+    plt.plot(np.arange(len(x_values)), y_values, 'g-', label='True Parameter Value')
     plt.plot(np.arange(len(x_values)), mean_mles, 'r--')
     plt.fill_between(
         np.arange(len(x_values)),
         lower_quantile, upper_quantile,
         color='blue', alpha=0.15, label='95% Quantile Range')
+
+    if "scale" in param:
+        plt.ylim(200, 3000)
+
+    if "shape" in param:
+        plt.ylim(0, 3.5)
 
     # angle the x-axis labels
     # and round the values to 2 decimal places
@@ -71,7 +76,7 @@ def plot_mles_and_cis(raw_data, x_col, param, param_label):
         plt.setp(text, fontsize='small')
 
     plt.tight_layout(h_pad=4.0, w_pad=2.5)
-    plt.savefig(f'plot-{x_col}-vs-{param}.pdf')
+    plt.savefig(f'plot-{x_col}-shape-vs-{param}.pdf')
     plt.close()
 
 #x_col = 'shape.3'

@@ -1,7 +1,7 @@
 ---
 title: "Bootstrapping confidence intervals (BCa) of the maximum likelihood estimator of components in a series systems from masked failure data"
 author: "Alex Towell"
-abstract: "We estimate the parameters of a series system with Weibull component lifetimes from relatively small samples consisting of right-censored system lifetimes and masked component cause of failure. Under a set of conditions that permit us to ignore how the component cause of failures are masked, we assess the bias and variance of the estimator. Then, we assess the accuracy of the boostrapped variance and calibration of the confidence intervals of the MLE under a variety of scenarios."
+abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. A reduced model with homogeneous component shapes simplifies analysis for well-designed systems. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models, validation of estimation techniques via simulations, and assessment of a reduced model. Together, these advance rigorous component reliability assessment from masked failure data."
 output:
     bookdown::pdf_document2:
     #bookdown::html_document2:
@@ -17,10 +17,14 @@ output:
         citation_package: natbib
 indent: true
 header-includes:
+   - \usepackage{caption}
    - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
    - \AtBeginDocument{\newtheorem{condition}{Condition}}
    - \AtBeginDocument{\renewcommand{\refname}{References}}
 bibliography: refs.bib
+link-citations: true
+# let's change the style to a statistics / math / engineering journal
+biblio-style: apalike
 ---
 
 
@@ -46,38 +50,36 @@ library(kableExtra)
 
 Introduction
 ============
-Accurately estimating the reliability of individual components in
-multi-component systems is an important problem in many engineering domains.
-However, component lifetimes and failure causes are often not directly
-observable. In a series system, only the system-level failure time may be recorded along
-with limited information about which component failed. Such *masked* data poses challenges
-for estimating component reliability. 
+Accurately estimating the reliability of individual components in multi-component
+systems is an important challenge, as component lifetimes and failure causes are
+often not directly observable. In a series system, only system-level failure times
+may be recorded along with limited information about the failed component. Such
+masked data poses difficulties for assessing component reliability.
 
-In this paper, we develop a maximum likelihood approach to estimate component reliability
-in series systems using right-censored lifetime data and candidate sets that contain the
-failed component. The key contributions are:
+This paper develops and validates maximum likelihood techniques to estimate
+component reliability from right-censored lifetime data and candidate sets
+indicative of component failure causes. The key results are:
 
-1. Deriving a likelihood model that accounts for right-censoring and masked failure causes
-through candidate sets. This allows the available masked data to be used for estimation.
+- Deriving a likelihood model incorporating right-censoring and candidate sets to
+  enable masked data to be used for parameter estimation.
 
-2. Validating the accuracy, precision, and robustness of the maximum likelihood estimator
-through an extensive simulation study under different sample sizes, masking probabilities,
-and censoring levels. 
+- Demonstrating through simulation studies that the maximum likelihood estimator
+  performs well despite small samples and significant masking and right-censoring.
+  Estimation of scale parameters is more robust than shape parameters.
 
-3. Demonstrating that bootstrapping provides well-calibrated confidence intervals for the
-MLEs even with small samples.
+- Showing that bootstrapping provides reasonably well-calibrated confidence
+  intervals for the maximum likelihood estimates, even with small sample sizes.
 
-Together, these contributions provide a statistically rigorous methodology for learning
-about latent component properties from series system data. The methods are shown to work
-well even when failure information is significantly masked. This capability expands the
-range of applications where component reliability can be quantified from limited observations.
+- Assessing a reduced model with homogeneous component shapes. This simplified
+  model is favored for well-designed systems but deviations in component properties
+  can impact adequacy.
 
-The remainder of this paper is organized as follows. First, we detail the series system and
-masked data models. Next, we present the likelihood construction and maximum likelihood
-theory. We then describe the bootstrap approach for variance and confidence interval
-estimation. Finally, we validate the methods through simulation studies under various data
-scenarios and sample sizes.
+The remainder of the paper details the series system and likelihood models,
+maximum likelihood estimation methodology, bootstrap confidence interval estimation,
+and extensive simulation studies exploring estimator behavior under various sample
+sizes, masking levels, and model assumptions.
 
+Together, these contributions provide a statistically rigorous framework for learning about latent component properties from limited observational data on system reliability. The proposed methods expand the capability to quantify component lifetimes in situations where failure data is significantly masked.
 
 Series System Model {#sec:statmod}
 ==================================
@@ -950,14 +952,11 @@ Series System with Weibull Components {#sec:weibull}
 The Weibull distribution, introduced by Waloddi Weibull in 1937, has been
 instrumental in reliability analysis due to its ability to model a wide range
 of failure behaviors. Reflecting on its utility, Weibull
-modestly noted that it "[...] may sometimes render good service."
-(Source: "New Weibull Handbook"). In the context of our study, we utilize the Weibull
+modestly noted that it "[...] may sometimes render good service." \citep{Abernethy2006}.
+In the context of our study, we utilize the Weibull
 to model a system as originating from Weibull components in a series configuration,
 producing a specific form of the likelihood model described in Section \ref{sec:like_model},
 which deals with challenges such as right censoring and masked component cause of failure.
-In Section \ref{sec:sim_study}, we conduct a simulation study to assess the sensivity
-of this model to variations in masking probabilities, sample size, and differentiated
-component reliabilities.
 
 The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
 lifetime distribution given by
@@ -990,45 +989,43 @@ case of the Weibull distribution when $k_j = 1$.}
 result of components wearing as they age
 
 The lifetime of the series system composed of $m$ Weibull components
-has a reliability function given by
-\begin{equation}
+has a reliability and hazard functions given by the following theorem.
+\begin{theorem}
+The lifetime of a series system composed of $m$ Weibull components
+has a reliability function, hazard function, and pdf respectively given by
+\begin{align}
 \label{eq:sys_weibull_reliability_function}
-R_{T_i}(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
-\end{equation}
-\begin{proof}
-By Theorem \ref{thm:sys_reliability_function},
-$$
-R_{T_i}(t;\v\theta) = \prod_{j=1}^{m} R_j(t;\lambda_j,k_j).
-$$
-Plugging in the Weibull component reliability functions obtains the result
-\begin{align*}
-R_{T_i}(t;\v\theta)
-    &= \prod_{j=1}^{m} \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}\\
-    &= \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
-\end{align*}
-\end{proof}
-
-The Weibull series system's hazard function is given by
-\begin{equation}
+R_{T_i}(t;\v\theta) &= \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\},\\
 \label{eq:sys_weibull_failure_rate_function}
-h_{T_i}(t;\v\theta) =
-    \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1},
-\end{equation}
-whose proof follows from Theorem \ref{thm:sys_failure_rate}.
-The pdf of the series system is given by
-\begin{equation}
+h_{T_i}(t;\v\theta) &= \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1},\\
 \label{eq:sys_weibull_pdf}
-f_{T_i}(t;\v\theta) =
-\biggl\{
+f_{T_i}(t;\v\theta) &= \biggl\{
     \sum_{j=1}^m \frac{k_j}{\lambda_j}\left(\frac{t}{\lambda_j}\right)^{k_j-1}
 \biggr\}
 \exp
 \biggl\{
     -\sum_{j=1}^m \bigl(\frac{t}{\lambda_j}\bigr)^{k_j}
 \biggr\}.
-\end{equation}
+\end{align}
+\end{theorem}
 \begin{proof}
-By definition,
+The proof for the reliability function follows from Theorem \ref{thm:sys_reliability_function},
+$$
+R_{T_i}(t;\v\theta) = \prod_{j=1}^{m} R_j(t;\lambda_j,k_j).
+$$
+Plugging in the Weibull component reliability functions obtains the result
+\begin{align*}
+R_{T_i}(t;\v\theta)
+    = \prod_{j=1}^{m} \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}
+    = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+\end{align*}
+The proof for the hazard function follows from Theorem \ref{thm:sys_failure_rate},
+\begin{align*}
+h_{T_i}(t;\v\theta)
+    = \sum_{j=1}^{m} h_j(t;\v{\theta_j})
+    = \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
+\end{align*}
+The proof for the pdf follows from Theorem \ref{thm:sys_pdf}. By definition,
 $$
 f_{T_i}(t;\v\theta) = h_{T_i}(t;\v\theta) R_{T_i}(t;\v\theta).
 $$
@@ -1192,15 +1189,13 @@ sample is given by
 \nabla \ell(\v\theta) = \sum_{i=1}^n \nabla \ell_i(\v\theta).
 \end{equation}
 
-
-Reduced Model: Weibull Series System Due to Homogeneous Shape Parameters
-========================================================================
+## Weibull Series System: Homogeneous Shape Parameters {#sec:reduced-weibull}
 
 A series system composed of Weibull components is not generally Weibull unless the
 shape parameters of the components are homogeneous.
 \begin{theorem}
-If the shape parameters of the components are identical, then the series system is Weibull
-with a shape parameter $k$ given by the shape parameter of the components and a scale
+If the shape parameters of the components are homogenous, then the series system is Weibull
+with a shape parameter $k$ given by the identical shape parameters of the components and a scale
 parameter $\lambda$ given by
 \begin{equation}
 \label{eq:sys_weibull_scale}
@@ -1226,7 +1221,7 @@ $$
 \end{proof}
 
 \begin{theorem}
-If a series system has Weibull components with identical shape parameters, the component
+If a series system has Weibull components with homogeneous shape parameters, the component
 cause of failure is conditionally independent of the system failure time:
 $$
     \Pr\{K_i = j | T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-k}}{\sum_{l=1}^{m} \lambda_l^{-k}}.
@@ -1248,19 +1243,11 @@ cause of failure given the system failure time is given by
 \end{align*}
 \end{proof}
 
-
-As we discussed in the previous section, if the shapes are similar, the series system
-is approximately Weibull. In our simulation study, we analyze a series system with
-Weibull components that have similar shape parameters (except in those studies where
-we vary the shape parameters to test the sensitivity of the MLE to different component
-failure characteristics).
-
-
- This reduces the
-series system to a known distribution, the Weibull distribution, which is particularly useful
-for analysis and interpretation, especially in the context of small samples, since instead of
-estimating $2m$ parameters we only need to estimate $m+1$ parameters, one shape parameter and
-$m$ scale parameters.
+If we have prior knowledge that the shape parameters are sufficiently homogenous, it may
+be useful to simplify the likelihood model by assuming the shape parameters are identical,
+simplifying the series system to Weibull, facilitating analysis and interpretation.
+According to the bias-variance trade-off, we expect the MLE to be more biased but
+have lower sampling variance.
 
 We denote the full model log-likelihood function by $\ell_F$ and the reduced model log-likelihood
 by $\ell_R$. The reduced model is obtained by setting the shape parameter of each component to
@@ -1269,11 +1256,10 @@ $$
 \ell_R(k, \lambda_1, \lambda_2, \cdots, \lambda_m) =
         \ell_F(k, \lambda_1, k, \lambda_2, \ldots, k, \lambda_m),
 $$
-The same is done for the score and hessian of the log-likelihood functions.
+The same may be done for the score and hessian of the log-likelihood functions.
 
-Simulation Study {#sec:sim_study}
+Simulation Study: Full Model {#sec:sim_study}
 ================================
-
 
 ```{r sim-study-design, echo = F}
 theta <- c(
@@ -1289,7 +1275,7 @@ scales <- theta[grepl("scale", names(theta))]
 ```
 
 In this section, we conduct a simulation study to assess the performance
-of the MLE for the likelihood model defined in Section \ref{sec:weibull}.
+of the MLE for the full likelihood model defined in Section \ref{sec:weibull}.
 In this simulation study, we assess the sensitivity of the MLE to
 various simulation scenarios. In particular, we assess two important
 properties of the MLE with respect to a scenario:
@@ -1373,7 +1359,7 @@ In this section, we describe the data generating process for our simulation stud
 It consists of three parts: the series system, the candidate set model, and the
 right-censoring model.
 
-### Weibull Series System Lifetime {-}
+### Series System Lifetime {-}
 
 We generate data from a Weibull series system with $m$ components.
 As described in Section \ref{sec:weibull}, the $j$\textsuperscript{th} component
@@ -1426,119 +1412,52 @@ a fixed probability $p$, independently of all other components and independently
 of $\v\theta$, and the failed component is always included in the candidate set.
 See Appendix \@ref(app:cand-model) for the R code that implements this model.
 
-
-## Full Model Versus Reduced Model
-
-We described the full model in Section \ref{sec:wei-series} and we described the reduced model
-in Section \ref{sec:reduced-model}. In this section, we seek to ascertain when the reduced
-model is appropriate. In the reduced model, series system to a known distribution, the Weibull
-distribution, which is particularly useful for analysis and interpretation, especially in the
-context of small samples, since instead of estimating $2m$ parameters we only need to estimate
-$m+1$ parameters, one shape parameter and $m$ scale parameters.
-
-All things else being equal, particularly for small samples, we prefer simpler models over
-more complex models. The reduced model is simpler than the full model because it has fewer
-parameters. However, we must be careful to ensure that the reduced model is not too simple.
-If the reduced model is too simple, then it may not be able to adequately describe the data.
-In this case, the full model is preferred. This is in keeping with the principle of Ockham's
-razor, the simplest model that adequately describes the data is preferred.
-
-### Likelihood Ratio Test
-In order to determine if the reduced model is appropriate, we will conduct a hypothesis test.
-We wish to conduct a hypothesis test to determine if there is statistically significant
-evidence that the shape parameters are homogeneous:
-\begin{align*}
-H_0 &: \text{all shape parameters equal.}\\
-H_1 &: \text{not all shape parameters are equal.}
-\end{align*}
-We will use the likelihood ratio test (LRT) to test this hypothesis. The LRT statistic is
-given by
-$$
-\Lambda = -2 (\ell_R - \ell_F)
-$$
-where $\ell_R$ is the log-likelihood function of the null (reduced) model
-and $\ell_F$ is the log-likelihood function of the full model. Under the null model,
-the LRT statistic is asymptotically distributed chi-squared with $m-1$ degrees of freedom,
-where $m$ is the number of components in the series system,
-$$
-\Lambda \sim \chi^2_{m-1}.
-$$
-If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
-degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, then we find the data to be incompatible with the null
-hypothesis $H_0$, otherwise we find the data to be compatible with the null hypothesis $H_0$.
-
-### Sample Size Analysis
-
-Roughly, we seek to determine the sample size required to detect a statistically significant difference in the
-shape parameters of the components for our well-defined series system described in Section \ref{}.
-We will use the LRT statistic to determine the sample size required to detect a difference
-in the shape parameters of the components with a given power and significance level.
-
-We generate samples from size $50$ to size $400$ from the well-designed series system described in
-Section \ref{sec:sim_study}, Table \ref{tab:series-sys}, and we compute the LRT statistic for each
-sample. We plot the results in Figure \ref{fig:lrt}.
-
-```{r out.width='50%', fig.align="center", echo = F, fig.cap="Likelihood Ratio Test Statistic vs Sample Size"}
-knitr::include_graphics("image/lrt.png")
-```
-
-The variability in $p$-values across different sample sizes may reflect the
-complexity of the models being compared and the underlying data generating process.
-The absence of a clear trend in the mean $p$-values suggests that the test's power
-and significance levels may be influenced by other factors beyond sample size,
-notably right-censoring and masking of component cause of failure.
-
-Further investigation may include analyzing what happens when we vary
-right-censoring and masking of component cause of failure, as well as considering
-series systems which are not so well-designed, e.g., series systems with components
-that have very different shapes and scales. It may also be interesting to consider
-series systems with more components, e.g., $m = 20$.
-
-The current analysis suggests that the reduced model is appropriate for the DGP
-and sample sizes. With that said, we proceed to investigate the full model in
-our simulation study.
-
 ## Simulation Scenarios
 
-We define a simulation scenario to be some combination of $n$, $p$, $k_3$, and $\lambda_3$.
-We are interested in choosing a small number of scenarios that are
-representative of real-world scenarios and that are interesting to analyze.
+We define a simulation scenario to be some combination of $n$ (sample size),
+$p$ (masking probability in our Bernoulli candidate set model), $k_3$
+(shape parameter of the third component), $\lambda_3$ (scale parameter of the
+third component), and $q$ (right-censoring quantile). We are interested in
+choosing a small number of scenarios that are representative of real-world
+scenarios and that are interesting to analyze.
 
-Here is an outline of the simulation study analysis:
+Here is an outline of the simulation study for a particular scenario:
 
-1. Fix a combination of simulation parameters to some value, and vary the remaining parameter, e.g.,
-   fix $p$, $k_3$, $\lambda_3$, and vary the sample size $n$.
+1. Fix a combination of simulation parameters to some value, and vary the remaining
+   parameters. For example, if we want to assess how the sampling distribution of
+   the MLE changes with respect to sample size, we might choose some particular
+   values for $p$, $k_3$, $\lambda_3$, and $q$, and vary the sample size $n$ over the
+   desired range.
 
-2. Simulate $R$ datasets from the Data Generating Process (DGP) described in
-   Section \ref{sec:data_gen}.
+2. Simulate $R \geq 300$ datasets from the Data Generating Process (DGP) described in
+   Section \ref{sec:data_gen} and compute an MLE for each dataset. We choose $R$ to be
+   large enough so that the sampling distribution of the MLE is well approximated by
+   the empirical distribution of the $R$ MLEs.
 
-3. For each of these $R = 500$ datasets, compute the MLE.
+3. For each of these $R$ MLEs, compute some function of the MLE, like the BCa confidence
+   intervals or the likelihood ratio test statistic. This will give us $R$ statistics
+   as a Monte-carlo estimate of the sampling distribution of the statistic.
 
-4. For each of these $R$ datasets, perform bootstrap resampling $B = 1000$ times to create
-   a set of bootstrap samples (replicates).
+4. Use the $R$ statistics to estimate some property of the sampling distribution of the
+   statistic, e.g., the mean of the MLE or the coverage probability of the BCa confidence
+   intervals, with respect to the parameter(s) we are varying in the scenario, e.g.,
+   assess how the coverage probability of the BCa confidence intervals changes with
+   respect to sample size.
 
-5. Calculate the MLE for each of these bootstrap samples. This generates an empirical
-   distribution of the MLE, which is used to construct a confidence interval for
-   the MLE.
-
-6. For each dataset, determine whether the true parameter value falls within the
-   computed CI. Aggregate this information across all $R$ datasets to estimate the
-   coverage probability of the CI and the bias of the MLE at that particular
-   combination of simulation parameters.
-
-Once we generate the data for a simulation scenario, we plot the results and discuss
-the performance of the MLE estimator under the chosen scenario.
+5. Visualize the results and assess the behavior of estimator under the chosen scenario.
+   
 For how we run a simulation scenario, see Appendix \ref{app:sim-code}.
 
 ## Scenario: Assessing the Impact of Right-Censoring {#sec:effect-censoring}
 
 In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
-Table \ref{tab:series-sys}, and we vary the right-censoring quantile ($q$) from $25\%$ (significant
-right-censoring) to $100\%$ (no right-censoring), with a component cause of failure masking
-probability of $21.5\%$ (moderate masking) and sample size $n = 100$ (moderate sample size).
+Table \ref{tab:series-sys}, and we vary the right-censoring quantile ($q$) from $60\%$ to $100\%$
+(no right-censoring), with a component cause of failure masking
+probability of $21.5\%$ and sample size $n = 100$.
 
-```{r q-vs-stats-p215-shape, out.width='100%', cache = T, fig.cap=c("Right-Censoring Quantile vs MLE ($p = 0.215, n = 100$)","Right-Qensoring Quantile ($q$) vs MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/tau/plot-q-vs-mle.pdf")
+```{r q-vs-stats, out.width='100%', cache = T, fig.cap=c("Right-Censoring Quantile vs MLE ($p = 0.215, n = 100$)","Right-Qensoring Quantile ($q$) vs MLEs"), fig.align="center", echo = F}
+#knitr::include_graphics("image/tau/plot-q-vs-mle.pdf")
+knitr::include_graphics("image/5_system_tau_fig.pdf")
 ```
 
 ### Analysis {-}
@@ -1558,17 +1477,18 @@ for $j = 1, \ldots, m$. We see that these partial derivatives are related to the
 Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
 
 - As $\tau$ increases, $R_{T_i}(\tau;\v\theta)$ decreases, and so the effect right-censoring has on the MLE decreases. This is what we see in
-  Figure \ref{fig:q-vs-stats-p215-shape}.
+  Figure \ref{fig:q-vs-stats}.
 
 - The partial derivatives with respect to the scale parameters are always positive, so right-censoring positively bias the scale parameter
-  estimates to make right-censoring events more likely. The more right-censoring, the more the positive bias. We see this in Figure \ref{fig:q-vs-stats-p215-shape},
+  estimates to make right-censoring events more likely. The more right-censoring, the more the positive bias. We see this in Figure
+  \ref{fig:q-vs-stats},
   where the scale parameter bias decreases as we decrase the probability ($1-q$) of a right-censoring event.
 
 - The partial derivative with respect to the shape parameter of the $j$\textsuperscript{th} component, $k_j$, is
   non-negative if $\lambda_j \geq \tau$ and otherwise negative. In our well-designed series system, the scale parameters
   are large compared to most of the right-censoring times for $\tau(q)$, so the MLE nudges the shape parameter estimates
   in a positive direction to increase the probability of a right-censoring event $R_{T_i}(\tau)$ at time $\tau$. We see this
-  in Figure \ref{fig:q-vs-stats-p215-shape}, where the shape parameter estimates are positively biased for most of the quantiles
+  in Figure \ref{fig:q-vs-stats}, where the shape parameter estimates are positively biased for most of the quantiles
   $q$.
   
 An alternative way to reason about the effect right-censoring has on the MLE is give by the
@@ -1616,9 +1536,15 @@ Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moder
 we fix the right-censoring quantile to $q = 0.825$ (moderate censoring), and we vary the sample
 size $n$ from $50$ (small sample size) to $1000$ (very large sample size).
 
-```{r samp-size-n-vs-stats-p215-scale, out.width='100%', fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/n-vs-mles.pdf")
+```{r samp-size-n-vs-stats, out.width='100%', fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
+#knitr::include_graphics("image/n-vs-mles.pdf")
+knitr::include_graphics("image/5_system_samp_size_fig.pdf")
 ```
+
+In Figure \ref{fig:samp-size-n-vs-stats}, we show the effect of the sample size $n$ on the MLEs
+for the shape and scale parameters. The top four plots only show the effect on the MLEs for the
+shape and scale parameters of components $1$ and $4$, since the rest were essentially identical,
+and the bottom two plots show the coverage probabilities for all parameters.
 
 Here are several key observations:
 
@@ -1681,29 +1607,34 @@ on the MLEs for the the shape and scale parameters of components $1$ and $4$, si
 rest were essentially identical, and the bottom two plots show the coverage probabilities for
 all parameters.
 
+```{r masking-prob-vs-stats, fig.cap=c("Component Cause of Failure Masking ($p$) vs MLE", "Component Cause of Failure Masking Probability (p) vs. MLE"), fig.align="center", echo = F}
+#knitr::include_graphics("image/p-vs-mle.pdf")
+knitr::include_graphics("image/5_system_prob_fig.pdf")
+```
+
 ### Analysis {-}
 
 Here are several key observations:
 
-- *Coverage Probability (CP)*: For the scale parameters, the 95% CI is well-calibrated
-  for masking probabilities up to $p = 0.725$, which is really quite significant,
-  obtaining coverages over $90%, but drops precipitously after that point.
+- *Coverage Probability (CP)*: For the scale parameters, the $95\%$ CI is well-calibrated
+  for Bernulli masking probabilities up to $p = 0.725$, which is really quite significant,
+  obtaining coverages over $90\%$, but drops precipitously after that point.
   
-  For the shape parameters, the 95% CI is well-calibrated for masking probabilities only
+  For the shape parameters, the $95\%$ CI is well-calibrated for masking probabilities only
   up to $p = 0.4$, which is still large, obtaining coverages generally over $90%$, but
   begins to drop slowly after that point.
   
-  The bootstrapped (BCa) confidence intervals seem fairly well-calibrated for most realistic
+  The BCa confidence intervals are well-calibrated for most realistic
   masking probabilities, constructing CIs that are neither too wide nor too narrow,
-  but when the masking is essentially a fair coin flip, one should probably take the CIs with
-  a grain of salt.
+  but when the masking is severe and the sample size is relatively small, one should
+  take the CIs with a grain of salt.
 
-- *Dispersion of MLEs*: The shaded regions representing the 95% quantile of
+- *Dispersion of MLEs*: The shaded regions representing the $95\%$ quantile of
   the MLEs become wider as the masking probability increases. This is an indicator of the
   decreased precision in the estimates when provided with more ambiguous data about the
-  component cause of failure. However, even for fairly significant masking, $p \leq 0.55$,
-  the 95% quantiles are relatively narrow and the CP is well-calibrated, indicating that
-  the MLEs are still relatively precise and accurate.
+  component cause of failure. However, even for fairly significant Bernoulli masking,
+  $p \leq 0.55$, the $95\%$ quantiles are relatively narrow and the CP is
+  well-calibrated, indicating that the MLEs are still relatively precise and accurate.
 
 - *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) show that the bootstrapped BCa
   CIs are becoming more spread out as the masking probability increases. They are also
@@ -1720,28 +1651,33 @@ Here are several key observations:
   stable across different masking probabilities, only showing a significant positive bias
   when the masking probability $p$ becomes quite significant.
 
-```{r masking-prob-vs-stats, fig.cap=c("Component Cause of Failure Masking (p) vs MLE", "Component Cause of Failure Masking Probability (p) vs. MLE"), fig.align="center", echo = F}
-knitr::include_graphics("image/p-vs-mle.pdf")
-```
-
 ## Scenario: Assessing the Impact of Changing the Scale Parameter of a Component {#sec:scale-vs-mttf}
 
 By Equation \eqref{eq:mttf-wei}, we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
 when we decrease the scale parameter of a component, we proportionally decrease the MTTF.
 In this scenario, we start with the well-designed series system described in Section \ref{sec:sim_study},
-Table \ref{tab:series-sys}, and we will manipulate the MTTF of component 3 by changing its scale parameter,
-$\lambda_3$, and observing the effect this has on the MLE. Since the other components had a similiar MTTF,
-we will arbitrarily choose component 1 to represent the other components.
+Table \ref{tab:series-sys}, and we will manipulate the MTTF of component 3, MTTF$_3$, by changing its
+scale parameter, $\lambda_3$, and observing the effect this has on the MLE. Since the other components
+had a similiar MTTF, we will arbitrarily choose component 1 to represent the other components.
+
+In Figure \ref{mttf-vs-ci}, we show the effect of changing the scale parameter of component $3$, $lambda_3$,
+but use MTTF$_3$ on the MLE for the shape and
+scale parameters. The top four plots only show the effect
+on the MLEs for the the shape and scale parameters of components $1$ and $3$. The MLEs for the remaining
+components were similar to the MLE for the shape and scale parameters of component $1$. The bottom plot
+shows the coverage probabilities for all parameters.
 
 We vary the MTTF of component 3 from around $300$ to $1500$ and the other components have their MTTFs fixed
-at around 900, as show in Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
+at around $900$, as show in Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
 the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample size to $n = 100$ (moderate sample size).
 
-### Analysis {-}
-
-```{r mttf-vs-ci, fig.cap=c("MTTF vs Parameter Statistics"), fig.align="center", echo = F}
-knitr::include_graphics("image/plot-scale3-vs-stats.pdf")
+```{r mttf-vs-ci, fig.cap=c("MTTF$_3$ vs MLE By Varying Scale", "Mean-Time-To-Failure (MTTF) of Component 3 by Varying Its Scale Parameter"), fig.align="center", echo = F}
+#knitr::include_graphics("image/plot-scale3-vs-stats.pdf")
+#knitr::include_graphics("image/5_system_scale3_vary.pdf")
+knitr::include_graphics("image/5_system_mttf3_by_scale3.pdf")
 ```
+
+### Analysis {-}
 
 We make two observations about Figure \ref{fig:mttf-vs-ci}:
 
@@ -1786,20 +1722,13 @@ We analyze the effect of component 3's shape parameter on the MLE and the bootst
 shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
 on the scale parameter.
 
-### Scales Analysis
-```{r prob3-vs-scales, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs Scale Statistics"), fig.align="center", echo = F}
-# show in a 2x1 grid
-image1 <- readPNG("image/prob3-vs-scale1.png")
-image2 <- readPNG("image/prob3-vs-scale3.png")
-image3 <- readPNG("image/prob3-vs-scales-cp.png")
-g1 <- rasterGrob(image1)
-g2 <- rasterGrob(image2)
-g3 <- rasterGrob(image3)
-first_row <- arrangeGrob(g1, g2, ncol = 2)
-grid.arrange(first_row, g3, nrow = 2)
+```{r prob3-vs-mle, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs MLE"), fig.align="center", echo = F}
+knitr::include_graphics("image/5_system_shape3_fig.pdf")
 ```
 
-In Figure \ref{fig:prob3-vs-shapes}, we show the effect of the shape parameter of component 3 on the
+### Scales Analysis
+
+In Figure \ref{fig:prob3-vs-mle}, we show the effect of the shape parameter of component 3 on the
 MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
 We see that the mean MLE, in green, is relatively close to the true value, in red, for the scale parameter
 of both components. There is a slight positive bias, which may be due to the fact that the data is right-censored
@@ -1825,18 +1754,7 @@ and are able to estimate them more accurately.
 Now, we look at the effect of the shape parameter of component 3 on the MLE and the bootstrapped confidence intervals
 for the shape parameters of components 1 and 3.
 
-```{r prob3-vs-shapes, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs Shape Statistics"), fig.align="center", echo = F}
-image1 <- readPNG("image/prob3-vs-shape1.png")
-image2 <- readPNG("image/prob3-vs-shape3.png")
-image3 <- readPNG("image/prob3-vs-shapes-cp.png")
-g1 <- rasterGrob(image1)
-g2 <- rasterGrob(image2)
-g3 <- rasterGrob(image3)
-first_row <- arrangeGrob(g1, g2, ncol = 2)
-grid.arrange(first_row, g3, nrow = 2)
-```
-
-In Figure \ref{fig:prob3-vs-shapes}, we show the effect of the shape parameter of component 3 on the
+In Figure \ref{fig:prob3-vs-mle}, we show the effect of the shape parameter of component 3 on the
 MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
 
 We see that the bias for $k_1$ slowly increases (positive bias) as $\Pr\{K_i = 3\}$ increases, and the bias for
@@ -1859,6 +1777,294 @@ the coverage probabilities are very well-calibrated for all values of $\Pr\{K_i 
 as $\Pr\{K_i = 3\}$ increases due to the fact that we observe more failures of component 3 as $\Pr\{K_i = 3\}$
 increases and thus have more informationa bout $k_3$ for our estimate.
 
+## Implications and Recommendations
+
+#### Shape parameters {-}
+The shape parameters are more sensitive to the data than the scale parameters. The coverage probabilities
+were also consistently less well-calibrated for the shape parameters compared to the scale parameters,
+but they were still reasonably well-calibrated for most scenarios, with a lower bound of $85\%$ for
+the most extreme scenarios, e.g., Bernoulli masking probabilities of $p = 0.7$ with a relatively small
+sample ($n = 100$) and moderate right-censoring ($q = 0.825$).
+
+The shape parameters define the failure characteristics of the components, but they have a complex
+relationship to the MTTF and other reliability measures.
+Ideally, the shape parameters will all be greater than $1$, indicating wear-out failures, but this is
+not always the case, and sometimes it may be the case that some components have a shape parameter
+greater than $1$ while others have a shape parametr less than $1$. Due to the sensitivity of the
+shape parameters to the data, and the fact that the shape parameters are less intuitive than the
+scale parameters, we recommend that the shape parameters be interpreted with caution, particularly
+when the sample size is small.
+
+Since a well-designed system has components with similar failure characteristics, the shape parameters
+should be reasonably aligned. To mitigate the problems with the shape parameters, both from an analytic
+and variability perspective, we may be motivated to use the reduced model that assumes homogeneity
+in the shape parameters, as described in Section \ref{sec:reduced-weibull}. The reduced model offers
+interpretability (the series system is itself Weibull) and reduced estimator
+variability (only $m+1$ parameters instead of $2 m$), but it is must adequately describe the data.
+
+#### Scale parameters {-}
+The scale parameters are less sensitive to the data than the shape parameters. The coverage probabilities
+were also consistently well-calibrated for all scenarios, with a lower-bound of around $90\%$ for the
+most extreme scenarios.
+The scale parameters are linearly related to the MTTF, and have a simpler relationship to the
+the other reliability measures too, which makes it easier to interpret and understand.
+
+#### Sample Size {-}
+The MLE is very sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
+sensitivity when the sample size is small and not necessarily representative of the true distribution.
+
+#### Right-Censoring {-}
+For our well-designed system, the mean MLE for the shape parameters were mildly sensitive to right-censoring,
+but even significant censoring around $50\%$ only introduced a small positive bias. The mean MLE for the
+scale parameters were not very sensitive to right-censoring.
+
+The sampling variance of the MLE for both the shape and scale parameters were somewhat sensitive to 
+right-censoring, as evidenced by the decreasing width of the confidence intervals as a function of
+increasing right-censoring times. However, the coverage probabilities of the confidence intervals
+were well-calibrated for the scale parameters
+
+the bootstrapped CIs are quite wide to
+account for this sensitivity when the sample contains insufficient information due to censoring.
+  The 
+
+- The BCa (bootstrapped) confidence intervals are well-calibrated in all but the most extreme circumstances,
+  constructing CIs that are neither too wide nor too narrow, with two notable exceptions:
+
+    - When the masking probability is essentially a fair coin flip, one should probably take the CIs with
+        a grain of salt.
+
+    - When the components have radically differentiated failure characteristics, the CIs for the parameters
+        of the other components are quite wide, but the coverage probability is still well-calibrated.
+
+# Simulation Study: Full Model vs Reduced Model {#sec:full-vs-reduced}
+
+In Section \ref{sec:weibull}, we developed the full model with Weibull
+components and we conducted a sensitivity analysis of its MLE in
+Section \ref{sec:sim_study}. Here, our focus shifts to a sensitivity
+analysis aimed at understanding when it is appropriate to use the reduced model
+that assumes homogeneity in the shape parameters of the components, as described
+in Section \ref{sec:reduced-weibull}. The reduced model offers interpretability
+(the series system is itself Weibull) and reduced estimator variability (only
+$m+1$ parameters instead of $2m$), but it is must adequately describe the data.
+
+We aim to assess the appropriateness of the reduced model under varying
+sample sizes and shape parameters of the third component ($k_3$). We employ
+a simulation study using the likelihood ratio test (LRT) for this purpose,
+where the null hypothesis, $H_0$, assumes homogenous shape parameters.
+
+We take the well-designed series system described in Section \ref{sec:sim_study},
+Table \ref{tab:series-sys}, and manipulate the shape parameter of the third
+component ($k_3$) to cause the components to have different failure characteristics.
+Recall that $k_3 = 1.1308$ corresponds to a *well-designed* series system, where
+component shapes are reasoanbly aligned. We also vary the sample size $n$ to assess
+the impact of sample size on the appropriateness of the reduced model.
+
+Figure \ref{fig:lrt-contour} provides a contour plot with varying 
+sample sizes along the $x$-axis, shape of component 3 along the $y$-axis,
+and median $p$-value along the color scale.
+The contour lines corresponding to $p$-values of $0.05$ and $0.1$ are
+often used as a threshold for statistical significance. Points outside
+of these contours in dark blue are indicative of significant evidence
+against the null model and points inside of these contours in light blue
+for $0.1$ and green for $0.05$ are indicative of insufficient evidence
+against the null model.
+
+Figure \ref{fig:lrt-samp-size} provides a plot of the median $p$-value
+against the sample size for the well-designed system, where the shape
+parameter of component 3 is fixed at $1.1308$. The $95$th percentile
+of the $p$-values is also provided as a more stringent criterion for
+statistical significance.
+
+```{r samp-size-shape-lrt, results='asis', echo = F}
+cat('
+\\begin{figure}
+    \\centering
+    \\begin{minipage}{.5\\textwidth}
+        \\centering
+        \\includegraphics[width=1\\linewidth]{image/fig-lrt/contour_plot.pdf}
+        \\captionof{figure}{$p$-Value vs Sample Size and Shape $k_3$}
+        \\label{fig:lrt-contour}
+    \\end{minipage}%
+    \\begin{minipage}{.5\\textwidth}
+        \\centering
+        \\includegraphics[width=1\\linewidth]{image/fig-lrt/n-vs-p-value.pdf}
+        \\captionof{figure}{$p$-Value vs Sample Size for Well-Designed System}
+        \\label{fig:lrt-samp-size}
+    \\end{minipage}
+\\end{figure}
+')
+```
+
+#### Sensitivity to Sample Size ($n$) {-}
+
+- The sample size is an essential aspect of hypothesis testing, as it affects the
+test's power, which is the probability of correctly rejecting the null hypothesis
+when it is false. In the contour plot in Figure \ref{fig:lrt-contour}, as $n$
+increases, the contours trend lower.
+This indicates that larger samples result in smaller median $p$-values,
+implying that the power of the LRT increases with the sample size.
+However, its power is quite low for small samples, particularly for values of
+$k_3$ somewhat close to the shape parameters of the other components in the system.
+
+- Recall that in the well-designed series system, $k_3 = 1.1308$. In this case,
+even very large sample sizes do not produce evidence
+against the null model, indicating robust compatibility.
+
+- In Figure \ref{fig:lrt-samp-size}, we fix $k_3$ at $1.1308$ and vary the sample size. 
+The median $p$-value only manages to drop below the $0.05$ theshold with
+sample sizes around $10000$. In the more stringent criterion given
+by the $95$th percentile of the $p$-values, nearly $30000$ observations are
+necessary to reject the null hypothesis in $95\%$ of the simulations.
+
+#### Sensivity to Shape Parameter ($k_3$) {-}
+
+- In Figure \ref{fig:lrt-contour}, for a given shape parameter, increasing the
+sample size tends to decrease the median $p$-value. Larger samples provide
+more information about the parameters, which increases the power of the LRT.
+
+- The median $p$-values in the vicinity of the line $k_3 = 1.1308$ are
+high across various sample sizes, indicating that the null model is a good fit.
+As $k_3$ deviates from this line, the median $p$-value diminishes,
+indicating increasing evidence against the null model.
+
+## Implications and Recommendations
+
+The power of the test for a well-designed series system is quite
+low, requiring many thousands of observations before the test has
+sufficient power to reject the null hypothesis. But, this is not
+necessarily a bad thing. The reduced model is quite simple and
+interpretable, and is by definition a good fit for a well-designed
+series system. 
+
+The findings suggest that the reduced model is particularly apt
+when the system is well-designed, even for very large samples.
+Practitioners should weigh the trade-offs between the simplicity
+of the reduced model and the adequacy in describing the data,
+with consideration of the available sample size and the characteristics
+of the system being modeled.
+
+For systems believed to be well-designed, employing the null model is
+supported both statistically and practically due to its simplicity,
+reduced estimator variability, and analytical tractability.
+
+In the absence of prior information, or if the shape parameter
+significantly diverges from the well-designed value, the choice between
+models should be undertaken with caution. More complex models may be
+favorable, especially with large sample sizes.
+
+Future Work
+===========
+
+#### Relaxation of Conditions {-}
+
+Investigate relaxations of Conditions 1, 2, and 3.
+Condition 1 stipulates that the failed component is always in
+the candidate set,
+$$
+    \Pr\{K_i \in \mathcal{C}_i\} = 1.
+$$
+
+Instead, we could model this as a probability, where the probability
+of the failed component being in the candidate set is a function
+of the failure time $T_i$ and the component cause of failure $K_i$,
+$$
+    \Pr\{K_i \in \mathcal{C}_i | K_i = j, T_i = t_i\} = g(j, t_i).
+$$
+
+Condition 2 stipulates that
+$$
+    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\} = 
+    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j'\}
+$$
+for all $j, j' \in c_i$. We call this an *uninformed* candidate set,
+since the conditional probability of the candidate set given the
+failure time and component cause of failure is independent of the
+component cause of failure. We could relax this condition to allow
+for *informed* candidate sets, where the conditional probability
+of the candidate set given the failure time and component cause of
+failure is dependent on the component cause of failure.
+
+In each of these violations or relaxations, we can either construct
+a new likelihood model that takes this relaxation into account, or
+we can use the existing likelihood model and assess the sensitivity
+of the estimator to this violation. A potentially interesting way to
+do the lattr is by using KL-divergence to measure the distance
+between, for instance, the uninformed and informed candidate set models,
+and then assess the sensitivity of the estimators to this distance.
+
+#### Expanded Sensitivity Analyses {-}
+
+- Assess the sensitivity of the reduced model to the presence of
+masking and right-censoring. Since it has fewer parameters, it may
+be more robust to these effects.
+
+- Assess the sensitivity of the full and reduced models to the
+number ($m$) of components in the series system.
+
+#### Data Augmentation {-}
+
+Assess the robustness of Data Augmentation (DA) as an implicit
+prior, particularly for the reduced model, where we may adopt the
+prior that the system is well-designed. By incorporating DA into
+the procedure, we may be able to significantly improve the
+performance of the estimator on extremely small samples.
+
+Unlike a full Bayesian approach, where we would need to specify
+a prior for the parameters, DA is an implicit prior that need not
+be explicitly specified. It is a form of regularization that
+improves the performance of the estimator by leveraging the
+structure of the model and the data. It is particularly useful
+for small samples, where the data is not sufficient to overcome
+the masking and censoring effects.
+
+#### Penalized Likelihood {-}
+
+Assess the use of penalized likelihood methods instead of
+DA as a form of regularization. For instance, we can add
+a penalty term to the log-likelihood function that penalizes
+the likelihood when the shape parameters are not close to
+each other. Instead of simply using a reduced model, we can 
+use a penalized likelihood approach to encourage the shape
+parameters to be close to each other, but not necessarily
+equal.
+
+Conclusion
+==========
+
+This paper presented maximum likelihood methods for estimating
+component reliability from masked failure data in series systems.
+A likelihood model was derived accounting for right-censoring and
+candidate sets masking the component cause of failure. Through
+simulation studies, right-censoring and masking were found to bias
+shape parameter estimates positively. The scale parameter estimates
+were more robust. Overall, shape parameters were more sensitive to
+the data and harder to estimate precisely than scale parameters.
+Nonetheless, bootstrapping provided reasonably well-calibrated
+confidence intervals even for small sample sizes.
+
+A reduced model assuming homogeneous component shape parameters
+was also assessed. This simplified model improves interpretability
+as the system becomes Weibull, while reducing estimator variability.
+The appropriateness of the reduced model was explored through an
+LRT simulation study. For well-designed systems, the reduced model
+showed excellent fit even for large samples. However, varying the
+scale or shape of a single component quickly provided evidence
+against the null model.
+
+The reduced model thus appears favorable both statistically and
+practically when systems are believed to be well-designed. However,
+more complex models may be preferred given divergent component
+properties or large samples. The choice between models should weigh
+model simplicity against adequacy in describing available data.
+
+Overall, this work provides a rigorous framework for quantifying
+component reliability from limited observational data. The methods
+demonstrated accurate and robust performance despite the significant
+challenges introduced by masking and right-censoring. Future work
+can focus on relaxing modeling assumptions and expanding the
+sensitivity analysis. The techniques presented expand the range of
+applications where component lifetime properties can be inferred
+from system-level data.
 
 # Appendix A: R Code For Log-likelihood Function {-}
 
@@ -2190,3 +2396,28 @@ qwei_series <- function(p, shapes, scales) {
     return(t1)
 }
 ```
+
+
+# Appendix F: Likelihood Ratio Test {-#app:lrt}
+
+In order to determine if a reduced model (e.g., Weibull series system in
+which all of the shape parameters are homogeneous) is appropriate,
+a hypothesis test test may be conducted to determine if there is
+statistically significant evidence in support of the null hypothesis $H_0$,
+e.g., that all of the shape parameters are homogeneous.
+
+Given that we employ a well-defined likelihood model, the likelihood ratio test
+(LRT) is a good choice. The LRT statistic is given by
+$$
+\Lambda = -2 (\ell_R - \ell_F)
+$$
+where $\ell_R$ is the log-likelihood of the null (reduced) model (the log-likelihood of
+the reduced model evaluated at its MLE given a random sample) and $\ell_F$ is the log-likelihood
+of the full model. Under the null model, the LRT statistic is asymptotically distributed chi-squared
+with $m-1$ degrees of freedom, where $m$ is the number of components in the series system,
+$$
+\Lambda \sim \chi^2_{m-1}.
+$$
+If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
+degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, where $\alpha$ denotes the significance level, then
+we find the data to be incompatible with the null hypothesis $H_0$.

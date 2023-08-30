@@ -20,24 +20,32 @@ z = pivot_data.values
 
 # Create the contour plot using Matplotlib
 plt.figure(figsize=(4, 4))
-contour = plt.contourf(x, y, z, levels=np.linspace(0, 1, 11), cmap='viridis')
+
+levels=np.concatenate([np.linspace(0, 0.05, 1),
+                       np.linspace(0.05, 0.1, 1),
+                       np.linspace(0.1, 1, 2)])
+
+print(levels)
+
+# Use the 'autumn' colormap and adjust the color range from 0 to 0.55
+#contour = plt.contourf(x, y, z, levels=levels, cmap='tab20c')
+contour = plt.contourf(x, y, z, levels=levels, cmap='tab20c')
 plt.colorbar(label='Median $p$-Value')
 
 # Add a contour line for the 0.05 cut-off using a contrasting color
-contour_005 = plt.contour(x, y, z, levels=[0.05], colors='white', linestyles='--')
-plt.clabel(contour_005, inline=True, fontsize=10, fmt='%1.2f', colors='white')
+# make it thicker by setting the linewidth to 3
+# the contour level labels need to be adjusted to be more visible
+contour_005 = plt.contour(x, y, z, levels=[.05, .1], colors='black', linestyles='--', linewidths=1)
+plt.clabel(contour_005, inline=True, fmt='%1.2f', colors='black', fontsize=8)
 
 # Add a horizontal line at shape3 = 1.1308
-plt.axhline(y=1.1308, color='orange', linestyle='--', label='$k_3 = 1.1308$')
+plt.axhline(y=1.1308, color='black', linestyle='-', label='$k_3 = 1.1308$', linewidth=2)
 
 # Plot labels and title
 plt.xlabel('Sample Size ($n$)')
-plt.ylabel('Shape of Component 3 ($k_3$)')
-plt.title('$p$-Value vs Sample Size and Shape of Component 3')
-
+plt.ylabel('Shape of Component $3$ ($k_3$)')
+#plt.title('$p$-Value Vs Sample Size and Shape of Component 3')
 plt.legend()
-plt.tight_layout()
 
-# save the plot
-plt.savefig('contour_plot.pdf', bbox_inches='tight')
-plt.savefig('contour_plot.png', bbox_inches='tight')
+plt.tight_layout()
+plt.savefig('contour_plot.pdf')

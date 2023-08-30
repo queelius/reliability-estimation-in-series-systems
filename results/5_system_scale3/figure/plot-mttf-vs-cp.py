@@ -43,18 +43,18 @@ markers = ['o', 's', '^', 'x', 'D']
 
 for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)), line_styles, markers):
     if (j == 3):
-        plt.plot(coverage_probabilities[x_col], coverage_probabilities['shape_coverage.3'], label='Shape $k_3$', color=color, linestyle=ls, marker=mk, linewidth=7)
+        plt.plot(coverage_probabilities[x_col], coverage_probabilities['shape_coverage.3'], label=f'Shape $k_{j}$', color=color, linestyle=ls, marker=mk, linewidth=6)
     else:
         plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'shape_coverage.{j}'], label=f'Shape $k_{j}$', color=color, linestyle=ls, marker=mk)
 
 for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)), line_styles, markers):
     if (j == 3):
-        plt.plot(coverage_probabilities[x_col], coverage_probabilities['scale_coverage.3'], label='Scale $\lambda_3$', color=color, linestyle=ls, marker=mk, linewidth=7)
+        plt.plot(coverage_probabilities[x_col], coverage_probabilities['scale_coverage.3'], label=f'Scale $\lambda_{j}$', color=color, linestyle=ls, marker=mk, linewidth=6)
     else:
         plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'scale_coverage.{j}'], label=f'Scale $\lambda_{j}$', color=color, linestyle=ls, marker=mk)
 
-plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_shape_coverage_prob'], color='darkblue', linewidth=4, linestyle='-', label='Mean Shape')
-plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_scale_coverage_prob'], color='darkred', linewidth=4, linestyle='-', label='Mean Scale')
+plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_shape_coverage_prob'], color='darkblue', linewidth=6, linestyle='-', label='Mean Shape')
+plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_scale_coverage_prob'], color='darkred', linewidth=6, linestyle='-', label='Mean Scale')
 
 plt.axhline(y=0.95, color='grey', linestyle='--', label='Nominal 95% Level')
 plt.xlabel('MTTF of 3rd Component (MTTF$_3$) By Varying Scale Parameter')
