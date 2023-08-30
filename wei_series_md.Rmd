@@ -1,5 +1,5 @@
 ---
-title: "Bootstrapping confidence intervals (BCa) of the maximum likelihood estimator of components in a series systems from masked failure data"
+title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
 author: "Alex Towell"
 abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. A reduced model with homogeneous component shapes simplifies analysis for well-designed systems. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models, validation of estimation techniques via simulations, and assessment of a reduced model. Together, these advance rigorous component reliability assessment from masked failure data."
 output:
@@ -130,7 +130,6 @@ h_{T_i}(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < T_i < t+\Delta t\}}{\Delta t}
        &= \frac{f_{T_i}(t)}{R_{T_i}(t)}.
 \end{split}
 \end{equation}
-\end{definition}
 
 The lifetime of the $j$\textsuperscript{th} component is assumed to follow a parametric distribution indexed
 by a parameter vector $\v{\theta_j}$. The parameter vector of the overall system is defined as
@@ -141,9 +140,8 @@ $$
 When a random variable $X$ is parameterized by a particular $\v\theta$, we denote the
 reliability function by $R_X(t;\v\theta)$, and the same for the other distribution functions.
 As a special case, for the components in the series system, we subscript by their labels, e.g,
-the $j$\textsuperscript{th} component's pdf is denoted by $f_j(t;\v{\theta_j})$.
-
-Two random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
+the $j$\textsuperscript{th} component's pdf is denoted by $f_j(t;\v{\theta_j})$. Two continuous
+random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
 Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
 $$
 f_X(x) = \int_{\mathcal{Y}} f_{X,Y}(x,y) dy,
@@ -304,7 +302,7 @@ $T_i$ is given by
   f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) \prod_{l=1}^m R_l(t;\v\theta),
 \end{equation}
 where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th}
-component and $R_{T_i}(t;\v\theta)$ is the reliability function of the series
+component and $R_l(t;\v{\theta_l})$ is the reliability function of the series
 system.
 \end{theorem}
 \begin{proof}
@@ -338,6 +336,14 @@ $$
 Generalizing from this completes the proof.
 \end{proof}
 
+Theorem \ref{thm:f_k_and_t} shows that the joint pdf of the component cause of
+failure and system lifetime is a function of the hazard functions and reliability
+functions of the components. This result will be used in the Section \ref{sec:like_model}
+to derive the likelihood function for the masked data.
+
+The probability that the $j$\textsuperscript{th} component is the cause of failure
+is given by the following theorem.
+\begin{theorem}
 The probability that the $j$\textsuperscript{th} component is the cause of failure
 is given by
 \begin{equation}
@@ -346,8 +352,12 @@ is given by
 \biggl[
     \frac{h_j(T_i;\v{\theta_j})}
          {\sum_{l=1}^m h_l(T_i ; \v{\theta_l})}
-\biggr].
+\biggr]
 \end{equation}
+where $K_i$ is the random variable denoting the component cause of failure of the
+$i$\textsuperscript{th} system and $T_i$ is the random variable denoting the
+lifetime of the $i$\textsuperscript{th} system.
+\end{theorem}
 \begin{proof}
 The probability the $j$\textsuperscript{th} component is the cause of failure is given by
 marginalizing the joint pdf of $K_i$ and $T_i$ over $T_i$,
@@ -358,8 +368,8 @@ By Theorem \ref{thm:f_k_and_t}, this is equivalent to
 \begin{align*}
 \Pr\{K_i = j\}
     &= \int_0^{\infty} h_j(t;\v{\theta_j}) R_{T_i}(t;\v\theta) dt\\
-    &= \int_0^{\infty} \biggl(\frac{h_j(t;\v{\theta_j})}{h_{T_i}(t ; \v\theta)}\bigr) f_{T_i}(t ; \v\theta) dt\\
-    &= E_{\v\theta}\bigl[h_j(T_i;\v{\theta_j}) / \sum_{l=1}^m h_l(T_i ; \v{\theta_l})\bigr].
+    &= \int_0^{\infty} \biggl(\frac{h_j(t;\v{\theta_j})}{h_{T_i}(t ; \v\theta)}\biggr) f_{T_i}(t ; \v\theta) dt\\
+    &= E_{\v\theta}\biggl[\frac{h_j(T_i;\v{\theta_j})}{\sum_{l=1}^m h_l(T_i ; \v{\theta_l})}\biggr].
 \end{align*}
 \end{proof}
 
@@ -569,13 +579,13 @@ model are the system's lifetime and additional masked data in the form of
 a candidate set that is somehow correlated with the unobserved component
 lifetimes.
 
-The key goal of our analysis is to estimate the parameters, $\v{\theta}$, which 
+The key goal of our analysis is to estimate the parameter $\v{\theta}$, which 
 maximize the likelihood of the observed data, and to estimate the precision and
 accuracy of this estimate using the Bootstrap method.
 
-To achieve this, we first need to
-assess the joint distribution of the system's continuous lifetime, $T_i$, and the
-discrete candidate set, $\mathcal{C}_i$, which can be written as
+To achieve this, we first need to assess the joint distribution of the system's
+continuous lifetime, $T_i$, and the discrete candidate set, $\mathcal{C}_i$, which
+can be written as
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = f_{T_i}(t_i;\v{\theta})
     \Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | T_i = t_i\},
@@ -735,6 +745,64 @@ To summarize this result, assuming Conditions \ref{cond:c_contains_k},
 if we observe an exact system failure time for the $i$-th system ($\delta_i = 1$),
 but the component that failed is masked by a candidate set $c_i$, then its likelihood
 contribution is given by Equation \eqref{eq:likelihood_contribution_masked}.
+
+### Probability of Component Cause of System Failure {-}
+This subsection is not necessary in our likelihood model, but it derives a useful
+result for making predictions about the component cause of failure.
+Suppose we have observed a candidate set and a series system
+failure and we are interested in the probability that a particular component
+is the cause of failure.
+\begin{theorem}
+Assuming Conditions \ref{cond:c_contains_k} and \ref{cond:equal_prob_failure_cause},
+the conditional probability of the component cause of failure is component $j$ ($K_i = j$)
+given a masked component cause of failure ($\mathcal{C}_i = c_i$) and system lifetime ($T_i = t_i$)
+is given by
+\begin{equation}
+\label{eq:cond_prob_k_given_t_and_c}
+\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
+ \frac{h_j(t_i|\v{\theta_j})}{\sum_{l \in c_i} h_l(t_i|\v{\theta_l})} 1_{\{j \in c_i\}}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+The conditional probability $\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\}$ may be
+written as
+$$
+\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
+    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} f_{K_i,T_i}(j,t_i;\v\theta)}
+    {\sum_{j=1}^m \Pr{}_{\!\v\theta}
+        \{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} f_{K_i,T_i}(j,t_i;\v\theta)}.
+$$
+By Theorem \ref{thm:f_k_and_t},
+$f_{K_i,T_i}(j,t_i;\v\theta) = h_j(t_i;\v\theta)R_{T_i}(t_i;\v\theta)$.
+We may make this substitution and simplify:
+$$
+\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
+    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v{\theta_j})}
+         {\sum_{j'=1}^m \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i=j',T_i=t_i\} h_{j'}(t_i;\v{\theta_{j'}})}.
+$$
+Assuming Conditions \ref{cond:c_contains_k} and \ref{cond:equal_prob_failure_cause}, we may rewrite the above
+as
+$$
+\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
+    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v{\theta_j})}
+    {\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} {\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}} =
+    \frac{h_j(t_i;\v{\theta_j})}
+    {\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}.
+$$
+\end{proof}
+
+Frequently, we may not have any information at all about the component cause of
+failure. In this case, $c_i = \{1,\ldots,m\}$, and we obtain the following corollary.
+\begin{corollary}
+\label{cor:cond_prob}
+The probability that the $j$\textsuperscript{th}
+component is the cause of system failure given only that we know a system failure
+occured at time $t_i$ is given by
+$$
+\Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{l=1}^m h_l(t_i;\v{\theta_l})}.
+$$
+\end{corollary}
+
 
 ## Right-Censored Data
 
@@ -988,8 +1056,8 @@ case of the Weibull distribution when $k_j = 1$.}
 - $k_j > 1$ indicates wear-out failures. An example of how this might arise is a
 result of components wearing as they age
 
-The lifetime of the series system composed of $m$ Weibull components
-has a reliability and hazard functions given by the following theorem.
+We show that the lifetime of the series system composed of $m$ Weibull components
+has a reliability, hazard, and probability density functions given by the following theorem.
 \begin{theorem}
 The lifetime of a series system composed of $m$ Weibull components
 has a reliability function, hazard function, and pdf respectively given by
@@ -1040,7 +1108,7 @@ In Section \ref{sec:reliability}, we discussed the concept of reliability.
 In the case of Weibull components, the MTTF of the $j$\textsuperscript{th}
 component is given by
 \begin{equation}
-\label{mttf-weibull}
+\label{eq:mttf-weibull}
 \text{MTTF}_j = \lambda_j \Gamma\biggl(1 + \frac{1}{k_j}\biggr),
 \end{equation}
 where $\Gamma$ is the gamma function.
@@ -1130,7 +1198,7 @@ the score and the Hessian of the log-likelihood function.
 We analytically derive the score since it is useful to have for the Newton-Raphson
 method, but we do not do the same for the Hessian of the log-likelihood for the following reasons:
 
-1. The gradient is relatively easy to derive, and it is useful to have for
+1. The gradient is easy to derive, and it is useful to have for
 computing gradients efficiently and accurately, which will be useful for
 numerically approximating the Hessian.
 
@@ -1228,7 +1296,7 @@ $$
 $$
 \end{theorem}
 \begin{proof}
-The conditional probability of the $j$\textsuperscript{th} component being the
+By Corollary \ref{cor:cond_prob}, the conditional probability of the $j$\textsuperscript{th} component being the
 cause of failure given the system failure time is given by
 \begin{align*}
 \Pr\{K_i = j | T_i = t\}
@@ -1387,7 +1455,7 @@ $$
 $$
 So, after we generate the system failure time $T_i$, we generate the censoring
 time $S_i$ by taking the minimum of $T_i$ and $\tau$.
-In our simulation study, we parmaterize the right-censoring time $\tau$ by the
+In our simulation study, we paramaterize the right-censoring time $\tau$ by the
 quantile $q = 0.825$ of the series system,
 $$
     \tau = F_{T_i}^{-1}(q).
@@ -1398,7 +1466,7 @@ quantile of the series system, we define the function $g$ as
 $$
 g(\tau) = F_{T_i}(\tau;\v\theta) - q
 $$
-and find its root using the Newton-Raphson method. See Appendix \ref{app:series-quantile} for the R code that
+and find its root using the Newton-Raphson method. See Appendix E for the R code that
 implements this procedure.
 
 ### Masking Model for Component Cause of Failure {-}
@@ -1410,7 +1478,7 @@ method, which we call the *Bernoulli candidate set model*. In this model, each
 non-failed component is included in the candidate set with
 a fixed probability $p$, independently of all other components and independently
 of $\v\theta$, and the failed component is always included in the candidate set.
-See Appendix \@ref(app:cand-model) for the R code that implements this model.
+See Appendix D for the R code that implements this model.
 
 ## Simulation Scenarios
 
@@ -1446,12 +1514,12 @@ Here is an outline of the simulation study for a particular scenario:
 
 5. Visualize the results and assess the behavior of estimator under the chosen scenario.
    
-For how we run a simulation scenario, see Appendix \ref{app:sim-code}.
+For how we run a simulation scenario, see Appendix C.
 
 ## Scenario: Assessing the Impact of Right-Censoring {#sec:effect-censoring}
 
-In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
-Table \ref{tab:series-sys}, and we vary the right-censoring quantile ($q$) from $60\%$ to $100\%$
+In this scenario, we use the well-designed series system described in Table \ref{tab:series-sys},
+and we vary the right-censoring quantile ($q$) from $60\%$ to $100\%$
 (no right-censoring), with a component cause of failure masking
 probability of $21.5\%$ and sample size $n = 100$.
 
@@ -1459,8 +1527,6 @@ probability of $21.5\%$ and sample size $n = 100$.
 #knitr::include_graphics("image/tau/plot-q-vs-mle.pdf")
 knitr::include_graphics("image/5_system_tau_fig.pdf")
 ```
-
-### Analysis {-}
 
 When a right-censoring event occurs, in order to increase the likelihood of the data, the MLE
 is nudged in a direction that increases the probability of a right-censoring event at time $\tau$,
@@ -1481,8 +1547,7 @@ Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
 
 - The partial derivatives with respect to the scale parameters are always positive, so right-censoring positively bias the scale parameter
   estimates to make right-censoring events more likely. The more right-censoring, the more the positive bias. We see this in Figure
-  \ref{fig:q-vs-stats},
-  where the scale parameter bias decreases as we decrase the probability ($1-q$) of a right-censoring event.
+  \ref{fig:q-vs-stats}, where the bias of the MLE for the scale parameter decreases as we decrease the probability ($1-q$) of a right-censoring event.
 
 - The partial derivative with respect to the shape parameter of the $j$\textsuperscript{th} component, $k_j$, is
   non-negative if $\lambda_j \geq \tau$ and otherwise negative. In our well-designed series system, the scale parameters
@@ -1491,17 +1556,7 @@ Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
   in Figure \ref{fig:q-vs-stats}, where the shape parameter estimates are positively biased for most of the quantiles
   $q$.
   
-An alternative way to reason about the effect right-censoring has on the MLE is give by the
-following. When a right-censoring event occurs, to make the estimates more compatible
-with the right-censoring event, the estimate is nudged in a direction that increases the
-MTTF of the components and decreases the probability of component
-failures before the censoring time $\tau$. In the case of our well-designed system,
-for most of the right-censoring quatiles $q$, this is accomplished by nudging the
-shape and scale parameters in a positive direction, which causes the MLE to be positively
-biased in the prescence of these censoring times. As the right-censoring quantile $q$
-increases, the effect of right-censoring on the MLE decreases.
-
-Here are several key observations:
+#### Key Observations {-}
 
 - *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
   nominal 95% level across different right-censoring quantiles. This suggests that the
@@ -1531,8 +1586,7 @@ Here are several key observations:
 
 ## Scenario: Assessing the Impact of Sample Size {#sec:effect-samp-size}
 
-In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
-Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
+In this scenario, we use the well-designed series system described in Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
 we fix the right-censoring quantile to $q = 0.825$ (moderate censoring), and we vary the sample
 size $n$ from $50$ (small sample size) to $1000$ (very large sample size).
 
@@ -1546,7 +1600,7 @@ for the shape and scale parameters. The top four plots only show the effect on t
 shape and scale parameters of components $1$ and $4$, since the rest were essentially identical,
 and the bottom two plots show the coverage probabilities for all parameters.
 
-Here are several key observations:
+#### Key Observations {-}
 
 - *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
   nominal 95% level across different sample sizes. This suggests that the bootstrapped
@@ -1571,22 +1625,14 @@ Here are several key observations:
   not necessarily representative of the true distribution.
 
 - *Mean of MLEs for Scales*: The red dashed line indicating the mean of MLEs remains stable across
-  different sample sizes and close to the true value, suggesting that the scale MLEs are, on
-  average, reasonably unbiased.
+  different sample sizes and close to the true value, suggesting that the scale MLEs are 
+  reasonably unbiased.
 
 - *Mean of MLEs for Shapes*: The red dashed line is the mean of shape MLEs. Unlike the scale MLEs,
   we see that for small samples, particularly less than $200$, we observe a significant
   amount of positive bias for shape MLEs. The MLE for the shape parameters in this
   scenario appear to be more sensitive to the data than the scale parameters.
 
-  In Section \ref{sec:effect-censoring}, right-censoring was shown to have a very small
-  effect of positively biasing the shape parameter estimates for right-censoring quantiles 
-  arond $q = 0.82%, but not for the scale parameters. This may partly explain the positive
-  bias in the shape parameter estimates for small sample sizes. However, in Section \ref{},
-  we show that it may also be related to the masking probability $p = 0.215$. When the sample
-  size is small, the data is not sufficient to overcome the masking effect, and so the MLE is
-  positively biased due to the uncertainty about which component caused the system to fail.
-    
 This scenario successfully illustrates the importance of sample size in estimating parameters.
 The findings align with statistical theory and provide insights into the behavior of these estimators
 for different sample sizes. In particular, it highlights the sensitivity of the shape parameter
@@ -1595,7 +1641,7 @@ sufficient data to overcome these effects.
 
 ## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
 
-In this scenario, we use the well-designed series system described in Section \ref{sec:sim_study},
+In this scenario, we use the well-designed series system described in
 Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (reasonable sample size) and 
 we fix the right-censoring quantile to $q = 0.825$, and we vary the masking probability 
 from $p$ from $0.1$ (very slight masking the component cause of failure) to $0.85$
@@ -1612,29 +1658,26 @@ all parameters.
 knitr::include_graphics("image/5_system_prob_fig.pdf")
 ```
 
-### Analysis {-}
-
-Here are several key observations:
+#### Key Observations {-}
 
 - *Coverage Probability (CP)*: For the scale parameters, the $95\%$ CI is well-calibrated
   for Bernulli masking probabilities up to $p = 0.725$, which is really quite significant,
-  obtaining coverages over $90\%$, but drops precipitously after that point.
-  
+  obtaining coverages over $90\%$, but drops precipitously after that point.  
   For the shape parameters, the $95\%$ CI is well-calibrated for masking probabilities only
   up to $p = 0.4$, which is still large, obtaining coverages generally over $90%$, but
   begins to drop slowly after that point.
   
   The BCa confidence intervals are well-calibrated for most realistic
   masking probabilities, constructing CIs that are neither too wide nor too narrow,
-  but when the masking is severe and the sample size is relatively small, one should
+  but when the masking is severe and the sample size is small, one should
   take the CIs with a grain of salt.
 
 - *Dispersion of MLEs*: The shaded regions representing the $95\%$ quantile of
   the MLEs become wider as the masking probability increases. This is an indicator of the
   decreased precision in the estimates when provided with more ambiguous data about the
   component cause of failure. However, even for fairly significant Bernoulli masking,
-  $p \leq 0.55$, the $95\%$ quantiles are relatively narrow and the CP is
-  well-calibrated, indicating that the MLEs are still relatively precise and accurate.
+  $p \leq 0.55$, the $95\%$ quantiles are narrow and the CP is
+  well-calibrated, indicating that the MLEs are still precise and accurate.
 
 - *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) show that the bootstrapped BCa
   CIs are becoming more spread out as the masking probability increases. They are also
@@ -1643,32 +1686,27 @@ Here are several key observations:
   the same pattern. The width of the CIs consistently increase as the masking probability
   increases, which we intuitively expected given the increased uncertanity about the
   component cause of failure.
-
-  Afte a masking probability of $p = 0.4$, the widht of the CIs rapidly increase, which is
-  apparently necessary for the CPs to remain well-calibrated.
+  After a Bernoulli masking probability of $p \approx 0.5$, the width of the CIs rapidly increase,
+  which is apparently necessary for the CPs to remain well-calibrated.
 
 - *Mean of MLEs*: The red dashed line indicating the mean of the MLEs remains
   stable across different masking probabilities, only showing a significant positive bias
   when the masking probability $p$ becomes quite significant.
 
-## Scenario: Assessing the Impact of Changing the Scale Parameter of a Component {#sec:scale-vs-mttf}
+## Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3 {#sec:scale-vs-mttf}
 
-By Equation \eqref{eq:mttf-wei}, we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
+By Equation \eqref{eq:mttf-weibull}, we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
 when we decrease the scale parameter of a component, we proportionally decrease the MTTF.
-In this scenario, we start with the well-designed series system described in Section \ref{sec:sim_study},
-Table \ref{tab:series-sys}, and we will manipulate the MTTF of component 3, MTTF$_3$, by changing its
+In this scenario, we start with the well-designed series system described in Table \ref{tab:series-sys},
+and we will manipulate the MTTF of component 3, MTTF$_3$, by changing its
 scale parameter, $\lambda_3$, and observing the effect this has on the MLE. Since the other components
 had a similiar MTTF, we will arbitrarily choose component 1 to represent the other components.
+The bottom plot shows the coverage probabilities for all parameters.
 
-In Figure \ref{mttf-vs-ci}, we show the effect of changing the scale parameter of component $3$, $lambda_3$,
-but use MTTF$_3$ on the MLE for the shape and
-scale parameters. The top four plots only show the effect
-on the MLEs for the the shape and scale parameters of components $1$ and $3$. The MLEs for the remaining
-components were similar to the MLE for the shape and scale parameters of component $1$. The bottom plot
-shows the coverage probabilities for all parameters.
-
-We vary the MTTF of component 3 from around $300$ to $1500$ and the other components have their MTTFs fixed
-at around $900$, as show in Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
+In Figure \ref{fig:mttf-vs-ci}, we show the effect of changing the scale parameter of component $3$, $lambda_3$,
+but map $\lambda_3$ to MTTF$_3$ to make it more intuitive to reason about. We vary the MTTF of component 3
+from $300$ to $1500$ and the other components have their MTTFs fixed at around $900$, as shown in
+Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
 the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample size to $n = 100$ (moderate sample size).
 
 ```{r mttf-vs-ci, fig.cap=c("MTTF$_3$ vs MLE By Varying Scale", "Mean-Time-To-Failure (MTTF) of Component 3 by Varying Its Scale Parameter"), fig.align="center", echo = F}
@@ -1677,113 +1715,55 @@ the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample
 knitr::include_graphics("image/5_system_mttf3_by_scale3.pdf")
 ```
 
-### Analysis {-}
+#### Key observations {-}
 
-We make two observations about Figure \ref{fig:mttf-vs-ci}:
+- *Coverage Probability (CP)*: When MTTF of component 3 is much smaller than other components,
+the CP for $k_3$ is very well calibrated (approximately $95\%$) while the other shape parameters of
+the other componentns are around $90\%$, which is still reasonable. (This is the case even though
+the width of the CI for $k_3$ is extremely narrow compared to the others).
+As MTTF$_3$ increases, the CP for $k_3$ decreases, while CP for the other components increase
+slightly. The scale parameters are generally well-calibrated for all of the components.
 
-- When the MTTF of component 3 is much smaller than the other components, the estimate of parameters of component 3 is precise (narrow CIs with high Probability
-  coverage) and accurate (the MLE is close to the true value). This is because component 3 is the component cause of failure in nearly every system failure,
-  and so the data is very informative about the parameters of component 3. Conversely, the estimates of the parameters of the other components is quite poor,
-  with wide CIs and large positive bias. Nonetheless, the coverage probability of the CIs for the other components is still well-calibrated, which means that
-  the CIs will contain the true value of the parameter with a probability around the specified confidence level. So, while we may not have a good point estimates
-  for the parameters, we can still be confident that CIs contain them. That is to say, we have properly quantified our uncertainty about the parameters of the
-  other components.
+- *Dispersion of MLEs*: For component 3, as its MTTF decreases, the dispersion of MLEs narrows,
+indicating more precise estimates. Conversely, dispersion for other components widens. As MTTF
+of component 3 increases, its dispersion widens while others narrow. This is consistent with
+the fact that the smaller MTTF of component 3 means that, in this well-designed system at least,
+it is more likely to be the component cause of failure, and so we have more information about
+its parameters and are able to estimate them more accurately.
 
-- When the MTTF of component 3 is much larger than the MTTF of the other components, then component 3 is much less likely to be the component cause of failure,
-  and with a masking probability of $p = 0.215$, it will be in the candidate set with approximately $21.5\%$ probability, but it will generally be a false
-  candidate. The end result is that the estimates of the parameters of component 3 are quite poor, with wide CIs and large positive bias. However, the estimates
-  of the parameters of the other components are quite good, with narrow CIs and small positive bias. The coverage probability of the CIs for the other components
-  are, in comparison, quite good. As the MTTF of component 3 increases and it becomes less likely to be the component cause of failure, the estimates of the
-  parameters of the other components become more precise and accurate.
+- *IQR of Bootstrapped CIs*: The dark blue vertical lines representing IQR show that the variability
+of the Bootstrapped BCa CIs decreases for component 3 as its MTTF decreases, suggesting more
+consistency in the estimates. For other components, IQR behaves conversely.
 
-  We also see that the bias is positive for both parameters of component 3. We had not necessarily expected this, but we knew there would be a complex
-  relationship given the presence of right-censoring and masking. When a system is right-censored, or the exact time of failure is observed but the component
-  cause of failure is masked and component 3 is not in the candidate set, then to make component 3 more likely to not be the component cause of failure,
-  its failure rate at that observed time is pushed down and its MTTF is pushed to the right by the MLE. Thus, $\hat\lambda_3$ being positively biased is
-  expected. However, $k_3$ being positively biased is not necessarily expected, but the fact is, decreasing $k_3$ only has a small impact on the MTTF compared
-  to the scale parameter $\lambda_3$, and the shape parameter may be more particular about when the failures occur. For example, if the shape parameter is
-  large, then the failures may be more likely to occur at the beginning of the lifetime, which would cause the MTTF to be pushed to the right. This is
-   
-## Scenario: Assessing the Impact of Changing the Shape Parameter of a Component {#sec:shape3-vary}
+- *Mean of MLEs*: For component 3, the mean of MLEs of scale parameter increases with MTTF,
+reflecting a small positive bias. The shape parameter also shows positive bias, which can be attributed
+to the intricate relationship with the scale parameter and the presence of right-censoring and masking.
 
-We vary the shape paramenter of component 3 from $0.1$ to $1.9$ and observe the effect it has on the MLE and the
-bootstrapped confidence intervals (BCa). The shape parameter determines the failure characteristics
-of component 3. 
+## Scenario: Analyzing the Impact of Changing the Shape Parameter of Component 3 {#sec:shape3-vary}
 
-When $k_3 < 1$, this indicates infant mortality, with a decreasing failure rate over time, so even though
-it has a high failure rate at the beginning of its lifetime, it has a low failure rate at the end of its
-lifetime and its MTTF is much higher than the other components even though it has a higher
-probability of failing first.
-When $k_3 > 1$, this indicates wear-out failures, with an increasing failure rate over time, so even though
-it has a low failure rate at the beginning of its lifetime, it has a high failure rate at the end of its
-lifetime and it has a lower probability of failing first.
+We assess the effects of varying component 3's shape parameter between $0.1$ and $3.5$ on the MLEs
+for the shape and scale parameters of components 1 and 3.
 
-We analyze the effect of component 3's shape parameter on the MLE and the bootstrapped confidence intervals for the
-shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
-on the scale parameter.
+#### Key observations {-}
 
-```{r prob3-vs-mle, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs MLE"), fig.align="center", echo = F}
-knitr::include_graphics("image/5_system_shape3_fig.pdf")
-```
+- *Coverage Probability (CP)*: The CP for the scale parameter of component 3 increases with $\Pr\{K_i = 3\}$, indicating more accurate estimates due to more observed failures. For other components, it decreases. For the shape parameters, CPs are generally less calibrated than scale parameters, though reasonably good for $\Pr\{K_i = 3\} < 0.4$.
 
-### Scales Analysis
+- *Dispersion of MLEs*: The mean MLE for the scale parameter $\lambda_3$ starts to increase significantly as $\Pr\{K_i = 3\} > 0.5$. For shape parameters, the bias for $k_1$ increases slowly, while for $k_3$ it decreases slowly to $0$ as $\Pr\{K_i = 3\}$ increases.
 
-In Figure \ref{fig:prob3-vs-mle}, we show the effect of the shape parameter of component 3 on the
-MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
-We see that the mean MLE, in green, is relatively close to the true value, in red, for the scale parameter
-of both components. There is a slight positive bias, which may be due to the fact that the data is right-censored
-with moderate masking of the component cause of failure. We see that as the probability of component 3 being the
-cause of failure increases, the bootstrapped confidence intervals generally increase in width, with the exception
-of when $k_3 < 1$ which causes $\Pr\{K_i = 3\}$ to be very small and as $\Pr\{K_i = 3\}$ approaches $0.2$, all
-of the components are approximately equally like to be the component cause of failure, and so the CIs seem to be
-fairly small for all scale parameters.
+- *IQR of Bootstrapped CIs*: For the scale parameters, bootstrapped CIs widen with increasing $\Pr\{K_i = 3\}$, except when $k_3 < 1$. For the shape parameters, the CIs for $k_1$ widen as $\Pr\{K_i = 3\}$ increases, while CIs for $k_3$ narrow, becoming extremely small for $\Pr\{K_i = 3\} > 0.3$.
 
-However, for $\Pr\{K_i = 3\} > 0.5$, we see that the the mean MLE begins to increase significantly for $\lambda_3$.
-This is somewhat unexpecte; we might think that, because its probabilty of being the component cause of failure
-is higher, that we would estimate $\lambda_3$ to be lower to proportionately decrase its MTTF. However, the
-fact is that the shape parameter has a much bigger impact.
-
-Also, the coverage probabilites of the confidence intervals for the scale parameters decreases for the
-scale parameter of components other than 3 as $\Pr\{K_i = 3\}$ increases, but the coverage probability
-for the scale parameter of component 3 increases. This may be because, as $\Pr\{K_i = 3\}$ increases, we
-are more likely to observe a failure of component 3, and so we have more information about its parameters
-and are able to estimate them more accurately.
-
-### Shapes Analysis
-
-Now, we look at the effect of the shape parameter of component 3 on the MLE and the bootstrapped confidence intervals
-for the shape parameters of components 1 and 3.
-
-In Figure \ref{fig:prob3-vs-mle}, we show the effect of the shape parameter of component 3 on the
-MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
-
-We see that the bias for $k_1$ slowly increases (positive bias) as $\Pr\{K_i = 3\}$ increases, and the bias for
-$k_3$ slowly decreases (positive bias) to $0$ as $\Pr\{K_i = 3\}$ increases.
-This makes sense, as a larger positive bias for $k_1$ means that the MLE is nudging the shape parameter
-of component 1 to be larger so that component 1 is less likely to be the cause of failure.
-Similarly, a smaller positive bias for $k_3$ means that the MLE is nudging the shape parameter
-of component 3 to be smaller so that component 3 is more likely to be the cause of failure.
-
-The confidence intervals for $k_1$ also become quite wide as $\Pr\{K_i = 3\}$ increases, which is expected
-since we observe fewer failures of component 1 as $\Pr\{K_i = 3\}$ increases, and so we have less information
-about its parameters and are less able to estimate them accurately. Conversely, the confidence intervals for
-$k_3$ become narrower as $\Pr\{K_i = 3\}$ increases, which is also expected, since we observe more failures
-of component 3 as $\Pr\{K_i = 3\}$ increases, and so we have more information about its parameters and are
-more able to estimate them accurately. The CI widths for $k_3$ becomes extremely small for $\Pr\{K_i = 3\} > 0.3$.
-
-The coverage probabilities are generally less well-caliibrated for the shape parameters compared to the
-scale parameters, but they are still reasonably well-calibrated for $\Pr\{K_i = 3\} < 0.4$. For $k_3$,
-the coverage probabilities are very well-calibrated for all values of $\Pr\{K_i = 3\}$, but improve
-as $\Pr\{K_i = 3\}$ increases due to the fact that we observe more failures of component 3 as $\Pr\{K_i = 3\}$
-increases and thus have more informationa bout $k_3$ for our estimate.
+- *Mean of MLEs*: The mean MLE for the scale parameter is close to the true value with a slight positive bias. For shape parameters, the MLE is adjusting $k_1$ to be larger and $k_3$ to be smaller as $\Pr\{K_i = 3\}$ increases, affecting the likelihood of each component being the cause of failure.
 
 ## Implications and Recommendations
+
+Here, we discuss and summarize the implications of our simulation study and provide recommendations
+for practitioners.
 
 #### Shape parameters {-}
 The shape parameters are more sensitive to the data than the scale parameters. The coverage probabilities
 were also consistently less well-calibrated for the shape parameters compared to the scale parameters,
 but they were still reasonably well-calibrated for most scenarios, with a lower bound of $85\%$ for
-the most extreme scenarios, e.g., Bernoulli masking probabilities of $p = 0.7$ with a relatively small
+the most extreme scenarios, e.g., Bernoulli masking probabilities of $p = 0.7$ with a small
 sample ($n = 100$) and moderate right-censoring ($q = 0.825$).
 
 The shape parameters define the failure characteristics of the components, but they have a complex
@@ -1802,7 +1782,7 @@ in the shape parameters, as described in Section \ref{sec:reduced-weibull}. The 
 interpretability (the series system is itself Weibull) and reduced estimator
 variability (only $m+1$ parameters instead of $2 m$), but it is must adequately describe the data.
 
-#### Scale parameters {-}
+#### Scale Parameters {-}
 The scale parameters are less sensitive to the data than the shape parameters. The coverage probabilities
 were also consistently well-calibrated for all scenarios, with a lower-bound of around $90\%$ for the
 most extreme scenarios.
@@ -1812,6 +1792,12 @@ the other reliability measures too, which makes it easier to interpret and under
 #### Sample Size {-}
 The MLE is very sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
 sensitivity when the sample size is small and not necessarily representative of the true distribution.
+We see that the MLE of the shape parameters is somewhat biased for small samples, but the scale
+parameters have a small bias except for the most extreme cases of right-censoring, masking, or
+deviations from a well-designed system. In either case, as the sample size increases, the bias
+decreases and the CIs become more narrow and well-calibrated.
+We observed that the confidence intervals were well-calibrated for even small sample sizes for the scale
+parameters, but the shape parameters were less well-calibrated.
 
 #### Right-Censoring {-}
 For our well-designed system, the mean MLE for the shape parameters were mildly sensitive to right-censoring,
@@ -1821,22 +1807,21 @@ scale parameters were not very sensitive to right-censoring.
 The sampling variance of the MLE for both the shape and scale parameters were somewhat sensitive to 
 right-censoring, as evidenced by the decreasing width of the confidence intervals as a function of
 increasing right-censoring times. However, the coverage probabilities of the confidence intervals
-were well-calibrated for the scale parameters
+were generally well-calibrated for the shape and scale parameters except for the most extreme
+cases of right-censoring.
 
-the bootstrapped CIs are quite wide to
-account for this sensitivity when the sample contains insufficient information due to censoring.
-  The 
+#### Component Cause of Failure Masking {-}
+For our well-designed system, the mean MLE for the shape parameters are insensitive to
+masking, observing only a small positive bias for significant masking of $50\%$ or greater. However,
+the calibration of the confidence intervals for the shape parameters were quite sensitive to masking,
+reaching as low as $85\%$ for the most extreme cases of Bernoulli masking at $p \approx 0.7$.
 
-- The BCa (bootstrapped) confidence intervals are well-calibrated in all but the most extreme circumstances,
-  constructing CIs that are neither too wide nor too narrow, with two notable exceptions:
+#### Deviations from Well-Designed Systems {-}
+When we deviate from a well-designed system, the MLE becomes much more sensitive to the data, exhibiting
+more bias, more variability, and less well-calibrated confidence intervals. This is particularly true
+for the shape parameters, which are more sensitive to the data than the scale parameters.
 
-    - When the masking probability is essentially a fair coin flip, one should probably take the CIs with
-        a grain of salt.
-
-    - When the components have radically differentiated failure characteristics, the CIs for the parameters
-        of the other components are quite wide, but the coverage probability is still well-calibrated.
-
-# Simulation Study: Full Model vs Reduced Model {#sec:full-vs-reduced}
+# Simulation Study: Full Weibull Model vs Reduced (Homogenous Shape) Model {#sec:full-vs-reduced}
 
 In Section \ref{sec:weibull}, we developed the full model with Weibull
 components and we conducted a sensitivity analysis of its MLE in
@@ -1852,8 +1837,8 @@ sample sizes and shape parameters of the third component ($k_3$). We employ
 a simulation study using the likelihood ratio test (LRT) for this purpose,
 where the null hypothesis, $H_0$, assumes homogenous shape parameters.
 
-We take the well-designed series system described in Section \ref{sec:sim_study},
-Table \ref{tab:series-sys}, and manipulate the shape parameter of the third
+We take the well-designed series system described in Table \ref{tab:series-sys},
+and manipulate the shape parameter of the third
 component ($k_3$) to cause the components to have different failure characteristics.
 Recall that $k_3 = 1.1308$ corresponds to a *well-designed* series system, where
 component shapes are reasoanbly aligned. We also vary the sample size $n$ to assess
@@ -1946,7 +1931,6 @@ of the system being modeled.
 For systems believed to be well-designed, employing the null model is
 supported both statistically and practically due to its simplicity,
 reduced estimator variability, and analytical tractability.
-
 In the absence of prior information, or if the shape parameter
 significantly diverges from the well-designed value, the choice between
 models should be undertaken with caution. More complex models may be
@@ -1963,14 +1947,12 @@ the candidate set,
 $$
     \Pr\{K_i \in \mathcal{C}_i\} = 1.
 $$
-
 Instead, we could model this as a probability, where the probability
 of the failed component being in the candidate set is a function
 of the failure time $T_i$ and the component cause of failure $K_i$,
 $$
     \Pr\{K_i \in \mathcal{C}_i | K_i = j, T_i = t_i\} = g(j, t_i).
 $$
-
 Condition 2 stipulates that
 $$
     \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\} = 
@@ -2072,7 +2054,6 @@ The following code is the log-likelihood function for the Weibull series system
 with a likelihood model that includes masked component cause of failure and right-censoring.
 It is implemented in the R library `wei.series.md.c1.c2.c3` and is available on
 [GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
-
 For clarity and brevity, we removed some of the functionality that is not relevant to the
 analysis in this paper.
 
@@ -2341,7 +2322,7 @@ for (scale3 in scales3) {
 ```
 
 
-# Appendix D: Bernoulli Candidate Set Model {-}
+# Appendix D: Bernoulli Candidate Set Model {-#app:cand-model}
 
 ```{r, eval = FALSE}
 #' Bernoulli candidate set model is a particular type of *uninformed* model.
