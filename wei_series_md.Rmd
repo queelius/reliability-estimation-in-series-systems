@@ -78,7 +78,10 @@ maximum likelihood estimation methodology, bootstrap confidence interval estimat
 and extensive simulation studies exploring estimator behavior under various sample
 sizes, masking levels, and model assumptions.
 
-Together, these contributions provide a statistically rigorous framework for learning about latent component properties from limited observational data on system reliability. The proposed methods expand the capability to quantify component lifetimes in situations where failure data is significantly masked.
+Together, these contributions provide a statistically rigorous framework for learning
+about latent component properties from limited observational data on system reliability.
+The proposed methods expand the capability to quantify component lifetimes in situations
+where failure data is significantly masked.
 
 Series System Model {#sec:statmod}
 ==================================
@@ -1555,33 +1558,37 @@ Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
   in Figure \ref{fig:q-vs-stats}, where the shape parameter estimates are positively biased for most of the quantiles
   $q$.
   
-#### Key Observations {-}
+### Key Observations {-}
 
-- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
-  nominal 95% level across different right-censoring quantiles. This suggests that the
-  bootstrapped CIs will contain the true value of the parameters with the specified confidence
-  level. The CIs are neither too wide nor too narrow.
+##### Coverage Probability (CP) {-}
+The CP is well-calibrated, obtaining a value near the
+nominal 95% level across different right-censoring quantiles. This suggests that the
+bootstrapped CIs will contain the true value of the parameters with the specified confidence
+level. The CIs are neither too wide nor too narrow.
 
-- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of
-  the MLEs get narrower as the right-censoring quantile increases. This is an indicator of the
-  increased precision in the estimates as more data is available due to decreased
-  censoring.
+##### Dispersion of MLEs {-}
+The shaded regions representing the 95% probability range of
+the MLEs get narrower as the right-censoring quantile increases. This is an indicator of the
+increased precision in the estimates as more data is available due to decreased
+censoring.
 
-- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in
-  sample size. This suggests that the bootstrapped CIs are getting more consistent and
-  focused around a narrower range with larger samples while maintaining a good coverage
-  probability. As we get more data, the bootstrapped CIs are more likely to be closer
-  to each other and the true value of the parameters.
+##### IQR of Bootstrapped CIs {-}
+The IQR (vertical blue bars) reduces with an increase in
+sample size. This suggests that the bootstrapped CIs are getting more consistent and
+focused around a narrower range with larger samples while maintaining a good coverage
+probability. As we get more data, the bootstrapped CIs are more likely to be closer
+to each other and the true value of the parameters.
 
-  For small right-censoring quantiles (small right-censoring times), they are quite
-  large, but to maintain well-calibrated CIs, this  was necessary. The estimator is quite
-  sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
-  sensitivity when the sample contains insufficient information due to censoring.
+For small right-censoring quantiles (small right-censoring times), they are quite
+large, but to maintain well-calibrated CIs, this  was necessary. The estimator is quite
+sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
+sensitivity when the sample contains insufficient information due to censoring.
 
-- *Mean of MLEs*: The red dashed line indicating the mean of MLEs initially is quite biased,
-  but quickly diminshes to neglible levels for scale parameters. The estimates for the shape
-  parameters never reaches zero, but this is potentially due to masking. At a larger sample
-  size, we anticipate the bias in the shape estimates would also decrease to zero.
+##### Bias of MLEs {-}
+The red dashed line indicating the mean of MLEs initially is quite biased,
+but quickly diminshes to neglible levels for scale parameters. The estimates for the shape
+parameters never reaches zero, but this is potentially due to masking. At a larger sample
+size, we anticipate the bias in the shape estimates would also decrease to zero.
 
 ## Scenario: Assessing the Impact of Sample Size {#sec:effect-samp-size}
 
@@ -1599,38 +1606,42 @@ for the shape and scale parameters. The top four plots only show the effect on t
 shape and scale parameters of components $1$ and $4$, since the rest were essentially identical,
 and the bottom two plots show the coverage probabilities for all parameters.
 
-#### Key Observations {-}
+### Key Observations {-}
 
-- *Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
-  nominal 95% level across different sample sizes. This suggests that the bootstrapped
+##### Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
+  nominal $95\%$ level across different sample sizes. This suggests that the bootstrapped
   CIs will contain the true value of the shape parameter with the specified confidence
   level. The CIs are neither too wide nor too narrow.
 
-- *Dispersion of MLEs*: The shaded regions representing the 95% probability range of
-  the MLEs get narrower as the sample size increases. This is an indicator of the
-  increased precision in the estimates when provided with more data. This is consistent
-  with the asymptotic properties of the MLE when the regularity conditions are satisfied,
-  e.g., converges in probability to the true value of the parameter as $n$ goes to infinity.
+##### Dispersion of MLEs {-}
+The shaded regions representing the $95\%$ probability range of
+the MLEs get narrower as the sample size increases. This is an indicator of the
+increased precision in the estimates when provided with more data. This is consistent
+with the asymptotic properties of the MLE when the regularity conditions are satisfied,
+e.g., converges in probability to the true value of the parameter as $n$ goes to infinity.
 
-- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) reduces with an increase in
-  sample size. This suggests that the bootstrapped CIs are getting more consistent and
-  focused around a narrower range with larger samples while maintaining a good coverage
-  probability. As we get more data, the bootstrapped CIs are more likely to be closer
-  to each other and the true value of the scale parameter.
+##### IQR of Bootstrapped CIs {-}
+The IQR (vertical blue bars) reduces with an increase in
+sample size. This suggests that the bootstrapped CIs are getting more consistent and
+focused around a narrower range with larger samples while maintaining a good coverage
+probability. As we get more data, the bootstrapped CIs are more likely to be closer
+to each other and the true value of the scale parameter.
 
-  For small sample sizes, they are quite large, but to maintain well-calibrated CIs, this
-  was necessary. The estimator is quite sensitive to the data, and so the bootstrapped
-  CIs are quite wide to account for this sensitivity when the sample size is small and
-  not necessarily representative of the true distribution.
+For small sample sizes, they are quite large, but to maintain well-calibrated CIs, this
+was necessary. The estimator is quite sensitive to the data, and so the bootstrapped
+CIs are quite wide to account for this sensitivity when the sample size is small and
+not necessarily representative of the true distribution.
 
-- *Mean of MLEs for Scales*: The red dashed line indicating the mean of MLEs remains stable across
-  different sample sizes and close to the true value, suggesting that the scale MLEs are 
-  reasonably unbiased.
+##### Bias of MLEs for Scales {-}
+The red dashed line indicating the mean of MLEs remains stable across
+different sample sizes and close to the true value, suggesting that the scale MLEs are 
+reasonably unbiased.
 
-- *Mean of MLEs for Shapes*: The red dashed line is the mean of shape MLEs. Unlike the scale MLEs,
-  we see that for small samples, particularly less than $200$, we observe a significant
-  amount of positive bias for shape MLEs. The MLE for the shape parameters in this
-  scenario appear to be more sensitive to the data than the scale parameters.
+##### Bias of MLEs for Shapes {-}
+The red dashed line is the mean of shape MLEs. Unlike the scale MLEs,
+we see that for small samples, particularly less than $200$, we observe a significant
+amount of positive bias for shape MLEs. The MLE for the shape parameters in this
+scenario appear to be more sensitive to the data than the scale parameters.
 
 This scenario successfully illustrates the importance of sample size in estimating parameters.
 The findings align with statistical theory and provide insights into the behavior of these estimators
@@ -1657,40 +1668,44 @@ all parameters.
 knitr::include_graphics("image/5_system_prob_fig.pdf")
 ```
 
-#### Key Observations {-}
+### Key Observations {-}
 
-- *Coverage Probability (CP)*: For the scale parameters, the $95\%$ CI is well-calibrated
-  for Bernulli masking probabilities up to $p = 0.725$, which is really quite significant,
-  obtaining coverages over $90\%$, but drops precipitously after that point.  
-  For the shape parameters, the $95\%$ CI is well-calibrated for masking probabilities only
-  up to $p = 0.4$, which is still large, obtaining coverages generally over $90%$, but
-  begins to drop slowly after that point.
+##### Coverage Probability (CP) {-}
+For the scale parameters, the $95\%$ CI is well-calibrated
+for Bernulli masking probabilities up to $p = 0.725$, which is really quite significant,
+obtaining coverages over $90\%$, but drops precipitously after that point.  
+For the shape parameters, the $95\%$ CI is well-calibrated for masking probabilities only
+up to $p = 0.4$, which is still large, obtaining coverages generally over $90%$, but
+begins to drop slowly after that point.
   
-  The BCa confidence intervals are well-calibrated for most realistic
-  masking probabilities, constructing CIs that are neither too wide nor too narrow,
-  but when the masking is severe and the sample size is small, one should
-  take the CIs with a grain of salt.
+The BCa confidence intervals are well-calibrated for most realistic
+masking probabilities, constructing CIs that are neither too wide nor too narrow,
+but when the masking is severe and the sample size is small, one should
+take the CIs with a grain of salt.
 
-- *Dispersion of MLEs*: The shaded regions representing the $95\%$ quantile of
-  the MLEs become wider as the masking probability increases. This is an indicator of the
-  decreased precision in the estimates when provided with more ambiguous data about the
-  component cause of failure. However, even for fairly significant Bernoulli masking,
-  $p \leq 0.55$, the $95\%$ quantiles are narrow and the CP is
-  well-calibrated, indicating that the MLEs are still precise and accurate.
+##### Dispersion of MLEs {-}
+The shaded regions representing the $95\%$ quantile of
+the MLEs become wider as the masking probability increases. This is an indicator of the
+decreased precision in the estimates when provided with more ambiguous data about the
+component cause of failure. However, even for fairly significant Bernoulli masking,
+$p \leq 0.55$, the $95\%$ quantiles are narrow and the CP is
+well-calibrated, indicating that the MLEs are still precise and accurate.
 
-- *IQR of Bootstrapped CIs*: The IQR (vertical blue bars) show that the bootstrapped BCa
-  CIs are becoming more spread out as the masking probability increases. They are also
-  asymmetric, with the lower bound being more spread out than the upper bound, but this
-  is consistent with the actual behavior of the dispersion of the MLEs, which exhibits
-  the same pattern. The width of the CIs consistently increase as the masking probability
-  increases, which we intuitively expected given the increased uncertanity about the
-  component cause of failure.
-  After a Bernoulli masking probability of $p \approx 0.5$, the width of the CIs rapidly increase,
-  which is apparently necessary for the CPs to remain well-calibrated.
+##### IQR of Bootstrapped CIs {-}
+The IQR (vertical blue bars) show that the bootstrapped BCa
+CIs are becoming more spread out as the masking probability increases. They are also
+asymmetric, with the lower bound being more spread out than the upper bound, but this
+is consistent with the actual behavior of the dispersion of the MLEs, which exhibits
+the same pattern. The width of the CIs consistently increase as the masking probability
+increases, which we intuitively expected given the increased uncertanity about the
+component cause of failure.
+After a Bernoulli masking probability of $p \approx 0.5$, the width of the CIs rapidly increase,
+which is apparently necessary for the CPs to remain well-calibrated.
 
-- *Mean of MLEs*: The red dashed line indicating the mean of the MLEs remains
-  stable across different masking probabilities, only showing a significant positive bias
-  when the masking probability $p$ becomes quite significant.
+##### Bias of MLEs {-}
+The red dashed line indicating the mean of the MLEs remains
+stable across different masking probabilities, only showing a significant positive bias
+when the masking probability $p$ becomes quite significant.
 
 ## Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3 {#sec:scale-vs-mttf}
 
@@ -1714,51 +1729,95 @@ the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample
 knitr::include_graphics("image/5_system_mttf3_by_scale3.pdf")
 ```
 
-#### Key observations {-}
+### Key Observations {-}
 
-- *Coverage Probability (CP)*: When MTTF of component 3 is much smaller than other components,
-the CP for $k_3$ is very well calibrated (approximately $95\%$) while the other shape parameters of
-the other componentns are around $90\%$, which is still reasonable. (This is the case even though
-the width of the CI for $k_3$ is extremely narrow compared to the others).
-As MTTF$_3$ increases, the CP for $k_3$ decreases, while CP for the other components increase
-slightly. The scale parameters are generally well-calibrated for all of the components.
+##### Coverage Probability (CP) {-}
+When MTTF of component 3 is much smaller than other components,
+the CP for $k_3$ is very well calibrated (approximately obtaining the nominal level $95\%$)
+while the CP for other componentns are around $90\%$, which is still reasonable.
+(This is the case even though the width of the CI for $k_3$ is extremely narrow compared to the others).
+As MTTF$_3$ increases, the CP for $k_3$ decreases, while the CP for the other components increase
+slightly. The scale parameters are generally well-calibrated for all of the components, except
+for component 3 when its MTTF is large and it dips down to $90\%$. Despite the individual differences,
+the mean of the CPs for shape and scale parameters hardly change.
 
-- *Dispersion of MLEs*: For component 3, as its MTTF decreases, the dispersion of MLEs narrows,
+##### Dispersion of MLEs {-}
+For component 3, as its MTTF decreases, the dispersion of MLEs narrows,
 indicating more precise estimates. Conversely, dispersion for other components widens. As MTTF
 of component 3 increases, its dispersion widens while others narrow. This is consistent with
 the fact that the smaller MTTF of component 3 means that, in this well-designed system at least,
 it is more likely to be the component cause of failure, and so we have more information about
 its parameters and are able to estimate them more accurately.
 
-- *IQR of Bootstrapped CIs*: The dark blue vertical lines representing IQR show that the variability
-of the Bootstrapped BCa CIs decreases for component 3 as its MTTF decreases, suggesting more
-consistency in the estimates. For other components, IQR behaves conversely.
+##### IQR of Bootstrapped CIs {-}
+The dark blue vertical lines representing IQR are consistent with the dispersion of MLEs,
+which is the ideal behavior, and suggests that the BCa confidence intervals are performing well.
 
-- *Mean of MLEs*: For component 3, the mean of MLEs of scale parameter increases with MTTF,
-reflecting a small positive bias. The shape parameter also shows positive bias, which can be attributed
-to the intricate relationship with the scale parameter and the presence of right-censoring and masking.
+##### Bias of MLEs {-}
+For component 3, the bias of MLE for the scale parameter becomes slightly more negatively biased
+as MTTF$_3$ increases, and the bias of the MLE for the shape parameter becomes slightly more positively
+biased. The MLE for the shape and scale parameters for component 1 have a very small bias, if any,
+and are not affected by the MTTF$_3$. The scale parameters are easier to estimate than the shape
+parameters, and so they are less sensitive to changes in scale than the shape parameters, as
+we will show in the next scenario.
 
-## Scenario: Analyzing the Impact of Changing the Shape Parameter of Component 3 {#sec:shape3-vary}
+## Scenario: Assessing the Impact of Changing the Shape Parameter of Component 3 {#sec:shape3-vary}
 
-We assess the effects of varying component 3's shape parameter between $0.1$ and $3.5$ on the MLEs
-for the shape and scale parameters of components 1 and 3.
+The shape parameter determines the failure characteristics.
+We vary the shape paramenter of component 3 from $0.1$ to $3.5$ and observe the effect
+it has on the MLE.
+When $k_3 < 1$, this indicates infant mortality, and when $k_3 > 1$, this indicates
+wear-out failures.
 
-#### Key observations {-}
+We analyze the effect of component 3's shape parameter on the MLE and the bootstrapped confidence intervals for the
+shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
+on the scale parameter.
 
-- *Coverage Probability (CP)*: The CP for the scale parameter of component 3 increases with $\Pr\{K_i = 3\}$, indicating more accurate estimates due to more observed failures. For other components, it decreases. For the shape parameters, CPs are generally less calibrated than scale parameters, though reasonably good for $\Pr\{K_i = 3\} < 0.4$.
 
-- *Dispersion of MLEs*: The mean MLE for the scale parameter $\lambda_3$ starts to increase significantly as $\Pr\{K_i = 3\} > 0.5$. For shape parameters, the bias for $k_1$ increases slowly, while for $k_3$ it decreases slowly to $0$ as $\Pr\{K_i = 3\}$ increases.
+```{r prob3-vs-mle, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs MLE"), fig.align="center", echo = F}
+knitr::include_graphics("image/5_system_shape3_fig.pdf")
+```
 
-- *IQR of Bootstrapped CIs*: For the scale parameters, bootstrapped CIs widen with increasing $\Pr\{K_i = 3\}$, except when $k_3 < 1$. For the shape parameters, the CIs for $k_1$ widen as $\Pr\{K_i = 3\}$ increases, while CIs for $k_3$ narrow, becoming extremely small for $\Pr\{K_i = 3\} > 0.3$.
+#### Key Observations {-}
 
-- *Mean of MLEs*: The mean MLE for the scale parameter is close to the true value with a slight positive bias. For shape parameters, the MLE is adjusting $k_1$ to be larger and $k_3$ to be smaller as $\Pr\{K_i = 3\}$ increases, affecting the likelihood of each component being the cause of failure.
+##### Coverage Probability (CP) {-}
+The CP for the scale parameters
+are well-calibrated and close to the nominal level of $0.95$ for all values of $\Pr\{K_i = 3\}$.
+For the the shape parameter of component 3 ($k_3$) in
+bold orange colors, we see that it is well-calibrated for all values of
+$\Pr\{K_i = 3\}$, but actually may become too large for extreme values of $\Pr\{K_i = 3\}$.
+The CP for the shape parameters of the other components decreases with $$\Pr\{K_i = 3\}$, dipping below $90\%$ for $\Pr\{K_i = 3\} > 0.4$. At a sample size of $n = 100$, the CP for the shape parameters of the other components is generally not well-calibrated for $\Pr\{K_i = 3\} > 0.4$.
+
+##### Dispersion of MLEs {-}
+The dispersion of the MLE for the shape and scale parameters of component 1, $k_1$ and $\lambda_1$,
+is fairly steady but begins to increase rapdily at the extreme values of $\Pr\{K_i = 3\}$. This is indicative of
+having less information about the failure characteristcs of component $1$ as component $3$ begins to dominate the
+component cause of failure.
+The dispersion of the shape parameter $k_3$ is initially quite large, indicative of having very little
+information about the failure characteristcs of component 3 since it is unlikely to be the component cause of
+failure, but its dispersion rapidly decreases as $\Pr\{K_i = 3\}$ increases and more information is
+available about component 3's failure characteristics. In fact, it nearly becomes a point at $\Pr\{K_i = 3\} = 0.6$.
+The dispersion of the the scale parameter of component $3$, $\lambda_1$, is quite steady and is less spread out
+than the MLE for $\lambda_1$, but at extreme values of $\Pr\{K_i = 3\}$, it also begins to rapidly increase,
+suggesting some complex interactions between the shape and scale parameters of component 3.
+
+##### IQR of Bootstrapped CIs {-}
+The CIs precisely track the dispersion of the MLEs, which is the ideal behavior,
+and suggests that the BCa confidence intervals are performing well.
+
+##### Bias of MLEs {-}
+The MLE for the scale parameters are nearly unbiased and generally seem unaffected by changes
+in $\Pr\{K_i = 3\}$. As $\Pr\{K_i = 3\}$ increases the MLE is adjusting $k_1$ to be more
+positively biased, decreasing its infant morality rate to make it less likely to be the
+component cause of failure, and adjusting $k_3$ to be less positively biased, increasing
+its infant mortality rate, to make it more likely to be the component cause of failure.
 
 ## Implications and Recommendations
 
 Here, we discuss and summarize the implications of our simulation study and provide recommendations
 for practitioners.
 
-#### Shape parameters {-}
+#### Shape Parameters {-}
 The shape parameters are more sensitive to the data than the scale parameters. The coverage probabilities
 were also consistently less well-calibrated for the shape parameters compared to the scale parameters,
 but they were still reasonably well-calibrated for most scenarios, with a lower bound of $85\%$ for
