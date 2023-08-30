@@ -3,27 +3,26 @@ title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques 
 author: "Alex Towell"
 abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. A reduced model with homogeneous component shapes simplifies analysis for well-designed systems. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models, validation of estimation techniques via simulations, and assessment of a reduced model. Together, these advance rigorous component reliability assessment from masked failure data."
 output:
-    bookdown::pdf_document2:
+    #bookdown::pdf_document2:
+    bookdown::pdf_book:
     #bookdown::html_document2:
     #bookdown::gitbook:
     #pdf_document:
-        #toc: yes
+        toc: yes
         #toc_depth: 3
         number_sections: true
         #extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
-        extra_dependencies: ["tikz"]
+        extra_dependencies: ["tikz", "caption"]
         df_print: kable
         keep_tex: true
         citation_package: natbib
 indent: true
 header-includes:
-   - \usepackage{caption}
    - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
    - \AtBeginDocument{\newtheorem{condition}{Condition}}
    - \AtBeginDocument{\renewcommand{\refname}{References}}
 bibliography: refs.bib
-link-citations: true
-# let's change the style to a statistics / math / engineering journal
+link-citations: true # what are these? ans: https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#citation-links
 biblio-style: apalike
 ---
 
