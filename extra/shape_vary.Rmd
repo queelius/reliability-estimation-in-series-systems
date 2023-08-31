@@ -1,0 +1,70 @@
+## Whatevs
+
+
+The shape parameter determines the failure characteristics.
+We vary the shape paramenter of component 3 from $0.1$ to $3.5$ and observe the effect it has on the MLE.
+When $k_3 < 1$, this indicates infant mortality, with a decreasing failure rate over time, so even though
+it has a high failure rate at the beginning of its lifetime, it has a low failure rate at the end of its
+lifetime and its MTTF is much higher than the other components even though it has a higher
+probability of failing first.
+When $k_3 > 1$, this indicates wear-out failures, with an increasing failure rate over time, so even though
+it has a low failure rate at the beginning of its lifetime, it has a high failure rate at the end of its
+lifetime and it has a lower probability of failing first.
+
+We analyze the effect of component 3's shape parameter on the MLE and the bootstrapped confidence intervals for the
+shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
+on the scale parameter.
+
+```{r prob3-vs-mle, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs MLE"), fig.align="center", echo = F}
+knitr::include_graphics("image/5_system_shape3_fig.pdf")
+```
+
+#### Scale Analysis {-}
+
+In Figure \ref{fig:prob3-vs-mle}, we show the effect of the shape parameter of component 3 on the
+MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
+We see that the mean MLE, in green, is close to the true value, in red, for the scale parameter
+of both components. There is a slight positive bias, which may be due to the fact that the data is right-censored
+with moderate masking of the component cause of failure. We see that as the probability of component 3 being the
+cause of failure increases, the bootstrapped confidence intervals generally increase in width, with the exception
+of when $k_3 < 1$ which causes $\Pr\{K_i = 3\}$ to be very small and as $\Pr\{K_i = 3\}$ approaches $0.2$, all
+of the components are approximately equally like to be the component cause of failure, and so the CIs seem to be
+fairly small for all scale parameters.
+
+However, for $\Pr\{K_i = 3\} > 0.5$, we see that the the mean MLE begins to increase significantly for $\lambda_3$.
+This is somewhat unexpecte; we might think that, because its probabilty of being the component cause of failure
+is higher, that we would estimate $\lambda_3$ to be lower to proportionately decrease its MTTF. However, the
+fact is that the shape parameter has a much bigger impact.
+
+Also, the coverage probabilites of the confidence intervals for the scale parameters decreases for the
+scale parameter of components other than 3 as $\Pr\{K_i = 3\}$ increases, but the coverage probability
+for the scale parameter of component 3 increases. This may be because, as $\Pr\{K_i = 3\}$ increases, we
+are more likely to observe a failure of component 3, and so we have more information about its parameters
+and are able to estimate them more accurately.
+
+#### Shape Analysis {-}
+
+Now, we look at the effect of the shape parameter of component 3 on the MLE and the bootstrapped confidence intervals
+for the shape parameters of components 1 and 3.
+In Figure \ref{fig:prob3-vs-mle}, we show the effect of the shape parameter of component 3 on the
+MLE and the bootstrapped confidence intervals for the shape parameters of components 1 and 3.
+
+We see that the bias for $k_1$ slowly increases (positive bias) as $\Pr\{K_i = 3\}$ increases, and the bias for
+$k_3$ slowly decreases (positive bias) to $0$ as $\Pr\{K_i = 3\}$ increases.
+This makes sense, as a larger positive bias for $k_1$ means that the MLE is nudging the shape parameter
+of component 1 to be larger so that component 1 is less likely to be the cause of failure.
+Similarly, a smaller positive bias for $k_3$ means that the MLE is nudging the shape parameter
+of component 3 to be smaller so that component 3 is more likely to be the cause of failure.
+
+The confidence intervals for $k_1$ also become quite wide as $\Pr\{K_i = 3\}$ increases, which is expected
+since we observe fewer failures of component 1 as $\Pr\{K_i = 3\}$ increases, and so we have less information
+about its parameters and are less able to estimate them accurately. Conversely, the confidence intervals for
+$k_3$ become narrower as $\Pr\{K_i = 3\}$ increases, which is also expected, since we observe more failures
+of component 3 as $\Pr\{K_i = 3\}$ increases, and so we have more information about its parameters and are
+more able to estimate them accurately. The CI widths for $k_3$ becomes extremely small for $\Pr\{K_i = 3\} > 0.3$.
+
+The coverage probabilities are generally less well-caliibrated for the shape parameters compared to the
+scale parameters, but they are still reasonably well-calibrated for $\Pr\{K_i = 3\} < 0.4$. For $k_3$,
+the coverage probabilities are very well-calibrated for all values of $\Pr\{K_i = 3\}$, but improve
+as $\Pr\{K_i = 3\}$ increases due to the fact that we observe more failures of component 3 as $\Pr\{K_i = 3\}$
+increases and thus have more informationa bout $k_3$ for our estimate.
