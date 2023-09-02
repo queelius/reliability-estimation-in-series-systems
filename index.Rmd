@@ -3,26 +3,28 @@ title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques 
 author: "Alex Towell"
 abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. A reduced model with homogeneous component shapes simplifies analysis for well-designed systems. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models, validation of estimation techniques via simulations, and assessment of a reduced model. Together, these advance rigorous component reliability assessment from masked failure data."
 output:
-    #bookdown::pdf_document2:
-    bookdown::pdf_book:
     #bookdown::html_document2:
-    #bookdown::gitbook:
-    #pdf_document:
-        toc: yes
+    #bookdown::pdf_document2:
+    bookdown::gitbook:
+        df_print: kable
+        citation_package: natbib
+    bookdown::pdf_book:
+        toc: true
         #toc_depth: 3
         number_sections: true
         #extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
         extra_dependencies: ["tikz", "caption"]
         df_print: kable
-        keep_tex: true
+        #keep_tex: true
         citation_package: natbib
 indent: true
 header-includes:
+   - \usepackage{tikz}
+   - \usepackage{caption}
    - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
    - \AtBeginDocument{\newtheorem{condition}{Condition}}
-   - \AtBeginDocument{\renewcommand{\refname}{References}}
 bibliography: refs.bib
-link-citations: true # what are these? ans: https://bookdown.org/yihui/bookdown/markdown-extensions-by-bookdown.html#citation-links
+link-citations: true
 biblio-style: apalike
 ---
 
@@ -83,7 +85,7 @@ about latent component properties from limited observational data on system reli
 The proposed methods expand the capability to quantify component lifetimes in situations
 where failure data is significantly masked.
 
-Series System Model {#sec:statmod}
+Series System Model {#statmod}
 ==================================
 Consider a system composed of $m$ components arranged in a series configuration.
 Each component and system has two possible states, functioning or failed.
@@ -279,7 +281,7 @@ which we sometimes find to be a more convenient form than Equation \eqref{eq:sys
 
 In this section, we derived the mathematical forms for the system's reliability function, pdf, and hazard function. Next, we build upon these concepts to derive distributions related to the component cause of failure.
 
-## Component Cause of Failure {#sec:comp_cause}
+## Component Cause of Failure {#comp_cause}
 Whenever a series system fails, precisely one of the components is the cause.
 We model the component cause of the series system failure as a random variable.
 \begin{definition}
@@ -340,7 +342,7 @@ Generalizing from this completes the proof.
 
 Theorem \ref{thm:f_k_and_t} shows that the joint pdf of the component cause of
 failure and system lifetime is a function of the hazard functions and reliability
-functions of the components. This result will be used in the Section \ref{sec:like_model}
+functions of the components. This result will be used in the Section \ref{like_model}
 to derive the likelihood function for the masked data.
 
 The probability that the $j$\textsuperscript{th} component is the cause of failure
@@ -375,7 +377,7 @@ By Theorem \ref{thm:f_k_and_t}, this is equivalent to
 \end{align*}
 \end{proof}
 
-## System and Component Reliabilities {#sec:reliability}
+## System and Component Reliabilities {#reliability}
 
 A common measure of reliability is mean time to failure (MTTF). The
 MTTF is defined as the expectation of the lifetime,
@@ -383,21 +385,16 @@ MTTF is defined as the expectation of the lifetime,
 \label{mttf-sys}
 \text{MTTF} = E_{\v\theta}\{T_i\},
 \end{equation}
-which if certain assumptions are satisfied\footnote{$T_i$ is non-negative and continuous, $R_{T_i}(t;\v\theta)$ is a
-well-defined, continuous, and differential function for $t > 0$,
-and $\int_0^\infty R_{T_i}(t;\v\theta) dt$ converges.}
-is equivalent to the integration of the reliability function over its support.
+which if certain assumptions are satisfied[^1] is equivalent to the integration of the reliability function over its support.
+
+[^1]: $T_i$ is non-negative and continuous, $R_{T_i}(t;\v\theta)$ is a well-defined, continuous, and differential function for $t > 0$, and $\int_0^\infty R_{T_i}(t;\v\theta) dt$ converges.
 
 While the MTTF provides a summary measure of reliability, it is not a complete description.
 Depending on the failure characteristics, MTTF can be misleading. For example,
 a system that has a high likelihood of failing early in its life may still have a
-large MTTF if it is fat-tailed.\footnote{A "fat-tailed" distribution refers to a probability
-distribution with tails that decay more slowly than those of the exponential family,
-such as the case with the Weibull when its shape parameter is greater than $1$. This means
-that extreme values are more likely to occur, and the distribution is more prone to
-"black swan" events or rare occurrences. In the context of reliability, a fat-tailed
-distribution might imply a higher likelihood of unusually long lifetimes, which can
-skew measures like the MTTF. See, for example, \cite{taleb2007black}.}
+large MTTF if it is fat-tailed.[^2]
+
+[^2]: A "fat-tailed" distribution refers to a probability distribution with tails that decay more slowly than those of the exponential family, such as the case with the Weibull when its shape parameter is greater than $1$. This means that extreme values are more likely to occur, and the distribution is more prone to "black swan" events or rare occurrences. In the context of reliability, a fat-tailed distribution might imply a higher likelihood of unusually long lifetimes, which can skew measures like the MTTF.[@taleb2007black].
 
 The reliability of the components in the series system determines the reliability
 of the system. We denote the MTTF of the $j$\textsuperscript{th} component by
@@ -410,7 +407,7 @@ the other components, e.g., $\Pr\{K_i = j\} \approx \Pr\{K_i = k\}$ and
 and MTTF$_j \approx$ MTTF$_k$ for all $j$ and $k$. This just means that the components
 should have similar reliabilities and failure characteristics.
 
-We use these results in the simulation study in Section \ref{sec:sim_study}, where we
+We use these results in the simulation study in Section \ref{sim_study}, where we
 assess the sensitivity of the MLE with respect to varying the reliability
 of one of the Weibull components. We vary its reliability in two different ways:
 
@@ -420,7 +417,7 @@ of one of the Weibull components. We vary its reliability in two different ways:
 2. We vary its scale parameter (keeping its shape parameter constant), which scales
    its MTTF while retaining the same failure characteristics.
 
-Likelihood Model for Masked Data {#sec:like_model}
+Likelihood Model for Masked Data {#like_model}
 ==================================================
 
 The object of interest is the (unknown) parameter value $\v\theta$. 
@@ -568,7 +565,7 @@ In the follow subsections, we prove this result for each type of masked data, ri
 system lifetime data $(\delta_i = 0)$ and masking of the component cause of failure
 $(\delta_i = 1)$.
 
-## Masked Component Cause of Failure {#sec:candmod}
+## Masked Component Cause of Failure {#candmod}
 Suppose a diagnostician is unable to identify the precise component cause of the
 failure, e.g., due to cost considerations he or she replaced multiple components
 at once, successfully repairing the system but failing to precisely identity
@@ -671,7 +668,7 @@ f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = R_{T_i}(t_i;\v\theta)
     \biggr\}.
 \end{equation}
 
-When we try to find an MLE of $\v\theta$ (see Section \ref{sec:mle}), we
+When we try to find an MLE of $\v\theta$ (see Section \ref{mle}), we
 solve the simultaneous equations of the MLE and choose a solution
 $\hat{\v\theta}$ that is a maximum for the likelihood function.
 When we do this, we find that $\hat{\v\theta}$ depends on the unknown
@@ -808,7 +805,7 @@ $$
 
 ## Right-Censored Data
 
-As described in Section \ref{sec:like_model}, we observe realizations of
+As described in Section \ref{like_model}, we observe realizations of
 $(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{T_i,\tau_i\}$ is the
 right-censored system lifetime, $\delta_i = 1_{\{T_i < \tau_i\}}$ is
 the right-censoring indicator, and $\mathcal{C}_i$ is the candidate set.
@@ -851,7 +848,7 @@ L_i(\v\theta) =
 \end{cases}
 $$
 
-We use this result in Section \ref{sec:mle} to derive the maximum likelihood
+We use this result in Section \ref{mle} to derive the maximum likelihood
 estimator (MLE) of $\v\theta$.
 
 ## Identifiability and Convergence Issues
@@ -861,24 +858,24 @@ to identifiability and flat likelihood regions.
 Identifiability refers to the unique mapping of the model parameters to the
 likelihood function, and lack of identifiability can lead
 to multiple sets of parameters that explain the data equally well, making inference
-about the true parameters challenging \citep{lehmann1998theory}, while 
-flat likelihood regions can complicate convergence \citep{wu1983convergence}.
+about the true parameters challenging [@lehmann1998theory], while 
+flat likelihood regions can complicate convergence [@wu1983convergence].
 
 In our simulation study, we address these challenges in a pragmatic way. Specifically,
 failure to converge to a solution within a maximum of 125 iterations is interpreted as
 evidence of the aforementioned issues, leading to the discarding of the sample, with
 the process then repeated with a new synthetic sample. Note, however, that in Section
-\ref{sec:boot} where we discuss the bias-corrected and accelerated (BCa) bootstrap
+\ref{boot} where we discuss the bias-corrected and accelerated (BCa) bootstrap
 method for constructing confidence intervals, we do not discard any resamples.
 
 This strategy helps ensure the robustness of the results, while acknowledging the
 inherent complexities of likelihood-based estimation in models characterized by
 masking and right-censoring.
 
-Maximum Likelihood Estimation {#sec:mle}
+Maximum Likelihood Estimation {#mle}
 ========================================
 In our analysis, we use maximum likelihood estimation (MLE) to estimate the series
-system parameter $\v\theta$ from the masked data \citep{bain, casella2002statistical}.
+system parameter $\v\theta$ from the masked data [@bain;casella2002statistical].
 The MLE finds parameter values that maximize the likelihood of the observed data
 under the assumed model. A maximum likelihood estimate, $\hat{\v\theta}$, is a
 solution of
@@ -888,7 +885,7 @@ L(\hat{\v\theta}) = \max_{\v\theta \in \v\Omega} L(\v\theta),
 \end{equation}
 where $L(\v\theta)$ is the likelihood function of the observed data. For computational
 efficiency and analytical simplicity, we work with the log-likelihood function,
-denoted as $\ell(\v\theta)$, instead of the likelihood function \citep{casella2002statistical}.
+denoted as $\ell(\v\theta)$, instead of the likelihood function [@casella2002statistical].
 \begin{theorem}
 \label{thm:loglike_total}
 The log-likelihood function, $\ell(\v\theta)$, for our masked data model is the sum of the log-likelihoods for each observation,
@@ -921,9 +918,7 @@ $$
 \ell_i(\v\theta) = \log R_{T_i}(s_i;\v\theta) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr).
 $$
 We replace $R_{T_i}(s_i;\v\theta)$ with its component-wise definition and by Condition \ref{cond:masked_indept_theta},
-we may discard\footnote{Adding or substracting a function by a constant does not change where it obtains a maximum, so we
-are free to discard such terms from the log-likelihood function.} the $\log \beta_i$ term since it does not depend on
-$\v\theta$, giving us the result
+we may discard the $\log \beta_i$ term since it does not depend on $\v\theta$, giving us the result
 $$
 \ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
 $$
@@ -936,18 +931,18 @@ The MLE, $\hat{\v\theta}$, is often found by solving a system of equations deriv
 \label{eq:mle_eq}
 \frac{\partial}{\partial \theta_j} \ell(\v\theta) = 0,
 \end{equation}
-for each component $\theta_j$ of the parameter $\v\theta$ \citep{bain}. When there's no closed-form solution,
+for each component $\theta_j$ of the parameter $\v\theta$ [@bain]. When there's no closed-form solution,
 we resort to numerical methods like the Newton-Raphson method.
 
 Assuming some regularity conditions, such as the likelihood function being identifiable, the MLE has many desirable
 asymptotic properties that underpin statistical inference, namely that it is an asymptotically unbiased estimator
 of the parameter $\v\theta$ and it is normally distributed with a variance given by the inverse of the Fisher
-Information Matrix (FIM) \citep{casella2002statistical}.
+Information Matrix (FIM) [@casella2002statistical].
 However, for smaller samples, these asymptotic properties may not yield accurate approximations. We propose to use
 the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE, in particular for
 computing confidence intervals.
 
-Bias-Corrected and Accelerated Bootstrap Confidence Intervals {#sec:boot}
+Bias-Corrected and Accelerated Bootstrap Confidence Intervals {#boot}
 ===============================================================
 We utilize the non-parametric bootstrap to approximate the sampling distribution of
 the MLE. In the non-parametric bootstrap, we resample from the observed data
@@ -976,7 +971,7 @@ applies two corrections to the standard bootstrap method:
 
 Since we are primarly interested in generating confidence intervals for small samples for a
 potentially biased MLE, the BCa method may be a good choice for our analysis. For more details
-on BCa, see \cite{efron1987better}.
+on BCa, see [@efron1987better].
 
 In our simulation study, we will assess the performance of the bootstrapped BCa
 confidence intervals by computing the coverage probability of the confidence
@@ -993,39 +988,39 @@ nominal level, 95%.
 
 While the bootstrap method provides a robust and flexible tool for statistical
 estimation, its effectiveness can be influenced by several factors
-\citep{efron1994introduction}.
+[@efron1994introduction].
 
 Firstly, instances of non-convergence in our bootstrap samples were observed.
 Such cases can occur when the estimation method, like the MLE used in our
 analysis, fails to converge due to the specifics of the resampled data
-\citep{casella2002statistical}. This issue can potentially introduce bias or
+[@casella2002statistical]. This issue can potentially introduce bias or
 reduce the effective sample size of our bootstrap distribution.
 
 Secondly, the bootstrap's accuracy can be compromised with small sample sizes,
 as the method relies on the law of large numbers to approximate the true sampling
 distribution. For small datasets, the bootstrap samples might not adequately
 represent the true variability in the data, leading to inaccurate results
-\citep{efron1994introduction}.
+[@efron1994introduction].
 
 Thirdly, our data involves right censoring and a masking of the component cause
 of failure when a system failure is observed. These aspects can cause certain data points or
 trends to be underrepresented or not represented at all in our data, introducing
-bias in the bootstrap distribution \citep{klein2005survival}.
+bias in the bootstrap distribution [@klein2005survival].
 
 Despite these challenges, we found the bootstrap method useful in approximating
 the sampling distribution of the MLE, taking care in interpreting the results,
 particularly as it relates to coverage probabilities.
 
-Series System with Weibull Components {#sec:weibull}
+Series System with Weibull Components {#weibull}
 ====================================================
 
 The Weibull distribution, introduced by Waloddi Weibull in 1937, has been
 instrumental in reliability analysis due to its ability to model a wide range
 of failure behaviors. Reflecting on its utility, Weibull
-modestly noted that it "[...] may sometimes render good service." \citep{Abernethy2006}.
+modestly noted that it "[...] may sometimes render good service." [@Abernethy2006].
 In the context of our study, we utilize the Weibull
 to model a system as originating from Weibull components in a series configuration,
-producing a specific form of the likelihood model described in Section \ref{sec:like_model},
+producing a specific form of the likelihood model described in Section \ref{like_model},
 which deals with challenges such as right censoring and masked component cause of failure.
 
 The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
@@ -1053,10 +1048,11 @@ a result of defective components being weeded out early, and the remaining
 components surviving for a much longer time.
 - $k_j = 1$ indicates random failures (independent of age). An example of how
 this might arise is a result of random shocks to the system, but otherwise
-the system is age-independent.\footnote{The exponential distribution is a special
-case of the Weibull distribution when $k_j = 1$.}
+the system is age-independent.[^4]
 - $k_j > 1$ indicates wear-out failures. An example of how this might arise is a
 result of components wearing as they age
+
+[^4]: The exponential distribution is a special case of the Weibull distribution when $k_j = 1$.
 
 We show that the lifetime of the series system composed of $m$ Weibull components
 has a reliability, hazard, and probability density functions given by the following theorem.
@@ -1106,7 +1102,7 @@ Equations \eqref{eq:sys_weibull_reliability_function} and
 
 ## Reliability
 
-In Section \ref{sec:reliability}, we discussed the concept of reliability.
+In Section \ref{reliability}, we discussed the concept of reliability.
 In the case of Weibull components, the MTTF of the $j$\textsuperscript{th}
 component is given by
 \begin{equation}
@@ -1131,8 +1127,8 @@ they have a similar MTTF and a similar probability of being the component cause 
 failure, i.e., they have similar shapes and scales, so that system failures are not
 dominated by some subset of components.
 
-## Likelihood Model {#sec:sys_weibull_likelihood}
-In Section \ref{sec:like_model}, we discussed two separate kinds of likelihood
+## Likelihood Model {#sys_weibull_likelihood}
+In Section \ref{like_model}, we discussed two separate kinds of likelihood
 contributions, masked component cause of failure data (with exact system failure
 times) and right-censored data. The likelihood contribution of the
 $i$\textsuperscript{th} system is given by the following theorem.
@@ -1259,7 +1255,7 @@ sample is given by
 \nabla \ell(\v\theta) = \sum_{i=1}^n \nabla \ell_i(\v\theta).
 \end{equation}
 
-## Weibull Series System: Homogeneous Shape Parameters {#sec:reduced-weibull}
+## Weibull Series System: Homogeneous Shape Parameters {#reduced-weibull}
 
 A series system composed of Weibull components is not generally Weibull unless the
 shape parameters of the components are homogeneous.
@@ -1328,7 +1324,7 @@ $$
 $$
 The same may be done for the score and hessian of the log-likelihood functions.
 
-Simulation Study: Full Model {#sec:sim_study}
+Simulation Study: Full Model {#sim_study}
 ================================
 
 ```{r sim-study-design, echo = F}
@@ -1345,7 +1341,7 @@ scales <- theta[grepl("scale", names(theta))]
 ```
 
 In this section, we conduct a simulation study to assess the performance
-of the MLE for the full likelihood model defined in Section \ref{sec:weibull}.
+of the MLE for the full likelihood model defined in Section \ref{weibull}.
 In this simulation study, we assess the sensitivity of the MLE to
 various simulation scenarios. In particular, we assess two important
 properties of the MLE with respect to a scenario:
@@ -1370,7 +1366,7 @@ slightly more complex, we add two more components to this series system,
 with shape and scale parameters given by the last two components in Table
 \ref{tab:series-sys}. We will refer to this system as the **base** system.
 
-In Section \ref{sec:reliability}, we defined a well-designed series
+In Section \ref{reliability}, we defined a well-designed series
 system as one that consists of components with similar reliabilities, where we define
 reliability in two ways, the mean time to failure (MTTF) and the probability that a
 specific component will be the cause of failure. All things else being equal,
@@ -1423,7 +1419,7 @@ knitr::kable(
 
 
 
-## Data Generating Process {#sec:data_gen}
+## Data Generating Process {#data_gen}
 
 In this section, we describe the data generating process for our simulation studies.
 It consists of three parts: the series system, the candidate set model, and the
@@ -1432,7 +1428,7 @@ right-censoring model.
 ### Series System Lifetime {-}
 
 We generate data from a Weibull series system with $m$ components.
-As described in Section \ref{sec:weibull}, the $j$\textsuperscript{th} component
+As described in Section \ref{weibull}, the $j$\textsuperscript{th} component
 of the $i$\textsuperscript{th} system has a lifetime distribution given by
 $$
     T_{i j} \sim \operatorname{WEI}(k_j, \lambda_j)
@@ -1468,13 +1464,13 @@ quantile of the series system, we define the function $g$ as
 $$
 g(\tau) = F_{T_i}(\tau;\v\theta) - q
 $$
-and find its root using the Newton-Raphson method. See Appendix E for the R code that
+and find its root using the Newton-Raphson method. See Appendix \ref{app-series-quantile} for the R code that
 implements this procedure.
 
 ### Masking Model for Component Cause of Failure {-}
 
 We must generate data that satisfies the masking conditions described in
-Section \ref{sec:candmod}.
+Section \ref{candmod}.
 There are many ways to satisfying the masking conditions. We choose the simplest
 method, which we call the *Bernoulli candidate set model*. In this model, each
 non-failed component is included in the candidate set with
@@ -1500,7 +1496,7 @@ Here is an outline of the simulation study for a particular scenario:
    desired range.
 
 2. Simulate $R \geq 300$ datasets from the Data Generating Process (DGP) described in
-   Section \ref{sec:data_gen} and compute an MLE for each dataset. We choose $R$ to be
+   Section \ref{data_gen} and compute an MLE for each dataset. We choose $R$ to be
    large enough so that the sampling distribution of the MLE is well approximated by
    the empirical distribution of the $R$ MLEs.
 
@@ -1518,7 +1514,7 @@ Here is an outline of the simulation study for a particular scenario:
    
 For how we run a simulation scenario, see Appendix C.
 
-## Scenario: Assessing the Impact of Right-Censoring {#sec:effect-censoring}
+## Scenario: Assessing the Impact of Right-Censoring {#effect-censoring}
 
 In this scenario, we use the well-designed series system described in Table \ref{tab:series-sys},
 and we vary the right-censoring quantile ($q$) from $60\%$ to $100\%$
@@ -1590,7 +1586,7 @@ but quickly diminshes to neglible levels for scale parameters. The estimates for
 parameters never reaches zero, but this is potentially due to masking. At a larger sample
 size, we anticipate the bias in the shape estimates would also decrease to zero.
 
-## Scenario: Assessing the Impact of Sample Size {#sec:effect-samp-size}
+## Scenario: Assessing the Impact of Sample Size {#effect-samp-size}
 
 In this scenario, we use the well-designed series system described in Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
 we fix the right-censoring quantile to $q = 0.825$ (moderate censoring), and we vary the sample
@@ -1649,7 +1645,7 @@ for different sample sizes. In particular, it highlights the sensitivity of the 
 estimates to right-censoring and masking for small sample sizes and the importance of having
 sufficient data to overcome these effects.
 
-## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#sec:p-vs-mttf}
+## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#p-vs-mttf}
 
 In this scenario, we use the well-designed series system described in
 Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (reasonable sample size) and 
@@ -1707,7 +1703,7 @@ The red dashed line indicating the mean of the MLEs remains
 stable across different masking probabilities, only showing a significant positive bias
 when the masking probability $p$ becomes quite significant.
 
-## Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3 {#sec:scale-vs-mttf}
+## Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3 {#scale-vs-mttf}
 
 By Equation \eqref{eq:mttf-weibull}, we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
 when we decrease the scale parameter of a component, we proportionally decrease the MTTF.
@@ -1761,7 +1757,7 @@ and are not affected by the MTTF$_3$. The scale parameters are easier to estimat
 parameters, and so they are less sensitive to changes in scale than the shape parameters, as
 we will show in the next scenario.
 
-## Scenario: Assessing the Impact of Changing the Shape Parameter of Component 3 {#sec:shape3-vary}
+## Scenario: Assessing the Impact of Changing the Shape Parameter of Component 3 {#shape3-vary}
 
 The shape parameter determines the failure characteristics.
 We vary the shape paramenter of component 3 from $0.1$ to $3.5$ and observe the effect
@@ -1836,7 +1832,7 @@ when the sample size is small.
 Since a well-designed system has components with similar failure characteristics, the shape parameters
 should be reasonably aligned. To mitigate the problems with the shape parameters, both from an analytic
 and variability perspective, we may be motivated to use the reduced model that assumes homogeneity
-in the shape parameters, as described in Section \ref{sec:reduced-weibull}. The reduced model offers
+in the shape parameters, as described in Section \ref{reduced-weibull}. The reduced model offers
 interpretability (the series system is itself Weibull) and reduced estimator
 variability (only $m+1$ parameters instead of $2 m$), but it is must adequately describe the data.
 
@@ -1879,14 +1875,14 @@ When we deviate from a well-designed system, the MLE becomes much more sensitive
 more bias, more variability, and less well-calibrated confidence intervals. This is particularly true
 for the shape parameters, which are more sensitive to the data than the scale parameters.
 
-# Simulation Study: Full Weibull Model vs Reduced (Homogenous Shape) Model {#sec:full-vs-reduced}
+# Simulation Study: Full Weibull Model vs Reduced (Homogenous Shape) Model {#full-vs-reduced}
 
-In Section \ref{sec:weibull}, we developed the full model with Weibull
+In Section \ref{weibull}, we developed the full model with Weibull
 components and we conducted a sensitivity analysis of its MLE in
-Section \ref{sec:sim_study}. Here, our focus shifts to a sensitivity
+Section \ref{sim_study}. Here, our focus shifts to a sensitivity
 analysis aimed at understanding when it is appropriate to use the reduced model
 that assumes homogeneity in the shape parameters of the components, as described
-in Section \ref{sec:reduced-weibull}. The reduced model offers interpretability
+in Section \ref{reduced-weibull}. The reduced model offers interpretability
 (the series system is itself Weibull) and reduced estimator variability (only
 $m+1$ parameters instead of $2m$), but it is must adequately describe the data.
 
@@ -2106,7 +2102,11 @@ sensitivity analysis. The techniques presented expand the range of
 applications where component lifetime properties can be inferred
 from system-level data.
 
-# Appendix A: R Code For Log-likelihood Function {-}
+(APPENDIX) Appendix {-}
+=======================
+
+R Code For Log-likelihood Function
+==================================
 
 The following code is the log-likelihood function for the Weibull series system
 with a likelihood model that includes masked component cause of failure and right-censoring.
@@ -2146,7 +2146,8 @@ loglik_wei_series_md_c1_c2_c3 <- function(df, theta) {
 ```
 
 
-# Appendix B: R Code For Score Function {-}
+R Code For Score Function
+=========================
 
 The following code is the score function (gradient of the log-likelihood function with respect to $\v\theta$) for the Weibull series system
 with a likelihood model that includes masked component cause of failure and right-censoring.
@@ -2206,10 +2207,11 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
 }
 ```
 
-# Appendix C: R Code For Simulation of Scenarios {-}
+R Code For Simulation of Scenarios
+==================================
 
 The following code is the Monte-carlo simulation code for running the scenarios
-described in Section \ref{sec:sim_study}.
+described in Section \ref{sim_study}.
 
 ```{r bootstrap-sim-code, eval=FALSE}
 #### Setup simulation parameters here ####
@@ -2380,7 +2382,8 @@ for (scale3 in scales3) {
 ```
 
 
-# Appendix D: Bernoulli Candidate Set Model {-#app:cand-model}
+Bernoulli Candidate Set Model {#app-cand-model}
+=============================
 
 ```{r, eval = FALSE}
 #' Bernoulli candidate set model is a particular type of *uninformed* model.
@@ -2409,7 +2412,8 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 }
 ```
 
-# Appendix E: Series System Quantile Function {-#app:series-quantile}
+Series System Quantile Function {#app-series-quantile}
+===============================
 
 ```{r, eval=FALSE}
 #' Quantile function (inverse of the cdf).
@@ -2437,7 +2441,8 @@ qwei_series <- function(p, shapes, scales) {
 ```
 
 
-# Appendix F: Likelihood Ratio Test {-#app:lrt}
+Likelihood Ratio Test {#app-lrt}
+================================
 
 In order to determine if a reduced model (e.g., Weibull series system in
 which all of the shape parameters are homogeneous) is appropriate,
@@ -2460,3 +2465,6 @@ $$
 If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
 degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, where $\alpha$ denotes the significance level, then
 we find the data to be incompatible with the null hypothesis $H_0$.
+
+References
+==========

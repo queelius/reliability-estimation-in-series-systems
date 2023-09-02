@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>7 Simulation Study: Full Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+  <meta name="description" content="7 Simulation Study: Full Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="7 Simulation Study: Full Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="7 Simulation Study: Full Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  
+  
+  
+
+<meta name="author" content="Alex Towell" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="weibull.html"/>
+<link rel="next" href="full-vs-reduced.html"/>
+<style type="text/css">
+p.abstract{
+  text-align: center;
+  font-weight: bold;
+}
+div.abstract{
+  margin: auto;
+  width: 90%;
+}
+</style>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="statmod.html"><a href="statmod.html"><i class="fa fa-check"></i><b>2</b> Series System Model</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="statmod.html"><a href="statmod.html#comp_cause"><i class="fa fa-check"></i><b>2.1</b> Component Cause of Failure</a></li>
+<li class="chapter" data-level="2.2" data-path="statmod.html"><a href="statmod.html#reliability"><i class="fa fa-check"></i><b>2.2</b> System and Component Reliabilities</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="like_model.html"><a href="like_model.html"><i class="fa fa-check"></i><b>3</b> Likelihood Model for Masked Data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="like_model.html"><a href="like_model.html#candmod"><i class="fa fa-check"></i><b>3.1</b> Masked Component Cause of Failure</a>
+<ul>
+<li class="chapter" data-level="" data-path="like_model.html"><a href="like_model.html#probability-of-component-cause-of-system-failure"><i class="fa fa-check"></i>Probability of Component Cause of System Failure</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="like_model.html"><a href="like_model.html#right-censored-data"><i class="fa fa-check"></i><b>3.2</b> Right-Censored Data</a></li>
+<li class="chapter" data-level="3.3" data-path="like_model.html"><a href="like_model.html#identifiability-and-convergence-issues"><i class="fa fa-check"></i><b>3.3</b> Identifiability and Convergence Issues</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="mle.html"><a href="mle.html"><i class="fa fa-check"></i><b>4</b> Maximum Likelihood Estimation</a></li>
+<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="boot.html"><a href="boot.html#issues-with-resampling-from-the-observed-data"><i class="fa fa-check"></i><b>5.1</b> Issues with Resampling from the Observed Data</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="weibull.html"><a href="weibull.html"><i class="fa fa-check"></i><b>6</b> Series System with Weibull Components</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="weibull.html"><a href="weibull.html#reliability-1"><i class="fa fa-check"></i><b>6.1</b> Reliability</a></li>
+<li class="chapter" data-level="6.2" data-path="weibull.html"><a href="weibull.html#sys_weibull_likelihood"><i class="fa fa-check"></i><b>6.2</b> Likelihood Model</a></li>
+<li class="chapter" data-level="6.3" data-path="weibull.html"><a href="weibull.html#reduced-weibull"><i class="fa fa-check"></i><b>6.3</b> Weibull Series System: Homogeneous Shape Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="sim_study.html"><a href="sim_study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Full Model</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="sim_study.html"><a href="sim_study.html#data_gen"><i class="fa fa-check"></i><b>7.1</b> Data Generating Process</a>
+<ul>
+<li class="chapter" data-level="" data-path="sim_study.html"><a href="sim_study.html#series-system-lifetime"><i class="fa fa-check"></i>Series System Lifetime</a></li>
+<li class="chapter" data-level="" data-path="sim_study.html"><a href="sim_study.html#right-censoring-model"><i class="fa fa-check"></i>Right-Censoring Model</a></li>
+<li class="chapter" data-level="" data-path="sim_study.html"><a href="sim_study.html#masking-model-for-component-cause-of-failure"><i class="fa fa-check"></i>Masking Model for Component Cause of Failure</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="sim_study.html"><a href="sim_study.html#simulation-scenarios"><i class="fa fa-check"></i><b>7.2</b> Simulation Scenarios</a></li>
+<li class="chapter" data-level="7.3" data-path="sim_study.html"><a href="sim_study.html#effect-censoring"><i class="fa fa-check"></i><b>7.3</b> Scenario: Assessing the Impact of Right-Censoring</a>
+<ul>
+<li class="chapter" data-level="" data-path="sim_study.html"><a href="sim_study.html#key-observations"><i class="fa fa-check"></i>Key Observations</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="sim_study.html"><a href="sim_study.html#effect-samp-size"><i class="fa fa-check"></i><b>7.4</b> Scenario: Assessing the Impact of Sample Size</a>
+<ul>
+<li class="chapter" data-level="" data-path="sim_study.html"><a href="sim_study.html#key-observations-1"><i class="fa fa-check"></i>Key Observations</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="sim_study.html"><a href="sim_study.html#p-vs-mttf"><i class="fa fa-check"></i><b>7.5</b> Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure</a>
+<ul>
+<li class="chapter" data-level="" data-path="sim_study.html"><a href="sim_study.html#key-observations-2"><i class="fa fa-check"></i>Key Observations</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="sim_study.html"><a href="sim_study.html#scale-vs-mttf"><i class="fa fa-check"></i><b>7.6</b> Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3</a>
+<ul>
+<li class="chapter" data-level="" data-path="sim_study.html"><a href="sim_study.html#key-observations-3"><i class="fa fa-check"></i>Key Observations</a></li>
+</ul></li>
+<li class="chapter" data-level="7.7" data-path="sim_study.html"><a href="sim_study.html#shape3-vary"><i class="fa fa-check"></i><b>7.7</b> Scenario: Assessing the Impact of Changing the Shape Parameter of Component 3</a></li>
+<li class="chapter" data-level="7.8" data-path="sim_study.html"><a href="sim_study.html#implications-and-recommendations"><i class="fa fa-check"></i><b>7.8</b> Implications and Recommendations</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="full-vs-reduced.html"><a href="full-vs-reduced.html"><i class="fa fa-check"></i><b>8</b> Simulation Study: Full Weibull Model vs Reduced (Homogenous Shape) Model</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="full-vs-reduced.html"><a href="full-vs-reduced.html#implications-and-recommendations-1"><i class="fa fa-check"></i><b>8.1</b> Implications and Recommendations</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="future-work.html"><a href="future-work.html"><i class="fa fa-check"></i><b>9</b> Future Work</a></li>
+<li class="chapter" data-level="10" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>10</b> Conclusion</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="r-code-for-log-likelihood-function.html"><a href="r-code-for-log-likelihood-function.html"><i class="fa fa-check"></i><b>A</b> R Code For Log-likelihood Function</a></li>
+<li class="chapter" data-level="B" data-path="r-code-for-score-function.html"><a href="r-code-for-score-function.html"><i class="fa fa-check"></i><b>B</b> R Code For Score Function</a></li>
+<li class="chapter" data-level="C" data-path="r-code-for-simulation-of-scenarios.html"><a href="r-code-for-simulation-of-scenarios.html"><i class="fa fa-check"></i><b>C</b> R Code For Simulation of Scenarios</a></li>
+<li class="chapter" data-level="D" data-path="app-cand-model.html"><a href="app-cand-model.html"><i class="fa fa-check"></i><b>D</b> Bernoulli Candidate Set Model</a></li>
+<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a></li>
+<li class="chapter" data-level="F" data-path="app-lrt.html"><a href="app-lrt.html"><i class="fa fa-check"></i><b>F</b> Likelihood Ratio Test</a></li>
+<li class="chapter" data-level="G" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>G</b> References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="sim_study" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">7</span> Simulation Study: Full Model<a href="sim_study.html#sim_study" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this section, we conduct a simulation study to assess the performance
+of the MLE for the full likelihood model defined in Section .
+In this simulation study, we assess the sensitivity of the MLE to
+various simulation scenarios. In particular, we assess two important
+properties of the MLE with respect to a scenario:</p>
+<ol style="list-style-type: decimal">
+<li><p>Accuracy (Bias): How close is the expected value of the MLE to the true
+parameter values? If the expected value of the MLE is close to the true
+parameter values, the accuracy is high.</p></li>
+<li><p>Precision: How much does the MLE vary from sample to sample? We measure
+this by assessing the 95% confidence intervals (BCa, Bias-Corrected and
+accelerated). If the confidence intervals are both small and have good
+coverage probability (the proportion of confidence intervals that contain
+the true parameter values), then the MLE is precise.</p></li>
+</ol>
+<p>We begin by specifying the parameters of the series system that will be
+the central object of our simulation study. We consider the data in
+<span class="citation">Guo, Niu, and Szidarovszky (<a href="#ref-Huairu-2013" role="doc-biblioref">2013</a>)</span>, in which they study the reliability of a series system with
+three components. They fit Weibull components in a series configuration to
+the data, resulting in an MLE with shape and scale estimates given by the
+first three components in Table . To make the model
+slightly more complex, we add two more components to this series system,
+with shape and scale parameters given by the last two components in Table
+. We will refer to this system as the <strong>base</strong> system.</p>
+<p>In Section , we defined a well-designed series
+system as one that consists of components with similar reliabilities, where we define
+reliability in two ways, the mean time to failure (MTTF) and the probability that a
+specific component will be the cause of failure. All things else being equal,
+components with long MTTFs and with near uniform probability of being the component
+cause of failure is preferrable, otherwise we have a weak link in the system.</p>
+<p>The base system defined in Table  satisfies this definition
+of being a well-designed system. We see that there are no components that are
+significantly less reliable than any of the others, component 1 being the most reliable
+and component 3 being the least reliable. This is a result of the scales and shapes
+being similar for each component. In addition, the shapes are larger than <span class="math inline">\(1\)</span>, which
+means components are unlikely to fail early.</p>
+<table>
+<caption>
+<span id="tab:series-sys">Table 7.1: </span>Weibull Components in Series Configuration
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Shape (<span class="math inline">\(k_j\)</span>)
+</th>
+<th style="text-align:right;">
+Scale (<span class="math inline">\(\lambda_j\)</span>)
+</th>
+<th style="text-align:right;">
+MTTF<span class="math inline">\(_j\)</span>
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(\Pr\{K_i = j\}\)</span>
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(R_j(\tau;k_j,\lambda_j)\)</span>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Component 1
+</td>
+<td style="text-align:right;">
+1.2576
+</td>
+<td style="text-align:right;">
+994.3661
+</td>
+<td style="text-align:right;">
+924.869
+</td>
+<td style="text-align:right;">
+0.169
+</td>
+<td style="text-align:right;">
+0.744
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Component 2
+</td>
+<td style="text-align:right;">
+1.1635
+</td>
+<td style="text-align:right;">
+908.9458
+</td>
+<td style="text-align:right;">
+862.157
+</td>
+<td style="text-align:right;">
+0.207
+</td>
+<td style="text-align:right;">
+0.698
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Component 3
+</td>
+<td style="text-align:right;">
+1.1308
+</td>
+<td style="text-align:right;">
+840.1141
+</td>
+<td style="text-align:right;">
+803.564
+</td>
+<td style="text-align:right;">
+0.234
+</td>
+<td style="text-align:right;">
+0.667
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Component 4
+</td>
+<td style="text-align:right;">
+1.1802
+</td>
+<td style="text-align:right;">
+940.1342
+</td>
+<td style="text-align:right;">
+888.237
+</td>
+<td style="text-align:right;">
+0.196
+</td>
+<td style="text-align:right;">
+0.711
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Component 5
+</td>
+<td style="text-align:right;">
+1.2034
+</td>
+<td style="text-align:right;">
+923.1631
+</td>
+<td style="text-align:right;">
+867.748
+</td>
+<td style="text-align:right;">
+0.195
+</td>
+<td style="text-align:right;">
+0.711
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Series System
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+222.884
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0.175
+</td>
+</tr>
+</tbody>
+</table>
+<div id="data_gen" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Data Generating Process<a href="sim_study.html#data_gen" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this section, we describe the data generating process for our simulation studies.
+It consists of three parts: the series system, the candidate set model, and the
+right-censoring model.</p>
+<div id="series-system-lifetime" class="section level3 unnumbered hasAnchor" number="">
+<h3>Series System Lifetime<a href="sim_study.html#series-system-lifetime" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We generate data from a Weibull series system with <span class="math inline">\(m\)</span> components.
+As described in Section , the <span class="math inline">\(j\)</span> component
+of the <span class="math inline">\(i\)</span> system has a lifetime distribution given by
+<span class="math display">\[
+    T_{i j} \sim \operatorname{WEI}(k_j, \lambda_j)
+\]</span>
+and the lifetime of the series system composed of <span class="math inline">\(m\)</span> Weibull components
+is defined as
+<span class="math display">\[
+    T_i = \min\{T_{i 1}, \ldots, T_{i m}\}.
+\]</span>
+To generate a data set, we first generate the <span class="math inline">\(m\)</span> component failure times,
+by efficiently sampling from their respective distributions, and we then set
+the failure time <span class="math inline">\(t_i\)</span> of the system to the minimum of the component failure times.</p>
+</div>
+<div id="right-censoring-model" class="section level3 unnumbered hasAnchor" number="">
+<h3>Right-Censoring Model<a href="sim_study.html#right-censoring-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We employ a simple right-censoring model, where the right-censoring time
+<span class="math inline">\(\tau\)</span> is fixed at some known value, e.g., an experiment is run for a fixed
+amount of time <span class="math inline">\(\tau\)</span>, and all systems that have not failed by the end of the
+experiment are right-censored. The censoring time <span class="math inline">\(S_i\)</span> of the
+<span class="math inline">\(i\)</span> system is thus given by
+<span class="math display">\[
+    S_i = \min\{T_i, \tau\}.
+\]</span>
+So, after we generate the system failure time <span class="math inline">\(T_i\)</span>, we generate the censoring
+time <span class="math inline">\(S_i\)</span> by taking the minimum of <span class="math inline">\(T_i\)</span> and <span class="math inline">\(\tau\)</span>.
+In our simulation study, we paramaterize the right-censoring time <span class="math inline">\(\tau\)</span> by the
+quantile <span class="math inline">\(q = 0.825\)</span> of the series system,
+<span class="math display">\[
+    \tau = F_{T_i}^{-1}(q).
+\]</span>
+This means that <span class="math inline">\(82.5\%\)</span> of the series systems are expected to fail before time <span class="math inline">\(\tau\)</span>
+and <span class="math inline">\(17.5\%\)</span> of the series are expected to be right-censored. To solve for the <span class="math inline">\(82.5\%\)</span>
+quantile of the series system, we define the function <span class="math inline">\(g\)</span> as
+<span class="math display">\[
+g(\tau) = F_{T_i}(\tau;\v\theta) - q
+\]</span>
+and find its root using the Newton-Raphson method. See Appendix E for the R code that
+implements this procedure.</p>
+</div>
+<div id="masking-model-for-component-cause-of-failure" class="section level3 unnumbered hasAnchor" number="">
+<h3>Masking Model for Component Cause of Failure<a href="sim_study.html#masking-model-for-component-cause-of-failure" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We must generate data that satisfies the masking conditions described in
+Section .
+There are many ways to satisfying the masking conditions. We choose the simplest
+method, which we call the <em>Bernoulli candidate set model</em>. In this model, each
+non-failed component is included in the candidate set with
+a fixed probability <span class="math inline">\(p\)</span>, independently of all other components and independently
+of <span class="math inline">\(\v\theta\)</span>, and the failed component is always included in the candidate set.
+See Appendix D for the R code that implements this model.</p>
+</div>
+</div>
+<div id="simulation-scenarios" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Simulation Scenarios<a href="sim_study.html#simulation-scenarios" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We define a simulation scenario to be some combination of <span class="math inline">\(n\)</span> (sample size),
+<span class="math inline">\(p\)</span> (masking probability in our Bernoulli candidate set model), <span class="math inline">\(k_3\)</span>
+(shape parameter of the third component), <span class="math inline">\(\lambda_3\)</span> (scale parameter of the
+third component), and <span class="math inline">\(q\)</span> (right-censoring quantile). We are interested in
+choosing a small number of scenarios that are representative of real-world
+scenarios and that are interesting to analyze.</p>
+<p>Here is an outline of the simulation study for a particular scenario:</p>
+<ol style="list-style-type: decimal">
+<li><p>Fix a combination of simulation parameters to some value, and vary the remaining
+parameters. For example, if we want to assess how the sampling distribution of
+the MLE changes with respect to sample size, we might choose some particular
+values for <span class="math inline">\(p\)</span>, <span class="math inline">\(k_3\)</span>, <span class="math inline">\(\lambda_3\)</span>, and <span class="math inline">\(q\)</span>, and vary the sample size <span class="math inline">\(n\)</span> over the
+desired range.</p></li>
+<li><p>Simulate <span class="math inline">\(R \geq 300\)</span> datasets from the Data Generating Process (DGP) described in
+Section  and compute an MLE for each dataset. We choose <span class="math inline">\(R\)</span> to be
+large enough so that the sampling distribution of the MLE is well approximated by
+the empirical distribution of the <span class="math inline">\(R\)</span> MLEs.</p></li>
+<li><p>For each of these <span class="math inline">\(R\)</span> MLEs, compute some function of the MLE, like the BCa confidence
+intervals or the likelihood ratio test statistic. This will give us <span class="math inline">\(R\)</span> statistics
+as a Monte-carlo estimate of the sampling distribution of the statistic.</p></li>
+<li><p>Use the <span class="math inline">\(R\)</span> statistics to estimate some property of the sampling distribution of the
+statistic, e.g., the mean of the MLE or the coverage probability of the BCa confidence
+intervals, with respect to the parameter(s) we are varying in the scenario, e.g.,
+assess how the coverage probability of the BCa confidence intervals changes with
+respect to sample size.</p></li>
+<li><p>Visualize the results and assess the behavior of estimator under the chosen scenario.</p></li>
+</ol>
+<p>For how we run a simulation scenario, see Appendix C.</p>
+</div>
+<div id="effect-censoring" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Scenario: Assessing the Impact of Right-Censoring<a href="sim_study.html#effect-censoring" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this scenario, we use the well-designed series system described in Table ,
+and we vary the right-censoring quantile (<span class="math inline">\(q\)</span>) from <span class="math inline">\(60\%\)</span> to <span class="math inline">\(100\%\)</span>
+(no right-censoring), with a component cause of failure masking
+probability of <span class="math inline">\(21.5\%\)</span> and sample size <span class="math inline">\(n = 100\)</span>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:q-vs-stats"></span>
+<embed src="image/5_system_tau_fig.pdf" title="Right-Censoring Quantile vs MLE ($p = 0.215, n = 100$)" width="100%" type="application/pdf" />
+<p class="caption">
+Figure 7.1: Right-Censoring Quantile vs MLE (<span class="math inline">\(p = 0.215, n = 100\)</span>)
+</p>
+</div>
+<p>When a right-censoring event occurs, in order to increase the likelihood of the data, the MLE
+is nudged in a direction that increases the probability of a right-censoring event at time <span class="math inline">\(\tau\)</span>,
+which is given by <span class="math inline">\(R_{T_i}(t;\v\theta)\)</span>, representing a source of bias in the estimate.</p>
+<p>To increase <span class="math inline">\(R_{T_i}(\tau)\)</span>, we move in the direction (gradient) of these partial derivatives.
+The partial derivatives of <span class="math inline">\(R_{T_i}(\tau)\)</span>
+are given by
+<span class="math display">\[\begin{align*}
+\frac{\partial R_{T_i}(\tau)}{\partial \lambda_j} &amp;= R_{T_i}(\tau;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \frac{k_j}{\lambda_j},\\
+\frac{\partial R_{T_i}(\tau)}{\partial k_j}       &amp;= R_{T_i}(\tau;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \left(\log \lambda_j - \log \tau\right),
+\end{align*}\]</span>
+for <span class="math inline">\(j = 1, \ldots, m\)</span>. We see that these partial derivatives are related to the score of a right-censored likelihood contribution in
+Theorem . Let us analyze these partial derivatives:</p>
+<ul>
+<li><p>As <span class="math inline">\(\tau\)</span> increases, <span class="math inline">\(R_{T_i}(\tau;\v\theta)\)</span> decreases, and so the effect right-censoring has on the MLE decreases. This is what we see in
+Figure .</p></li>
+<li><p>The partial derivatives with respect to the scale parameters are always positive, so right-censoring positively bias the scale parameter
+estimates to make right-censoring events more likely. The more right-censoring, the more the positive bias. We see this in Figure
+, where the bias of the MLE for the scale parameter decreases as we decrease the probability (<span class="math inline">\(1-q\)</span>) of a right-censoring event.</p></li>
+<li><p>The partial derivative with respect to the shape parameter of the <span class="math inline">\(j\)</span> component, <span class="math inline">\(k_j\)</span>, is
+non-negative if <span class="math inline">\(\lambda_j \geq \tau\)</span> and otherwise negative. In our well-designed series system, the scale parameters
+are large compared to most of the right-censoring times for <span class="math inline">\(\tau(q)\)</span>, so the MLE nudges the shape parameter estimates
+in a positive direction to increase the probability of a right-censoring event <span class="math inline">\(R_{T_i}(\tau)\)</span> at time <span class="math inline">\(\tau\)</span>. We see this
+in Figure , where the shape parameter estimates are positively biased for most of the quantiles
+<span class="math inline">\(q\)</span>.</p></li>
+</ul>
+<div id="key-observations" class="section level3 unnumbered hasAnchor" number="">
+<h3>Key Observations<a href="sim_study.html#key-observations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="coverage-probability-cp" class="section level5 unnumbered hasAnchor" number="">
+<h5>Coverage Probability (CP)<a href="sim_study.html#coverage-probability-cp" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The CP is well-calibrated, obtaining a value near the
+nominal 95% level across different right-censoring quantiles. This suggests that the
+bootstrapped CIs will contain the true value of the parameters with the specified confidence
+level. The CIs are neither too wide nor too narrow.</p>
+</div>
+<div id="dispersion-of-mles" class="section level5 unnumbered hasAnchor" number="">
+<h5>Dispersion of MLEs<a href="sim_study.html#dispersion-of-mles" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The shaded regions representing the 95% probability range of
+the MLEs get narrower as the right-censoring quantile increases. This is an indicator of the
+increased precision in the estimates as more data is available due to decreased
+censoring.</p>
+</div>
+<div id="iqr-of-bootstrapped-cis" class="section level5 unnumbered hasAnchor" number="">
+<h5>IQR of Bootstrapped CIs<a href="sim_study.html#iqr-of-bootstrapped-cis" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The IQR (vertical blue bars) reduces with an increase in
+sample size. This suggests that the bootstrapped CIs are getting more consistent and
+focused around a narrower range with larger samples while maintaining a good coverage
+probability. As we get more data, the bootstrapped CIs are more likely to be closer
+to each other and the true value of the parameters.</p>
+<p>For small right-censoring quantiles (small right-censoring times), they are quite
+large, but to maintain well-calibrated CIs, this was necessary. The estimator is quite
+sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
+sensitivity when the sample contains insufficient information due to censoring.</p>
+</div>
+<div id="bias-of-mles" class="section level5 unnumbered hasAnchor" number="">
+<h5>Bias of MLEs<a href="sim_study.html#bias-of-mles" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The red dashed line indicating the mean of MLEs initially is quite biased,
+but quickly diminshes to neglible levels for scale parameters. The estimates for the shape
+parameters never reaches zero, but this is potentially due to masking. At a larger sample
+size, we anticipate the bias in the shape estimates would also decrease to zero.</p>
+</div>
+</div>
+</div>
+<div id="effect-samp-size" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Scenario: Assessing the Impact of Sample Size<a href="sim_study.html#effect-samp-size" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this scenario, we use the well-designed series system described in Table . We fix the masking probability to <span class="math inline">\(p = 0.215\)</span> (moderate masking),
+we fix the right-censoring quantile to <span class="math inline">\(q = 0.825\)</span> (moderate censoring), and we vary the sample
+size <span class="math inline">\(n\)</span> from <span class="math inline">\(50\)</span> (small sample size) to <span class="math inline">\(1000\)</span> (very large sample size).</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:samp-size-n-vs-stats"></span>
+<embed src="image/5_system_samp_size_fig.pdf" title="Sample Size vs MLEs ($p = 0.215, q = 0.825$)" width="100%" type="application/pdf" />
+<p class="caption">
+Figure 7.2: Sample Size vs MLEs (<span class="math inline">\(p = 0.215, q = 0.825\)</span>)
+</p>
+</div>
+<p>In Figure , we show the effect of the sample size <span class="math inline">\(n\)</span> on the MLEs
+for the shape and scale parameters. The top four plots only show the effect on the MLEs for the
+shape and scale parameters of components <span class="math inline">\(1\)</span> and <span class="math inline">\(4\)</span>, since the rest were essentially identical,
+and the bottom two plots show the coverage probabilities for all parameters.</p>
+<div id="key-observations-1" class="section level3 unnumbered hasAnchor" number="">
+<h3>Key Observations<a href="sim_study.html#key-observations-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="coverage-probability-cp-the-cp-is-well-calibrated-obtaining-a-value-near-the" class="section level5 hasAnchor" number="7.4.0.0.1">
+<h5><span class="header-section-number">7.4.0.0.1</span> Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the<a href="sim_study.html#coverage-probability-cp-the-cp-is-well-calibrated-obtaining-a-value-near-the" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>nominal <span class="math inline">\(95\%\)</span> level across different sample sizes. This suggests that the bootstrapped
+CIs will contain the true value of the shape parameter with the specified confidence
+level. The CIs are neither too wide nor too narrow.</p>
+</div>
+<div id="dispersion-of-mles-1" class="section level5 unnumbered hasAnchor" number="">
+<h5>Dispersion of MLEs<a href="sim_study.html#dispersion-of-mles-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The shaded regions representing the <span class="math inline">\(95\%\)</span> probability range of
+the MLEs get narrower as the sample size increases. This is an indicator of the
+increased precision in the estimates when provided with more data. This is consistent
+with the asymptotic properties of the MLE when the regularity conditions are satisfied,
+e.g., converges in probability to the true value of the parameter as <span class="math inline">\(n\)</span> goes to infinity.</p>
+</div>
+<div id="iqr-of-bootstrapped-cis-1" class="section level5 unnumbered hasAnchor" number="">
+<h5>IQR of Bootstrapped CIs<a href="sim_study.html#iqr-of-bootstrapped-cis-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The IQR (vertical blue bars) reduces with an increase in
+sample size. This suggests that the bootstrapped CIs are getting more consistent and
+focused around a narrower range with larger samples while maintaining a good coverage
+probability. As we get more data, the bootstrapped CIs are more likely to be closer
+to each other and the true value of the scale parameter.</p>
+<p>For small sample sizes, they are quite large, but to maintain well-calibrated CIs, this
+was necessary. The estimator is quite sensitive to the data, and so the bootstrapped
+CIs are quite wide to account for this sensitivity when the sample size is small and
+not necessarily representative of the true distribution.</p>
+</div>
+<div id="bias-of-mles-for-scales" class="section level5 unnumbered hasAnchor" number="">
+<h5>Bias of MLEs for Scales<a href="sim_study.html#bias-of-mles-for-scales" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The red dashed line indicating the mean of MLEs remains stable across
+different sample sizes and close to the true value, suggesting that the scale MLEs are
+reasonably unbiased.</p>
+</div>
+<div id="bias-of-mles-for-shapes" class="section level5 unnumbered hasAnchor" number="">
+<h5>Bias of MLEs for Shapes<a href="sim_study.html#bias-of-mles-for-shapes" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The red dashed line is the mean of shape MLEs. Unlike the scale MLEs,
+we see that for small samples, particularly less than <span class="math inline">\(200\)</span>, we observe a significant
+amount of positive bias for shape MLEs. The MLE for the shape parameters in this
+scenario appear to be more sensitive to the data than the scale parameters.</p>
+<p>This scenario successfully illustrates the importance of sample size in estimating parameters.
+The findings align with statistical theory and provide insights into the behavior of these estimators
+for different sample sizes. In particular, it highlights the sensitivity of the shape parameter
+estimates to right-censoring and masking for small sample sizes and the importance of having
+sufficient data to overcome these effects.</p>
+</div>
+</div>
+</div>
+<div id="p-vs-mttf" class="section level2 hasAnchor" number="7.5">
+<h2><span class="header-section-number">7.5</span> Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure<a href="sim_study.html#p-vs-mttf" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this scenario, we use the well-designed series system described in
+Table . We fix the sample size to <span class="math inline">\(n = 90\)</span> (reasonable sample size) and
+we fix the right-censoring quantile to <span class="math inline">\(q = 0.825\)</span>, and we vary the masking probability
+from <span class="math inline">\(p\)</span> from <span class="math inline">\(0.1\)</span> (very slight masking the component cause of failure) to <span class="math inline">\(0.85\)</span>
+(extreme masking of the component cause of failure).</p>
+<p>In Figure , we show the effect of the masking probability
+<span class="math inline">\(p\)</span> on the MLE for the shape and scale parameters. The top four plots only show the effect
+on the MLEs for the the shape and scale parameters of components <span class="math inline">\(1\)</span> and <span class="math inline">\(4\)</span>, since the
+rest were essentially identical, and the bottom two plots show the coverage probabilities for
+all parameters.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:masking-prob-vs-stats"></span>
+<embed src="image/5_system_prob_fig.pdf" title="Component Cause of Failure Masking ($p$) vs MLE" type="application/pdf" />
+<p class="caption">
+Figure 7.3: Component Cause of Failure Masking (<span class="math inline">\(p\)</span>) vs MLE
+</p>
+</div>
+<div id="key-observations-2" class="section level3 unnumbered hasAnchor" number="">
+<h3>Key Observations<a href="sim_study.html#key-observations-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="coverage-probability-cp-1" class="section level5 unnumbered hasAnchor" number="">
+<h5>Coverage Probability (CP)<a href="sim_study.html#coverage-probability-cp-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>For the scale parameters, the <span class="math inline">\(95\%\)</span> CI is well-calibrated
+for Bernulli masking probabilities up to <span class="math inline">\(p = 0.725\)</span>, which is really quite significant,
+obtaining coverages over <span class="math inline">\(90\%\)</span>, but drops precipitously after that point.<br />
+For the shape parameters, the <span class="math inline">\(95\%\)</span> CI is well-calibrated for masking probabilities only
+up to <span class="math inline">\(p = 0.4\)</span>, which is still large, obtaining coverages generally over <span class="math inline">\(90%\)</span>, but
+begins to drop slowly after that point.</p>
+<p>The BCa confidence intervals are well-calibrated for most realistic
+masking probabilities, constructing CIs that are neither too wide nor too narrow,
+but when the masking is severe and the sample size is small, one should
+take the CIs with a grain of salt.</p>
+</div>
+<div id="dispersion-of-mles-2" class="section level5 unnumbered hasAnchor" number="">
+<h5>Dispersion of MLEs<a href="sim_study.html#dispersion-of-mles-2" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The shaded regions representing the <span class="math inline">\(95\%\)</span> quantile of
+the MLEs become wider as the masking probability increases. This is an indicator of the
+decreased precision in the estimates when provided with more ambiguous data about the
+component cause of failure. However, even for fairly significant Bernoulli masking,
+<span class="math inline">\(p \leq 0.55\)</span>, the <span class="math inline">\(95\%\)</span> quantiles are narrow and the CP is
+well-calibrated, indicating that the MLEs are still precise and accurate.</p>
+</div>
+<div id="iqr-of-bootstrapped-cis-2" class="section level5 unnumbered hasAnchor" number="">
+<h5>IQR of Bootstrapped CIs<a href="sim_study.html#iqr-of-bootstrapped-cis-2" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The IQR (vertical blue bars) show that the bootstrapped BCa
+CIs are becoming more spread out as the masking probability increases. They are also
+asymmetric, with the lower bound being more spread out than the upper bound, but this
+is consistent with the actual behavior of the dispersion of the MLEs, which exhibits
+the same pattern. The width of the CIs consistently increase as the masking probability
+increases, which we intuitively expected given the increased uncertanity about the
+component cause of failure.
+After a Bernoulli masking probability of <span class="math inline">\(p \approx 0.5\)</span>, the width of the CIs rapidly increase,
+which is apparently necessary for the CPs to remain well-calibrated.</p>
+</div>
+<div id="bias-of-mles-1" class="section level5 unnumbered hasAnchor" number="">
+<h5>Bias of MLEs<a href="sim_study.html#bias-of-mles-1" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The red dashed line indicating the mean of the MLEs remains
+stable across different masking probabilities, only showing a significant positive bias
+when the masking probability <span class="math inline">\(p\)</span> becomes quite significant.</p>
+</div>
+</div>
+</div>
+<div id="scale-vs-mttf" class="section level2 hasAnchor" number="7.6">
+<h2><span class="header-section-number">7.6</span> Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3<a href="sim_study.html#scale-vs-mttf" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>By Equation , we see that MTTF<span class="math inline">\(_j\)</span> is proportional to the scale parameter <span class="math inline">\(\lambda_j\)</span>, which means
+when we decrease the scale parameter of a component, we proportionally decrease the MTTF.
+In this scenario, we start with the well-designed series system described in Table ,
+and we will manipulate the MTTF of component 3, MTTF<span class="math inline">\(_3\)</span>, by changing its
+scale parameter, <span class="math inline">\(\lambda_3\)</span>, and observing the effect this has on the MLE. Since the other components
+had a similiar MTTF, we will arbitrarily choose component 1 to represent the other components.
+The bottom plot shows the coverage probabilities for all parameters.</p>
+<p>In Figure , we show the effect of changing the scale parameter of component <span class="math inline">\(3\)</span>, <span class="math inline">\(lambda_3\)</span>,
+but map <span class="math inline">\(\lambda_3\)</span> to MTTF<span class="math inline">\(_3\)</span> to make it more intuitive to reason about. We vary the MTTF of component 3
+from <span class="math inline">\(300\)</span> to <span class="math inline">\(1500\)</span> and the other components have their MTTFs fixed at around <span class="math inline">\(900\)</span>, as shown in
+Table . We fix the masking probability to <span class="math inline">\(p = 0.215\)</span> (moderate masking),
+the right-censoring quantile to <span class="math inline">\(q = 0.825\)</span> (moderate censoring), and the sample size to <span class="math inline">\(n = 100\)</span> (moderate sample size).</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:mttf-vs-ci"></span>
+<embed src="image/5_system_mttf3_by_scale3.pdf" title="MTTF$_3$ vs MLE By Varying Scale" type="application/pdf" />
+<p class="caption">
+Figure 7.4: MTTF<span class="math inline">\(_3\)</span> vs MLE By Varying Scale
+</p>
+</div>
+<div id="key-observations-3" class="section level3 unnumbered hasAnchor" number="">
+<h3>Key Observations<a href="sim_study.html#key-observations-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="coverage-probability-cp-2" class="section level5 unnumbered hasAnchor" number="">
+<h5>Coverage Probability (CP)<a href="sim_study.html#coverage-probability-cp-2" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>When MTTF of component 3 is much smaller than other components,
+the CP for <span class="math inline">\(k_3\)</span> is very well calibrated (approximately obtaining the nominal level <span class="math inline">\(95\%\)</span>)
+while the CP for other componentns are around <span class="math inline">\(90\%\)</span>, which is still reasonable.
+(This is the case even though the width of the CI for <span class="math inline">\(k_3\)</span> is extremely narrow compared to the others).
+As MTTF<span class="math inline">\(_3\)</span> increases, the CP for <span class="math inline">\(k_3\)</span> decreases, while the CP for the other components increase
+slightly. The scale parameters are generally well-calibrated for all of the components, except
+for component 3 when its MTTF is large and it dips down to <span class="math inline">\(90\%\)</span>. Despite the individual differences,
+the mean of the CPs for shape and scale parameters hardly change.</p>
+</div>
+<div id="dispersion-of-mles-3" class="section level5 unnumbered hasAnchor" number="">
+<h5>Dispersion of MLEs<a href="sim_study.html#dispersion-of-mles-3" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>For component 3, as its MTTF decreases, the dispersion of MLEs narrows,
+indicating more precise estimates. Conversely, dispersion for other components widens. As MTTF
+of component 3 increases, its dispersion widens while others narrow. This is consistent with
+the fact that the smaller MTTF of component 3 means that, in this well-designed system at least,
+it is more likely to be the component cause of failure, and so we have more information about
+its parameters and are able to estimate them more accurately.</p>
+</div>
+<div id="iqr-of-bootstrapped-cis-3" class="section level5 unnumbered hasAnchor" number="">
+<h5>IQR of Bootstrapped CIs<a href="sim_study.html#iqr-of-bootstrapped-cis-3" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The dark blue vertical lines representing IQR are consistent with the dispersion of MLEs,
+which is the ideal behavior, and suggests that the BCa confidence intervals are performing well.</p>
+</div>
+<div id="bias-of-mles-2" class="section level5 unnumbered hasAnchor" number="">
+<h5>Bias of MLEs<a href="sim_study.html#bias-of-mles-2" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>For component 3, the bias of MLE for the scale parameter becomes slightly more negatively biased
+as MTTF<span class="math inline">\(_3\)</span> increases, and the bias of the MLE for the shape parameter becomes slightly more positively
+biased. The MLE for the shape and scale parameters for component 1 have a very small bias, if any,
+and are not affected by the MTTF<span class="math inline">\(_3\)</span>. The scale parameters are easier to estimate than the shape
+parameters, and so they are less sensitive to changes in scale than the shape parameters, as
+we will show in the next scenario.</p>
+</div>
+</div>
+</div>
+<div id="shape3-vary" class="section level2 hasAnchor" number="7.7">
+<h2><span class="header-section-number">7.7</span> Scenario: Assessing the Impact of Changing the Shape Parameter of Component 3<a href="sim_study.html#shape3-vary" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The shape parameter determines the failure characteristics.
+We vary the shape paramenter of component 3 from <span class="math inline">\(0.1\)</span> to <span class="math inline">\(3.5\)</span> and observe the effect
+it has on the MLE.
+When <span class="math inline">\(k_3 &lt; 1\)</span>, this indicates infant mortality, and when <span class="math inline">\(k_3 &gt; 1\)</span>, this indicates
+wear-out failures.</p>
+<p>We analyze the effect of component 3’s shape parameter on the MLE and the bootstrapped confidence intervals for the
+shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
+on the scale parameter.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:prob3-vs-mle"></span>
+<embed src="image/5_system_shape3_fig.pdf" title="Probability of Component 3 Failure vs MLE" width="100%" type="application/pdf" />
+<p class="caption">
+Figure 7.5: Probability of Component 3 Failure vs MLE
+</p>
+</div>
+<div id="key-observations-4" class="section level4 unnumbered hasAnchor" number="">
+<h4>Key Observations<a href="sim_study.html#key-observations-4" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="coverage-probability-cp-3" class="section level5 unnumbered hasAnchor" number="">
+<h5>Coverage Probability (CP)<a href="sim_study.html#coverage-probability-cp-3" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The CP for the scale parameters
+are well-calibrated and close to the nominal level of <span class="math inline">\(0.95\)</span> for all values of <span class="math inline">\(\Pr\{K_i = 3\}\)</span>.
+For the the shape parameter of component 3 (<span class="math inline">\(k_3\)</span>) in
+bold orange colors, we see that it is well-calibrated for all values of
+<span class="math inline">\(\Pr\{K_i = 3\}\)</span>, but actually may become too large for extreme values of <span class="math inline">\(\Pr\{K_i = 3\}\)</span>.
+The CP for the shape parameters of the other components decreases with $<span class="math inline">\(\Pr\{K_i = 3\}\)</span>, dipping below <span class="math inline">\(90\%\)</span> for <span class="math inline">\(\Pr\{K_i = 3\} &gt; 0.4\)</span>. At a sample size of <span class="math inline">\(n = 100\)</span>, the CP for the shape parameters of the other components is generally not well-calibrated for <span class="math inline">\(\Pr\{K_i = 3\} &gt; 0.4\)</span>.</p>
+</div>
+<div id="dispersion-of-mles-4" class="section level5 unnumbered hasAnchor" number="">
+<h5>Dispersion of MLEs<a href="sim_study.html#dispersion-of-mles-4" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The dispersion of the MLE for the shape and scale parameters of component 1, <span class="math inline">\(k_1\)</span> and <span class="math inline">\(\lambda_1\)</span>,
+is fairly steady but begins to increase rapdily at the extreme values of <span class="math inline">\(\Pr\{K_i = 3\}\)</span>. This is indicative of
+having less information about the failure characteristcs of component <span class="math inline">\(1\)</span> as component <span class="math inline">\(3\)</span> begins to dominate the
+component cause of failure.
+The dispersion of the shape parameter <span class="math inline">\(k_3\)</span> is initially quite large, indicative of having very little
+information about the failure characteristcs of component 3 since it is unlikely to be the component cause of
+failure, but its dispersion rapidly decreases as <span class="math inline">\(\Pr\{K_i = 3\}\)</span> increases and more information is
+available about component 3’s failure characteristics. In fact, it nearly becomes a point at <span class="math inline">\(\Pr\{K_i = 3\} = 0.6\)</span>.
+The dispersion of the the scale parameter of component <span class="math inline">\(3\)</span>, <span class="math inline">\(\lambda_1\)</span>, is quite steady and is less spread out
+than the MLE for <span class="math inline">\(\lambda_1\)</span>, but at extreme values of <span class="math inline">\(\Pr\{K_i = 3\}\)</span>, it also begins to rapidly increase,
+suggesting some complex interactions between the shape and scale parameters of component 3.</p>
+</div>
+<div id="iqr-of-bootstrapped-cis-4" class="section level5 unnumbered hasAnchor" number="">
+<h5>IQR of Bootstrapped CIs<a href="sim_study.html#iqr-of-bootstrapped-cis-4" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The CIs precisely track the dispersion of the MLEs, which is the ideal behavior,
+and suggests that the BCa confidence intervals are performing well.</p>
+</div>
+<div id="bias-of-mles-3" class="section level5 unnumbered hasAnchor" number="">
+<h5>Bias of MLEs<a href="sim_study.html#bias-of-mles-3" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The MLE for the scale parameters are nearly unbiased and generally seem unaffected by changes
+in <span class="math inline">\(\Pr\{K_i = 3\}\)</span>. As <span class="math inline">\(\Pr\{K_i = 3\}\)</span> increases the MLE is adjusting <span class="math inline">\(k_1\)</span> to be more
+positively biased, decreasing its infant morality rate to make it less likely to be the
+component cause of failure, and adjusting <span class="math inline">\(k_3\)</span> to be less positively biased, increasing
+its infant mortality rate, to make it more likely to be the component cause of failure.</p>
+</div>
+</div>
+</div>
+<div id="implications-and-recommendations" class="section level2 hasAnchor" number="7.8">
+<h2><span class="header-section-number">7.8</span> Implications and Recommendations<a href="sim_study.html#implications-and-recommendations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here, we discuss and summarize the implications of our simulation study and provide recommendations
+for practitioners.</p>
+<div id="shape-parameters" class="section level4 unnumbered hasAnchor" number="">
+<h4>Shape Parameters<a href="sim_study.html#shape-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The shape parameters are more sensitive to the data than the scale parameters. The coverage probabilities
+were also consistently less well-calibrated for the shape parameters compared to the scale parameters,
+but they were still reasonably well-calibrated for most scenarios, with a lower bound of <span class="math inline">\(85\%\)</span> for
+the most extreme scenarios, e.g., Bernoulli masking probabilities of <span class="math inline">\(p = 0.7\)</span> with a small
+sample (<span class="math inline">\(n = 100\)</span>) and moderate right-censoring (<span class="math inline">\(q = 0.825\)</span>).</p>
+<p>The shape parameters define the failure characteristics of the components, but they have a complex
+relationship to the MTTF and other reliability measures.
+Ideally, the shape parameters will all be greater than <span class="math inline">\(1\)</span>, indicating wear-out failures, but this is
+not always the case, and sometimes it may be the case that some components have a shape parameter
+greater than <span class="math inline">\(1\)</span> while others have a shape parametr less than <span class="math inline">\(1\)</span>. Due to the sensitivity of the
+shape parameters to the data, and the fact that the shape parameters are less intuitive than the
+scale parameters, we recommend that the shape parameters be interpreted with caution, particularly
+when the sample size is small.</p>
+<p>Since a well-designed system has components with similar failure characteristics, the shape parameters
+should be reasonably aligned. To mitigate the problems with the shape parameters, both from an analytic
+and variability perspective, we may be motivated to use the reduced model that assumes homogeneity
+in the shape parameters, as described in Section . The reduced model offers
+interpretability (the series system is itself Weibull) and reduced estimator
+variability (only <span class="math inline">\(m+1\)</span> parameters instead of <span class="math inline">\(2 m\)</span>), but it is must adequately describe the data.</p>
+</div>
+<div id="scale-parameters" class="section level4 unnumbered hasAnchor" number="">
+<h4>Scale Parameters<a href="sim_study.html#scale-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The scale parameters are less sensitive to the data than the shape parameters. The coverage probabilities
+were also consistently well-calibrated for all scenarios, with a lower-bound of around <span class="math inline">\(90\%\)</span> for the
+most extreme scenarios.
+The scale parameters are linearly related to the MTTF, and have a simpler relationship to the
+the other reliability measures too, which makes it easier to interpret and understand.</p>
+</div>
+<div id="sample-size" class="section level4 unnumbered hasAnchor" number="">
+<h4>Sample Size<a href="sim_study.html#sample-size" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The MLE is very sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
+sensitivity when the sample size is small and not necessarily representative of the true distribution.
+We see that the MLE of the shape parameters is somewhat biased for small samples, but the scale
+parameters have a small bias except for the most extreme cases of right-censoring, masking, or
+deviations from a well-designed system. In either case, as the sample size increases, the bias
+decreases and the CIs become more narrow and well-calibrated.
+We observed that the confidence intervals were well-calibrated for even small sample sizes for the scale
+parameters, but the shape parameters were less well-calibrated.</p>
+</div>
+<div id="right-censoring" class="section level4 unnumbered hasAnchor" number="">
+<h4>Right-Censoring<a href="sim_study.html#right-censoring" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>For our well-designed system, the mean MLE for the shape parameters were mildly sensitive to right-censoring,
+but even significant censoring around <span class="math inline">\(50\%\)</span> only introduced a small positive bias. The mean MLE for the
+scale parameters were not very sensitive to right-censoring.</p>
+<p>The sampling variance of the MLE for both the shape and scale parameters were somewhat sensitive to
+right-censoring, as evidenced by the decreasing width of the confidence intervals as a function of
+increasing right-censoring times. However, the coverage probabilities of the confidence intervals
+were generally well-calibrated for the shape and scale parameters except for the most extreme
+cases of right-censoring.</p>
+</div>
+<div id="component-cause-of-failure-masking" class="section level4 unnumbered hasAnchor" number="">
+<h4>Component Cause of Failure Masking<a href="sim_study.html#component-cause-of-failure-masking" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>For our well-designed system, the mean MLE for the shape parameters are insensitive to
+masking, observing only a small positive bias for significant masking of <span class="math inline">\(50\%\)</span> or greater. However,
+the calibration of the confidence intervals for the shape parameters were quite sensitive to masking,
+reaching as low as <span class="math inline">\(85\%\)</span> for the most extreme cases of Bernoulli masking at <span class="math inline">\(p \approx 0.7\)</span>.</p>
+</div>
+<div id="deviations-from-well-designed-systems" class="section level4 unnumbered hasAnchor" number="">
+<h4>Deviations from Well-Designed Systems<a href="sim_study.html#deviations-from-well-designed-systems" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>When we deviate from a well-designed system, the MLE becomes much more sensitive to the data, exhibiting
+more bias, more variability, and less well-calibrated confidence intervals. This is particularly true
+for the shape parameters, which are more sensitive to the data than the scale parameters.</p>
+</div>
+</div>
+</div>
+<h3><span class="header-section-number">G</span> References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references hanging-indent">
+<div id="ref-Huairu-2013">
+<p>Guo, Huairui, Pengying Niu, and F. Szidarovszky. 2013. “Estimating Component Reliabilities from Incomplete System Failure Data.” <em>Annual Reliability and Maintainability Symposium (RAMS)</em>, January, 1–6. <a href="https://doi.org/10.1109/rams.2013.6517765">https://doi.org/10.1109/rams.2013.6517765</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="weibull.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="full-vs-reduced.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
