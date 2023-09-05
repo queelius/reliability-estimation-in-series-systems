@@ -19,6 +19,7 @@ output:
         citation_package: natbib
 indent: true
 header-includes:
+   - \usepackage[utf8]{inputenc}
    - \usepackage{tikz}
    - \usepackage{caption}
    - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
@@ -42,25 +43,46 @@ library(glue)
 library(png)
 library(kableExtra)
 
-#\newtheorem{definition}{Definition}
-#\newtheorem{theorem}{Theorem}
-#\newtheorem{corollary}{Corollary}
-#\numberwithin{equation}{section}
-
+# \newtheorem{definition}{Definition}
+# \newtheorem{theorem}{Theorem}
+# \newtheorem{corollary}{Corollary}
+# \numberwithin{equation}{section}
 ```
 
 Introduction
 ============
-Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. In a series system, only system failure times may be recorded along with limited information about the failed component in the form of candidate sets. Such masked data poses difficulties for assessing component reliability.
+Accurately estimating reliability of individual components in multi-component
+systems is challenging when only system-level failure data is observable. In a
+series system[@Agustin-2011], only system failure times may be recorded along
+with limited information about the failed component in the form of candidate
+sets[@Huairu-2013]. Such masked data poses difficulties for assessing component
+reliability.
 
-This paper develops and validates maximum likelihood techniques to estimate component reliability from right-censored lifetime data and candidate sets indicative of component failure causes. The key results are:
+This paper develops and validates maximum likelihood techniques to estimate
+component reliability from right-censored lifetime data and candidate sets
+indicative of component failure causes. The key results are:
 
-Deriving a likelihood model incorporating right-censoring and candidate sets to enable masked data to be used for parameter estimation.
-Demonstrating through simulation studies that the maximum likelihood estimator performs well despite small samples and significant masking and right-censoring. Estimation of scale parameters is more robust than shape parameters.
-Showing that bootstrapping provides reasonably well-calibrated confidence intervals for the maximum likelihood estimates, even with small sample sizes.
-The remainder of the paper details the series system and likelihood models, maximum likelihood estimation methodology, bootstrap confidence interval estimation, and extensive simulation studies exploring estimator behavior under various sample sizes, masking levels, and model assumptions.
+- Deriving a likelihood model incorporating right-censoring and candidate sets
+  to enable masked data to be used for parameter estimation.
 
-Together, these contributions provide a statistically rigorous framework for learning about latent component properties from limited observational data on system reliability. The proposed methods expand the capability to quantify component lifetimes in situations where failure data is significantly masked.
+- Demonstrating through simulation studies that the maximum likelihood estimator
+  performs well despite small samples and significant masking and
+  right-censoring.
+  
+- Estimation of scale parameters is more robust than shape parameters.
+
+- Showing that bootstrapping provides reasonably well-calibrated confidence
+  intervals for the maximum likelihood estimates, even with small sample sizes.
+
+The remainder of the paper details the series system and likelihood models,
+maximum likelihood estimation methodology, bootstrap confidence interval
+estimation, and extensive simulation studies exploring estimator behavior under
+various sample sizes, masking levels, and model assumptions.
+
+Together, these contributions provide a statistically rigorous framework for
+learning about latent component properties from limited observational data on
+system reliability. The proposed methods expand the capability to quantify
+component lifetimes in situations where failure data is significantly masked.
 
 
 Accurately estimating the reliability of individual components in multi-component
@@ -1320,11 +1342,11 @@ Simulation Study: Full Model {#sim-study}
 
 ```{r sim-study-design, echo = F}
 theta <- c(
-    shape1 = 1.2576, scale1 = 994.3661,
-    shape2 = 1.1635, scale2 = 908.9458,
-    shape3 = 1.1308, scale3 = 840.1141,
-    shape4 = 1.1802, scale4 = 940.1342,
-    shape5 = 1.2034, scale5 = 923.1631
+  shape1 = 1.2576, scale1 = 994.3661,
+  shape2 = 1.1635, scale2 = 908.9458,
+  shape3 = 1.1308, scale3 = 840.1141,
+  shape4 = 1.1802, scale4 = 940.1342,
+  shape5 = 1.2034, scale5 = 923.1631
 )
 
 shapes <- theta[grepl("shape", names(theta))]
@@ -1349,7 +1371,7 @@ properties of the MLE with respect to a scenario:
 
 We begin by specifying the parameters of the series system that will be
 the central object of our simulation study. We consider the data in
-@Huairu-2013, in which they study the reliability of a series system with
+[@Huairu-2013], in which they study the reliability of a series system with
 three components. They fit Weibull components in a series configuration to
 the data, resulting in an MLE with shape and scale estimates given by the
 first three components in Table \ref{tab:series-sys}. To make the model
@@ -1373,10 +1395,10 @@ means components are unlikely to fail early.
 
 ```{r series-sys, table.attr = "style='width:50%;'", echo = F, fig.align = "center"}
 mttf.sys <- integrate(function(t) {
-    t * dwei_series(t,
-        scales = scales,
-        shapes = shapes
-    )
+  t * dwei_series(t,
+    scales = scales,
+    shapes = shapes
+  )
 }, lower = 0, upper = Inf)$value
 
 mttf.sys <- round(mttf.sys, digits = 3)
@@ -1386,12 +1408,12 @@ tau <- qwei_series(p = 0.825, scales = scales, shapes = shapes)
 surv.sys <- round(surv_wei_series(tau, scales = scales, shapes = shapes), digits = 3)
 surv <- round(pweibull(tau, shape = shapes, scale = scales, lower.tail = FALSE), digits = 3)
 components <- data.frame(
-    Shape = shapes,
-    Scale = scales,
-    MTTF = mttf,
-    Prob = probs,
-    Survival = surv,
-    row.names = paste("Component", 1:5)
+  Shape = shapes,
+  Scale = scales,
+  MTTF = mttf,
+  Prob = probs,
+  Survival = surv,
+  row.names = paste("Component", 1:5)
 )
 
 components <- rbind(components, "Series System" = c(NA, NA, mttf.sys, NA, surv.sys))
@@ -1402,9 +1424,9 @@ names(components)[3] <- "MTTF$_j$"
 names(components)[4] <- "$\\Pr\\{K_i = j\\}$"
 names(components)[5] <- "$R_j(\\tau;k_j,\\lambda_j)$"
 knitr::kable(
-    components,
-    caption = "Weibull Components in Series Configuration",
-    escape = FALSE # Add this line to allow raw LaTeX
+  components,
+  caption = "Weibull Components in Series Configuration",
+  escape = FALSE # Add this line to allow raw LaTeX
 )
 ```
 
@@ -1513,7 +1535,7 @@ and we vary the right-censoring quantile ($q$) from $60\%$ to $100\%$
 probability of $21.5\%$ and sample size $n = 100$.
 
 ```{r q-vs-stats, out.width='100%', cache = T, fig.cap=c("Right-Censoring Quantile vs MLE ($p = 0.215, n = 100$)","Right-Qensoring Quantile ($q$) vs MLEs"), fig.align="center", echo = F}
-#knitr::include_graphics("image/tau/plot-q-vs-mle.pdf")
+# knitr::include_graphics("image/tau/plot-q-vs-mle.pdf")
 knitr::include_graphics("image/5_system_tau_fig.pdf")
 ```
 
@@ -1584,7 +1606,7 @@ we fix the right-censoring quantile to $q = 0.825$ (moderate censoring), and we 
 size $n$ from $50$ (small sample size) to $1000$ (very large sample size).
 
 ```{r samp-size-n-vs-stats, out.width='100%', fig.cap=c("Sample Size vs MLEs ($p = 0.215, q = 0.825$)","Sample Size ($n$) vs MLEs"), fig.align="center", echo = F}
-#knitr::include_graphics("image/n-vs-mles.pdf")
+# knitr::include_graphics("image/n-vs-mles.pdf")
 knitr::include_graphics("image/5_system_samp_size_fig.pdf")
 ```
 
@@ -1652,7 +1674,7 @@ rest were essentially identical, and the bottom two plots show the coverage prob
 all parameters.
 
 ```{r masking-prob-vs-stats, fig.cap=c("Component Cause of Failure Masking ($p$) vs MLE", "Component Cause of Failure Masking Probability (p) vs. MLE"), fig.align="center", echo = F}
-#knitr::include_graphics("image/p-vs-mle.pdf")
+# knitr::include_graphics("image/p-vs-mle.pdf")
 knitr::include_graphics("image/5_system_prob_fig.pdf")
 ```
 
@@ -1712,8 +1734,8 @@ Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moder
 the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample size to $n = 100$ (moderate sample size).
 
 ```{r mttf-vs-ci, fig.cap=c("MTTF$_3$ vs MLE By Varying Scale", "Mean-Time-To-Failure (MTTF) of Component 3 by Varying Its Scale Parameter"), fig.align="center", echo = F}
-#knitr::include_graphics("image/plot-scale3-vs-stats.pdf")
-#knitr::include_graphics("image/5_system_scale3_vary.pdf")
+# knitr::include_graphics("image/plot-scale3-vs-stats.pdf")
+# knitr::include_graphics("image/5_system_scale3_vary.pdf")
 knitr::include_graphics("image/5_system_mttf3_by_scale3.pdf")
 ```
 
@@ -2074,11 +2096,11 @@ for the shape parameters, which are more sensitive to the data than the scale pa
 # Log-likelihood Function {#app-weibull-loglik-r}
 
 The following code is the log-likelihood function for the Weibull series system
-with a likelihood model that includes masked component cause of failure and right-censoring.
-It is implemented in the R library `wei.series.md.c1.c2.c3` and is available on
-[GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
-For clarity and brevity, we removed some of the functionality that is not relevant to the
-analysis in this paper.
+with a likelihood model that includes masked component cause of failure and
+right-censoring. It is implemented in the R library `wei.series.md.c1.c2.c3` and
+is available on [GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
+For clarity and brevity, we removed some of the functionality that is not
+relevant to the analysis in this paper.
 
 ```{r, eval = FALSE}
 #' Generates a log-likelihood function for a Weibull series system with respect
@@ -2089,35 +2111,37 @@ analysis in this paper.
 #' @param theta parameter vector (shape1, scale1, ..., shapem, scalem)
 #' @returns Log-likelihood with respect to `theta` given `df`
 loglik_wei_series_md_c1_c2_c3 <- function(df, theta) {
-    n <- nrow(df)
-    C <- md_decode_matrix(df, candset)
-    m <- ncol(C)
-    delta <- df[[right_censoring_indicator]]
-    t <- df[[lifetime]]
-    k <- length(theta)
-    shapes <- theta[seq(1, k, 2)]
-    scales <- theta[seq(2, k, 2)]
+  n <- nrow(df)
+  C <- md_decode_matrix(df, candset)
+  m <- ncol(C)
+  delta <- df[[right_censoring_indicator]]
+  t <- df[[lifetime]]
+  k <- length(theta)
+  shapes <- theta[seq(1, k, 2)]
+  scales <- theta[seq(2, k, 2)]
 
-    s <- 0
-    for (i in 1:n) {
-        s <- s - sum((t[i] / scales)^shapes)
-        if (delta[i]) {
-            s <- s + log(sum(shapes[C[i, ]] / scales[C[i, ]] *
-                (t[i] / scales[C[i, ]])^(shapes[C[i, ]] - 1)))
-        }
+  s <- 0
+  for (i in 1:n) {
+    s <- s - sum((t[i] / scales)^shapes)
+    if (delta[i]) {
+      s <- s + log(sum(shapes[C[i, ]] / scales[C[i, ]] *
+        (t[i] / scales[C[i, ]])^(shapes[C[i, ]] - 1)))
     }
-    s
+  }
+  s
 }
 ```
 
-
 # Score Function {#app-score-fn-r}
 
-The following code is the score function (gradient of the log-likelihood function with respect to $\v\theta$) for the Weibull series system
-with a likelihood model that includes masked component cause of failure and right-censoring.
-It is implemented in the R library `wei.series.md.c1.c2.c3` and is available on [GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
+The following code is the score function (gradient of the log-likelihood
+function with respect to $\v\theta$) for the Weibull series system with a
+likelihood model that includes masked component cause of failure and
+right-censoring. It is implemented in the R library `wei.series.md.c1.c2.c3` and
+is available on [GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
 
-For clarity and brevity, we removed some of the functionality that is not relevant to the
+For clarity and brevity, we removed some of the functionality that is not
+relevant to the
 analysis in this paper.
 
 ```{r score-code, eval = FALSE}
@@ -2130,46 +2154,53 @@ analysis in this paper.
 #' @param theta parameter vector (shape1, scale1, ..., shapem, scalem)
 #' @returns Score with respect to `theta` given `df`
 score_wei_series_md_c1_c2_c3 <- function(df, theta) {
-    n <- nrow(df)
-    C <- md_decode_matrix(df, candset)
-    m <- ncol(C)
-    delta <- df[[right_censoring_indicator]]
-    t <- df[[lifetime]]
-    shapes <- theta[seq(1, length(theta), 2)]
-    scales <- theta[seq(2, length(theta), 2)]
-    shape_scores <- rep(0, m)
-    scale_scores <- rep(0, m)
+  n <- nrow(df)
+  C <- md_decode_matrix(df, candset)
+  m <- ncol(C)
+  delta <- df[[right_censoring_indicator]]
+  t <- df[[lifetime]]
+  shapes <- theta[seq(1, length(theta), 2)]
+  scales <- theta[seq(2, length(theta), 2)]
+  shape_scores <- rep(0, m)
+  scale_scores <- rep(0, m)
 
-    for (i in 1:n) {
-        rt.term.shapes <- -(t[i] / scales)^shapes * log(t[i] / scales)
-        rt.term.scales <- (shapes / scales) * (t[i] / scales)^shapes
+  for (i in 1:n) {
+    rt.term.shapes <- -(t[i] / scales)^shapes * log(t[i] / scales)
+    rt.term.scales <- (shapes / scales) * (t[i] / scales)^shapes
 
-        # Initialize mask terms to 0
-        mask.term.shapes <- rep(0, m)
-        mask.term.scales <- rep(0, m)
+    # Initialize mask terms to 0
+    mask.term.shapes <- rep(0, m)
+    mask.term.scales <- rep(0, m)
 
-        if (delta[i]) {
-            cindex <- C[i, ]
-            denom <- sum(shapes[cindex] / scales[cindex] * (t[i] / scales[cindex])^(shapes[cindex] - 1))
+    if (delta[i]) {
+      cindex <- C[i, ]
+      denom <- sum(shapes[cindex] / scales[cindex] *
+        (t[i] / scales[cindex])^(shapes[cindex] - 1))
 
-            numer.shapes <- 1 / t[i] * (t[i] / scales[cindex])^shapes[cindex] *
-                (1 + shapes[cindex] * log(t[i] / scales[cindex]))
-            mask.term.shapes[cindex] <- numer.shapes / denom
+      numer.shapes <- 1 / t[i] * (t[i] / scales[cindex])^shapes[cindex] *
+        (1 + shapes[cindex] * log(t[i] / scales[cindex]))
+      mask.term.shapes[cindex] <- numer.shapes / denom
 
-            numer.scales <- (shapes[cindex] / scales[cindex])^2 * (t[i] / scales[cindex])^(shapes[cindex] - 1)
-            mask.term.scales[cindex] <- numer.scales / denom
-        }
-
-        shape_scores <- shape_scores + rt.term.shapes + mask.term.shapes
-        scale_scores <- scale_scores + rt.term.scales - mask.term.scales
+      numer.scales <- (shapes[cindex] / scales[cindex])^2 *
+        (t[i] / scales[cindex])^(shapes[cindex] - 1)
+      mask.term.scales[cindex] <- numer.scales / denom
     }
 
-    scr <- rep(0, length(theta))
-    scr[seq(1, length(theta), 2)] <- shape_scores
-    scr[seq(2, length(theta), 2)] <- scale_scores
-    scr
+    shape_scores <- shape_scores + rt.term.shapes + mask.term.shapes
+    scale_scores <- scale_scores + rt.term.scales - mask.term.scales
+  }
+
+  scr <- rep(0, length(theta))
+  scr[seq(1, length(theta), 2)] <- shape_scores
+  scr[seq(2, length(theta), 2)] <- scale_scores
+  scr
 }
 ```
+
+
+# Numerical Solutions to the MLE {#app-mle-r}
+
+
 
 # Scenario Simulation {#app-sim-study-r}
 
@@ -2179,11 +2210,11 @@ scenarios described in Section \@ref(sim-study).
 ```{r bootstrap-sim-code, eval=FALSE}
 #### Setup simulation parameters here ####
 theta <- c(
-    shape1 = 1.2576, scale1 = 994.3661,
-    shape2 = 1.1635, scale2 = 908.9458,
-    shape3 = NA, scale3 = 840.1141,
-    shape4 = 1.1802, scale4 = 940.1342,
-    shape5 = 1.2034, scale5 = 923.1631
+  shape1 = 1.2576, scale1 = 994.3661,
+  shape2 = 1.1635, scale2 = 908.9458,
+  shape3 = NA, scale3 = 840.1141,
+  shape4 = 1.1802, scale4 = 940.1342,
+  shape5 = 1.2034, scale5 = 923.1631
 )
 
 shapes3 <- c(1.1308) # shape 3 true parameter values to simulate
@@ -2208,10 +2239,10 @@ library(wei.series.md.c1.c2.c3) # for `mle_lbfgsb_wei_series_md_c1_c2_c3` etc
 file.meta <- paste0(filename, ".txt")
 file.csv <- paste0(filename, ".csv")
 if (file.exists(file.meta)) {
-    stop("File already exists: ", file.meta)
+  stop("File already exists: ", file.meta)
 }
 if (file.exists(file.csv)) {
-    stop("File already exists: ", file.csv)
+  stop("File already exists: ", file.csv)
 }
 
 shapes <- theta[seq(1, length(theta), 2)]
@@ -2240,107 +2271,110 @@ cat("   n_cores: ", n_cores, "\n")
 sink()
 
 for (scale3 in scales3) {
-    for (shape3 in shapes3) {
-        for (n in N) {
-            for (p in P) {
-                for (q in Q) {
-                    shapes[3] <- shape3
-                    theta["shape3"] <- shape3
+  for (shape3 in shapes3) {
+    for (n in N) {
+      for (p in P) {
+        for (q in Q) {
+          shapes[3] <- shape3
+          theta["shape3"] <- shape3
 
-                    cat("[starting scenario: scale3 = ", scale3, ",
-                        shape3 = ", shape3, ", n = ", n, ", p = ", p, ", q = ", q, "]\n")
-                    tau <- qwei_series(p = q, scales = scales, shapes = shapes)
+          cat("[starting scenario: scale3 = ", scale3, ", shape3 = ", shape3,
+            ", n = ", n, ", p = ", p, ", q = ", q, "]\n")
+          tau <- qwei_series(p = q, scales = scales, shapes = shapes)
 
-                    # we compute R MLEs for each scenario
-                    shapes.mle <- matrix(NA, nrow = R, ncol = m)
-                    scales.mle <- matrix(NA, nrow = R, ncol = m)
-                    shapes.lower <- matrix(NA, nrow = R, ncol = m)
-                    shapes.upper <- matrix(NA, nrow = R, ncol = m)
-                    scales.lower <- matrix(NA, nrow = R, ncol = m)
-                    scales.upper <- matrix(NA, nrow = R, ncol = m)
+          # we compute R MLEs for each scenario
+          shapes.mle <- matrix(NA, nrow = R, ncol = m)
+          scales.mle <- matrix(NA, nrow = R, ncol = m)
+          shapes.lower <- matrix(NA, nrow = R, ncol = m)
+          shapes.upper <- matrix(NA, nrow = R, ncol = m)
+          scales.lower <- matrix(NA, nrow = R, ncol = m)
+          scales.upper <- matrix(NA, nrow = R, ncol = m)
 
-                    iter <- 0L
-                    repeat {
-                        retry <- FALSE
-                        tryCatch(
-                            {
-                                repeat {
-                                    df <- generate_guo_weibull_table_2_data(
-                                        shapes = shapes, scales = scales, n = n, p = p, tau = tau
-                                    )
+          iter <- 0L
+          repeat {
+            retry <- FALSE
+            tryCatch(
+              {
+                repeat {
+                  df <- generate_guo_weibull_table_2_data(
+                    shapes = shapes, scales = scales, n = n, p = p, tau = tau
+                  )
 
-                                    sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-                                        theta0 = theta, df = df, hessian = FALSE,
-                                        control = list(maxit = max_iter, parscale = theta)
-                                    )
-                                    if (sol$convergence == 0) {
-                                        break
-                                    }
-                                    cat("[", iter, "] MLE did not converge, retrying.\n")
-                                }
-
-                                mle_solver <- function(df, i) {
-                                    mle_lbfgsb_wei_series_md_c1_c2_c3(
-                                        theta0 = sol$par, df = df[i, ], hessian = FALSE,
-                                        control = list(maxit = max_boot_iter, parscale = sol$par)
-                                    )$par
-                                }
-
-                                # do the non-parametric bootstrap
-                                sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore", ncpus = n_cores)
-                            },
-                            error = function(e) {
-                                cat("[error] ", conditionMessage(e), "\n")
-                                cat("[retrying scenario: n = ", n, ", p = ", p, ", q = ", q, "\n")
-                                retry <<- TRUE
-                            }
-                        )
-                        if (retry) {
-                            next
-                        }
-                        iter <- iter + 1L
-                        shapes.mle[iter, ] <- sol$par[seq(1, length(theta), 2)]
-                        scales.mle[iter, ] <- sol$par[seq(2, length(theta), 2)]
-
-                        tryCatch(
-                            {
-                                ci <- confint(mle_boot(sol.boot), type = ci_method, level = ci_level)
-                                shapes.ci <- ci[seq(1, length(theta), 2), ]
-                                scales.ci <- ci[seq(2, length(theta), 2), ]
-                                shapes.lower[iter, ] <- shapes.ci[, 1]
-                                shapes.upper[iter, ] <- shapes.ci[, 2]
-                                scales.lower[iter, ] <- scales.ci[, 1]
-                                scales.upper[iter, ] <- scales.ci[, 2]
-                            },
-                            error = function(e) {
-                                cat("[error] ", conditionMessage(e), "\n")
-                            }
-                        )
-                        if (iter %% 5 == 0) {
-                            cat("[iteration ", iter, "] shapes = ", shapes.mle[iter, ], "scales = ", scales.mle[iter, ], "\n")
-                        }
-
-                        if (iter == R) {
-                            break
-                        }
-                    }
-
-                    df <- data.frame(
-                        n = rep(n, R), rep(scale3, R), rep(shape3, R),
-                        p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
-                        shapes = shapes.mle, scales = scales.mle,
-                        shapes.lower = shapes.lower, shapes.upper = shapes.upper,
-                        scales.lower = scales.lower, scales.upper = scales.upper
-                    )
-
-                    write.table(df,
-                        file = file.csv, sep = ",", row.names = FALSE,
-                        col.names = !file.exists(file.csv), append = TRUE
-                    )
+                  sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+                    theta0 = theta, df = df, hessian = FALSE,
+                    control = list(maxit = max_iter, parscale = theta)
+                  )
+                  if (sol$convergence == 0) {
+                    break
+                  }
+                  cat("[", iter, "] MLE did not converge, retrying.\n")
                 }
+
+                mle_solver <- function(df, i) {
+                  mle_lbfgsb_wei_series_md_c1_c2_c3(
+                    theta0 = sol$par, df = df[i, ], hessian = FALSE,
+                    control = list(maxit = max_boot_iter, parscale = sol$par)
+                  )$par
+                }
+
+                # do the non-parametric bootstrap
+                sol.boot <- boot(df, mle_solver, R = B, parallel = "multicore",
+                  ncpus = n_cores)
+              },
+              error = function(e) {
+                cat("[error] ", conditionMessage(e), "\n")
+                cat("[retrying scenario: n = ", n, ", p = ", p, ", q = ", q, "\n")
+                retry <<- TRUE
+              }
+            )
+            if (retry) {
+              next
             }
+            iter <- iter + 1L
+            shapes.mle[iter, ] <- sol$par[seq(1, length(theta), 2)]
+            scales.mle[iter, ] <- sol$par[seq(2, length(theta), 2)]
+
+            tryCatch(
+              {
+                ci <- confint(mle_boot(sol.boot), type = ci_method,
+                    level = ci_level)
+                shapes.ci <- ci[seq(1, length(theta), 2), ]
+                scales.ci <- ci[seq(2, length(theta), 2), ]
+                shapes.lower[iter, ] <- shapes.ci[, 1]
+                shapes.upper[iter, ] <- shapes.ci[, 2]
+                scales.lower[iter, ] <- scales.ci[, 1]
+                scales.upper[iter, ] <- scales.ci[, 2]
+              },
+              error = function(e) {
+                cat("[error] ", conditionMessage(e), "\n")
+              }
+            )
+            if (iter %% 5 == 0) {
+              cat("[iteration ", iter, "] shapes = ", shapes.mle[iter, ],
+                  "scales = ", scales.mle[iter, ], "\n")
+            }
+
+            if (iter == R) {
+              break
+            }
+          }
+
+          df <- data.frame(
+            n = rep(n, R), rep(scale3, R), rep(shape3, R),
+            p = rep(p, R), q = rep(q, R), tau = rep(tau, R), B = rep(B, R),
+            shapes = shapes.mle, scales = scales.mle,
+            shapes.lower = shapes.lower, shapes.upper = shapes.upper,
+            scales.lower = scales.lower, scales.upper = scales.upper
+          )
+
+          write.table(df,
+            file = file.csv, sep = ",", row.names = FALSE,
+            col.names = !file.exists(file.csv), append = TRUE
+          )
         }
+      }
     }
+  }
 }
 ```
 
@@ -2362,14 +2396,14 @@ for (scale3 in scales3) {
 #'          system will include a non-failed component in its candidate set,
 #'          assuming the jth system is not right-censored).
 md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
-    n <- nrow(df)
-    p <- rep(p, length.out = n)
-    Tm <- md_decode_matrix(df, comp)
-    m <- ncol(Tm)
-    Q <- matrix(p, nrow = n, ncol = m)
-    Q[cbind(1:n, apply(Tm, 1, which.min))] <- 1
-    Q[!df[[right_censoring_indicator]], ] <- 0
-    df %>% bind_cols(md_encode_matrix(Q, prob))
+  n <- nrow(df)
+  p <- rep(p, length.out = n)
+  Tm <- md_decode_matrix(df, comp)
+  m <- ncol(Tm)
+  Q <- matrix(p, nrow = n, ncol = m)
+  Q[cbind(1:n, apply(Tm, 1, which.min))] <- 1
+  Q[!df[[right_censoring_indicator]], ] <- 0
+  df %>% bind_cols(md_encode_matrix(Q, prob))
 }
 ```
 
@@ -2387,16 +2421,16 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 #' @param scales vector of weibull scale parameters for weibull lifetime
 #'               components
 qwei_series <- function(p, shapes, scales) {
-    t0 <- 1
-    repeat {
-        t1 <- t0 - sum((t0/scales)^shapes) + log(1-p) /
-            sum(shapes*t0^(shapes-1)/scales^shapes)
-        if (abs(t1 - t0) < tol) {
-            break
-        }
-        t0 <- t1
+  t0 <- 1
+  repeat {
+    t1 <- t0 - sum((t0 / scales)^shapes) + log(1 - p) /
+      sum(shapes * t0^(shapes - 1) / scales^shapes)
+    if (abs(t1 - t0) < tol) {
+      break
     }
-    return(t1)
+    t0 <- t1
+  }
+  return(t1)
 }
 ```
 
