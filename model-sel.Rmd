@@ -1,0 +1,219 @@
+---
+title: "Model Selection for Reliability Estimation in Series Systems"
+author: "Alex Towell"
+abstract: "This paper explores model selection for reliability estimation of components in multi-component series systems. A likelihood model is developed to account for right-censoring and candidate sets indicative of masked failure causes. Simulation studies demonstrate the sensitivity of maximum likelihood estimators to modeling assumptions. A reduced model with homogeneous component shapes simplifies analysis but may be inadequate for some systems. Appropriateness of the reduced model is assessed using likelihood ratio tests. Findings suggest the reduced model excels for well-designed systems. More complex models are favored given divergent component properties or large samples. Proper model specification balances simplicity against representativeness."
+output:
+    #bookdown::html_document2:
+    #bookdown::pdf_document2:
+    bookdown::gitbook:
+        df_print: kable
+        citation_package: natbib
+    bookdown::pdf_book:
+        toc: true
+        #toc_depth: 3
+        number_sections: true
+        #extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
+        extra_dependencies: ["tikz", "caption"]
+        df_print: kable
+        #keep_tex: true
+        citation_package: natbib
+indent: true
+header-includes:
+   - \usepackage{tikz}
+   - \usepackage{caption}
+   - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
+   - \AtBeginDocument{\newtheorem{condition}{Condition}}
+bibliography: refs.bib
+link-citations: true
+biblio-style: apalike
+---
+
+
+# Introduction
+
+Estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. A likelihood model incorporating right-censoring and candidate sets was previously developed to enable component inference from such masked data [1]. Simulation studies revealed estimator behavior and sensitivity to modeling assumptions given limited samples.
+
+A key question is choosing an appropriate model complexity. A reduced model assuming homogeneous component shapes simplifies analysis as the system becomes Weibull. However, deviations in component properties impact adequacy. Proper model specification requires balancing simplicity against representativeness.
+
+This paper explores model selection for component reliability estimation in series systems. The likelihood model from [1] is summarized. Simulation studies demonstrate estimator sensitivity and assess reduced model appropriateness using likelihood ratio tests. Findings provide guidance on suitable models based on system design and available data.
+
+# Series System Model
+Consider a system with m components in series, where each component j has a Weibull distributed lifetime with scale λj and shape kj [1]. The system fails when any component fails. The system lifetime distribution is determined by component properties.
+
+Only system failure times are observed, potentially right-censored. For failures, a candidate set indicates possible failed components. This masked data enables component inference despite lack of direct component observations.
+
+A likelihood model for the masked data was derived in [1], accounting for right-censoring and candidate sets. The model relies on assumptions that candidate sets contain the failed component and components are equally likely to be masked given failure time and cause [1].
+
+Maximum likelihood estimation produced accurate results despite small samples and significant masking and censoring [1]. However, shape parameters were more variable and challenging to estimate precisely. A reduced model with homogeneous shapes simplified analysis while reducing estimator variability.
+
+Assessing Model Adequacy
+While simpler models are favorable, they must adequately represent available data. The likelihood ratio test (LRT) assesses model fit. The test statistic compares likelihoods under the null (reduced) and alternative (full) models:
+
+$$
+\Lambda = -2(lR - lF)
+$$
+
+where $l_R$ and $l_F$ are log-likelihoods under reduced and full models respectively. Under standard regularity conditions, the test statistic asymptotically follows a $\chisq^2$ distribution with degrees of freedom equal to the difference in model parameters [2].
+
+If $\Lambda$ exceeds a critical value, the null model is rejected. Otherwise, there is insufficient evidence against the null. Larger samples provide greater power to detect lack of fit.
+
+# Simulation Study
+A simulation study was conducted to demonstrate estimator sensitivity and explore reduced model adequacy using LRTs under various scenarios [1].
+
+The base system had 5 Weibull components with similar but non-identical failure characteristics, representing a well-designed system without a single weak point. Samples were generated under moderate right-censoring and masking probabilities for the component cause of failure.
+
+Varying sample size n showed reductions in estimator dispersion and confidence interval width with more observations. However, small samples exhibited bias for shape parameters. Scale parameters were more robust.
+
+Increasing the masking probability expanded confidence intervals to maintain coverage, with scale parameters remaining unbiased up to significant masking. Shape parameters were more affected.
+
+Reduced model adequacy was assessed by manipulating the shape parameter k3 of one component to make failure characteristics diverge. The LRT detected misfit with sufficient power only when $k_3$ substantially deviated from the well-designed case. For the nominal system, large samples did not produce evidence against the reduced model, supporting its adequacy in that case.
+
+# Discussion
+The simulation studies demonstrated estimator sensitivity but overall robust performance given the significant challenges introduced by limited data. Bootstrap confidence intervals proved valuable for characterizing uncertainty.
+
+The reduced model with homogeneous shapes showed excellent fit for well-designed systems, even with extensive data. This supports employing the simplified model for such systems. Deviations in component properties quickly provided evidence against the reduced model. More complex models are then desirable, particularly with large samples.
+
+In practice, the choice between models entails weighing simplicity against representativeness. Well-founded reduced models excel for well-designed systems. But data inconsistencies or divergent components motivate fuller models. Proper specification requires understanding system characteristics and estimator behavior.
+
+By providing guidance on suitable models, this work improves component reliability assessment from limited system failure data. Further studies on modeling extensions were suggested in [1]. The methods enable quantifying latent component properties when failures are significantly masked.
+
+# Simulation Study: Full Weibull Model vs Reduced (Homogenous Shape) Model {#full-vs-reduced}
+
+In Section \@ref(weibull), we developed the full model with Weibull
+components and we conducted a sensitivity analysis of its MLE in
+Section \@ref(sim-study). Here, our focus shifts to a sensitivity
+analysis aimed at understanding when it is appropriate to use the reduced model
+that assumes homogeneity in the shape parameters of the components, as described
+in Section \@ref(reduced-weibull). The reduced model offers interpretability
+(the series system is itself Weibull) and reduced estimator variability (only
+$m+1$ parameters instead of $2m$), but it is must adequately describe the data.
+
+We aim to assess the appropriateness of the reduced model under varying
+sample sizes and shape parameters of the third component ($k_3$). We employ
+a simulation study using the likelihood ratio test (LRT) for this purpose,
+where the null hypothesis, $H_0$, assumes homogenous shape parameters.
+
+We take the well-designed series system described in Table \ref{tab:series-sys},
+and manipulate the shape parameter of the third
+component ($k_3$) to cause the components to have different failure characteristics.
+Recall that $k_3 = 1.1308$ corresponds to a *well-designed* series system, where
+component shapes are reasoanbly aligned. We also vary the sample size $n$ to assess
+the impact of sample size on the appropriateness of the reduced model.
+
+Figure \ref{fig:lrt-contour} provides a contour plot with varying 
+sample sizes along the $x$-axis, shape of component 3 along the $y$-axis,
+and median $p$-value along the color scale.
+The contour lines corresponding to $p$-values of $0.05$ and $0.1$ are
+often used as a threshold for statistical significance. Points outside
+of these contours in dark blue are indicative of significant evidence
+against the null model and points inside of these contours in light blue
+for $0.1$ and green for $0.05$ are indicative of insufficient evidence
+against the null model.
+
+Figure \ref{fig:lrt-samp-size} provides a plot of the median $p$-value
+against the sample size for the well-designed system, where the shape
+parameter of component 3 is fixed at $1.1308$. The $95$th percentile
+of the $p$-values is also provided as a more stringent criterion for
+statistical significance.
+
+```{r samp-size-shape-lrt, results='asis', echo = F}
+cat('
+\\begin{figure}
+    \\centering
+    \\begin{minipage}{.5\\textwidth}
+        \\centering
+        \\includegraphics[width=1\\linewidth]{image/fig-lrt/contour_plot.pdf}
+        \\captionof{figure}{$p$-Value vs Sample Size and Shape $k_3$}
+        \\label{fig:lrt-contour}
+    \\end{minipage}%
+    \\begin{minipage}{.5\\textwidth}
+        \\centering
+        \\includegraphics[width=1\\linewidth]{image/fig-lrt/n-vs-p-value.pdf}
+        \\captionof{figure}{$p$-Value vs Sample Size for Well-Designed System}
+        \\label{fig:lrt-samp-size}
+    \\end{minipage}
+\\end{figure}
+')
+```
+
+#### Sensitivity to Sample Size ($n$) {-}
+
+- The sample size is an essential aspect of hypothesis testing, as it affects the
+test's power, which is the probability of correctly rejecting the null hypothesis
+when it is false. In the contour plot in Figure \ref{fig:lrt-contour}, as $n$
+increases, the contours trend lower.
+This indicates that larger samples result in smaller median $p$-values,
+implying that the power of the LRT increases with the sample size.
+However, its power is quite low for small samples, particularly for values of
+$k_3$ somewhat close to the shape parameters of the other components in the system.
+
+- Recall that in the well-designed series system, $k_3 = 1.1308$. In this case,
+even very large sample sizes do not produce evidence
+against the null model, indicating robust compatibility.
+
+- In Figure \ref{fig:lrt-samp-size}, we fix $k_3$ at $1.1308$ and vary the sample size. 
+The median $p$-value only manages to drop below the $0.05$ theshold with
+sample sizes around $10000$. In the more stringent criterion given
+by the $95$th percentile of the $p$-values, nearly $30000$ observations are
+necessary to reject the null hypothesis in $95\%$ of the simulations.
+
+#### Sensivity to Shape Parameter ($k_3$) {-}
+
+- In Figure \ref{fig:lrt-contour}, for a given shape parameter, increasing the
+sample size tends to decrease the median $p$-value. Larger samples provide
+more information about the parameters, which increases the power of the LRT.
+
+- The median $p$-values in the vicinity of the line $k_3 = 1.1308$ are
+high across various sample sizes, indicating that the null model is a good fit.
+As $k_3$ deviates from this line, the median $p$-value diminishes,
+indicating increasing evidence against the null model.
+
+## Implications and Recommendations
+
+The power of the test for a well-designed series system is quite
+low, requiring many thousands of observations before the test has
+sufficient power to reject the null hypothesis. But, this is not
+necessarily a bad thing. The reduced model is quite simple and
+interpretable, and is by definition a good fit for a well-designed
+series system. 
+
+The findings suggest that the reduced model is particularly apt
+when the system is well-designed, even for very large samples.
+Practitioners should weigh the trade-offs between the simplicity
+of the reduced model and the adequacy in describing the data,
+with consideration of the available sample size and the characteristics
+of the system being modeled.
+
+For systems believed to be well-designed, employing the null model is
+supported both statistically and practically due to its simplicity,
+reduced estimator variability, and analytical tractability.
+In the absence of prior information, or if the shape parameter
+significantly diverges from the well-designed value, the choice between
+models should be undertaken with caution. More complex models may be
+favorable, especially with large sample sizes.
+
+
+# Likelihood Ratio Test {#app-lrt}
+
+In order to determine if a reduced model (e.g., Weibull series system in
+which all of the shape parameters are homogeneous) is appropriate,
+a hypothesis test test may be conducted to determine if there is
+statistically significant evidence in support of the null hypothesis $H_0$,
+e.g., that all of the shape parameters are homogeneous.
+
+Given that we employ a well-defined likelihood model, the likelihood ratio test
+(LRT) is a good choice. The LRT statistic is given by
+$$
+\Lambda = -2 (\ell_R - \ell_F)
+$$
+where $\ell_R$ is the log-likelihood of the null (reduced) model (the log-likelihood of
+the reduced model evaluated at its MLE given a random sample) and $\ell_F$ is the log-likelihood
+of the full model. Under the null model, the LRT statistic is asymptotically distributed chi-squared
+with $m-1$ degrees of freedom, where $m$ is the number of components in the series system,
+$$
+\Lambda \sim \chi^2_{m-1}.
+$$
+If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
+degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, where $\alpha$ denotes the significance level, then
+we find the data to be incompatible with the null hypothesis $H_0$.
+

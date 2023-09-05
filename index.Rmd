@@ -51,6 +51,18 @@ library(kableExtra)
 
 Introduction
 ============
+Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. In a series system, only system failure times may be recorded along with limited information about the failed component in the form of candidate sets. Such masked data poses difficulties for assessing component reliability.
+
+This paper develops and validates maximum likelihood techniques to estimate component reliability from right-censored lifetime data and candidate sets indicative of component failure causes. The key results are:
+
+Deriving a likelihood model incorporating right-censoring and candidate sets to enable masked data to be used for parameter estimation.
+Demonstrating through simulation studies that the maximum likelihood estimator performs well despite small samples and significant masking and right-censoring. Estimation of scale parameters is more robust than shape parameters.
+Showing that bootstrapping provides reasonably well-calibrated confidence intervals for the maximum likelihood estimates, even with small sample sizes.
+The remainder of the paper details the series system and likelihood models, maximum likelihood estimation methodology, bootstrap confidence interval estimation, and extensive simulation studies exploring estimator behavior under various sample sizes, masking levels, and model assumptions.
+
+Together, these contributions provide a statistically rigorous framework for learning about latent component properties from limited observational data on system reliability. The proposed methods expand the capability to quantify component lifetimes in situations where failure data is significantly masked.
+
+
 Accurately estimating the reliability of individual components in multi-component
 systems is an important challenge, as component lifetimes and failure causes are
 often not directly observable. In a series system, only system-level failure times
@@ -163,15 +175,16 @@ the joint pdf of $X_1,\ldots,X_m$ is denoted by $f(x_1,\ldots,x_m)$.
 Next, we dive deeper into these concepts and provide mathematical derivations for
 the reliability function, pdf, and hazard function of the series system.
 We begin with the reliability function of the series system, as given by the following theorem.
-\begin{theorem}
-\label{thm:sys_reliability_function}
+
+::: {.theorem #sys-reliability-function}
 The series system has a reliability function given by
 \begin{equation}
 \label{eq:sys_reliability_function}
-  R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
 \end{equation}
-\end{theorem}
-\begin{proof}
+:::
+
+::: {.proof}
 The reliability function is defined as
 $$
   R_{T_i}(t;\v\theta) = \Pr\{T_i > t\}
@@ -194,21 +207,23 @@ Performing this substitution obtains the result
 $$
   R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
 $$
-\end{proof}
+:::
 
-Theorem \ref{thm:sys_reliability_function} shows that the system's overall reliability is the product of the reliabilities of its individual components. This property is inherent to series systems and will be used in the subsequent derivations.
+Theorem \@ref(thm:sys-reliability-function) shows that the system's overall reliability is the
+product of the reliabilities of its individual components. This property is inherent to series
+systems and will be used in the subsequent derivations. Next, we turn our attention to the pdf
+of the system lifetime, described in the following theorem.
 
-Next, we turn our attention to the pdf of the system lifetime, described in the following theorem.
-\begin{theorem}
-\label{thm:sys_pdf}
+::: {.theorem #sys-pdf}
 The series system has a pdf given by
 \begin{equation}
 \label{eq:sys_pdf}
 f_{T_i}(t;\v\theta) = \sum_{j=1}^m f_j(t;\v{\theta_j})
     \prod_{\substack{k=1\\k\neq j}}^m R_k(t;\v{\theta_j}).
 \end{equation}
-\end{theorem}
-\begin{proof}
+:::
+
+::: {.proof}
 By definition, the pdf may be written as
 $$
     f_{T_i}(t;\v\theta) = -\frac{d}{dt} \prod_{j=1}^m R_j(t;\v{\theta_j}).
@@ -232,19 +247,20 @@ $$
 f_{T_i}(t;\v\theta)= \sum_{j=1}^m f_j(t;\v{\theta_j})
     \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\v{\theta_k}).
 $$
-\end{proof}
-Theorem \ref{thm:sys_pdf} shows the pdf of the system lifetime as a function of the pdfs and reliabilities of its components.
+:::
 
+Theorem \@ref(thm:sys-pdf) shows the pdf of the system lifetime as a function of the pdfs and reliabilities of its components.
 We continue with the hazard function of the system lifetime, defined in the next theorem.
-\begin{theorem}
-\label{thm:sys_failure_rate}
+
+::: {.theorem #sys-failure-rate}
 The series system has a hazard function given by
 \begin{equation}
-\label{eq:sys_failure_rate}
+\label{eq:sys-failure-rate}
   h_{T_i}(t;\v\theta) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 \end{equation}
-\end{theorem}
-\begin{proof}
+:::
+
+::: {.proof}
 By Equation \eqref{eq:failure_rate}, the $i$\textsuperscript{th} series system lifetime has a hazard function defined as
 $$
   h_{T_i}(t;\v\theta) = \frac{f_{T_i}(t;\v\theta)}{R_{T_i}(t;\v\theta)}.
@@ -259,12 +275,11 @@ which can be simplified to
 $$
 h_{T_i}(t;\v\theta) = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})} = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
-\end{proof}
+:::
 
-Theorem \ref{thm:sys_failure_rate} reveals that the system's hazard function is the sum of the hazard functions of its components.
-
-By definition, the hazard function is the ratio of the pdf to the reliability
-function,
+Theorem \@ref(thm:sys-failure-rate) reveals that the system's hazard function is the sum
+of the hazard functions of its components. By definition, the hazard function is the ratio of
+the pdf to the reliability function,
 $$
 h_{T_i}(t;\v\theta) = \frac{f_{T_i}(t;\v\theta)}{R_{T_i}(t;\v\theta)},
 $$
@@ -279,12 +294,15 @@ f_{T_i}(t;\v\theta) &= h_{T_i}(t;\v\theta) R_{T_i}(t;\v\theta)\\
 \end{equation}
 which we sometimes find to be a more convenient form than Equation \eqref{eq:sys_pdf}.
 
-In this section, we derived the mathematical forms for the system's reliability function, pdf, and hazard function. Next, we build upon these concepts to derive distributions related to the component cause of failure.
+In this section, we derived the mathematical forms for the system's reliability,
+probability density, and hazard functions. Next, we build upon these concepts to
+derive distributions related to the component cause of failure.
 
-## Component Cause of Failure {#comp_cause}
+## Component Cause of Failure {#comp-cause}
 Whenever a series system fails, precisely one of the components is the cause.
 We model the component cause of the series system failure as a random variable.
-\begin{definition}
+
+::: {.definition}
 The component cause of failure of a series system is
 denoted by the random variable $K_i$ whose support is given by $\{1,\ldots,m\}$.
 For example, $K_i=j$ indicates that the component indexed by $j$ failed first, i.e.,
@@ -293,12 +311,12 @@ $$
 $$
 for every $j'$ in the support of $K_i$ except for $j$.
 Since we have series systems, $K_i$ is unique.
-\end{definition}
+:::
 
 The system lifetime and the component cause of failure has a joint distribution
 given by the following theorem.
-\begin{theorem}
-\label{thm:f_k_and_t}
+
+::: {.theorem #f-k-and-t}
 The joint pdf of the component cause of failure $K_i$ and series system lifetime
 $T_i$ is given by
 \begin{equation}
@@ -308,8 +326,9 @@ $T_i$ is given by
 where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th}
 component and $R_l(t;\v{\theta_l})$ is the reliability function of the series
 system.
-\end{theorem}
-\begin{proof}
+:::
+
+::: {.proof}
 Consider a series system with $3$ components.
 By the assumption that component lifetimes are mutually independent,
 the joint pdf of $T_{i 1},T_{i 2},T_{i 3}$ is given by
@@ -338,16 +357,17 @@ $$
 f_{K_i,T_i}(j,t;\v\theta) = h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l})\\
 $$
 Generalizing from this completes the proof.
-\end{proof}
+:::
 
-Theorem \ref{thm:f_k_and_t} shows that the joint pdf of the component cause of
+Theorem \@ref(thm:f-k-and-t) shows that the joint pdf of the component cause of
 failure and system lifetime is a function of the hazard functions and reliability
-functions of the components. This result will be used in the Section \ref{like_model}
+functions of the components. This result will be used in the Section \@ref(like-model)
 to derive the likelihood function for the masked data.
 
 The probability that the $j$\textsuperscript{th} component is the cause of failure
 is given by the following theorem.
-\begin{theorem}
+
+::: {.theorem #prob-k}
 The probability that the $j$\textsuperscript{th} component is the cause of failure
 is given by
 \begin{equation}
@@ -361,21 +381,45 @@ is given by
 where $K_i$ is the random variable denoting the component cause of failure of the
 $i$\textsuperscript{th} system and $T_i$ is the random variable denoting the
 lifetime of the $i$\textsuperscript{th} system.
-\end{theorem}
-\begin{proof}
+:::
+
+::: {.proof}
 The probability the $j$\textsuperscript{th} component is the cause of failure is given by
 marginalizing the joint pdf of $K_i$ and $T_i$ over $T_i$,
 $$
 \Pr\{K_i = j\} = \int_0^{\infty} f_{K_i,T_i}(j,t;\v\theta) dt.
 $$
-By Theorem \ref{thm:f_k_and_t}, this is equivalent to
+By Theorem \@ref(thm:f-k-and-t), this is equivalent to
 \begin{align*}
 \Pr\{K_i = j\}
     &= \int_0^{\infty} h_j(t;\v{\theta_j}) R_{T_i}(t;\v\theta) dt\\
     &= \int_0^{\infty} \biggl(\frac{h_j(t;\v{\theta_j})}{h_{T_i}(t ; \v\theta)}\biggr) f_{T_i}(t ; \v\theta) dt\\
     &= E_{\v\theta}\biggl[\frac{h_j(T_i;\v{\theta_j})}{\sum_{l=1}^m h_l(T_i ; \v{\theta_l})}\biggr].
 \end{align*}
-\end{proof}
+:::
+
+::: {.theorem #prob-k-given-t}
+The probability that the $j$\textsuperscript{th}
+component is the cause of system failure given only that we know a system failure
+occured at time $t_i$ is given by
+$$
+\Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{l=1}^m h_l(t_i;\v{\theta_l})}.
+$$
+:::
+
+::: {.proof}
+By the definition of conditional probability,
+\begin{align*}
+    \Pr\{K_i = j|T_i = t_i\} 
+        &= \frac{f_{K_i,T_i}(j, t_i;\v\theta)}{f_{T_i}(t_i;\v\theta)}\\
+        &= \frac{h_j(t_i;\v{\theta_j})}{R_{T_i}(t_i;\v\theta)} / f_{T_i}(t_i;\v\theta)
+\end{align*}
+By the property that $h_{T_i}(t_i;\v\theta) = f_{T_i}(t_i;\v\theta) / R_{T_i}(t_i;\v\theta)$,
+we may do this substitution and simplify to obtain
+$$
+\Pr\{K_i = j|T_i = t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{l=1}^m h_l(t_i;\v{\theta_l})}.
+$$
+:::
 
 ## System and Component Reliabilities {#reliability}
 
@@ -407,7 +451,7 @@ the other components, e.g., $\Pr\{K_i = j\} \approx \Pr\{K_i = k\}$ and
 and MTTF$_j \approx$ MTTF$_k$ for all $j$ and $k$. This just means that the components
 should have similar reliabilities and failure characteristics.
 
-We use these results in the simulation study in Section \ref{sim_study}, where we
+We use these results in the simulation study in Section \@ref(sim-study), where we
 assess the sensitivity of the MLE with respect to varying the reliability
 of one of the Weibull components. We vary its reliability in two different ways:
 
@@ -417,7 +461,7 @@ of one of the Weibull components. We vary its reliability in two different ways:
 2. We vary its scale parameter (keeping its shape parameter constant), which scales
    its MTTF while retaining the same failure characteristics.
 
-Likelihood Model for Masked Data {#like_model}
+Likelihood Model for Masked Data {#like-model}
 ==================================================
 
 The object of interest is the (unknown) parameter value $\v\theta$. 
@@ -630,7 +674,7 @@ $$
 
 Even though $K_i$ is not observable in our masked data model, we can still
 consider the joint distribution of $T_i$, $K_i$, and $\mathcal{C}_i$.
-By Theorem \ref{thm:f_k_and_t}, the joint pdf of $T_i$ and $K_i$ is given by
+By Theorem \@ref(thm:f-k-and-t), the joint pdf of $T_i$ and $K_i$ is given by
 $$
 f_{T_i,K_i}(t_i,j;\v{\theta}) = h_j(t_i;\v{\theta_j}) R_{T_i}(t_i;\v\theta),
 $$
@@ -668,7 +712,7 @@ f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = R_{T_i}(t_i;\v\theta)
     \biggr\}.
 \end{equation}
 
-When we try to find an MLE of $\v\theta$ (see Section \ref{mle}), we
+When we try to find an MLE of $\v\theta$ (see Section \@ref(mle)), we
 solve the simultaneous equations of the MLE and choose a solution
 $\hat{\v\theta}$ that is a maximum for the likelihood function.
 When we do this, we find that $\hat{\v\theta}$ depends on the unknown
@@ -745,67 +789,9 @@ if we observe an exact system failure time for the $i$-th system ($\delta_i = 1$
 but the component that failed is masked by a candidate set $c_i$, then its likelihood
 contribution is given by Equation \eqref{eq:likelihood_contribution_masked}.
 
-### Probability of Component Cause of System Failure {-}
-This subsection is not necessary in our likelihood model, but it derives a useful
-result for making predictions about the component cause of failure.
-Suppose we have observed a candidate set and a series system
-failure and we are interested in the probability that a particular component
-is the cause of failure.
-\begin{theorem}
-Assuming Conditions \ref{cond:c_contains_k} and \ref{cond:equal_prob_failure_cause},
-the conditional probability of the component cause of failure is component $j$ ($K_i = j$)
-given a masked component cause of failure ($\mathcal{C}_i = c_i$) and system lifetime ($T_i = t_i$)
-is given by
-\begin{equation}
-\label{eq:cond_prob_k_given_t_and_c}
-\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
- \frac{h_j(t_i|\v{\theta_j})}{\sum_{l \in c_i} h_l(t_i|\v{\theta_l})} 1_{\{j \in c_i\}}.
-\end{equation}
-\end{theorem}
-\begin{proof}
-The conditional probability $\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\}$ may be
-written as
-$$
-\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
-    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} f_{K_i,T_i}(j,t_i;\v\theta)}
-    {\sum_{j=1}^m \Pr{}_{\!\v\theta}
-        \{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} f_{K_i,T_i}(j,t_i;\v\theta)}.
-$$
-By Theorem \ref{thm:f_k_and_t},
-$f_{K_i,T_i}(j,t_i;\v\theta) = h_j(t_i;\v\theta)R_{T_i}(t_i;\v\theta)$.
-We may make this substitution and simplify:
-$$
-\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
-    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v{\theta_j})}
-         {\sum_{j'=1}^m \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i=j',T_i=t_i\} h_{j'}(t_i;\v{\theta_{j'}})}.
-$$
-Assuming Conditions \ref{cond:c_contains_k} and \ref{cond:equal_prob_failure_cause}, we may rewrite the above
-as
-$$
-\Pr\{K_i = j|T_i=t_i,\mathcal{C}_i=c_i\} =
-    \frac{\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v{\theta_j})}
-    {\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|K_i = j,T_i=t_i\} {\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}} =
-    \frac{h_j(t_i;\v{\theta_j})}
-    {\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}.
-$$
-\end{proof}
-
-Frequently, we may not have any information at all about the component cause of
-failure. In this case, $c_i = \{1,\ldots,m\}$, and we obtain the following corollary.
-\begin{corollary}
-\label{cor:cond_prob}
-The probability that the $j$\textsuperscript{th}
-component is the cause of system failure given only that we know a system failure
-occured at time $t_i$ is given by
-$$
-\Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{l=1}^m h_l(t_i;\v{\theta_l})}.
-$$
-\end{corollary}
-
-
 ## Right-Censored Data
 
-As described in Section \ref{like_model}, we observe realizations of
+As described in Section \@ref(like-model), we observe realizations of
 $(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{T_i,\tau_i\}$ is the
 right-censored system lifetime, $\delta_i = 1_{\{T_i < \tau_i\}}$ is
 the right-censoring indicator, and $\mathcal{C}_i$ is the candidate set.
@@ -848,7 +834,7 @@ L_i(\v\theta) =
 \end{cases}
 $$
 
-We use this result in Section \ref{mle} to derive the maximum likelihood
+We use this result in Section \@ref(mle) to derive the maximum likelihood
 estimator (MLE) of $\v\theta$.
 
 ## Identifiability and Convergence Issues
@@ -865,7 +851,7 @@ In our simulation study, we address these challenges in a pragmatic way. Specifi
 failure to converge to a solution within a maximum of 125 iterations is interpreted as
 evidence of the aforementioned issues, leading to the discarding of the sample, with
 the process then repeated with a new synthetic sample. Note, however, that in Section
-\ref{boot} where we discuss the bias-corrected and accelerated (BCa) bootstrap
+\@ref(boot) where we discuss the bias-corrected and accelerated (BCa) bootstrap
 method for constructing confidence intervals, we do not discard any resamples.
 
 This strategy helps ensure the robustness of the results, while acknowledging the
@@ -1020,7 +1006,7 @@ of failure behaviors. Reflecting on its utility, Weibull
 modestly noted that it "[...] may sometimes render good service." [@Abernethy2006].
 In the context of our study, we utilize the Weibull
 to model a system as originating from Weibull components in a series configuration,
-producing a specific form of the likelihood model described in Section \ref{like_model},
+producing a specific form of the likelihood model described in Section \@ref(like-model),
 which deals with challenges such as right censoring and masked component cause of failure.
 
 The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
@@ -1056,7 +1042,7 @@ result of components wearing as they age
 
 We show that the lifetime of the series system composed of $m$ Weibull components
 has a reliability, hazard, and probability density functions given by the following theorem.
-\begin{theorem}
+::: {.theorem #sys_weibull}
 The lifetime of a series system composed of $m$ Weibull components
 has a reliability function, hazard function, and pdf respectively given by
 \begin{align}
@@ -1073,9 +1059,10 @@ f_{T_i}(t;\v\theta) &= \biggl\{
     -\sum_{j=1}^m \bigl(\frac{t}{\lambda_j}\bigr)^{k_j}
 \biggr\}.
 \end{align}
-\end{theorem}
-\begin{proof}
-The proof for the reliability function follows from Theorem \ref{thm:sys_reliability_function},
+:::
+
+::: {.proof}
+The proof for the reliability function follows from Theorem \@ref(thm:sys-reliability-function),
 $$
 R_{T_i}(t;\v\theta) = \prod_{j=1}^{m} R_j(t;\lambda_j,k_j).
 $$
@@ -1085,24 +1072,24 @@ R_{T_i}(t;\v\theta)
     = \prod_{j=1}^{m} \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}
     = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
 \end{align*}
-The proof for the hazard function follows from Theorem \ref{thm:sys_failure_rate},
+The proof for the hazard function follows from Theorem \@ref(thm:sys-failure-rate),
 \begin{align*}
 h_{T_i}(t;\v\theta)
     = \sum_{j=1}^{m} h_j(t;\v{\theta_j})
     = \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
 \end{align*}
-The proof for the pdf follows from Theorem \ref{thm:sys_pdf}. By definition,
+The proof for the pdf follows from Theorem \@ref(thm:sys-pdf). By definition,
 $$
 f_{T_i}(t;\v\theta) = h_{T_i}(t;\v\theta) R_{T_i}(t;\v\theta).
 $$
 Plugging in the failure rate and reliability functions given respectively by
 Equations \eqref{eq:sys_weibull_reliability_function} and
 \eqref{eq:sys_weibull_failure_rate_function} completes the proof.
-\end{proof}
+:::
 
 ## Reliability
 
-In Section \ref{reliability}, we discussed the concept of reliability.
+In Section \@ref(reliability), we discussed the concept of reliability.
 In the case of Weibull components, the MTTF of the $j$\textsuperscript{th}
 component is given by
 \begin{equation}
@@ -1127,8 +1114,8 @@ they have a similar MTTF and a similar probability of being the component cause 
 failure, i.e., they have similar shapes and scales, so that system failures are not
 dominated by some subset of components.
 
-## Likelihood Model {#sys_weibull_likelihood}
-In Section \ref{like_model}, we discussed two separate kinds of likelihood
+## Likelihood Model {#sys-weibull-like}
+In Section \@ref(like-model), we discussed two separate kinds of likelihood
 contributions, masked component cause of failure data (with exact system failure
 times) and right-censored data. The likelihood contribution of the
 $i$\textsuperscript{th} system is given by the following theorem.
@@ -1185,6 +1172,9 @@ The log-likelihood contribution of the $i$-th system is given by
 where we drop any terms that do not depend on $\v\theta$ since they do not
 affect the MLE.
 \end{corollary}
+
+See Appendix \@ref(app-weibull-loglik-r) for the R code that implements the log-likelihood function
+for the series system with Weibull components.
 
 We find an MLE by solving \eqref{eq:mle_eq},
 i.e., a point $\v{\hat\theta} = (\hat{k}_1,\hat{\lambda}_1,\ldots,\hat{k}_m,\hat{\lambda}_m)$ satisfying
@@ -1286,15 +1276,16 @@ $$
 $$
 \end{proof}
 
-\begin{theorem}
+::: {.theorem}
 If a series system has Weibull components with homogeneous shape parameters, the component
 cause of failure is conditionally independent of the system failure time:
 $$
     \Pr\{K_i = j | T_i = t_i \} = \Pr\{K_i = j\} = \frac{\lambda_j^{-k}}{\sum_{l=1}^{m} \lambda_l^{-k}}.
 $$
-\end{theorem}
-\begin{proof}
-By Corollary \ref{cor:cond_prob}, the conditional probability of the $j$\textsuperscript{th} component being the
+:::
+
+::: {.proof}
+By Theorem \@ref(thm:prob-k-given-t), the conditional probability of the $j$\textsuperscript{th} component being the
 cause of failure given the system failure time is given by
 \begin{align*}
 \Pr\{K_i = j | T_i = t\}
@@ -1307,7 +1298,7 @@ cause of failure given the system failure time is given by
     = \frac{\bigl(\frac{1}{\lambda_j}\bigr)^k}
         {\sum_{l=1}^m \bigl(\frac{1}{\lambda_l}\bigr)^k}.
 \end{align*}
-\end{proof}
+:::
 
 If we have prior knowledge that the shape parameters are sufficiently homogenous, it may
 be useful to simplify the likelihood model by assuming the shape parameters are identical,
@@ -1324,7 +1315,7 @@ $$
 $$
 The same may be done for the score and hessian of the log-likelihood functions.
 
-Simulation Study: Full Model {#sim_study}
+Simulation Study: Full Model {#sim-study}
 ================================
 
 ```{r sim-study-design, echo = F}
@@ -1341,7 +1332,7 @@ scales <- theta[grepl("scale", names(theta))]
 ```
 
 In this section, we conduct a simulation study to assess the performance
-of the MLE for the full likelihood model defined in Section \ref{weibull}.
+of the MLE for the full likelihood model defined in Section \@ref(weibull).
 In this simulation study, we assess the sensitivity of the MLE to
 various simulation scenarios. In particular, we assess two important
 properties of the MLE with respect to a scenario:
@@ -1366,7 +1357,7 @@ slightly more complex, we add two more components to this series system,
 with shape and scale parameters given by the last two components in Table
 \ref{tab:series-sys}. We will refer to this system as the **base** system.
 
-In Section \ref{reliability}, we defined a well-designed series
+In Section \@ref(reliability), we defined a well-designed series
 system as one that consists of components with similar reliabilities, where we define
 reliability in two ways, the mean time to failure (MTTF) and the probability that a
 specific component will be the cause of failure. All things else being equal,
@@ -1419,7 +1410,7 @@ knitr::kable(
 
 
 
-## Data Generating Process {#data_gen}
+## Data Generating Process {#data-gen-proc}
 
 In this section, we describe the data generating process for our simulation studies.
 It consists of three parts: the series system, the candidate set model, and the
@@ -1428,10 +1419,10 @@ right-censoring model.
 ### Series System Lifetime {-}
 
 We generate data from a Weibull series system with $m$ components.
-As described in Section \ref{weibull}, the $j$\textsuperscript{th} component
+As described in Section \@ref(weibull), the $j$\textsuperscript{th} component
 of the $i$\textsuperscript{th} system has a lifetime distribution given by
 $$
-    T_{i j} \sim \operatorname{WEI}(k_j, \lambda_j)
+    T_{i j} \sim \operatorname{Weibull}(k_j, \lambda_j)
 $$
 and the lifetime of the series system composed of $m$ Weibull components
 is defined as
@@ -1464,19 +1455,19 @@ quantile of the series system, we define the function $g$ as
 $$
 g(\tau) = F_{T_i}(\tau;\v\theta) - q
 $$
-and find its root using the Newton-Raphson method. See Appendix \ref{app-series-quantile} for the R code that
+and find its root using the Newton-Raphson method. See Appendix \@ref(app-series-quantile) for the R code that
 implements this procedure.
 
 ### Masking Model for Component Cause of Failure {-}
 
 We must generate data that satisfies the masking conditions described in
-Section \ref{candmod}.
+Section \@ref(candmod).
 There are many ways to satisfying the masking conditions. We choose the simplest
 method, which we call the *Bernoulli candidate set model*. In this model, each
 non-failed component is included in the candidate set with
 a fixed probability $p$, independently of all other components and independently
 of $\v\theta$, and the failed component is always included in the candidate set.
-See Appendix D for the R code that implements this model.
+See \@ref(app-cand-model-r)} for the R code that implements this model.
 
 ## Simulation Scenarios
 
@@ -1496,7 +1487,7 @@ Here is an outline of the simulation study for a particular scenario:
    desired range.
 
 2. Simulate $R \geq 300$ datasets from the Data Generating Process (DGP) described in
-   Section \ref{data_gen} and compute an MLE for each dataset. We choose $R$ to be
+   Section \@ref(data-gen-proc) and compute an MLE for each dataset. We choose $R$ to be
    large enough so that the sampling distribution of the MLE is well approximated by
    the empirical distribution of the $R$ MLEs.
 
@@ -1512,7 +1503,7 @@ Here is an outline of the simulation study for a particular scenario:
 
 5. Visualize the results and assess the behavior of estimator under the chosen scenario.
    
-For how we run a simulation scenario, see Appendix C.
+For how we run a simulation scenario, see Appendix \@ref(app-sim-study-r).
 
 ## Scenario: Assessing the Impact of Right-Censoring {#effect-censoring}
 
@@ -1554,7 +1545,7 @@ Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
   in Figure \ref{fig:q-vs-stats}, where the shape parameter estimates are positively biased for most of the quantiles
   $q$.
   
-### Key Observations {-}
+### Key Observations
 
 ##### Coverage Probability (CP) {-}
 The CP is well-calibrated, obtaining a value near the
@@ -1602,12 +1593,13 @@ for the shape and scale parameters. The top four plots only show the effect on t
 shape and scale parameters of components $1$ and $4$, since the rest were essentially identical,
 and the bottom two plots show the coverage probabilities for all parameters.
 
-### Key Observations {-}
+### Key Observations
 
-##### Coverage Probability (CP)*: The CP is well-calibrated, obtaining a value near the
-  nominal $95\%$ level across different sample sizes. This suggests that the bootstrapped
-  CIs will contain the true value of the shape parameter with the specified confidence
-  level. The CIs are neither too wide nor too narrow.
+##### Coverage Probability (CP) {-}
+The CP is well-calibrated, obtaining a value near the
+nominal $95\%$ level across different sample sizes. This suggests that the bootstrapped
+CIs will contain the true value of the shape parameter with the specified confidence
+level. The CIs are neither too wide nor too narrow.
 
 ##### Dispersion of MLEs {-}
 The shaded regions representing the $95\%$ probability range of
@@ -1664,7 +1656,7 @@ all parameters.
 knitr::include_graphics("image/5_system_prob_fig.pdf")
 ```
 
-### Key Observations {-}
+### Key Observations
 
 ##### Coverage Probability (CP) {-}
 For the scale parameters, the $95\%$ CI is well-calibrated
@@ -1725,7 +1717,7 @@ the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample
 knitr::include_graphics("image/5_system_mttf3_by_scale3.pdf")
 ```
 
-### Key Observations {-}
+### Key Observations
 
 ##### Coverage Probability (CP) {-}
 When MTTF of component 3 is much smaller than other components,
@@ -1774,7 +1766,7 @@ on the scale parameter.
 knitr::include_graphics("image/5_system_shape3_fig.pdf")
 ```
 
-#### Key Observations {-}
+#### Key Observations
 
 ##### Coverage Probability (CP) {-}
 The CP for the scale parameters
@@ -1808,6 +1800,206 @@ positively biased, decreasing its infant morality rate to make it less likely to
 component cause of failure, and adjusting $k_3$ to be less positively biased, increasing
 its infant mortality rate, to make it more likely to be the component cause of failure.
 
+Future Work
+===========
+
+### Relaxation of Masking Conditions {-}
+
+Investigate relaxations of Conditions 1, 2, and 3.
+Condition 1 stipulates that the failed component is always in
+the candidate set,
+$$
+    \Pr\{K_i \in \mathcal{C}_i\} = 1.
+$$
+Instead, we could model this as a probability, where the probability
+of the failed component being in the candidate set is a function
+of the failure time $T_i$ and the component cause of failure $K_i$,
+$$
+    \Pr\{K_i \in \mathcal{C}_i | K_i = j, T_i = t_i\} = g(j, t_i).
+$$
+Condition 2 stipulates that
+$$
+    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\} = 
+    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j'\}
+$$
+for all $j, j' \in c_i$. We call this an *uninformed* candidate set,
+since the conditional probability of the candidate set given the
+failure time and component cause of failure is independent of the
+component cause of failure. We could relax this condition to allow
+for *informed* candidate sets, where the conditional probability
+of the candidate set given the failure time and component cause of
+failure is dependent on the component cause of failure.
+
+In each of these violations or relaxations, we can either construct
+a new likelihood model that takes this relaxation into account, or
+we can use the existing likelihood model and assess the sensitivity
+of the estimator to this violation. A potentially interesting way to
+do the lattr is by using KL-divergence to measure the distance
+between, for instance, the uninformed and informed candidate set models,
+and then assess the sensitivity of the estimators to this distance.
+
+### Expanded Sensitivity Analyses {-}
+
+- Assess the sensitivity of the reduced model to the presence of
+masking and right-censoring. Since it has fewer parameters, it may
+be more robust to these effects.
+
+- Assess the sensitivity of the full and reduced models to the
+number ($m$) of components in the series system.
+
+### Bootstrapped Data Augmentation {-}
+
+Assess the robustness of Data Augmentation (DA) as an implicit
+prior. For example, we may adopt the prior that the system is
+well-designed and augment particularly small samples with
+observations sampled in the following way:
+
+1. Fit the *reduced* model (which assumes a well-designed
+system with identical shape paramters) to the data.
+
+2. Sample $M$ new observations, $\{T_i,\mathcal{C}_i\}_{i=n+1}^{n+M}$,
+from the fitted model according to the DGP described in Section
+\@ref(data-gen-proc). The number of new observations $M$ is a hyperparameter
+that can be tuned, but intuitively we seek to sample enough new
+observations to mitigate the masking and censoring effects.
+For instance, this might suggest that we want the sample size to be
+large enough so that each component, no matter how unlikely, is
+represented in the sample as a masked component cause of failure.
+
+Unlike a full Bayesian approach, where we would need to specify
+a prior for the parameters, DA is an implicit prior that need not
+be explicitly specified. It is a form of regularization that
+reduces the variance of the estimator by leveraging the structure
+of the model and the data. It is particularly useful for small
+samples, where masking and censoring effects are more pronounced.
+
+The DA can be tuned to work with the Bootstrap, where we can
+resample $n$ observations from the unaugmented data, fit the
+reduced model, sample $M$ new observations from the reduced model
+fitted to the resampled data, and then fit the full model to the
+augmented data. This would be a form of *augmented bootstrap*.
+
+### Penalized Likelihood For Homogenous Shape Parameters {-}
+
+Assess the use of penalized likelihood methods instead of
+DA as a form of regularization. For instance, we can add
+a penalty term to the log-likelihood function that penalizes
+the likelihood when the shape parameters are not close to
+each other. Instead of using a reduced model, we can 
+use a penalized likelihood approach to encourage the shape
+parameters to be close to each other, but not necessarily
+equal.
+
+### General Likelihood Models {-}
+
+We have focused on the Weibull likelihood model, but we
+have the general likelihood model for the series system.
+We can allow the user to specify the parametric
+for each component.
+
+
+### Likelihood Model with Predictors {-}
+
+In our current model, we only observe the failure times,
+candidate sets, and right-censoring indicators. We can
+extend the model to include additional predictors, e.g.,
+let the hazard function be dependent on  predictors
+$\v{w_1}, \ldots, \v{w_n}$, where $\v{w_i}$ is a vector
+of predictors for the $i$th observation. Then, the
+hazard function for the $j$th component is
+$$
+    h_j(t_i;\v{\beta_j} | \v{w_i}),
+$$
+for instance we may use the existing Weibull likelihood model,
+but make the shape and scale parameters dependent on the
+predictors $\v{w}_i$. We can use any parametric
+likelihood model for the $j$th component. For instance,
+we can use the Cox proportional hazards model,
+$$
+    h_j(t_i;\v{\beta_j}) = h_0(t_i) \exp(\v{\beta_j}^T \v{w_i}),
+$$
+where $h_{0}(t_i)$ is a baseline hazard function
+shared by all components and $\v{\beta_j}$ is the parameter
+vector for the $j$th component.
+
+A more general model could parameterize each component
+with its own hazard function, where we have the freedom
+to choose any parametric form for the hazard function,
+as long as it is a valid hazard function, by the observation
+that
+$$
+    R_j(t_i;\v{\beta_j}|\v{w_i}) = \exp\{-\int_0^{t_i} h_j(t_i|\v{w_i};\v{\beta_j}\}.
+$$
+As long as $h_j(t|\v{w_i};\v{\beta_j})$ is non-negative and integrable,
+then $R_j(t_i;\v{\beta_j}|\v{w_i})$ is a valid reliability function.
+
+### Additional Likelihood Contributions {-}
+
+This is related to the previous point, but we can extend the
+likelihood model to include additional likelihood contributions.
+
+We used masked component cause of failure and right-censoring
+as the likelihood contributions in our model, but we can introduce
+additional likelihood contributions, such as interval censoring,
+left-censoring, other kinds of masking. This is also related
+to relaxing the masking conditions, where we can introduce
+additional likelihood contributions to account for the
+relaxations.
+
+### Prediction Intervals {-}
+
+Often, what we are most interested in is *induction*, or prediction.
+We want to predict the failure time of new series system, given
+information in a sample,
+$$
+    T_{n + p}, \ldots, T_{n+1} | T_1 = t_1, \ldots, T_n = t_n.
+$$
+
+We might also want to predict a statistic of interest that is a
+function of the new observations, e.g., the probability that
+component $j$ is the component cause of failure,
+$$
+    \Pr\{K_{n + 1} = j | T_1 = t_1, \ldots, T_n = t_n\}.
+$$
+
+Conclusion
+==========
+
+This paper presented maximum likelihood methods for estimating
+component reliability from masked failure data in series systems.
+A likelihood model was derived accounting for right-censoring and
+candidate sets masking the component cause of failure. Through
+simulation studies, right-censoring and masking were found to bias
+shape parameter estimates positively. The scale parameter estimates
+were more robust. Overall, shape parameters were more sensitive to
+the data and harder to estimate precisely than scale parameters.
+Nonetheless, bootstrapping provided reasonably well-calibrated
+confidence intervals even for small sample sizes.
+
+A reduced model assuming homogeneous component shape parameters
+was also assessed. This simplified model improves interpretability
+as the system becomes Weibull, while reducing estimator variability.
+The appropriateness of the reduced model was explored through an
+LRT simulation study. For well-designed systems, the reduced model
+showed excellent fit even for large samples. However, varying the
+scale or shape of a single component quickly provided evidence
+against the null model.
+
+The reduced model thus appears favorable both statistically and
+practically when systems are believed to be well-designed. However,
+more complex models may be preferred given divergent component
+properties or large samples. The choice between models should weigh
+model simplicity against adequacy in describing available data.
+
+Overall, this work provides a rigorous framework for quantifying
+component reliability from limited observational data. The methods
+demonstrated accurate and robust performance despite the significant
+challenges introduced by masking and right-censoring. Future work
+can focus on relaxing modeling assumptions and expanding the
+sensitivity analysis. The techniques presented expand the range of
+applications where component lifetime properties can be inferred
+from system-level data.
+
 ## Implications and Recommendations
 
 Here, we discuss and summarize the implications of our simulation study and provide recommendations
@@ -1832,7 +2024,7 @@ when the sample size is small.
 Since a well-designed system has components with similar failure characteristics, the shape parameters
 should be reasonably aligned. To mitigate the problems with the shape parameters, both from an analytic
 and variability perspective, we may be motivated to use the reduced model that assumes homogeneity
-in the shape parameters, as described in Section \ref{reduced-weibull}. The reduced model offers
+in the shape parameters, as described in Section \@ref(reduced-weibull). The reduced model offers
 interpretability (the series system is itself Weibull) and reduced estimator
 variability (only $m+1$ parameters instead of $2 m$), but it is must adequately describe the data.
 
@@ -1875,238 +2067,11 @@ When we deviate from a well-designed system, the MLE becomes much more sensitive
 more bias, more variability, and less well-calibrated confidence intervals. This is particularly true
 for the shape parameters, which are more sensitive to the data than the scale parameters.
 
-# Simulation Study: Full Weibull Model vs Reduced (Homogenous Shape) Model {#full-vs-reduced}
-
-In Section \ref{weibull}, we developed the full model with Weibull
-components and we conducted a sensitivity analysis of its MLE in
-Section \ref{sim_study}. Here, our focus shifts to a sensitivity
-analysis aimed at understanding when it is appropriate to use the reduced model
-that assumes homogeneity in the shape parameters of the components, as described
-in Section \ref{reduced-weibull}. The reduced model offers interpretability
-(the series system is itself Weibull) and reduced estimator variability (only
-$m+1$ parameters instead of $2m$), but it is must adequately describe the data.
-
-We aim to assess the appropriateness of the reduced model under varying
-sample sizes and shape parameters of the third component ($k_3$). We employ
-a simulation study using the likelihood ratio test (LRT) for this purpose,
-where the null hypothesis, $H_0$, assumes homogenous shape parameters.
-
-We take the well-designed series system described in Table \ref{tab:series-sys},
-and manipulate the shape parameter of the third
-component ($k_3$) to cause the components to have different failure characteristics.
-Recall that $k_3 = 1.1308$ corresponds to a *well-designed* series system, where
-component shapes are reasoanbly aligned. We also vary the sample size $n$ to assess
-the impact of sample size on the appropriateness of the reduced model.
-
-Figure \ref{fig:lrt-contour} provides a contour plot with varying 
-sample sizes along the $x$-axis, shape of component 3 along the $y$-axis,
-and median $p$-value along the color scale.
-The contour lines corresponding to $p$-values of $0.05$ and $0.1$ are
-often used as a threshold for statistical significance. Points outside
-of these contours in dark blue are indicative of significant evidence
-against the null model and points inside of these contours in light blue
-for $0.1$ and green for $0.05$ are indicative of insufficient evidence
-against the null model.
-
-Figure \ref{fig:lrt-samp-size} provides a plot of the median $p$-value
-against the sample size for the well-designed system, where the shape
-parameter of component 3 is fixed at $1.1308$. The $95$th percentile
-of the $p$-values is also provided as a more stringent criterion for
-statistical significance.
-
-```{r samp-size-shape-lrt, results='asis', echo = F}
-cat('
-\\begin{figure}
-    \\centering
-    \\begin{minipage}{.5\\textwidth}
-        \\centering
-        \\includegraphics[width=1\\linewidth]{image/fig-lrt/contour_plot.pdf}
-        \\captionof{figure}{$p$-Value vs Sample Size and Shape $k_3$}
-        \\label{fig:lrt-contour}
-    \\end{minipage}%
-    \\begin{minipage}{.5\\textwidth}
-        \\centering
-        \\includegraphics[width=1\\linewidth]{image/fig-lrt/n-vs-p-value.pdf}
-        \\captionof{figure}{$p$-Value vs Sample Size for Well-Designed System}
-        \\label{fig:lrt-samp-size}
-    \\end{minipage}
-\\end{figure}
-')
-```
-
-#### Sensitivity to Sample Size ($n$) {-}
-
-- The sample size is an essential aspect of hypothesis testing, as it affects the
-test's power, which is the probability of correctly rejecting the null hypothesis
-when it is false. In the contour plot in Figure \ref{fig:lrt-contour}, as $n$
-increases, the contours trend lower.
-This indicates that larger samples result in smaller median $p$-values,
-implying that the power of the LRT increases with the sample size.
-However, its power is quite low for small samples, particularly for values of
-$k_3$ somewhat close to the shape parameters of the other components in the system.
-
-- Recall that in the well-designed series system, $k_3 = 1.1308$. In this case,
-even very large sample sizes do not produce evidence
-against the null model, indicating robust compatibility.
-
-- In Figure \ref{fig:lrt-samp-size}, we fix $k_3$ at $1.1308$ and vary the sample size. 
-The median $p$-value only manages to drop below the $0.05$ theshold with
-sample sizes around $10000$. In the more stringent criterion given
-by the $95$th percentile of the $p$-values, nearly $30000$ observations are
-necessary to reject the null hypothesis in $95\%$ of the simulations.
-
-#### Sensivity to Shape Parameter ($k_3$) {-}
-
-- In Figure \ref{fig:lrt-contour}, for a given shape parameter, increasing the
-sample size tends to decrease the median $p$-value. Larger samples provide
-more information about the parameters, which increases the power of the LRT.
-
-- The median $p$-values in the vicinity of the line $k_3 = 1.1308$ are
-high across various sample sizes, indicating that the null model is a good fit.
-As $k_3$ deviates from this line, the median $p$-value diminishes,
-indicating increasing evidence against the null model.
-
-## Implications and Recommendations
-
-The power of the test for a well-designed series system is quite
-low, requiring many thousands of observations before the test has
-sufficient power to reject the null hypothesis. But, this is not
-necessarily a bad thing. The reduced model is quite simple and
-interpretable, and is by definition a good fit for a well-designed
-series system. 
-
-The findings suggest that the reduced model is particularly apt
-when the system is well-designed, even for very large samples.
-Practitioners should weigh the trade-offs between the simplicity
-of the reduced model and the adequacy in describing the data,
-with consideration of the available sample size and the characteristics
-of the system being modeled.
-
-For systems believed to be well-designed, employing the null model is
-supported both statistically and practically due to its simplicity,
-reduced estimator variability, and analytical tractability.
-In the absence of prior information, or if the shape parameter
-significantly diverges from the well-designed value, the choice between
-models should be undertaken with caution. More complex models may be
-favorable, especially with large sample sizes.
-
-Future Work
-===========
-
-#### Relaxation of Conditions {-}
-
-Investigate relaxations of Conditions 1, 2, and 3.
-Condition 1 stipulates that the failed component is always in
-the candidate set,
-$$
-    \Pr\{K_i \in \mathcal{C}_i\} = 1.
-$$
-Instead, we could model this as a probability, where the probability
-of the failed component being in the candidate set is a function
-of the failure time $T_i$ and the component cause of failure $K_i$,
-$$
-    \Pr\{K_i \in \mathcal{C}_i | K_i = j, T_i = t_i\} = g(j, t_i).
-$$
-Condition 2 stipulates that
-$$
-    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\} = 
-    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j'\}
-$$
-for all $j, j' \in c_i$. We call this an *uninformed* candidate set,
-since the conditional probability of the candidate set given the
-failure time and component cause of failure is independent of the
-component cause of failure. We could relax this condition to allow
-for *informed* candidate sets, where the conditional probability
-of the candidate set given the failure time and component cause of
-failure is dependent on the component cause of failure.
-
-In each of these violations or relaxations, we can either construct
-a new likelihood model that takes this relaxation into account, or
-we can use the existing likelihood model and assess the sensitivity
-of the estimator to this violation. A potentially interesting way to
-do the lattr is by using KL-divergence to measure the distance
-between, for instance, the uninformed and informed candidate set models,
-and then assess the sensitivity of the estimators to this distance.
-
-#### Expanded Sensitivity Analyses {-}
-
-- Assess the sensitivity of the reduced model to the presence of
-masking and right-censoring. Since it has fewer parameters, it may
-be more robust to these effects.
-
-- Assess the sensitivity of the full and reduced models to the
-number ($m$) of components in the series system.
-
-#### Data Augmentation {-}
-
-Assess the robustness of Data Augmentation (DA) as an implicit
-prior, particularly for the reduced model, where we may adopt the
-prior that the system is well-designed. By incorporating DA into
-the procedure, we may be able to significantly improve the
-performance of the estimator on extremely small samples.
-
-Unlike a full Bayesian approach, where we would need to specify
-a prior for the parameters, DA is an implicit prior that need not
-be explicitly specified. It is a form of regularization that
-improves the performance of the estimator by leveraging the
-structure of the model and the data. It is particularly useful
-for small samples, where the data is not sufficient to overcome
-the masking and censoring effects.
-
-#### Penalized Likelihood {-}
-
-Assess the use of penalized likelihood methods instead of
-DA as a form of regularization. For instance, we can add
-a penalty term to the log-likelihood function that penalizes
-the likelihood when the shape parameters are not close to
-each other. Instead of simply using a reduced model, we can 
-use a penalized likelihood approach to encourage the shape
-parameters to be close to each other, but not necessarily
-equal.
-
-Conclusion
-==========
-
-This paper presented maximum likelihood methods for estimating
-component reliability from masked failure data in series systems.
-A likelihood model was derived accounting for right-censoring and
-candidate sets masking the component cause of failure. Through
-simulation studies, right-censoring and masking were found to bias
-shape parameter estimates positively. The scale parameter estimates
-were more robust. Overall, shape parameters were more sensitive to
-the data and harder to estimate precisely than scale parameters.
-Nonetheless, bootstrapping provided reasonably well-calibrated
-confidence intervals even for small sample sizes.
-
-A reduced model assuming homogeneous component shape parameters
-was also assessed. This simplified model improves interpretability
-as the system becomes Weibull, while reducing estimator variability.
-The appropriateness of the reduced model was explored through an
-LRT simulation study. For well-designed systems, the reduced model
-showed excellent fit even for large samples. However, varying the
-scale or shape of a single component quickly provided evidence
-against the null model.
-
-The reduced model thus appears favorable both statistically and
-practically when systems are believed to be well-designed. However,
-more complex models may be preferred given divergent component
-properties or large samples. The choice between models should weigh
-model simplicity against adequacy in describing available data.
-
-Overall, this work provides a rigorous framework for quantifying
-component reliability from limited observational data. The methods
-demonstrated accurate and robust performance despite the significant
-challenges introduced by masking and right-censoring. Future work
-can focus on relaxing modeling assumptions and expanding the
-sensitivity analysis. The techniques presented expand the range of
-applications where component lifetime properties can be inferred
-from system-level data.
 
 (APPENDIX) Appendix {-}
 =======================
 
-R Code For Log-likelihood Function
-==================================
+# Log-likelihood Function {#app-weibull-loglik-r}
 
 The following code is the log-likelihood function for the Weibull series system
 with a likelihood model that includes masked component cause of failure and right-censoring.
@@ -2146,8 +2111,7 @@ loglik_wei_series_md_c1_c2_c3 <- function(df, theta) {
 ```
 
 
-R Code For Score Function
-=========================
+# Score Function {#app-score-fn-r}
 
 The following code is the score function (gradient of the log-likelihood function with respect to $\v\theta$) for the Weibull series system
 with a likelihood model that includes masked component cause of failure and right-censoring.
@@ -2207,11 +2171,10 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
 }
 ```
 
-R Code For Simulation of Scenarios
-==================================
+# Scenario Simulation {#app-sim-study-r}
 
-The following code is the Monte-carlo simulation code for running the scenarios
-described in Section \ref{sim_study}.
+The following R code is the Monte-carlo simulation code for running the various
+scenarios described in Section \@ref(sim-study).
 
 ```{r bootstrap-sim-code, eval=FALSE}
 #### Setup simulation parameters here ####
@@ -2381,9 +2344,7 @@ for (scale3 in scales3) {
 }
 ```
 
-
-Bernoulli Candidate Set Model {#app-cand-model}
-=============================
+# Bernoulli Candidate Set Model {#app-cand-model-r}
 
 ```{r, eval = FALSE}
 #' Bernoulli candidate set model is a particular type of *uninformed* model.
@@ -2412,8 +2373,7 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 }
 ```
 
-Series System Quantile Function {#app-series-quantile}
-===============================
+# Series System Quantile Function {#app-series-quantile}
 
 ```{r, eval=FALSE}
 #' Quantile function (inverse of the cdf).
@@ -2441,30 +2401,3 @@ qwei_series <- function(p, shapes, scales) {
 ```
 
 
-Likelihood Ratio Test {#app-lrt}
-================================
-
-In order to determine if a reduced model (e.g., Weibull series system in
-which all of the shape parameters are homogeneous) is appropriate,
-a hypothesis test test may be conducted to determine if there is
-statistically significant evidence in support of the null hypothesis $H_0$,
-e.g., that all of the shape parameters are homogeneous.
-
-Given that we employ a well-defined likelihood model, the likelihood ratio test
-(LRT) is a good choice. The LRT statistic is given by
-$$
-\Lambda = -2 (\ell_R - \ell_F)
-$$
-where $\ell_R$ is the log-likelihood of the null (reduced) model (the log-likelihood of
-the reduced model evaluated at its MLE given a random sample) and $\ell_F$ is the log-likelihood
-of the full model. Under the null model, the LRT statistic is asymptotically distributed chi-squared
-with $m-1$ degrees of freedom, where $m$ is the number of components in the series system,
-$$
-\Lambda \sim \chi^2_{m-1}.
-$$
-If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
-degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, where $\alpha$ denotes the significance level, then
-we find the data to be incompatible with the null hypothesis $H_0$.
-
-References
-==========
