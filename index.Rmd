@@ -110,7 +110,8 @@ $$
 There are three particularly important distribution functions in reliability analysis: the
 reliability function, the probability density function, and the hazard function.
 The reliability function, $R_{T_i}(t)$, is the
-probability that the $i$\textsuperscript{th} system has a lifetime longer than a duration $t$,
+probability that the $i$\textsuperscript{th} system has a lifetime greater than 
+given duration $t$,
 \begin{equation}
 R_{T_i}(t) = \Pr\{T_i > t\}\\
 \end{equation}
@@ -139,7 +140,7 @@ which is given by
 h_{T_i}(t) 
   &= -\lim_{\Delta t \to 0} \frac{R_{T_i}(t+\Delta t) - R_{T_i}(t)}{\Delta t}
     \frac{1}{R_{T_i}(t)}\\
-  &= \frac{f_{T_i}(t)}{R_{T_i}(t)}.
+  &= \left(-\frac{d}{dt} R_{T_i}(t)\right) \frac{1}{R_{T_i}(t)} = \frac{f_{T_i}(t)}{R_{T_i}(t)}.
 \end{split}
 \end{equation}
 
@@ -245,8 +246,9 @@ f_{T_i}(t;\v\theta)= \sum_{j=1}^m f_j(t;\v{\theta_j})
 $$
 :::
 
-Theorem \@ref(thm:sys-pdf) shows the pdf of the system lifetime as a function of the pdfs and reliabilities of its components.
-We continue with the hazard function of the system lifetime, defined in the next theorem.
+Theorem \@ref(thm:sys-pdf) shows the pdf of the system lifetime is a function of
+the pdfs and reliabilities of its components. We continue with the hazard
+function of the system lifetime, defined in the next theorem.
 
 ::: {.theorem #sys-failure-rate}
 The series system has a hazard function given by
@@ -288,7 +290,7 @@ f_{T_i}(t;\v\theta) &= h_{T_i}(t;\v\theta) R_{T_i}(t;\v\theta)\\
                  \biggl\{ \prod_{j=1}^m R_j(t;\v{\theta_j}) \biggr\},
 \end{split}
 \end{equation}
-which we sometimes find to be a more convenient form than Equation \eqref{eq:sys_pdf}.
+which we find to be a more convenient form than Equation \eqref{eq:sys_pdf}.
 
 In this section, we derived the mathematical forms for the system's reliability,
 probability density, and hazard functions. Next, we build upon these concepts to
@@ -315,9 +317,8 @@ $T_i$ is given by
 \label{eq:f_k_and_t}
   f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) \prod_{l=1}^m R_l(t;\v\theta),
 \end{equation}
-where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th}
-component and $R_l(t;\v{\theta_l})$ is the reliability function of the $l$\textsuperscript{th}.
-component.
+where $h_l(t;\v{\theta_j})$ and $R_l(t;\v{\theta_l})$ are respectively the hazard
+and reliability functions of the $l$\textsuperscript{th} component.
 :::
 
 ::: {.proof}
@@ -340,12 +341,9 @@ f_{K_i,T_i}(j,t;\v\theta)
         R_3(t;\v{\theta_3}) dt_2\\
      &= f_1(t;\v{\theta_1}) R_2(t;\v{\theta_2}) R_3(t_1;\v{\theta_3}).
 \end{align*}
-Since $h_1(t;\v{\theta_1}) = f_1(t;\v{\theta_1}) / R_1(t;\v{\theta_1})$,
-$$
-f_1(t;\v{\theta_1}) = h_1(t;\v{\theta_1}) R_1(t;\v{\theta_1}).
-$$
-Making this substitution into the above expression for $f_{K_i,T_i}(j,t;\v\theta)$
-results in
+By definition, $f_1(t;\v{\theta_1}) = h_1(t;\v{\theta_1}) R_1(t;\v{\theta_1})$,
+and when we make this substitution into the above expression for $f_{K_i,T_i}(j,t;\v\theta)$,
+we obtain the result
 $$
 f_{K_i,T_i}(j,t;\v\theta) = h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l}).
 $$
@@ -414,10 +412,11 @@ $$
 $$
 :::
 
-We see that Theorems \@ref(thm:f-k-and-t) and \@ref(thm:prob-k) are closely related:
-$$
-  \Pr\{K_i = j\} = E_{\v\theta} \bigl[ \Pr\{K_i = j|T_i\} \bigr].
-$$
+We see that Theorems \@ref(thm:f-k-and-t) and \@ref(thm:prob-k) are closely related
+and that the probability that the $j$\textsuperscript{th} component is the cause of
+failure is the expected value of the ratio of the hazard function of the
+$j$\textsuperscript{th} component to the sum of the hazard functions of all
+components.
 
 ## System and Component Reliabilities {#reliability}
 
@@ -528,7 +527,7 @@ variations or unknown factors, we model it with a distribution.
 In summary, the observed data is assumed to be i.i.d. and is given by
 $D = \{D_1, \ldots, D_n\}$, where each $D_i$ contanis the following:
 \begin{itemize}
-\item{$S_i${} is the right-censored system lifetime of the $i$\textsuperscript{th} system.
+\item{$S_i$} is the right-censored system lifetime of the $i$\textsuperscript{th} system.
 \item{$\delta_i$} is the right-censoring indicator of the $i$\textsuperscript{th} system.
 \item{$\mathcal{C}_i$} is the set of candidate component causes of failure for the
 $i$\textsuperscript{th} system.
@@ -1526,8 +1525,9 @@ are given by
 for $j = 1, \ldots, m$. We see that these partial derivatives are related to the score of a right-censored likelihood contribution in
 Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
 
-- As $q increases ($\tau$ increases), $R_{T_i}(\tau;\v\theta)$ decreases, and so the effect right-censoring has on the MLE decreases. This is what we see in
-  Figure \ref{fig:q-vs-stats}.
+- As the right-censoring quantile $q$ increases ($\tau$ increases), $R_{T_i}(\tau;\v\theta)$
+  decreases, and so the effect right-censoring has on the MLE decreases. This is what we see
+  in Figure \ref{fig:q-vs-stats}.
 
 - The partial derivatives with respect to the scale parameters are always positive, so right-censoring positively bias the scale parameter
   estimates to make right-censoring events more likely. The more right-censoring, the more the positive bias. We see this in Figure
