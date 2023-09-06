@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
-  <meta name="description" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <title>D Bernoulli Candidate Set Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+  <meta name="description" content="D Bernoulli Candidate Set Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta property="og:title" content="D Bernoulli Candidate Set Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta name="twitter:title" content="D Bernoulli Candidate Set Model | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   
   
   
@@ -29,8 +29,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-
+<link rel="prev" href="app-sim-study-r.html"/>
+<link rel="next" href="app-series-quantile.html"/>
 <style type="text/css">
 p.abstract{
   text-align: center;
@@ -223,19 +223,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="page-not-found" class="section level1">
-<h1>Page not found</h1>
-<p>The page you requested cannot be found (perhaps it was moved or renamed).</p>
-<p>You may want to try searching to find the page's new location, or use
-the table of contents to find the page you are looking for.</p>
+<div id="app-cand-model-r" class="section level1 hasAnchor" number="13">
+<h1><span class="header-section-number">D</span> Bernoulli Candidate Set Model<a href="app-cand-model-r.html#app-cand-model-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="app-cand-model-r.html#cb4-1" aria-hidden="true"></a><span class="co">#&#39; Bernoulli candidate set model is a particular type of *uninformed* model.</span></span>
+<span id="cb4-2"><a href="app-cand-model-r.html#cb4-2" aria-hidden="true"></a><span class="co">#&#39; This model satisfies conditions C1, C2, and C3.</span></span>
+<span id="cb4-3"><a href="app-cand-model-r.html#cb4-3" aria-hidden="true"></a><span class="co">#&#39; The failed component will be in the corresponding candidate set with</span></span>
+<span id="cb4-4"><a href="app-cand-model-r.html#cb4-4" aria-hidden="true"></a><span class="co">#&#39; probability 1, and the remaining components will be in the candidate set</span></span>
+<span id="cb4-5"><a href="app-cand-model-r.html#cb4-5" aria-hidden="true"></a><span class="co">#&#39; with probability `p` (the same probability for each component). `p`</span></span>
+<span id="cb4-6"><a href="app-cand-model-r.html#cb4-6" aria-hidden="true"></a><span class="co">#&#39; may be different for each system, but it is assumed to be the same for</span></span>
+<span id="cb4-7"><a href="app-cand-model-r.html#cb4-7" aria-hidden="true"></a><span class="co">#&#39; each component within a system, so `p` can be a vector such that the</span></span>
+<span id="cb4-8"><a href="app-cand-model-r.html#cb4-8" aria-hidden="true"></a><span class="co">#&#39; length of `p` is the number of systems in the data set (with recycling</span></span>
+<span id="cb4-9"><a href="app-cand-model-r.html#cb4-9" aria-hidden="true"></a><span class="co">#&#39; if necessary).</span></span>
+<span id="cb4-10"><a href="app-cand-model-r.html#cb4-10" aria-hidden="true"></a><span class="co">#&#39;</span></span>
+<span id="cb4-11"><a href="app-cand-model-r.html#cb4-11" aria-hidden="true"></a><span class="co">#&#39; @param df masked data.</span></span>
+<span id="cb4-12"><a href="app-cand-model-r.html#cb4-12" aria-hidden="true"></a><span class="co">#&#39; @param p a vector of probabilities (p[j] is the probability that the jth</span></span>
+<span id="cb4-13"><a href="app-cand-model-r.html#cb4-13" aria-hidden="true"></a><span class="co">#&#39;          system will include a non-failed component in its candidate set,</span></span>
+<span id="cb4-14"><a href="app-cand-model-r.html#cb4-14" aria-hidden="true"></a><span class="co">#&#39;          assuming the jth system is not right-censored).</span></span>
+<span id="cb4-15"><a href="app-cand-model-r.html#cb4-15" aria-hidden="true"></a>md_bernoulli_cand_c1_c2_c3 &lt;-<span class="st"> </span><span class="cf">function</span>(df, p) {</span>
+<span id="cb4-16"><a href="app-cand-model-r.html#cb4-16" aria-hidden="true"></a>  n &lt;-<span class="st"> </span><span class="kw">nrow</span>(df)</span>
+<span id="cb4-17"><a href="app-cand-model-r.html#cb4-17" aria-hidden="true"></a>  p &lt;-<span class="st"> </span><span class="kw">rep</span>(p, <span class="dt">length.out =</span> n)</span>
+<span id="cb4-18"><a href="app-cand-model-r.html#cb4-18" aria-hidden="true"></a>  Tm &lt;-<span class="st"> </span><span class="kw">md_decode_matrix</span>(df, comp)</span>
+<span id="cb4-19"><a href="app-cand-model-r.html#cb4-19" aria-hidden="true"></a>  m &lt;-<span class="st"> </span><span class="kw">ncol</span>(Tm)</span>
+<span id="cb4-20"><a href="app-cand-model-r.html#cb4-20" aria-hidden="true"></a>  Q &lt;-<span class="st"> </span><span class="kw">matrix</span>(p, <span class="dt">nrow =</span> n, <span class="dt">ncol =</span> m)</span>
+<span id="cb4-21"><a href="app-cand-model-r.html#cb4-21" aria-hidden="true"></a>  Q[<span class="kw">cbind</span>(<span class="dv">1</span><span class="op">:</span>n, <span class="kw">apply</span>(Tm, <span class="dv">1</span>, which.min))] &lt;-<span class="st"> </span><span class="dv">1</span></span>
+<span id="cb4-22"><a href="app-cand-model-r.html#cb4-22" aria-hidden="true"></a>  Q[<span class="op">!</span>df[[right_censoring_indicator]], ] &lt;-<span class="st"> </span><span class="dv">0</span></span>
+<span id="cb4-23"><a href="app-cand-model-r.html#cb4-23" aria-hidden="true"></a>  df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">bind_cols</span>(<span class="kw">md_encode_matrix</span>(Q, prob))</span>
+<span id="cb4-24"><a href="app-cand-model-r.html#cb4-24" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-
+<a href="app-sim-study-r.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="app-series-quantile.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

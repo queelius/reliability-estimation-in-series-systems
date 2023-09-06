@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
-  <meta name="description" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <title>B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+  <meta name="description" content="B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta property="og:title" content="B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta name="twitter:title" content="B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   
   
   
@@ -29,8 +29,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-
+<link rel="prev" href="app-weibull-loglik-r.html"/>
+<link rel="next" href="app-sim-study-r.html"/>
 <style type="text/css">
 p.abstract{
   text-align: center;
@@ -223,19 +223,74 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="page-not-found" class="section level1">
-<h1>Page not found</h1>
-<p>The page you requested cannot be found (perhaps it was moved or renamed).</p>
-<p>You may want to try searching to find the page's new location, or use
-the table of contents to find the page you are looking for.</p>
+<div id="app-score-fn-r" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">B</span> Score Function<a href="app-score-fn-r.html#app-score-fn-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The following code is the score function (gradient of the log-likelihood
+function with respect to <span class="math inline">\(\boldsymbol{\theta}\)</span>) for the Weibull series system with a
+likelihood model that includes masked component cause of failure and
+right-censoring. It is implemented in the R library <code>wei.series.md.c1.c2.c3</code> and
+is available on <a href="https://github.com/queelius/wei.series.md.c1.c2.c3">GitHub</a>.</p>
+<p>For clarity and brevity, we removed some of the functionality that is not
+relevant to the
+analysis in this paper.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="app-score-fn-r.html#cb2-1" aria-hidden="true"></a><span class="co">#&#39; Computes the score function (gradient of the log-likelihood function) for a</span></span>
+<span id="cb2-2"><a href="app-score-fn-r.html#cb2-2" aria-hidden="true"></a><span class="co">#&#39; Weibull series system with respect to parameter `theta` (shape, scale) for masked</span></span>
+<span id="cb2-3"><a href="app-score-fn-r.html#cb2-3" aria-hidden="true"></a><span class="co">#&#39; data with candidate sets that satisfy conditions C1, C2, and C3 and right-censored</span></span>
+<span id="cb2-4"><a href="app-score-fn-r.html#cb2-4" aria-hidden="true"></a><span class="co">#&#39; data.</span></span>
+<span id="cb2-5"><a href="app-score-fn-r.html#cb2-5" aria-hidden="true"></a><span class="co">#&#39;</span></span>
+<span id="cb2-6"><a href="app-score-fn-r.html#cb2-6" aria-hidden="true"></a><span class="co">#&#39; @param df (masked) data frame</span></span>
+<span id="cb2-7"><a href="app-score-fn-r.html#cb2-7" aria-hidden="true"></a><span class="co">#&#39; @param theta parameter vector (shape1, scale1, ..., shapem, scalem)</span></span>
+<span id="cb2-8"><a href="app-score-fn-r.html#cb2-8" aria-hidden="true"></a><span class="co">#&#39; @returns Score with respect to `theta` given `df`</span></span>
+<span id="cb2-9"><a href="app-score-fn-r.html#cb2-9" aria-hidden="true"></a>score_wei_series_md_c1_c2_c3 &lt;-<span class="st"> </span><span class="cf">function</span>(df, theta) {</span>
+<span id="cb2-10"><a href="app-score-fn-r.html#cb2-10" aria-hidden="true"></a>  n &lt;-<span class="st"> </span><span class="kw">nrow</span>(df)</span>
+<span id="cb2-11"><a href="app-score-fn-r.html#cb2-11" aria-hidden="true"></a>  C &lt;-<span class="st"> </span><span class="kw">md_decode_matrix</span>(df, candset)</span>
+<span id="cb2-12"><a href="app-score-fn-r.html#cb2-12" aria-hidden="true"></a>  m &lt;-<span class="st"> </span><span class="kw">ncol</span>(C)</span>
+<span id="cb2-13"><a href="app-score-fn-r.html#cb2-13" aria-hidden="true"></a>  delta &lt;-<span class="st"> </span>df[[right_censoring_indicator]]</span>
+<span id="cb2-14"><a href="app-score-fn-r.html#cb2-14" aria-hidden="true"></a>  t &lt;-<span class="st"> </span>df[[lifetime]]</span>
+<span id="cb2-15"><a href="app-score-fn-r.html#cb2-15" aria-hidden="true"></a>  shapes &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">1</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)]</span>
+<span id="cb2-16"><a href="app-score-fn-r.html#cb2-16" aria-hidden="true"></a>  scales &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">2</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)]</span>
+<span id="cb2-17"><a href="app-score-fn-r.html#cb2-17" aria-hidden="true"></a>  shape_scores &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-18"><a href="app-score-fn-r.html#cb2-18" aria-hidden="true"></a>  scale_scores &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-19"><a href="app-score-fn-r.html#cb2-19" aria-hidden="true"></a></span>
+<span id="cb2-20"><a href="app-score-fn-r.html#cb2-20" aria-hidden="true"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) {</span>
+<span id="cb2-21"><a href="app-score-fn-r.html#cb2-21" aria-hidden="true"></a>    rt.term.shapes &lt;-<span class="st"> </span><span class="op">-</span>(t[i] <span class="op">/</span><span class="st"> </span>scales)<span class="op">^</span>shapes <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(t[i] <span class="op">/</span><span class="st"> </span>scales)</span>
+<span id="cb2-22"><a href="app-score-fn-r.html#cb2-22" aria-hidden="true"></a>    rt.term.scales &lt;-<span class="st"> </span>(shapes <span class="op">/</span><span class="st"> </span>scales) <span class="op">*</span><span class="st"> </span>(t[i] <span class="op">/</span><span class="st"> </span>scales)<span class="op">^</span>shapes</span>
+<span id="cb2-23"><a href="app-score-fn-r.html#cb2-23" aria-hidden="true"></a></span>
+<span id="cb2-24"><a href="app-score-fn-r.html#cb2-24" aria-hidden="true"></a>    <span class="co"># Initialize mask terms to 0</span></span>
+<span id="cb2-25"><a href="app-score-fn-r.html#cb2-25" aria-hidden="true"></a>    mask.term.shapes &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-26"><a href="app-score-fn-r.html#cb2-26" aria-hidden="true"></a>    mask.term.scales &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-27"><a href="app-score-fn-r.html#cb2-27" aria-hidden="true"></a></span>
+<span id="cb2-28"><a href="app-score-fn-r.html#cb2-28" aria-hidden="true"></a>    <span class="cf">if</span> (delta[i]) {</span>
+<span id="cb2-29"><a href="app-score-fn-r.html#cb2-29" aria-hidden="true"></a>      cindex &lt;-<span class="st"> </span>C[i, ]</span>
+<span id="cb2-30"><a href="app-score-fn-r.html#cb2-30" aria-hidden="true"></a>      denom &lt;-<span class="st"> </span><span class="kw">sum</span>(shapes[cindex] <span class="op">/</span><span class="st"> </span>scales[cindex] <span class="op">*</span></span>
+<span id="cb2-31"><a href="app-score-fn-r.html#cb2-31" aria-hidden="true"></a><span class="st">        </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span>(shapes[cindex] <span class="op">-</span><span class="st"> </span><span class="dv">1</span>))</span>
+<span id="cb2-32"><a href="app-score-fn-r.html#cb2-32" aria-hidden="true"></a></span>
+<span id="cb2-33"><a href="app-score-fn-r.html#cb2-33" aria-hidden="true"></a>      numer.shapes &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">/</span><span class="st"> </span>t[i] <span class="op">*</span><span class="st"> </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span>shapes[cindex] <span class="op">*</span></span>
+<span id="cb2-34"><a href="app-score-fn-r.html#cb2-34" aria-hidden="true"></a><span class="st">        </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shapes[cindex] <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex]))</span>
+<span id="cb2-35"><a href="app-score-fn-r.html#cb2-35" aria-hidden="true"></a>      mask.term.shapes[cindex] &lt;-<span class="st"> </span>numer.shapes <span class="op">/</span><span class="st"> </span>denom</span>
+<span id="cb2-36"><a href="app-score-fn-r.html#cb2-36" aria-hidden="true"></a></span>
+<span id="cb2-37"><a href="app-score-fn-r.html#cb2-37" aria-hidden="true"></a>      numer.scales &lt;-<span class="st"> </span>(shapes[cindex] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span><span class="dv">2</span> <span class="op">*</span></span>
+<span id="cb2-38"><a href="app-score-fn-r.html#cb2-38" aria-hidden="true"></a><span class="st">        </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span>(shapes[cindex] <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)</span>
+<span id="cb2-39"><a href="app-score-fn-r.html#cb2-39" aria-hidden="true"></a>      mask.term.scales[cindex] &lt;-<span class="st"> </span>numer.scales <span class="op">/</span><span class="st"> </span>denom</span>
+<span id="cb2-40"><a href="app-score-fn-r.html#cb2-40" aria-hidden="true"></a>    }</span>
+<span id="cb2-41"><a href="app-score-fn-r.html#cb2-41" aria-hidden="true"></a></span>
+<span id="cb2-42"><a href="app-score-fn-r.html#cb2-42" aria-hidden="true"></a>    shape_scores &lt;-<span class="st"> </span>shape_scores <span class="op">+</span><span class="st"> </span>rt.term.shapes <span class="op">+</span><span class="st"> </span>mask.term.shapes</span>
+<span id="cb2-43"><a href="app-score-fn-r.html#cb2-43" aria-hidden="true"></a>    scale_scores &lt;-<span class="st"> </span>scale_scores <span class="op">+</span><span class="st"> </span>rt.term.scales <span class="op">-</span><span class="st"> </span>mask.term.scales</span>
+<span id="cb2-44"><a href="app-score-fn-r.html#cb2-44" aria-hidden="true"></a>  }</span>
+<span id="cb2-45"><a href="app-score-fn-r.html#cb2-45" aria-hidden="true"></a></span>
+<span id="cb2-46"><a href="app-score-fn-r.html#cb2-46" aria-hidden="true"></a>  scr &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(theta))</span>
+<span id="cb2-47"><a href="app-score-fn-r.html#cb2-47" aria-hidden="true"></a>  scr[<span class="kw">seq</span>(<span class="dv">1</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)] &lt;-<span class="st"> </span>shape_scores</span>
+<span id="cb2-48"><a href="app-score-fn-r.html#cb2-48" aria-hidden="true"></a>  scr[<span class="kw">seq</span>(<span class="dv">2</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)] &lt;-<span class="st"> </span>scale_scores</span>
+<span id="cb2-49"><a href="app-score-fn-r.html#cb2-49" aria-hidden="true"></a>  <span class="kw">return</span>(scr)</span>
+<span id="cb2-50"><a href="app-score-fn-r.html#cb2-50" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-
+<a href="app-weibull-loglik-r.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="app-sim-study-r.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

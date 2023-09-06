@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
-  <meta name="description" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <title>A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+  <meta name="description" content="A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta property="og:title" content="A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Page not found | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta name="twitter:title" content="A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   
   
   
@@ -29,8 +29,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-
+<link rel="prev" href="conclusion.html"/>
+<link rel="next" href="app-score-fn-r.html"/>
 <style type="text/css">
 p.abstract{
   text-align: center;
@@ -223,19 +223,50 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="page-not-found" class="section level1">
-<h1>Page not found</h1>
-<p>The page you requested cannot be found (perhaps it was moved or renamed).</p>
-<p>You may want to try searching to find the page's new location, or use
-the table of contents to find the page you are looking for.</p>
+<div id="app-weibull-loglik-r" class="section level1 hasAnchor" number="10">
+<h1><span class="header-section-number">A</span> Log-likelihood Function<a href="app-weibull-loglik-r.html#app-weibull-loglik-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The following R code implements the log-likelihood function for the Weibull
+series system with right censoring and masking of component failure data. It is
+implemented in the R library <code>wei.series.md.c1.c2.c3</code> and
+is available on <a href="https://github.com/queelius/wei.series.md.c1.c2.c3">GitHub</a>.
+For clarity and brevity, we removed some of the functionality that is not
+relevant to the analysis in this paper and produce a simplified version of the
+code below.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="app-weibull-loglik-r.html#cb1-1" aria-hidden="true"></a><span class="co">#&#39; Generates a log-likelihood function for a Weibull series system with respect</span></span>
+<span id="cb1-2"><a href="app-weibull-loglik-r.html#cb1-2" aria-hidden="true"></a><span class="co">#&#39; to parameter `theta` (shape, scale) for masked data with candidate sets</span></span>
+<span id="cb1-3"><a href="app-weibull-loglik-r.html#cb1-3" aria-hidden="true"></a><span class="co">#&#39; that satisfy conditions C1, C2, and C3 and right-censored data.</span></span>
+<span id="cb1-4"><a href="app-weibull-loglik-r.html#cb1-4" aria-hidden="true"></a><span class="co">#&#39;</span></span>
+<span id="cb1-5"><a href="app-weibull-loglik-r.html#cb1-5" aria-hidden="true"></a><span class="co">#&#39; @param df (masked) data frame</span></span>
+<span id="cb1-6"><a href="app-weibull-loglik-r.html#cb1-6" aria-hidden="true"></a><span class="co">#&#39; @param theta parameter vector (shape1, scale1, ..., shapem, scalem)</span></span>
+<span id="cb1-7"><a href="app-weibull-loglik-r.html#cb1-7" aria-hidden="true"></a><span class="co">#&#39; @returns Log-likelihood with respect to `theta` given `df`</span></span>
+<span id="cb1-8"><a href="app-weibull-loglik-r.html#cb1-8" aria-hidden="true"></a>loglik_wei_series_md_c1_c2_c3 &lt;-<span class="st"> </span><span class="cf">function</span>(df, theta) {</span>
+<span id="cb1-9"><a href="app-weibull-loglik-r.html#cb1-9" aria-hidden="true"></a>  n &lt;-<span class="st"> </span><span class="kw">nrow</span>(df)</span>
+<span id="cb1-10"><a href="app-weibull-loglik-r.html#cb1-10" aria-hidden="true"></a>  C &lt;-<span class="st"> </span><span class="kw">md_decode_matrix</span>(df, candset)</span>
+<span id="cb1-11"><a href="app-weibull-loglik-r.html#cb1-11" aria-hidden="true"></a>  m &lt;-<span class="st"> </span><span class="kw">ncol</span>(C)</span>
+<span id="cb1-12"><a href="app-weibull-loglik-r.html#cb1-12" aria-hidden="true"></a>  delta &lt;-<span class="st"> </span>df[[right_censoring_indicator]]</span>
+<span id="cb1-13"><a href="app-weibull-loglik-r.html#cb1-13" aria-hidden="true"></a>  t &lt;-<span class="st"> </span>df[[lifetime]]</span>
+<span id="cb1-14"><a href="app-weibull-loglik-r.html#cb1-14" aria-hidden="true"></a>  k &lt;-<span class="st"> </span><span class="kw">length</span>(theta)</span>
+<span id="cb1-15"><a href="app-weibull-loglik-r.html#cb1-15" aria-hidden="true"></a>  shapes &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">1</span>, k, <span class="dv">2</span>)]</span>
+<span id="cb1-16"><a href="app-weibull-loglik-r.html#cb1-16" aria-hidden="true"></a>  scales &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">2</span>, k, <span class="dv">2</span>)]</span>
+<span id="cb1-17"><a href="app-weibull-loglik-r.html#cb1-17" aria-hidden="true"></a></span>
+<span id="cb1-18"><a href="app-weibull-loglik-r.html#cb1-18" aria-hidden="true"></a>  s &lt;-<span class="st"> </span><span class="dv">0</span></span>
+<span id="cb1-19"><a href="app-weibull-loglik-r.html#cb1-19" aria-hidden="true"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) {</span>
+<span id="cb1-20"><a href="app-weibull-loglik-r.html#cb1-20" aria-hidden="true"></a>    s &lt;-<span class="st"> </span>s <span class="op">-</span><span class="st"> </span><span class="kw">sum</span>((t[i] <span class="op">/</span><span class="st"> </span>scales)<span class="op">^</span>shapes)</span>
+<span id="cb1-21"><a href="app-weibull-loglik-r.html#cb1-21" aria-hidden="true"></a>    <span class="cf">if</span> (delta[i]) {</span>
+<span id="cb1-22"><a href="app-weibull-loglik-r.html#cb1-22" aria-hidden="true"></a>      s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(<span class="kw">sum</span>(shapes[C[i, ]] <span class="op">/</span><span class="st"> </span>scales[C[i, ]] <span class="op">*</span></span>
+<span id="cb1-23"><a href="app-weibull-loglik-r.html#cb1-23" aria-hidden="true"></a><span class="st">        </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[C[i, ]])<span class="op">^</span>(shapes[C[i, ]] <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)))</span>
+<span id="cb1-24"><a href="app-weibull-loglik-r.html#cb1-24" aria-hidden="true"></a>    }</span>
+<span id="cb1-25"><a href="app-weibull-loglik-r.html#cb1-25" aria-hidden="true"></a>  }</span>
+<span id="cb1-26"><a href="app-weibull-loglik-r.html#cb1-26" aria-hidden="true"></a>  <span class="kw">return</span>(s)</span>
+<span id="cb1-27"><a href="app-weibull-loglik-r.html#cb1-27" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-
+<a href="conclusion.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="app-score-fn-r.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
