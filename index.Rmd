@@ -1,7 +1,7 @@
 ---
 title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
 author: "Alex Towell"
-abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. A reduced model with homogeneous component shapes simplifies analysis for well-designed systems. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models, validation of estimation techniques via simulations, and assessment of a reduced model. Together, these advance rigorous component reliability assessment from masked failure data."
+abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models and validation of estimation techniques via simulations. Together, these advance rigorous component reliability assessment from masked failure data."
 output:
     #bookdown::html_document2:
     #bookdown::pdf_document2:
@@ -22,11 +22,17 @@ header-includes:
    - \usepackage[utf8]{inputenc}
    - \usepackage{tikz}
    - \usepackage{caption}
-   - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
-   - \AtBeginDocument{\newtheorem{condition}{Condition}}
+   - \usepackage{amsthm}
+   - \renewcommand{\v}[1]{\boldsymbol{#1}}
+   - \theoremstyle{definition}
+   - \newtheorem{condition}{Condition}
+   - \theoremstyle{plain}
 bibliography: refs.bib
 link-citations: true
-biblio-style: apalike
+#biblio-style: apalike
+#biblio-style: plainnat
+natbiboptions: "numbers"
+biblio-style: amsplain
 ---
 
 
@@ -51,16 +57,12 @@ library(kableExtra)
 
 Introduction
 ============
-Accurately estimating reliability of individual components in multi-component
-systems is challenging when only system-level failure data is observable. In a
-series system[@Agustin-2011], only system failure times may be recorded along
-with limited information about the failed component in the form of candidate
-sets[@Huairu-2013]. Such masked data poses difficulties for assessing component
+Accurately estimating the reliability of individual components in multi-component
+systems is an important challenge, as component lifetimes and failure causes are
+often not directly observable. In a series system [@Agustin-2011], only
+system-level failure times may be recorded along with limited information about
+the failed component. Such masked data poses difficulties for assessing component
 reliability.
-
-This paper develops and validates maximum likelihood techniques to estimate
-component reliability from right-censored lifetime data and candidate sets
-indicative of component failure causes. The key results are:
 
 - Deriving a likelihood model incorporating right-censoring and candidate sets
   to enable masked data to be used for parameter estimation.
@@ -69,7 +71,8 @@ indicative of component failure causes. The key results are:
   performs well despite small samples and significant masking and
   right-censoring.
   
-- Estimation of scale parameters is more robust than shape parameters.
+- Estimation of scale parameters is more robust than shape parameters in the
+  Weibull model.
 
 - Showing that bootstrapping provides reasonably well-calibrated confidence
   intervals for the maximum likelihood estimates, even with small sample sizes.
@@ -83,41 +86,6 @@ Together, these contributions provide a statistically rigorous framework for
 learning about latent component properties from limited observational data on
 system reliability. The proposed methods expand the capability to quantify
 component lifetimes in situations where failure data is significantly masked.
-
-
-Accurately estimating the reliability of individual components in multi-component
-systems is an important challenge, as component lifetimes and failure causes are
-often not directly observable. In a series system, only system-level failure times
-may be recorded along with limited information about the failed component. Such
-masked data poses difficulties for assessing component reliability.
-
-This paper develops and validates maximum likelihood techniques to estimate
-component reliability from right-censored lifetime data and candidate sets
-indicative of component failure causes. The key results are:
-
-- Deriving a likelihood model incorporating right-censoring and candidate sets to
-  enable masked data to be used for parameter estimation.
-
-- Demonstrating through simulation studies that the maximum likelihood estimator
-  performs well despite small samples and significant masking and right-censoring.
-  Estimation of scale parameters is more robust than shape parameters.
-
-- Showing that bootstrapping provides reasonably well-calibrated confidence
-  intervals for the maximum likelihood estimates, even with small sample sizes.
-
-- Assessing a reduced model with homogeneous component shapes. This simplified
-  model is favored for well-designed systems but deviations in component properties
-  can impact adequacy.
-
-The remainder of the paper details the series system and likelihood models,
-maximum likelihood estimation methodology, bootstrap confidence interval estimation,
-and extensive simulation studies exploring estimator behavior under various sample
-sizes, masking levels, and model assumptions.
-
-Together, these contributions provide a statistically rigorous framework for learning
-about latent component properties from limited observational data on system reliability.
-The proposed methods expand the capability to quantify component lifetimes in situations
-where failure data is significantly masked.
 
 Series System Model {#statmod}
 ==================================
@@ -460,7 +428,7 @@ Depending on the failure characteristics, MTTF can be misleading. For example,
 a system that has a high likelihood of failing early in its life may still have a
 large MTTF if it is fat-tailed.[^2]
 
-[^2]: A "fat-tailed" distribution refers to a probability distribution with tails that decay more slowly than those of the exponential family, such as the case with the Weibull when its shape parameter is greater than $1$. This means that extreme values are more likely to occur, and the distribution is more prone to "black swan" events or rare occurrences. In the context of reliability, a fat-tailed distribution might imply a higher likelihood of unusually long lifetimes, which can skew measures like the MTTF.[@taleb2007black].
+[^2]: A "fat-tailed" distribution refers to a probability distribution with tails that decay more slowly than those of the exponential family, such as the case with the Weibull when its shape parameter is greater than $1$. This means that extreme values are more likely to occur, and the distribution is more prone to "black swan" events or rare occurrences. In the context of reliability, a fat-tailed distribution might imply a higher likelihood of unusually long lifetimes, which can skew measures like the MTTF. [@taleb2007black].
 
 The reliability of the components in the series system determines the reliability
 of the system. We denote the MTTF of the $j$\textsuperscript{th} component by
@@ -754,9 +722,9 @@ $$
 $$
 for all $j' \in c_i$.
 \end{condition}
-According to [@Fran-1991], in many industrial problems, masking generally
-occurred due to time constraints and the expense of failure analysis. In this
-setting, Condition \ref{cond:equal_prob_failure_cause} generally holds.
+In many industrial problems, masking generally
+occurred due to time constraints and the expense of failure analysis [@Fran-1991].
+In this setting, Condition \ref{cond:equal_prob_failure_cause} generally holds.
 
 Assuming Conditions \ref{cond:c_contains_k} and
 \ref{cond:equal_prob_failure_cause},
@@ -883,7 +851,7 @@ masking and right-censoring.
 Maximum Likelihood Estimation {#mle}
 ========================================
 In our analysis, we use maximum likelihood estimation (MLE) to estimate the series
-system parameter $\v\theta$ from the masked data [@bain;casella2002statistical].
+system parameter $\v\theta$ from the masked data [@bain1992; @casella2002statistical].
 The MLE finds parameter values that maximize the likelihood of the observed data
 under the assumed model. A maximum likelihood estimate, $\hat{\v\theta}$, is a
 solution of
@@ -939,7 +907,7 @@ The MLE, $\hat{\v\theta}$, is often found by solving a system of equations deriv
 \label{eq:mle_eq}
 \frac{\partial}{\partial \theta_j} \ell(\v\theta) = 0,
 \end{equation}
-for each component $\theta_j$ of the parameter $\v\theta$ [@bain]. When there's no closed-form solution,
+for each component $\theta_j$ of the parameter $\v\theta$ [@bain1992]. When there's no closed-form solution,
 we resort to numerical methods like the Newton-Raphson method.
 
 Assuming some regularity conditions, such as the likelihood function being identifiable, the MLE has many desirable
@@ -1595,8 +1563,8 @@ sensitivity when the sample contains insufficient information due to censoring.
 
 ##### Bias of MLEs {-}
 The red dashed line indicating the mean of MLEs initially is quite biased,
-but quickly diminshes to neglible levels for scale parameters. The estimates for the shape
-parameters never reaches zero, but this is potentially due to masking. At a larger sample
+but quickly diminshes to neglible levels for scale parameters. The bias for the shape
+parameters never reach zero, but this is potentially due to masking. At a larger sample
 size, we anticipate the bias in the shape estimates would also decrease to zero.
 
 ## Scenario: Assessing the Impact of Sample Size {#effect-samp-size}
@@ -1788,7 +1756,7 @@ on the scale parameter.
 knitr::include_graphics("image/5_system_shape3_fig.pdf")
 ```
 
-#### Key Observations
+### Key Observations
 
 ##### Coverage Probability (CP) {-}
 The CP for the scale parameters
@@ -1825,7 +1793,7 @@ its infant mortality rate, to make it more likely to be the component cause of f
 Future Work
 ===========
 
-### Relaxation of Masking Conditions {-}
+#### Relaxation of Masking Conditions {-}
 
 Investigate relaxations of Conditions 1, 2, and 3.
 Condition 1 stipulates that the failed component is always in
@@ -1860,48 +1828,44 @@ do the lattr is by using KL-divergence to measure the distance
 between, for instance, the uninformed and informed candidate set models,
 and then assess the sensitivity of the estimators to this distance.
 
-### Expanded Sensitivity Analyses {-}
+#### Expanded Sensitivity Analyses {-}
 
-- Assess the sensitivity of the reduced model to the presence of
-masking and right-censoring. Since it has fewer parameters, it may
-be more robust to these effects.
+Explore the use of a reduced model that assumes homogeneity in shape parameters.
+This approach would simplify the system to $m+1$ parameters, as opposed to the
+$2m$ parameters in the current model, potentially increasing interpretability
+and reducing estimator variability. This direction warrants detailed
+investigation to ensure the reduced model retains sufficient accuracy and
+adequately describes the data.
 
-- Assess the sensitivity of the full and reduced models to the
-number ($m$) of components in the series system.
+#### Semi-Parametric Bootstrap {-}
 
-### Bootstrapped Data Augmentation {-}
+We used the non-parameteric bootstrap to construct confidence intervals,
+but we could also use the semi-parametric bootstrap.
+In the semi-parametric bootstrap, instead of resampling from the original
+data, we sample component lifetimes from the parametric distribution fitted
+to the original data and sample candidate sets from the empirical distribution
+of the conditional candidate sets in the original data.
+This is a compromise between the non-parametric bootstrap and the fully
+parametric bootstrap.[^30]
+[^30]: The fully parametric bootstrap is not appropriate for our likelihood
+model because we do not assume a parametric form for the distribution of the
+candidate sets.
+
+#### Data Augmentation {-}
 
 Assess the robustness of Data Augmentation (DA) as an implicit
 prior. For example, we may adopt the prior that the system is
-well-designed and augment particularly small samples with
-observations sampled in the following way:
-
-1. Fit the *reduced* model (which assumes a well-designed
-system with identical shape paramters) to the data.
-
-2. Sample $M$ new observations, $\{T_i,\mathcal{C}_i\}_{i=n+1}^{n+M}$,
-from the fitted model according to the DGP described in Section
-\@ref(data-gen-proc). The number of new observations $M$ is a hyperparameter
-that can be tuned, but intuitively we seek to sample enough new
-observations to mitigate the masking and censoring effects.
-For instance, this might suggest that we want the sample size to be
-large enough so that each component, no matter how unlikely, is
-represented in the sample as a masked component cause of failure.
+well-designed and augment particularly small samples with synthetic
+data from a reduced model (with homogenous shape parameters) fitted to the
+original data.
 
 Unlike a full Bayesian approach, where we would need to specify
 a prior for the parameters, DA is an implicit prior that need not
 be explicitly specified. It is a form of regularization that
 reduces the variance of the estimator by leveraging the structure
-of the model and the data. It is particularly useful for small
-samples, where masking and censoring effects are more pronounced.
+of the model and the data.
 
-The DA can be tuned to work with the Bootstrap, where we can
-resample $n$ observations from the unaugmented data, fit the
-reduced model, sample $M$ new observations from the reduced model
-fitted to the resampled data, and then fit the full model to the
-augmented data. This would be a form of *augmented bootstrap*.
-
-### Penalized Likelihood For Homogenous Shape Parameters {-}
+#### Penalized Likelihood For Homogenous Shape Parameters {-}
 
 Assess the use of penalized likelihood methods instead of
 DA as a form of regularization. For instance, we can add
@@ -1912,195 +1876,101 @@ use a penalized likelihood approach to encourage the shape
 parameters to be close to each other, but not necessarily
 equal.
 
-### General Likelihood Models {-}
+#### General Likelihood Model with Predictors {-}
 
-We have focused on the Weibull likelihood model, but we
-have the general likelihood model for the series system.
-We can allow the user to specify the parametric
-for each component.
+In this paper, we focused on a likelihood model that assumed Weibull components
+in a series configuration.
+We can extend this model by generalizing the hazard functions in two ways:
 
-
-### Likelihood Model with Predictors {-}
-
-In our current model, we only observe the failure times,
-candidate sets, and right-censoring indicators. We can
-extend the model to include additional predictors, e.g.,
-let the hazard function be dependent on  predictors
-$\v{w_1}, \ldots, \v{w_n}$, where $\v{w_i}$ is a vector
-of predictors for the $i$th observation. Then, the
+1. Let the hazard model be a function of predictors $\v{w_1}, \ldots, \v{w_n}$,
+where $\v{w_i}$ is a vector of predictors for the $i$th observation. Then, the
 hazard function for the $j$th component is
 $$
-    h_j(t_i;\v{\beta_j} | \v{w_i}),
+    h_j(t_i|\v{w_i};\v{\beta_j}),
 $$
-for instance we may use the existing Weibull likelihood model,
-but make the shape and scale parameters dependent on the
-predictors $\v{w}_i$. We can use any parametric
-likelihood model for the $j$th component. For instance,
-we can use the Cox proportional hazards model,
+for instance we might make the shape and scale parameters of the Weibull
+component model be a function of the predictors $\v{w_i}$.
+
+2. Replace the Weibull hazard function with a more general hazard function.
+For instance, in the Cox proportional hazards model [@cox1972regression], the
+hazard function for the $j$th component is given by
 $$
-    h_j(t_i;\v{\beta_j}) = h_0(t_i) \exp(\v{\beta_j}^T \v{w_i}),
+    h_j(t_i|\v{w_i};\v{\beta_j}) = h_0(t_i) \exp(\v{\beta_j}^T \v{w_i}),
 $$
-where $h_{0}(t_i)$ is a baseline hazard function
-shared by all components and $\v{\beta_j}$ is the parameter
-vector for the $j$th component.
+where $h_{0}(t_i)$ is a baseline hazard function shared by all components and
+$\v{\beta_j}$ is the parameter vector for the $j$th component. A more general
+model would allow the component hazard functions to take any valid form, namely
+non-negative and integrable.
 
-A more general model could parameterize each component
-with its own hazard function, where we have the freedom
-to choose any parametric form for the hazard function,
-as long as it is a valid hazard function, by the observation
-that
+In either case, by the relation
 $$
-    R_j(t_i;\v{\beta_j}|\v{w_i}) = \exp\{-\int_0^{t_i} h_j(t_i|\v{w_i};\v{\beta_j}\}.
+  R_j(t_i|\v{w_i};\v{\beta_j}) = e^{-H_j(t)},
 $$
-As long as $h_j(t|\v{w_i};\v{\beta_j})$ is non-negative and integrable,
-then $R_j(t_i;\v{\beta_j}|\v{w_i})$ is a valid reliability function.
-
-### Additional Likelihood Contributions {-}
-
-This is related to the previous point, but we can extend the
-likelihood model to include additional likelihood contributions.
-
-We used masked component cause of failure and right-censoring
-as the likelihood contributions in our model, but we can introduce
-additional likelihood contributions, such as interval censoring,
-left-censoring, other kinds of masking. This is also related
-to relaxing the masking conditions, where we can introduce
-additional likelihood contributions to account for the
-relaxations.
-
-### Prediction Intervals {-}
-
-Often, what we are most interested in is *induction*, or prediction.
-We want to predict the failure time of new series system, given
-information in a sample,
+where
 $$
-    T_{n + p}, \ldots, T_{n+1} | T_1 = t_1, \ldots, T_n = t_n.
+  H_j(t_i) = \int_0^{t_i} h_j(u|\v{w_i};\v{\beta_j}) du
+$$
+is the cumulative hazard function for the $j$\textsuperscript{th} component, we
+can plug these component hazard and reliability functions into the likelihood
+contribution model in Theorem \ref{thm:likelihood_contribution} to obtain a
+general likelihood model with predictors for the series system.
+
+#### Assess the Calibration of Other Related Bootstrapped Statistics {-}
+
+The calibration of the bootstrapped confidence intervals were evaluated
+and shown to be quite robust. We could do a similar analysis for other
+bootstrapped statistics. For instance, we could assess the bootstrapped $95\%$
+prediction interval for the probability that component $j$ is the component
+cause of the next system failure given the data $\mathcal{D}_n$,
+$$
+    \Pr\{K_{n+1} = j | \mathcal{D}_n\}.
 $$
 
-We might also want to predict a statistic of interest that is a
-function of the new observations, e.g., the probability that
-component $j$ is the component cause of failure,
-$$
-    \Pr\{K_{n + 1} = j | T_1 = t_1, \ldots, T_n = t_n\}.
-$$
-
-Conclusion
-==========
+Conclusion {#conclusion}
+========================
 
 This paper presented maximum likelihood methods for estimating
 component reliability from masked failure data in series systems.
-A likelihood model was derived accounting for right-censoring and
-candidate sets masking the component cause of failure. Through
-simulation studies, right-censoring and masking were found to bias
-shape parameter estimates positively. The scale parameter estimates
-were more robust. Overall, shape parameters were more sensitive to
-the data and harder to estimate precisely than scale parameters.
-Nonetheless, bootstrapping provided reasonably well-calibrated
-confidence intervals even for small sample sizes.
+We accounted for right-censoring and masking issues in our likelihood model,
+thereby achieving a rigorous framework for reliability analysis from limited
+observational data.
 
-A reduced model assuming homogeneous component shape parameters
-was also assessed. This simplified model improves interpretability
-as the system becomes Weibull, while reducing estimator variability.
-The appropriateness of the reduced model was explored through an
-LRT simulation study. For well-designed systems, the reduced model
-showed excellent fit even for large samples. However, varying the
-scale or shape of a single component quickly provided evidence
-against the null model.
+Our simulation studies reveal that shape parameters are particularly sensitive
+to data and harder to estimate precisely compared to scale parameters.
+Right-censoring and masking were found to bias shape parameters positively,
+although scale parameters exhibited more robust behavior. Despite these
+challenges, bootstrapping techniques yielded well-calibrated confidence
+intervals even for small sample sizes.
 
-The reduced model thus appears favorable both statistically and
-practically when systems are believed to be well-designed. However,
-more complex models may be preferred given divergent component
-properties or large samples. The choice between models should weigh
-model simplicity against adequacy in describing available data.
+The sensitivities in shape parameters lead to a need for caution, especially
+when dealing with small sample sizes. Coverage probabilities for shape
+parameters, for instance, drop below $90\%$ in the presence of significant
+masking. On the other hand, scale parameters display more robust properties,
+maintaining well-calibrated confidence intervals even under challenging
+conditions.
 
 Overall, this work provides a rigorous framework for quantifying
 component reliability from limited observational data. The methods
 demonstrated accurate and robust performance despite the significant
-challenges introduced by masking and right-censoring. Future work
-can focus on relaxing modeling assumptions and expanding the
-sensitivity analysis. The techniques presented expand the range of
-applications where component lifetime properties can be inferred
-from system-level data.
+challenges introduced by masking and right-censoring.
 
-## Implications and Recommendations
-
-Here, we discuss and summarize the implications of our simulation study and provide recommendations
-for practitioners.
-
-#### Shape Parameters {-}
-The shape parameters are more sensitive to the data than the scale parameters. The coverage probabilities
-were also consistently less well-calibrated for the shape parameters compared to the scale parameters,
-but they were still reasonably well-calibrated for most scenarios, with a lower bound of $85\%$ for
-the most extreme scenarios, e.g., Bernoulli masking probabilities of $p = 0.7$ with a small
-sample ($n = 100$) and moderate right-censoring ($q = 0.825$).
-
-The shape parameters define the failure characteristics of the components, but they have a complex
-relationship to the MTTF and other reliability measures.
-Ideally, the shape parameters will all be greater than $1$, indicating wear-out failures, but this is
-not always the case, and sometimes it may be the case that some components have a shape parameter
-greater than $1$ while others have a shape parametr less than $1$. Due to the sensitivity of the
-shape parameters to the data, and the fact that the shape parameters are less intuitive than the
-scale parameters, we recommend that the shape parameters be interpreted with caution, particularly
-when the sample size is small.
-
-Since a well-designed system has components with similar failure characteristics, the shape parameters
-should be reasonably aligned. To mitigate the problems with the shape parameters, both from an analytic
-and variability perspective, we may be motivated to use the reduced model that assumes homogeneity
-in the shape parameters, as described in Section \@ref(reduced-weibull). The reduced model offers
-interpretability (the series system is itself Weibull) and reduced estimator
-variability (only $m+1$ parameters instead of $2 m$), but it is must adequately describe the data.
-
-#### Scale Parameters {-}
-The scale parameters are less sensitive to the data than the shape parameters. The coverage probabilities
-were also consistently well-calibrated for all scenarios, with a lower-bound of around $90\%$ for the
-most extreme scenarios.
-The scale parameters are linearly related to the MTTF, and have a simpler relationship to the
-the other reliability measures too, which makes it easier to interpret and understand.
-
-#### Sample Size {-}
-The MLE is very sensitive to the data, and so the bootstrapped CIs are quite wide to account for this
-sensitivity when the sample size is small and not necessarily representative of the true distribution.
-We see that the MLE of the shape parameters is somewhat biased for small samples, but the scale
-parameters have a small bias except for the most extreme cases of right-censoring, masking, or
-deviations from a well-designed system. In either case, as the sample size increases, the bias
-decreases and the CIs become more narrow and well-calibrated.
-We observed that the confidence intervals were well-calibrated for even small sample sizes for the scale
-parameters, but the shape parameters were less well-calibrated.
-
-#### Right-Censoring {-}
-For our well-designed system, the mean MLE for the shape parameters were mildly sensitive to right-censoring,
-but even significant censoring around $50\%$ only introduced a small positive bias. The mean MLE for the
-scale parameters were not very sensitive to right-censoring.
-
-The sampling variance of the MLE for both the shape and scale parameters were somewhat sensitive to 
-right-censoring, as evidenced by the decreasing width of the confidence intervals as a function of
-increasing right-censoring times. However, the coverage probabilities of the confidence intervals
-were generally well-calibrated for the shape and scale parameters except for the most extreme
-cases of right-censoring.
-
-#### Component Cause of Failure Masking {-}
-For our well-designed system, the mean MLE for the shape parameters are insensitive to
-masking, observing only a small positive bias for significant masking of $50\%$ or greater. However,
-the calibration of the confidence intervals for the shape parameters were quite sensitive to masking,
-reaching as low as $85\%$ for the most extreme cases of Bernoulli masking at $p \approx 0.7$.
-
-#### Deviations from Well-Designed Systems {-}
-When we deviate from a well-designed system, the MLE becomes much more sensitive to the data, exhibiting
-more bias, more variability, and less well-calibrated confidence intervals. This is particularly true
-for the shape parameters, which are more sensitive to the data than the scale parameters.
-
+In light of our findings, to continue to refine our understanding and broaden
+the applicability of these methods, future work can focus on relaxing modeling
+assumptions, expanding the sensitivity analysis, and evaluating the viability
+of methods designed to reduce the variability of shape parameter estimates. 
 
 (APPENDIX) Appendix {-}
 =======================
 
-# Log-likelihood Function {#app-weibull-loglik-r}
 
-The following code is the log-likelihood function for the Weibull series system
-with a likelihood model that includes masked component cause of failure and
-right-censoring. It is implemented in the R library `wei.series.md.c1.c2.c3` and
+# Log-likelihood Function {#app-weibull-loglik-r}
+The following R code implements the log-likelihood function for the Weibull
+series system with right censoring and masking of component failure data. It is
+implemented in the R library `wei.series.md.c1.c2.c3` and
 is available on [GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
 For clarity and brevity, we removed some of the functionality that is not
-relevant to the analysis in this paper.
+relevant to the analysis in this paper and produce a simplified version of the
+code below.
 
 ```{r, eval = FALSE}
 #' Generates a log-likelihood function for a Weibull series system with respect
@@ -2128,12 +1998,11 @@ loglik_wei_series_md_c1_c2_c3 <- function(df, theta) {
         (t[i] / scales[C[i, ]])^(shapes[C[i, ]] - 1)))
     }
   }
-  s
+  return(s)
 }
 ```
 
 # Score Function {#app-score-fn-r}
-
 The following code is the score function (gradient of the log-likelihood
 function with respect to $\v\theta$) for the Weibull series system with a
 likelihood model that includes masked component cause of failure and
@@ -2193,14 +2062,9 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
   scr <- rep(0, length(theta))
   scr[seq(1, length(theta), 2)] <- shape_scores
   scr[seq(2, length(theta), 2)] <- scale_scores
-  scr
+  return(scr)
 }
 ```
-
-
-# Numerical Solutions to the MLE {#app-mle-r}
-
-
 
 # Scenario Simulation {#app-sim-study-r}
 

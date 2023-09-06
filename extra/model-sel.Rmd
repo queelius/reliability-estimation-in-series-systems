@@ -217,3 +217,21 @@ If the LRT statistic is greater than the critical value of the chi-squared distr
 degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, where $\alpha$ denotes the significance level, then
 we find the data to be incompatible with the null hypothesis $H_0$.
 
+
+
+# Conclusion
+
+A reduced model assuming homogeneous component shape parameters
+was also assessed. This simplified model improves interpretability
+as the system becomes Weibull, while reducing estimator variability.
+The appropriateness of the reduced model was explored through an
+LRT simulation study. For well-designed systems, the reduced model
+showed excellent fit even for large samples. However, varying the
+scale or shape of a single component quickly provided evidence
+against the null model.
+
+The reduced model thus appears favorable both statistically and
+practically when systems are believed to be well-designed. However,
+more complex models may be preferred given divergent component
+properties or large samples. The choice between models should weigh
+model simplicity against adequacy in describing available data.
