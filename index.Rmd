@@ -596,14 +596,12 @@ We present the following theorem for the likelihood contribution model.
 The likelihood contribution of the $i$-th system is given by
 \begin{equation}
 \label{eq:like}
-L_i(\v\theta) = R_{T_i}(s_i;\v\theta) \biggl(\beta_i \sum_{j \in c_i} h_j(s_i;\v{\theta_j}) \biggr)^{\delta_i}
+L_i(\v\theta) = \prod_{j=1}^m R_j(s_i;\v{\theta_j}) \biggl(\beta_i \sum_{j \in c_i} h_j(s_i;\v{\theta_j}) \biggr)^{\delta_i}
 \end{equation}
-where $R_{T_i}(s_i;\v\theta) = \prod_{j=1}^m R_j(s_i;\v{\theta_j})$
-is the reliability function of the series system evaluted at $s_i$, $\delta_i = 0$ indicates the
-$i$\textsuperscript{th} system is
-right-censored at time $s_i$, and $\delta_i = 1$ indicates the $i$\textsuperscript{th} system
-is observed to have failed at time $s_i$ with a component cause of failure
-is masked by the candidate set $c_i$.
+where $\delta_i = 0$ indicates the $i$\textsuperscript{th} system is
+right-censored at time $s_i$ and $\delta_i = 1$ indicates the $i$\textsuperscript{th} system
+is observed to have failed at time $s_i$ with a component cause of failure potentially masked
+by the candidate set $c_i$.
 \end{theorem}
 
 In the follow subsections, we prove this result for each type of masked data, right-censored
@@ -677,18 +675,17 @@ Even though $K_i$ is not observable in our masked data model, we can still
 consider the joint distribution of $T_i$, $K_i$, and $\mathcal{C}_i$.
 By Theorem \@ref(thm:f-k-and-t), the joint pdf of $T_i$ and $K_i$ is given by
 $$
-f_{T_i,K_i}(t_i,j;\v{\theta}) = h_j(t_i;\v{\theta_j}) R_{T_i}(t_i;\v\theta),
+f_{T_i,K_i}(t_i,j;\v{\theta}) = h_j(t_i;\v{\theta_j}) \prod_{l=1}^m R_l(t_i;\v{\theta_l}),
 $$
-where $h_j(t_i;\v{\theta_j})$ is the hazard function for the
-$j$\textsuperscript{th} component and $R_{T_i}(t_i;\v{\theta})$ is the
-reliability function of the system.
+where $h_j(t_i;\v{\theta_j})$ and $R_j(s_i;\v{\theta_j})$ are respectively the hazard
+and reliability functions of the $j$\textsuperscript{th} component.
 Thus, the joint pdf of $T_i$, $K_i$, and $\mathcal{C}_i$ may be written as
 \begin{equation}
 \label{eq:joint_pdf_t_k_c}
 \begin{split}
 f_{T_i,K_i,\mathcal{C}_i}(t_i,j,c_i;\v{\theta})
     &= f_{T_i,K_i}(t_i,k;\v{\theta}) \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}\\
-    &= h_j(t_i;\v{\theta_j}) R_{T_i}(t_i;\v\theta)
+    &= h_j(t_i;\v{\theta_j}) \prod_{l=1}^m R_l(t_i;\v{\theta_l})
     \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}.
 \end{split}
 \end{equation}
@@ -696,7 +693,7 @@ We are going to need the joint pdf of $T_i$ and $\mathcal{C}_i$, which
 may be obtained by summing over the support $\{1,\ldots,m\}$ of $K_i$ in
 Equation \eqref{eq:joint_pdf_t_k_c},
 $$
-f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = R_{T_i}(t_i;\v\theta)
+f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = \prod_{l=1}^m R_l(t_i;\v{\theta_l})
     \sum_{j=1}^m \biggl\{
         h_j(t_i;\v{\theta_j}) \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}
     \biggr\}.
@@ -707,7 +704,7 @@ $j \notin c_i$, and so we may rewrite the joint pdf of $T_i$ and
 $\mathcal{C}_i$ as
 \begin{equation}
 \label{eq:part1}
-f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = R_{T_i}(t_i;\v\theta)
+f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = \prod_{l=1}^m R_l(t_i;\v{\theta_l})
     \sum_{j \in c_i} \biggl\{
         h_j(t_i;\v{\theta_j}) \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}
     \biggr\}.
@@ -744,7 +741,7 @@ summation in Equation \eqref{eq:part1}, and thus the joint pdf of $T_i$ and
 $\mathcal{C}_i$ may be rewritten as
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) =
-    \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\} R_{T_i}(t_i;\v\theta)
+    \Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\} \prod_{l=1}^m R_l(t_i;\v{\theta_l})
     \sum_{j \in c_i} h_j(t_i;\v{\theta_j})
 $$
 where $j' \in c_i$.
@@ -772,7 +769,7 @@ and \ref{cond:masked_indept_theta} are satisfied, the joint pdf of $T_i$ and
 $\mathcal{C}_i$ is given by
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) =
-    \beta_i R_{T_i}(t_i;\v\theta)
+    \beta_i \prod_{l=1}^m R_l(t_i;\v{\theta_l})
     \sum_{j \in c_i} h_j(t_i;\v{\theta_j}).
 $$
 When we fix the sample and allow $\v{\theta}$ to vary, we obtain the
@@ -781,7 +778,7 @@ when the system lifetime is exactly known (i.e., $\delta_i = 1$) but the
 component cause of failure is masked by a candidate set $c_i$:
 \begin{equation}
 \label{eq:likelihood_contribution_masked}
-L_i(\v\theta) = R_{T_i}(t_i;\v\theta) \sum_{j \in c_i} h_j(t_i;\v{\theta_j}).
+L_i(\v\theta) = \prod_{l=1}^m R_l(t_i;\v{\theta_l}) \sum_{j \in c_i} h_j(t_i;\v{\theta_j}).
 \end{equation}
 
 To summarize this result, assuming Conditions \ref{cond:c_contains_k},
@@ -793,8 +790,8 @@ contribution is given by Equation \eqref{eq:likelihood_contribution_masked}.
 ## Right-Censored Data
 
 As described in Section \@ref(like-model), we observe realizations of
-$(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{T_i,\tau_i\}$ is the
-right-censored system lifetime, $\delta_i = 1_{\{T_i < \tau_i\}}$ is
+$(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{T_i,\tau\}$ is the
+right-censored system lifetime, $\delta_i = 1_{\{T_i < \tau\}}$ is
 the right-censoring indicator, and $\mathcal{C}_i$ is the candidate set.
 
 In the previous section, we discussed the likelihood contribution from an
@@ -806,12 +803,12 @@ $(\delta_i = 0$) in our masked data model.
 The likelihood contribution of a right-censored observation $(\delta_i = 0)$
 is given by
 \begin{equation}
-L_i(\v\theta) = R_{T_i}(s_i;\v\theta).
+L_i(\v\theta) = \prod_{l=1}^m R_l(s_i;\v{\theta_l}).
 \end{equation}
 \end{theorem}
 \begin{proof}
-When right-censoring occurs, then $S_i = \tau_i$, and we only know that
-$T_i > \tau_i$, and so we integrate over all possible values that it may have
+When right-censoring occurs, then $S_i = \tau$, and we only know that
+$T_i > \tau$, and so we integrate over all possible values that it may have
 obtained,
 $$
 L_i(\v\theta) = \Pr\!{}_{\v\theta}\{T_i > s_i\}.
@@ -819,7 +816,7 @@ $$
 By definition, this is just the survival or reliability function of the series system
 evaluated at $s_i$,
 $$
-L_i(\v\theta) = R_{T_i}(s_i;\v\theta).
+L_i(\v\theta) = R_{T_i}(s_i;\v\theta) = \prod_{l=1}^m R_l(t_i;\v{\theta_l}).
 $$
 \end{proof}
 
@@ -829,12 +826,11 @@ contribution for the $i$\textsuperscript{th} system shown in Theorem
 $$
 L_i(\v\theta) =
 \begin{cases}
-    R_{T_i}(s_i;\v\theta)                      &\text{ if } \delta_i = 0\\
-    \beta_i R_{T_i}(s_i;\v\theta)
+    \prod_{l=1}^m R_l(s_i;\v{\theta_l})         &\text{ if } \delta_i = 0\\
+    \beta_i \prod_{l=1}^m R_l(t_i;\v{\theta_l})
         \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1.
 \end{cases}
 $$
-
 We use this result in Section \@ref(mle) to derive the maximum likelihood
 estimator (MLE) of $\v\theta$.
 
@@ -897,19 +893,17 @@ seperately to obtain the result in Theorem \ref{thm:loglike_total}.
 
 \textbf{Case 1}: If the $i$-th system is right-censored ($\delta_i = 0$),
 $$
-\ell_i(\v\theta) = \log R_{T_i}(s_i;\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}).
+\ell_i(\v\theta) = \log \prod_{l=1}^m R_l(s_i;\v{\theta_l}) = \sum_{l=1}^m \log R_l(s_i;\v{\theta_l}).
 $$
-
 \textbf{Case 2}: If the $i$-th system's component cause of failure is masked but the failure time is known ($\delta_i = 1$),
 $$
-\ell_i(\v\theta) = \log R_{T_i}(s_i;\v\theta) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr).
+\ell_i(\v\theta) = \sum_{l=1}^m \log R_l(t_i;\v{\theta_l}) + \log \beta_i + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j})\bigr).
 $$
-We replace $R_{T_i}(s_i;\v\theta)$ with its component-wise definition and by Condition \ref{cond:masked_indept_theta},
+By Condition \ref{cond:masked_indept_theta},
 we may discard the $\log \beta_i$ term since it does not depend on $\v\theta$, giving us the result
 $$
-\ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
+\ell_i(\v\theta) = \sum_{l=1}^m \log R_l(s_i;\v{\theta_l}) + \log \bigl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
 $$
-
 Combining these two cases gives us the result in Theorem \ref{thm:loglike_total}.
 \end{proof}
 
@@ -1532,7 +1526,7 @@ are given by
 for $j = 1, \ldots, m$. We see that these partial derivatives are related to the score of a right-censored likelihood contribution in
 Theorem \ref{thm:weibull_score}. Let us analyze these partial derivatives:
 
-- As $\tau$ increases, $R_{T_i}(\tau;\v\theta)$ decreases, and so the effect right-censoring has on the MLE decreases. This is what we see in
+- As $q increases ($\tau$ increases), $R_{T_i}(\tau;\v\theta)$ decreases, and so the effect right-censoring has on the MLE decreases. This is what we see in
   Figure \ref{fig:q-vs-stats}.
 
 - The partial derivatives with respect to the scale parameters are always positive, so right-censoring positively bias the scale parameter
