@@ -64,6 +64,10 @@ system-level failure times may be recorded along with limited information about
 the failed component. Such masked data poses difficulties for assessing component
 reliability.
 
+This paper develops and validates maximum likelihood techniques to estimate
+component reliability from right-censored lifetime data and candidate sets
+indicative of component failure causes. The key results are:
+
 - Deriving a likelihood model incorporating right-censoring and candidate sets
   to enable masked data to be used for parameter estimation.
 
@@ -77,26 +81,25 @@ reliability.
 - Showing that bootstrapping provides reasonably well-calibrated confidence
   intervals for the maximum likelihood estimates, even with small sample sizes.
 
-The remainder of the paper details the series system and likelihood models,
-maximum likelihood estimation methodology, bootstrap confidence interval
-estimation, and extensive simulation studies exploring estimator behavior under
-various sample sizes, masking levels, and model assumptions.
-
 Together, these contributions provide a statistically rigorous framework for
 learning about latent component properties from limited observational data on
 system reliability. The proposed methods expand the capability to quantify
 component lifetimes in situations where failure data is significantly masked.
+
+The remainder of the paper details the series system and likelihood models,
+maximum likelihood estimation methodology, bootstrap confidence interval
+estimation, and extensive simulation studies exploring estimator behavior under
+various sample sizes, masking levels, and model assumptions.
 
 Series System Model {#statmod}
 ==================================
 Consider a system composed of $m$ components arranged in a series configuration.
 Each component and system has two possible states, functioning or failed.
 We have $n$ systems whose lifetimes are independent and identically distributed (i.i.d.).
-The lifetime of the $i$\textsuperscript{th} system denoted by the random variable $T_{i}$.
-The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th}
-system is denoted by the random variable $T_{i j}$.
+The lifetime of the $i$\textsuperscript{th} system is denoted by the random variable $T_{i}$
+and the lifetime of its $j$\textsuperscript{th} component is denoted by the random variable $T_{i j}$.
 We assume the component lifetimes in a single system are statistically independent and non-identically distributed.
-Here, lifetime is defined as the elapsed time from when the new, functioning component
+Here, lifetime (or lifespan) is defined as the elapsed time from when the new, functioning component
 (or system) is put into operation until it fails for the first time.
 A series system fails when any component fails, thus the lifetime of the $i$\textsuperscript{th}
 system is given by the component with the shortest lifetime,
@@ -107,7 +110,7 @@ $$
 There are three particularly important distribution functions in reliability analysis: the
 reliability function, the probability density function, and the hazard function.
 The reliability function, $R_{T_i}(t)$, is the
-probability that the $i$\textsuperscript{th} system has a lifespan larger than a duration $t$,
+probability that the $i$\textsuperscript{th} system has a lifetime longer than a duration $t$,
 \begin{equation}
 R_{T_i}(t) = \Pr\{T_i > t\}\\
 \end{equation}
@@ -126,14 +129,17 @@ The failure rate is given by the dividing this equation by the length of the tim
 interval, $\Delta t$:
 $$
 \frac{\Pr\{t < T_i < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T_i > t\}} =
-    \frac{R_{T_i}(t) - R_{T_i}(t+\Delta t)}{R_{T_i}(t)}.
+    -\frac{R_{T_i}(t+\Delta t) - R_{T_i}(t)}{\Delta t} \frac{1}{R_{T_i}(t)}.
 $$
-The hazard function $h_{T_i}(t)$ for $T_i$ is the instantaneous failure rate at time $t$, which is given by
+The hazard function $h_{T_i}(t)$ for $T_i$ is the instantaneous failure rate at time $t$,
+which is given by
 \begin{equation}
 \label{eq:failure_rate}
 \begin{split}
-h_{T_i}(t) &= \lim_{\Delta t \to 0} \frac{\Pr\{t < T_i < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T_i > t\}}\\
-       &= \frac{f_{T_i}(t)}{R_{T_i}(t)}.
+h_{T_i}(t) 
+  &= -\lim_{\Delta t \to 0} \frac{R_{T_i}(t+\Delta t) - R_{T_i}(t)}{\Delta t}
+    \frac{1}{R_{T_i}(t)}\\
+  &= \frac{f_{T_i}(t)}{R_{T_i}(t)}.
 \end{split}
 \end{equation}
 
@@ -145,8 +151,8 @@ $$
 
 When a random variable $X$ is parameterized by a particular $\v\theta$, we denote the
 reliability function by $R_X(t;\v\theta)$, and the same for the other distribution functions.
-As a special case, for the components in the series system, we subscript by their labels, e.g,
-the $j$\textsuperscript{th} component's pdf is denoted by $f_j(t;\v{\theta_j})$. Two continuous
+As a special case, for the components in a series system, we subscript by their labels, e.g,
+the pdf of the $j$\textsuperscript{th} component is denoted by $f_j(t;\v{\theta_j})$. Two continuous
 random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
 Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
 $$
@@ -200,9 +206,9 @@ $$
 :::
 
 Theorem \@ref(thm:sys-reliability-function) shows that the system's overall reliability is the
-product of the reliabilities of its individual components. This property is inherent to series
-systems and will be used in the subsequent derivations. Next, we turn our attention to the pdf
-of the system lifetime, described in the following theorem.
+product of the reliabilities of its individual components. This is an important relationship
+in all series systems and will be used in the subsequent derivations. Next, we turn our
+attention to the pdf of the system lifetime, described in the following theorem.
 
 ::: {.theorem #sys-pdf}
 The series system has a pdf given by
@@ -290,18 +296,14 @@ derive distributions related to the component cause of failure.
 
 ## Component Cause of Failure {#comp-cause}
 Whenever a series system fails, precisely one of the components is the cause.
-We model the component cause of the series system failure as a random variable.
-
-::: {.definition}
-The component cause of failure of a series system is
-denoted by the random variable $K_i$ whose support is given by $\{1,\ldots,m\}$.
+We denote the component cause of failure of a series system by the random
+variable $K_i$, whose support is given by $\{1,\ldots,m\}$.
 For example, $K_i=j$ indicates that the component indexed by $j$ failed first, i.e.,
 $$
     T_{i j} < T_{i j'}
 $$
 for every $j'$ in the support of $K_i$ except for $j$.
 Since we have series systems, $K_i$ is unique.
-:::
 
 The system lifetime and the component cause of failure has a joint distribution
 given by the following theorem.
@@ -314,8 +316,8 @@ $T_i$ is given by
   f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) \prod_{l=1}^m R_l(t;\v\theta),
 \end{equation}
 where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th}
-component and $R_l(t;\v{\theta_l})$ is the reliability function of the series
-system.
+component and $R_l(t;\v{\theta_l})$ is the reliability function of the $l$\textsuperscript{th}.
+component.
 :::
 
 ::: {.proof}
@@ -323,13 +325,14 @@ Consider a series system with $3$ components.
 By the assumption that component lifetimes are mutually independent,
 the joint pdf of $T_{i 1},T_{i 2},T_{i 3}$ is given by
 $$
-    f(t_1,t_2,t_3;\v\theta) = \prod_{j=1}^{3} f_j(t;\v{\theta_j}).
+    f(t_1,t_2,t_3;\v\theta) = \prod_{j=1}^{3} f_j(t_j;\v{\theta_j}),
 $$
+where $f_j(t_j;\v{\theta_j})$ is the pdf of the $j$\textsuperscript{th} component.
 The first component is the cause of failure at time $t$ if $K_i = 1$ and
 $T_i = t$, which may be rephrased as the likelihood that $T_{i 1} = t$,
 $T_{i 2} > t$, and $T_{i 3} > t$. Thus,
 \begin{align*}
-f_{K_i,T_i}(j;\v\theta) 
+f_{K_i,T_i}(j,t;\v\theta) 
     &= \int_t^{\infty} \int_t^{\infty}
         f_1(t;\v{\theta_1}) f_2(t_2;\v{\theta_2}) f_3(t_3;\v{\theta_3})
         dt_3 dt_2\\
@@ -342,11 +345,11 @@ $$
 f_1(t;\v{\theta_1}) = h_1(t;\v{\theta_1}) R_1(t;\v{\theta_1}).
 $$
 Making this substitution into the above expression for $f_{K_i,T_i}(j,t;\v\theta)$
-yields
+results in
 $$
-f_{K_i,T_i}(j,t;\v\theta) = h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l})\\
+f_{K_i,T_i}(j,t;\v\theta) = h_1(t;\v{\theta_1}) \prod_{l=1}^m R_l(t;\v{\theta_l}).
 $$
-Generalizing from this completes the proof.
+Generalizing this result completes the proof.
 :::
 
 Theorem \@ref(thm:f-k-and-t) shows that the joint pdf of the component cause of
@@ -390,7 +393,7 @@ By Theorem \@ref(thm:f-k-and-t), this is equivalent to
 
 ::: {.theorem #prob-k-given-t}
 The probability that the $j$\textsuperscript{th}
-component is the cause of system failure given only that we know a system failure
+component is the cause of system failure given that we know the system failure
 occured at time $t_i$ is given by
 $$
 \Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{l=1}^m h_l(t_i;\v{\theta_l})}.
@@ -402,14 +405,19 @@ By the definition of conditional probability,
 \begin{align*}
     \Pr\{K_i = j|T_i = t_i\} 
         &= \frac{f_{K_i,T_i}(j, t_i;\v\theta)}{f_{T_i}(t_i;\v\theta)}\\
-        &= \frac{h_j(t_i;\v{\theta_j})}{R_{T_i}(t_i;\v\theta)} / f_{T_i}(t_i;\v\theta)
+        &= \frac{h_j(t_i;\v{\theta_j}) R_{T_i}(t_i;\v\theta)}{f_{T_i}(t_i;\v\theta)}.
 \end{align*}
-By the property that $h_{T_i}(t_i;\v\theta) = f_{T_i}(t_i;\v\theta) / R_{T_i}(t_i;\v\theta)$,
-we may do this substitution and simplify to obtain
+Since $f_{T_i}(t_i;\v\theta) = h_{T_i}(t_i;\v\theta) R_{T_i}(t_i;\v\theta)$,
+we make this substitution and simplify to obtain
 $$
 \Pr\{K_i = j|T_i = t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{l=1}^m h_l(t_i;\v{\theta_l})}.
 $$
 :::
+
+We see that Theorems \@ref(thm:f-k-and-t) and \@ref(thm:prob-k) are closely related:
+$$
+  \Pr\{K_i = j\} = E_{\v\theta} \bigl[ \Pr\{K_i = j|T_i\} \bigr].
+$$
 
 ## System and Component Reliabilities {#reliability}
 
@@ -419,16 +427,24 @@ MTTF is defined as the expectation of the lifetime,
 \label{mttf-sys}
 \text{MTTF} = E_{\v\theta}\{T_i\},
 \end{equation}
-which if certain assumptions are satisfied[^1] is equivalent to the integration of the reliability function over its support.
+which if certain assumptions are satisfied[^1] is equivalent to the integration
+of the reliability function over its support.
 
-[^1]: $T_i$ is non-negative and continuous, $R_{T_i}(t;\v\theta)$ is a well-defined, continuous, and differential function for $t > 0$, and $\int_0^\infty R_{T_i}(t;\v\theta) dt$ converges.
+[^1]: $T_i$ is non-negative and continuous, $R_{T_i}(t;\v\theta)$ is a well-defined,
+continuous, and differential function for $t > 0$, and $\int_0^\infty R_{T_i}(t;\v\theta) dt$
+converges.
 
 While the MTTF provides a summary measure of reliability, it is not a complete description.
 Depending on the failure characteristics, MTTF can be misleading. For example,
 a system that has a high likelihood of failing early in its life may still have a
 large MTTF if it is fat-tailed.[^2]
 
-[^2]: A "fat-tailed" distribution refers to a probability distribution with tails that decay more slowly than those of the exponential family, such as the case with the Weibull when its shape parameter is greater than $1$. This means that extreme values are more likely to occur, and the distribution is more prone to "black swan" events or rare occurrences. In the context of reliability, a fat-tailed distribution might imply a higher likelihood of unusually long lifetimes, which can skew measures like the MTTF. [@taleb2007black].
+[^2]: A "fat-tailed" distribution refers to a probability distribution with tails that
+decay more slowly than those of the exponential family, such as the case with the Weibull
+when its shape parameter is greater than $1$. This means that extreme values are more
+likely to occur, and the distribution is more prone to "black swan" events or rare occurrences.
+In the context of reliability, a fat-tailed distribution might imply a higher likelihood of
+unusually long lifetimes, which can skew measures like the MTTF. [@taleb2007black]
 
 The reliability of the components in the series system determines the reliability
 of the system. We denote the MTTF of the $j$\textsuperscript{th} component by
@@ -461,65 +477,62 @@ the event of interest, say a system failure, directly.
 We consider two types of masking: masking the system failure lifetime and
 masking the component cause of failure.
 
-We generally encounter three types of system failure lifetime masking:
+We generally encounter two types of system failure lifetime masking:
 
-1. A system failure is observed at a particular point in time.
-2. A system failure is observed to occur within a particular interval of time.
-3. A system failure is not observed, but we know that the system survived at least
-   until a particular point in time. This is known as *right-censoring*
-   and can occur if, for instance, an experiment is terminated while the system
-   is still functioning.
+- A system failure is observed to occur within a particular interval of time.
 
+- A system failure is not observed, but we know that the system survived at least
+  until a particular point in time. This is known as *right-censoring*
+  and can occur if, for instance, an experiment is terminated while the system
+  is still functioning.
 
-We generally encounter two types of component cause of failure masking:
+In the case of masking the component cause of failure, we may not know the precise
+component cause of failure, but may have some indication. In this paper, we sometimes
+do not know which component failed, but can isolate the failed component to some subset
+of the components, known as a candidate set, which is a subset of $\{1,\ldots,m\}$.
+For example, if the candidate set is $\{1,2\}$, then we know that either the first
+or second component failed, but not which one. In this case, we say that the
+component cause of failure is *masked*. [^200]
 
-1. The component cause of failure is observed.
-2. The component cause of failure is not observed, but we know that the failed
-   component is in some set of components. This is known as *masking* the
-   component cause of failure.
+[^200]: If the candidate set only contains a single
+component, then we know the component cause of failure exactly.
 
-Thus, the component cause of failure masking will take the form of candidate sets. A
-candidate set consists of some subset of component labels that plausibly contains the
-label of the failed component.
-The sample space of candidate sets are all subsets of $\{1,\ldots,m\}$, thus
-there are $2^m$ possible outcomes in the sample space.
-
-In this paper, we limit our focus to observing *right censored* lifetimes and exact
-lifetimes but with masked component cause of failures.
+In this paper, each observation is either right censored or the lifetime of the
+system is observed precisely (no censoring) but with the component cause of failure
+potentially masked.
 We consider a sample of $n$ i.i.d. series systems, each of
-which is put into operation at some time and and observed until either it fails
-or is right-censored.
-We denote the right-censoring time of the $i$\textsuperscript{th} system by
-$\tau_i$. 
+which is put into operation and observed until either it fails
+or is right-censored after some time duration $\tau$. 
+
 We do not directly observe the system lifetime, $T_i$, but rather, we observe
 the right-censored lifetime, $S_i$, which is given by
 \begin{equation}
-    S_i = \min\{\tau_i, T_i\},
+    S_i = \min\{\tau, T_i\},
 \end{equation}
 We also observe a right-censoring indicator, $\delta_i$, which is given by
 \begin{equation}
-    \delta_i = 1_{T_i < \tau_i}
+    \delta_i = 1_{T_i < \tau}
 \end{equation}
 where $1_{\text{condition}}$ is an indicator function that outputs $1$ if
 *condition* is true and $0$ otherwise.
 Here, $\delta_i = 1$ indicates the event of interest, a system failure, was
 observed.
 
-If a system failure lifetime is observed, then we also observe a candidate set
+If a system failure event is observed, then we also observe a candidate set
 that contains the component cause of failure. We denote the candidate set for
 the $i$\textsuperscript{th} system by $\mathcal{C}_i$, which is a subset of
 $\{1,\ldots,m\}$.
 Since the data generating process for candidate sets may be subject to chance
-variations, it as a random set.
+variations or unknown factors, we model it with a distribution.
 
-Consider we have an independent and identically distributed (i.i.d.) random sample of masked data,
+In summary, the observed data is assumed to be i.i.d. and is given by
 $D = \{D_1, \ldots, D_n\}$, where each $D_i$ contanis the following:
-
-- $S_i$, the system lifetime of the $i$\textsuperscript{th} system.
-- $\delta_i$, the right-censoring indicator of the $i$\textsuperscript{th} system.
-- $\mathcal{C}_i$, the set of candidate component causes of failure for the
-  $i$\textsuperscript{th} system.
-
+\begin{itemize}
+\item{$S_i${} is the right-censored system lifetime of the $i$\textsuperscript{th} system.
+\item{$\delta_i$} is the right-censoring indicator of the $i$\textsuperscript{th} system.
+\item{$\mathcal{C}_i$} is the set of candidate component causes of failure for the
+$i$\textsuperscript{th} system.
+\end{itemize}
 The masked data generation process is illustrated by Figure \ref{fig:figureone}.
 
 \begin{figure}[h]
@@ -536,18 +549,17 @@ in later sections that is not a function of the distribution of $\mathcal{C}_i$.
 \label{fig:figureone}
 \end{figure}
 
-An example of masked data $D$ for exact, right-censored system failure times with
-candidate sets that mask the component cause of failure can be seen in Table 1
-for a series system with $m=3$ components.
+An example of masked data $D$ with a right-censoring time $\tau = 5$ can be seen in Table 1
+for a series system with $3$ components.
 
-System | Right-censoring time ($S_i$) | Right censoring indicator ($\delta_i$) | Candidate set ($\mathcal{C}_i$) |
------- | --------------------------- | --------------------------- | --------------------- |
-   1   | $4.3$                       | 1                           | $\{1,2\}$             |
-   2   | $1.3$                       | 1                           | $\{2\}$               |
-   3   | $5.4$                       | 0                           | $\emptyset$           |
-   4   | $2.6$                       | 1                           | $\{2,3\}$             |
-   5   | $3.7$                       | 1                           | $\{1,2,3\}$           |
-   6   | $10$                        | 0                           | $\emptyset$           |
+System | Right-censored lifetime ($S_i$) | Event indicator ($\delta_i$) | Candidate set ($\mathcal{C}_i$) |
+------ | ------------------------------- | --------------------------- | --------------------- |
+   1   | $1.1$                           | 1                           | $\{1,2\}$             |
+   2   | $1.3$                           | 1                           | $\{2\}$               |
+   4   | $2.6$                           | 1                           | $\{2,3\}$             |
+   5   | $3.7$                           | 1                           | $\{1,2,3\}$           |
+   6   | $5$                             | 0                           | $\emptyset$           |
+   3   | $5$                             | 0                           | $\emptyset$           |
 
 : Right-censored lifetime data with masked component cause of failure.
 
@@ -557,9 +569,8 @@ The joint pdf of the data $D$ can be represented as follows:
 $$
 f(D ; \v\theta) = \prod_{i=1}^n f(s_i,\delta_i,c_i;\v\theta),
 $$
-where $s_i$ is the observed system lifetime of the $i$\textsuperscript{th} system,
-$\delta_i$ is the observed right-censoring indicator of the $i$\textsuperscript{th} system,
-and $c_i$ is the observed candidate set of the $i$\textsuperscript{th} system.
+where $s_i$ is the observed system lifetime, $\delta_i$ is the observed event
+indicator, and $c_i$ is the observed candidate set of the $i$\textsuperscript{th} system.
 
 This joint pdf tells us how likely we are to observe the particular data, $D$, given
 the parameter $\v\theta$. When we keep the data constant and allow the parameter
