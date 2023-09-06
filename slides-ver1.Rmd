@@ -1,0 +1,78 @@
+---
+title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
+author: "Alex Towell"
+abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models and validation of estimation techniques via simulations. Together, these advance rigorous component reliability assessment from masked failure data."
+output: beamer_presentation
+header-includes:
+   - \usepackage[utf8]{inputenc}
+   - \usepackage{tikz}
+   - \usepackage{caption}
+   - \usepackage{amsthm}
+   - \renewcommand{\v}[1]{\boldsymbol{#1}}
+   - \theoremstyle{definition}
+   - \newtheorem{condition}{Condition}
+   - \theoremstyle{plain}
+bibliography: refs.bib
+link-citations: true
+natbiboptions: "numbers"
+biblio-style: amsplain
+---
+
+## Introduction
+
+- Estimating reliability of individual components from system-level data is challenging
+- Failure times and causes often unobserved
+- Developed likelihood framework to leverage observational data 
+- Simulation studies assess accuracy under small samples and significant masking
+
+## Series System Model
+
+- Components in series configuration
+- Lifetimes iid Weibull
+- Derived system:
+  - Reliability function: Product of components
+  - Probability density: Function of component densities 
+  - Hazard function: Sum of component hazards
+
+## Likelihood Model 
+
+- Right censoring: Unobserved lifetimes 
+- Masked causes: Candidate sets
+- Assumptions on candidate sets:
+  - Condition 1: Contains failed component
+  - Condition 2: Equal failure probability within candidate set
+  - Condition 3: Independent of parameters
+- Likelihood contributions:
+  - Right censoring: System reliability $\prod_j R_j(t;\v{\theta_j})$
+  - Masked causes: $\prod_l R_l(t;\v{\theta_j}) \sum_j h_j(t;\v{\theta_j})$
+
+## Estimation Methodology
+
+- Maximum Likelihood Estimation
+  - Asymptotic normality and efficiency
+  - Small sample issues
+- Bootstrap Confidence Intervals
+  - Approximates sampling distribution
+  - Bias correction
+  - Acceleration
+  - Flexibility for small samples
+
+## Simulation Studies
+
+- Assessed accuracy and precision of MLE
+- Metrics:
+  - Bias
+  - Coverage probability
+  - Confidence interval width
+- Key scenarios:
+  - Varying sample size
+  - Censoring level
+  - Masking probability
+  - Component parameters
+
+## Conclusion
+
+- Provided likelihood framework for limited data
+- MLE accurate under small samples and masking
+- Bootstrap CIs well-calibrated 
+- Shape parameters sensitive, scales more robust
