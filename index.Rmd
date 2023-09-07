@@ -6,7 +6,15 @@ output:
     #bookdown::html_document2:
     #bookdown::pdf_document2:
     bookdown::gitbook:
-        df_print: kable
+        split_by: none
+        config:
+            toc:
+                collapse: none
+                scroll_highlight: true
+            toolbar:
+                position: fixed  # makes the toolbar float
+            search: true
+#       df_print: kable
         citation_package: natbib
     bookdown::pdf_book:
         toc: true
