@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>8 Future Work | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
-  <meta name="description" content="8 Future Work | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <title>B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+  <meta name="description" content="B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="8 Future Work | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta property="og:title" content="B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="8 Future Work | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta name="twitter:title" content="B Score Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   
   
   
@@ -29,8 +29,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="sim-study.html"/>
-<link rel="next" href="conclusion.html"/>
+<link rel="prev" href="app-weibull-loglik-r.html"/>
+<link rel="next" href="app-sim-study-r.html"/>
 <style type="text/css">
 p.abstract{
   text-align: center;
@@ -158,17 +158,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3" data-path="like-model.html"><a href="like-model.html#identifiability-and-convergence-issues"><i class="fa fa-check"></i><b>3.3</b> Identifiability and Convergence Issues</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="mle.html"><a href="mle.html"><i class="fa fa-check"></i><b>4</b> Maximum Likelihood Estimation</a></li>
-<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a>
-<ul>
-<li class="chapter" data-level="5.1" data-path="boot.html"><a href="boot.html#issues-with-resampling-from-the-observed-data"><i class="fa fa-check"></i><b>5.1</b> Issues with Resampling from the Observed Data</a></li>
-</ul></li>
+<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a></li>
 <li class="chapter" data-level="6" data-path="weibull.html"><a href="weibull.html"><i class="fa fa-check"></i><b>6</b> Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="weibull.html"><a href="weibull.html#reliability-1"><i class="fa fa-check"></i><b>6.1</b> Reliability</a></li>
 <li class="chapter" data-level="6.2" data-path="weibull.html"><a href="weibull.html#sys-weibull-like"><i class="fa fa-check"></i><b>6.2</b> Likelihood Model</a></li>
 <li class="chapter" data-level="6.3" data-path="weibull.html"><a href="weibull.html#reduced-weibull"><i class="fa fa-check"></i><b>6.3</b> Weibull Series System: Homogeneous Shape Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Full Model</a>
+<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="sim-study.html"><a href="sim-study.html#data-gen-proc"><i class="fa fa-check"></i><b>7.1</b> Data Generating Process</a>
 <ul>
@@ -205,7 +202,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="B" data-path="app-score-fn-r.html"><a href="app-score-fn-r.html"><i class="fa fa-check"></i><b>B</b> Score Function</a></li>
 <li class="chapter" data-level="C" data-path="app-sim-study-r.html"><a href="app-sim-study-r.html"><i class="fa fa-check"></i><b>C</b> Scenario Simulation</a></li>
 <li class="chapter" data-level="D" data-path="app-cand-model-r.html"><a href="app-cand-model-r.html"><i class="fa fa-check"></i><b>D</b> Bernoulli Candidate Set Model</a></li>
-<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a></li>
+<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a>
+<ul>
+<li class="chapter" data-level="E.1" data-path="app-series-quantile.html"><a href="app-series-quantile.html#introduction-1"><i class="fa fa-check"></i><b>E.1</b> Introduction</a></li>
+<li class="chapter" data-level="E.2" data-path="app-series-quantile.html"><a href="app-series-quantile.html#series-system-model"><i class="fa fa-check"></i><b>E.2</b> Series System Model</a></li>
+<li class="chapter" data-level="E.3" data-path="app-series-quantile.html"><a href="app-series-quantile.html#likelihood-model"><i class="fa fa-check"></i><b>E.3</b> Likelihood Model</a></li>
+<li class="chapter" data-level="E.4" data-path="app-series-quantile.html"><a href="app-series-quantile.html#estimation-methodology"><i class="fa fa-check"></i><b>E.4</b> Estimation Methodology</a></li>
+<li class="chapter" data-level="E.5" data-path="app-series-quantile.html"><a href="app-series-quantile.html#simulation-studies"><i class="fa fa-check"></i><b>E.5</b> Simulation Studies</a></li>
+<li class="chapter" data-level="E.6" data-path="app-series-quantile.html"><a href="app-series-quantile.html#conclusion-1"><i class="fa fa-check"></i><b>E.6</b> Conclusion</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -223,152 +228,74 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="future-work" class="section level1 hasAnchor" number="8">
-<h1><span class="header-section-number">8</span> Future Work<a href="future-work.html#future-work" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="relaxation-of-masking-conditions" class="section level4 unnumbered hasAnchor" number="">
-<h4>Relaxation of Masking Conditions<a href="future-work.html#relaxation-of-masking-conditions" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Investigate relaxations of Conditions 1, 2, and 3.
-Condition 1 stipulates that the failed component is always in
-the candidate set,
-<span class="math display">\[
-    \Pr\{K_i \in \mathcal{C}_i\} = 1.
-\]</span>
-Instead, we could model this as a probability, where the probability
-of the failed component being in the candidate set is a function
-of the failure time <span class="math inline">\(T_i\)</span> and the component cause of failure <span class="math inline">\(K_i\)</span>,
-<span class="math display">\[
-    \Pr\{K_i \in \mathcal{C}_i | K_i = j, T_i = t_i\} = g(j, t_i).
-\]</span>
-Condition 2 stipulates that
-<span class="math display">\[
-    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\} = 
-    \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j&#39;\}
-\]</span>
-for all <span class="math inline">\(j, j&#39; \in c_i\)</span>. We call this an <em>uninformed</em> candidate set,
-since the conditional probability of the candidate set given the
-failure time and component cause of failure is independent of the
-component cause of failure. We could relax this condition to allow
-for <em>informed</em> candidate sets, where the conditional probability
-of the candidate set given the failure time and component cause of
-failure is dependent on the component cause of failure.</p>
-<p>In each of these violations or relaxations, we can either construct
-a new likelihood model that takes this relaxation into account, or
-we can use the existing likelihood model and assess the sensitivity
-of the estimator to this violation. A potentially interesting way to
-do the lattr is by using KL-divergence to measure the distance
-between, for instance, the uninformed and informed candidate set models,
-and then assess the sensitivity of the estimators to this distance.</p>
-</div>
-<div id="expanded-sensitivity-analyses" class="section level4 unnumbered hasAnchor" number="">
-<h4>Expanded Sensitivity Analyses<a href="future-work.html#expanded-sensitivity-analyses" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Explore the use of a reduced model that assumes homogeneity in shape parameters.
-This approach would simplify the system to <span class="math inline">\(m+1\)</span> parameters, as opposed to the
-<span class="math inline">\(2m\)</span> parameters in the current model, potentially increasing interpretability
-and reducing estimator variability. This direction warrants detailed
-investigation to ensure the reduced model retains sufficient accuracy and
-adequately describes the data.</p>
-</div>
-<div id="semi-parametric-bootstrap" class="section level4 unnumbered hasAnchor" number="">
-<h4>Semi-Parametric Bootstrap<a href="future-work.html#semi-parametric-bootstrap" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>We used the non-parameteric bootstrap to construct confidence intervals,
-but we could also use the semi-parametric bootstrap.
-In the semi-parametric bootstrap, instead of resampling from the original
-data, we sample component lifetimes from the parametric distribution fitted
-to the original data and sample candidate sets from the empirical distribution
-of the conditional candidate sets in the original data.
-This is a compromise between the non-parametric bootstrap and the fully
-parametric bootstrap.[^30]
-[^30]: The fully parametric bootstrap is not appropriate for our likelihood
-model because we do not assume a parametric form for the distribution of the
-candidate sets.</p>
-</div>
-<div id="data-augmentation" class="section level4 unnumbered hasAnchor" number="">
-<h4>Data Augmentation<a href="future-work.html#data-augmentation" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Assess the robustness of Data Augmentation (DA) as an implicit
-prior. For example, we may adopt the prior that the system is
-well-designed and augment particularly small samples with synthetic
-data from a reduced model (with homogenous shape parameters) fitted to the
-original data.</p>
-<p>Unlike a full Bayesian approach, where we would need to specify
-a prior for the parameters, DA is an implicit prior that need not
-be explicitly specified. It is a form of regularization that
-reduces the variance of the estimator by leveraging the structure
-of the model and the data.</p>
-</div>
-<div id="penalized-likelihood-for-homogenous-shape-parameters" class="section level4 unnumbered hasAnchor" number="">
-<h4>Penalized Likelihood For Homogenous Shape Parameters<a href="future-work.html#penalized-likelihood-for-homogenous-shape-parameters" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Assess the use of penalized likelihood methods instead of
-DA as a form of regularization. For instance, we can add
-a penalty term to the log-likelihood function that penalizes
-the likelihood when the shape parameters are not close to
-each other. Instead of using a reduced model, we can
-use a penalized likelihood approach to encourage the shape
-parameters to be close to each other, but not necessarily
-equal.</p>
-</div>
-<div id="general-likelihood-model-with-predictors" class="section level4 unnumbered hasAnchor" number="">
-<h4>General Likelihood Model with Predictors<a href="future-work.html#general-likelihood-model-with-predictors" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>In this paper, we focused on a likelihood model that assumed Weibull components
-in a series configuration.
-We can extend this model by generalizing the hazard functions in two ways:</p>
-<ol style="list-style-type: decimal">
-<li><p>Let the hazard model be a function of predictors <span class="math inline">\(\boldsymbol{w_1}, \ldots, \boldsymbol{w_n}\)</span>,
-where <span class="math inline">\(\boldsymbol{w_i}\)</span> is a vector of predictors for the <span class="math inline">\(i\)</span>th observation. Then, the
-hazard function for the <span class="math inline">\(j\)</span>th component is
-<span class="math display">\[
- h_j(t_i|\boldsymbol{w_i};\boldsymbol{\beta_j}),
-\]</span>
-for instance we might make the shape and scale parameters of the Weibull
-component model be a function of the predictors <span class="math inline">\(\boldsymbol{w_i}\)</span>.</p></li>
-<li><p>Replace the Weibull hazard function with a more general hazard function.
-For instance, in the Cox proportional hazards model <span class="citation">(Cox <a href="#ref-cox1972regression" role="doc-biblioref">1972</a>)</span>, the
-hazard function for the <span class="math inline">\(j\)</span>th component is given by
-<span class="math display">\[
- h_j(t_i|\boldsymbol{w_i};\boldsymbol{\beta_j}) = h_0(t_i) \exp(\boldsymbol{\beta_j}^T \boldsymbol{w_i}),
-\]</span>
-where <span class="math inline">\(h_{0}(t_i)\)</span> is a baseline hazard function shared by all components and
-<span class="math inline">\(\boldsymbol{\beta_j}\)</span> is the parameter vector for the <span class="math inline">\(j\)</span>th component. A more general
-model would allow the component hazard functions to take any valid form, namely
-non-negative and integrable.</p></li>
-</ol>
-<p>In either case, by the relation
-<span class="math display">\[
-  R_j(t_i|\boldsymbol{w_i};\boldsymbol{\beta_j}) = e^{-H_j(t)},
-\]</span>
-where
-<span class="math display">\[
-  H_j(t_i) = \int_0^{t_i} h_j(u|\boldsymbol{w_i};\boldsymbol{\beta_j}) du
-\]</span>
-is the cumulative hazard function for the <span class="math inline">\(j\)</span> component, we
-can plug these component hazard and reliability functions into the likelihood
-contribution model in Theorem  to obtain a
-general likelihood model with predictors for the series system.</p>
-</div>
-<div id="assess-the-calibration-of-other-related-bootstrapped-statistics" class="section level4 unnumbered hasAnchor" number="">
-<h4>Assess the Calibration of Other Related Bootstrapped Statistics<a href="future-work.html#assess-the-calibration-of-other-related-bootstrapped-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>The calibration of the bootstrapped confidence intervals were evaluated
-and shown to be quite robust. We could do a similar analysis for other
-bootstrapped statistics. For instance, we could assess the bootstrapped <span class="math inline">\(95\%\)</span>
-prediction interval for the probability that component <span class="math inline">\(j\)</span> is the component
-cause of the next system failure given the data <span class="math inline">\(\mathcal{D}_n\)</span>,
-<span class="math display">\[
-    \Pr\{K_{n+1} = j | \mathcal{D}_n\}.
-\]</span></p>
-</div>
-</div>
-<h3>References</h3>
-<div id="refs" class="references hanging-indent">
-<div id="ref-cox1972regression">
-<p>Cox, D. R. 1972. “Regression Models and Life-Tables.” <em>Journal of the Royal Statistical Society: Series B (Methodological)</em> 34 (2): 187–202. <a href="https://doi.org/https://doi.org/10.1111/j.2517-6161.1972.tb00899.x">https://doi.org/https://doi.org/10.1111/j.2517-6161.1972.tb00899.x</a>.</p>
-</div>
+<div id="app-score-fn-r" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">B</span> Score Function<a href="app-score-fn-r.html#app-score-fn-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>The following code is the score function (gradient of the log-likelihood
+function with respect to <span class="math inline">\(\boldsymbol{\theta}\)</span>) for the Weibull series system with a
+likelihood model that includes masked component cause of failure and
+right-censoring. It is implemented in the R library <code>wei.series.md.c1.c2.c3</code> and
+is available on <a href="https://github.com/queelius/wei.series.md.c1.c2.c3">GitHub</a>.</p>
+<p>For clarity and brevity, we removed some of the functionality that is not
+relevant to the
+analysis in this paper.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="app-score-fn-r.html#cb2-1" aria-hidden="true"></a><span class="co">#&#39; Computes the score function (gradient of the log-likelihood function) for a</span></span>
+<span id="cb2-2"><a href="app-score-fn-r.html#cb2-2" aria-hidden="true"></a><span class="co">#&#39; Weibull series system with respect to parameter `theta` (shape, scale) for masked</span></span>
+<span id="cb2-3"><a href="app-score-fn-r.html#cb2-3" aria-hidden="true"></a><span class="co">#&#39; data with candidate sets that satisfy conditions C1, C2, and C3 and right-censored</span></span>
+<span id="cb2-4"><a href="app-score-fn-r.html#cb2-4" aria-hidden="true"></a><span class="co">#&#39; data.</span></span>
+<span id="cb2-5"><a href="app-score-fn-r.html#cb2-5" aria-hidden="true"></a><span class="co">#&#39;</span></span>
+<span id="cb2-6"><a href="app-score-fn-r.html#cb2-6" aria-hidden="true"></a><span class="co">#&#39; @param df (masked) data frame</span></span>
+<span id="cb2-7"><a href="app-score-fn-r.html#cb2-7" aria-hidden="true"></a><span class="co">#&#39; @param theta parameter vector (shape1, scale1, ..., shapem, scalem)</span></span>
+<span id="cb2-8"><a href="app-score-fn-r.html#cb2-8" aria-hidden="true"></a><span class="co">#&#39; @returns Score with respect to `theta` given `df`</span></span>
+<span id="cb2-9"><a href="app-score-fn-r.html#cb2-9" aria-hidden="true"></a>score_wei_series_md_c1_c2_c3 &lt;-<span class="st"> </span><span class="cf">function</span>(df, theta) {</span>
+<span id="cb2-10"><a href="app-score-fn-r.html#cb2-10" aria-hidden="true"></a>  n &lt;-<span class="st"> </span><span class="kw">nrow</span>(df)</span>
+<span id="cb2-11"><a href="app-score-fn-r.html#cb2-11" aria-hidden="true"></a>  C &lt;-<span class="st"> </span><span class="kw">md_decode_matrix</span>(df, candset)</span>
+<span id="cb2-12"><a href="app-score-fn-r.html#cb2-12" aria-hidden="true"></a>  m &lt;-<span class="st"> </span><span class="kw">ncol</span>(C)</span>
+<span id="cb2-13"><a href="app-score-fn-r.html#cb2-13" aria-hidden="true"></a>  delta &lt;-<span class="st"> </span>df[[right_censoring_indicator]]</span>
+<span id="cb2-14"><a href="app-score-fn-r.html#cb2-14" aria-hidden="true"></a>  t &lt;-<span class="st"> </span>df[[lifetime]]</span>
+<span id="cb2-15"><a href="app-score-fn-r.html#cb2-15" aria-hidden="true"></a>  shapes &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">1</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)]</span>
+<span id="cb2-16"><a href="app-score-fn-r.html#cb2-16" aria-hidden="true"></a>  scales &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">2</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)]</span>
+<span id="cb2-17"><a href="app-score-fn-r.html#cb2-17" aria-hidden="true"></a>  shape_scores &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-18"><a href="app-score-fn-r.html#cb2-18" aria-hidden="true"></a>  scale_scores &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-19"><a href="app-score-fn-r.html#cb2-19" aria-hidden="true"></a></span>
+<span id="cb2-20"><a href="app-score-fn-r.html#cb2-20" aria-hidden="true"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) {</span>
+<span id="cb2-21"><a href="app-score-fn-r.html#cb2-21" aria-hidden="true"></a>    rt.term.shapes &lt;-<span class="st"> </span><span class="op">-</span>(t[i] <span class="op">/</span><span class="st"> </span>scales)<span class="op">^</span>shapes <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(t[i] <span class="op">/</span><span class="st"> </span>scales)</span>
+<span id="cb2-22"><a href="app-score-fn-r.html#cb2-22" aria-hidden="true"></a>    rt.term.scales &lt;-<span class="st"> </span>(shapes <span class="op">/</span><span class="st"> </span>scales) <span class="op">*</span><span class="st"> </span>(t[i] <span class="op">/</span><span class="st"> </span>scales)<span class="op">^</span>shapes</span>
+<span id="cb2-23"><a href="app-score-fn-r.html#cb2-23" aria-hidden="true"></a></span>
+<span id="cb2-24"><a href="app-score-fn-r.html#cb2-24" aria-hidden="true"></a>    <span class="co"># Initialize mask terms to 0</span></span>
+<span id="cb2-25"><a href="app-score-fn-r.html#cb2-25" aria-hidden="true"></a>    mask.term.shapes &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-26"><a href="app-score-fn-r.html#cb2-26" aria-hidden="true"></a>    mask.term.scales &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, m)</span>
+<span id="cb2-27"><a href="app-score-fn-r.html#cb2-27" aria-hidden="true"></a></span>
+<span id="cb2-28"><a href="app-score-fn-r.html#cb2-28" aria-hidden="true"></a>    <span class="cf">if</span> (delta[i]) {</span>
+<span id="cb2-29"><a href="app-score-fn-r.html#cb2-29" aria-hidden="true"></a>      cindex &lt;-<span class="st"> </span>C[i, ]</span>
+<span id="cb2-30"><a href="app-score-fn-r.html#cb2-30" aria-hidden="true"></a>      denom &lt;-<span class="st"> </span><span class="kw">sum</span>(shapes[cindex] <span class="op">/</span><span class="st"> </span>scales[cindex] <span class="op">*</span></span>
+<span id="cb2-31"><a href="app-score-fn-r.html#cb2-31" aria-hidden="true"></a><span class="st">        </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span>(shapes[cindex] <span class="op">-</span><span class="st"> </span><span class="dv">1</span>))</span>
+<span id="cb2-32"><a href="app-score-fn-r.html#cb2-32" aria-hidden="true"></a></span>
+<span id="cb2-33"><a href="app-score-fn-r.html#cb2-33" aria-hidden="true"></a>      numer.shapes &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">/</span><span class="st"> </span>t[i] <span class="op">*</span><span class="st"> </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span>shapes[cindex] <span class="op">*</span></span>
+<span id="cb2-34"><a href="app-score-fn-r.html#cb2-34" aria-hidden="true"></a><span class="st">        </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>shapes[cindex] <span class="op">*</span><span class="st"> </span><span class="kw">log</span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex]))</span>
+<span id="cb2-35"><a href="app-score-fn-r.html#cb2-35" aria-hidden="true"></a>      mask.term.shapes[cindex] &lt;-<span class="st"> </span>numer.shapes <span class="op">/</span><span class="st"> </span>denom</span>
+<span id="cb2-36"><a href="app-score-fn-r.html#cb2-36" aria-hidden="true"></a></span>
+<span id="cb2-37"><a href="app-score-fn-r.html#cb2-37" aria-hidden="true"></a>      numer.scales &lt;-<span class="st"> </span>(shapes[cindex] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span><span class="dv">2</span> <span class="op">*</span></span>
+<span id="cb2-38"><a href="app-score-fn-r.html#cb2-38" aria-hidden="true"></a><span class="st">        </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[cindex])<span class="op">^</span>(shapes[cindex] <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)</span>
+<span id="cb2-39"><a href="app-score-fn-r.html#cb2-39" aria-hidden="true"></a>      mask.term.scales[cindex] &lt;-<span class="st"> </span>numer.scales <span class="op">/</span><span class="st"> </span>denom</span>
+<span id="cb2-40"><a href="app-score-fn-r.html#cb2-40" aria-hidden="true"></a>    }</span>
+<span id="cb2-41"><a href="app-score-fn-r.html#cb2-41" aria-hidden="true"></a></span>
+<span id="cb2-42"><a href="app-score-fn-r.html#cb2-42" aria-hidden="true"></a>    shape_scores &lt;-<span class="st"> </span>shape_scores <span class="op">+</span><span class="st"> </span>rt.term.shapes <span class="op">+</span><span class="st"> </span>mask.term.shapes</span>
+<span id="cb2-43"><a href="app-score-fn-r.html#cb2-43" aria-hidden="true"></a>    scale_scores &lt;-<span class="st"> </span>scale_scores <span class="op">+</span><span class="st"> </span>rt.term.scales <span class="op">-</span><span class="st"> </span>mask.term.scales</span>
+<span id="cb2-44"><a href="app-score-fn-r.html#cb2-44" aria-hidden="true"></a>  }</span>
+<span id="cb2-45"><a href="app-score-fn-r.html#cb2-45" aria-hidden="true"></a></span>
+<span id="cb2-46"><a href="app-score-fn-r.html#cb2-46" aria-hidden="true"></a>  scr &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(theta))</span>
+<span id="cb2-47"><a href="app-score-fn-r.html#cb2-47" aria-hidden="true"></a>  scr[<span class="kw">seq</span>(<span class="dv">1</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)] &lt;-<span class="st"> </span>shape_scores</span>
+<span id="cb2-48"><a href="app-score-fn-r.html#cb2-48" aria-hidden="true"></a>  scr[<span class="kw">seq</span>(<span class="dv">2</span>, <span class="kw">length</span>(theta), <span class="dv">2</span>)] &lt;-<span class="st"> </span>scale_scores</span>
+<span id="cb2-49"><a href="app-score-fn-r.html#cb2-49" aria-hidden="true"></a>  <span class="kw">return</span>(scr)</span>
+<span id="cb2-50"><a href="app-score-fn-r.html#cb2-50" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="sim-study.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="conclusion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="app-weibull-loglik-r.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="app-sim-study-r.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

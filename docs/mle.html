@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
-  <meta name="description" content="A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <title>4 Maximum Likelihood Estimation | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+  <meta name="description" content="4 Maximum Likelihood Estimation | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta property="og:title" content="4 Maximum Likelihood Estimation | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="A Log-likelihood Function | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+  <meta name="twitter:title" content="4 Maximum Likelihood Estimation | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
   
   
   
@@ -29,8 +29,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="conclusion.html"/>
-<link rel="next" href="app-score-fn-r.html"/>
+<link rel="prev" href="like-model.html"/>
+<link rel="next" href="boot.html"/>
 <style type="text/css">
 p.abstract{
   text-align: center;
@@ -158,17 +158,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3" data-path="like-model.html"><a href="like-model.html#identifiability-and-convergence-issues"><i class="fa fa-check"></i><b>3.3</b> Identifiability and Convergence Issues</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="mle.html"><a href="mle.html"><i class="fa fa-check"></i><b>4</b> Maximum Likelihood Estimation</a></li>
-<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a>
-<ul>
-<li class="chapter" data-level="5.1" data-path="boot.html"><a href="boot.html#issues-with-resampling-from-the-observed-data"><i class="fa fa-check"></i><b>5.1</b> Issues with Resampling from the Observed Data</a></li>
-</ul></li>
+<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a></li>
 <li class="chapter" data-level="6" data-path="weibull.html"><a href="weibull.html"><i class="fa fa-check"></i><b>6</b> Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="weibull.html"><a href="weibull.html#reliability-1"><i class="fa fa-check"></i><b>6.1</b> Reliability</a></li>
 <li class="chapter" data-level="6.2" data-path="weibull.html"><a href="weibull.html#sys-weibull-like"><i class="fa fa-check"></i><b>6.2</b> Likelihood Model</a></li>
 <li class="chapter" data-level="6.3" data-path="weibull.html"><a href="weibull.html#reduced-weibull"><i class="fa fa-check"></i><b>6.3</b> Weibull Series System: Homogeneous Shape Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Full Model</a>
+<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="sim-study.html"><a href="sim-study.html#data-gen-proc"><i class="fa fa-check"></i><b>7.1</b> Data Generating Process</a>
 <ul>
@@ -205,7 +202,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="B" data-path="app-score-fn-r.html"><a href="app-score-fn-r.html"><i class="fa fa-check"></i><b>B</b> Score Function</a></li>
 <li class="chapter" data-level="C" data-path="app-sim-study-r.html"><a href="app-sim-study-r.html"><i class="fa fa-check"></i><b>C</b> Scenario Simulation</a></li>
 <li class="chapter" data-level="D" data-path="app-cand-model-r.html"><a href="app-cand-model-r.html"><i class="fa fa-check"></i><b>D</b> Bernoulli Candidate Set Model</a></li>
-<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a></li>
+<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a>
+<ul>
+<li class="chapter" data-level="E.1" data-path="app-series-quantile.html"><a href="app-series-quantile.html#introduction-1"><i class="fa fa-check"></i><b>E.1</b> Introduction</a></li>
+<li class="chapter" data-level="E.2" data-path="app-series-quantile.html"><a href="app-series-quantile.html#series-system-model"><i class="fa fa-check"></i><b>E.2</b> Series System Model</a></li>
+<li class="chapter" data-level="E.3" data-path="app-series-quantile.html"><a href="app-series-quantile.html#likelihood-model"><i class="fa fa-check"></i><b>E.3</b> Likelihood Model</a></li>
+<li class="chapter" data-level="E.4" data-path="app-series-quantile.html"><a href="app-series-quantile.html#estimation-methodology"><i class="fa fa-check"></i><b>E.4</b> Estimation Methodology</a></li>
+<li class="chapter" data-level="E.5" data-path="app-series-quantile.html"><a href="app-series-quantile.html#simulation-studies"><i class="fa fa-check"></i><b>E.5</b> Simulation Studies</a></li>
+<li class="chapter" data-level="E.6" data-path="app-series-quantile.html"><a href="app-series-quantile.html#conclusion-1"><i class="fa fa-check"></i><b>E.6</b> Conclusion</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -223,50 +228,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="app-weibull-loglik-r" class="section level1 hasAnchor" number="10">
-<h1><span class="header-section-number">A</span> Log-likelihood Function<a href="app-weibull-loglik-r.html#app-weibull-loglik-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>The following R code implements the log-likelihood function for the Weibull
-series system with right censoring and masking of component failure data. It is
-implemented in the R library <code>wei.series.md.c1.c2.c3</code> and
-is available on <a href="https://github.com/queelius/wei.series.md.c1.c2.c3">GitHub</a>.
-For clarity and brevity, we removed some of the functionality that is not
-relevant to the analysis in this paper and produce a simplified version of the
-code below.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="app-weibull-loglik-r.html#cb1-1" aria-hidden="true"></a><span class="co">#&#39; Generates a log-likelihood function for a Weibull series system with respect</span></span>
-<span id="cb1-2"><a href="app-weibull-loglik-r.html#cb1-2" aria-hidden="true"></a><span class="co">#&#39; to parameter `theta` (shape, scale) for masked data with candidate sets</span></span>
-<span id="cb1-3"><a href="app-weibull-loglik-r.html#cb1-3" aria-hidden="true"></a><span class="co">#&#39; that satisfy conditions C1, C2, and C3 and right-censored data.</span></span>
-<span id="cb1-4"><a href="app-weibull-loglik-r.html#cb1-4" aria-hidden="true"></a><span class="co">#&#39;</span></span>
-<span id="cb1-5"><a href="app-weibull-loglik-r.html#cb1-5" aria-hidden="true"></a><span class="co">#&#39; @param df (masked) data frame</span></span>
-<span id="cb1-6"><a href="app-weibull-loglik-r.html#cb1-6" aria-hidden="true"></a><span class="co">#&#39; @param theta parameter vector (shape1, scale1, ..., shapem, scalem)</span></span>
-<span id="cb1-7"><a href="app-weibull-loglik-r.html#cb1-7" aria-hidden="true"></a><span class="co">#&#39; @returns Log-likelihood with respect to `theta` given `df`</span></span>
-<span id="cb1-8"><a href="app-weibull-loglik-r.html#cb1-8" aria-hidden="true"></a>loglik_wei_series_md_c1_c2_c3 &lt;-<span class="st"> </span><span class="cf">function</span>(df, theta) {</span>
-<span id="cb1-9"><a href="app-weibull-loglik-r.html#cb1-9" aria-hidden="true"></a>  n &lt;-<span class="st"> </span><span class="kw">nrow</span>(df)</span>
-<span id="cb1-10"><a href="app-weibull-loglik-r.html#cb1-10" aria-hidden="true"></a>  C &lt;-<span class="st"> </span><span class="kw">md_decode_matrix</span>(df, candset)</span>
-<span id="cb1-11"><a href="app-weibull-loglik-r.html#cb1-11" aria-hidden="true"></a>  m &lt;-<span class="st"> </span><span class="kw">ncol</span>(C)</span>
-<span id="cb1-12"><a href="app-weibull-loglik-r.html#cb1-12" aria-hidden="true"></a>  delta &lt;-<span class="st"> </span>df[[right_censoring_indicator]]</span>
-<span id="cb1-13"><a href="app-weibull-loglik-r.html#cb1-13" aria-hidden="true"></a>  t &lt;-<span class="st"> </span>df[[lifetime]]</span>
-<span id="cb1-14"><a href="app-weibull-loglik-r.html#cb1-14" aria-hidden="true"></a>  k &lt;-<span class="st"> </span><span class="kw">length</span>(theta)</span>
-<span id="cb1-15"><a href="app-weibull-loglik-r.html#cb1-15" aria-hidden="true"></a>  shapes &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">1</span>, k, <span class="dv">2</span>)]</span>
-<span id="cb1-16"><a href="app-weibull-loglik-r.html#cb1-16" aria-hidden="true"></a>  scales &lt;-<span class="st"> </span>theta[<span class="kw">seq</span>(<span class="dv">2</span>, k, <span class="dv">2</span>)]</span>
-<span id="cb1-17"><a href="app-weibull-loglik-r.html#cb1-17" aria-hidden="true"></a></span>
-<span id="cb1-18"><a href="app-weibull-loglik-r.html#cb1-18" aria-hidden="true"></a>  s &lt;-<span class="st"> </span><span class="dv">0</span></span>
-<span id="cb1-19"><a href="app-weibull-loglik-r.html#cb1-19" aria-hidden="true"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n) {</span>
-<span id="cb1-20"><a href="app-weibull-loglik-r.html#cb1-20" aria-hidden="true"></a>    s &lt;-<span class="st"> </span>s <span class="op">-</span><span class="st"> </span><span class="kw">sum</span>((t[i] <span class="op">/</span><span class="st"> </span>scales)<span class="op">^</span>shapes)</span>
-<span id="cb1-21"><a href="app-weibull-loglik-r.html#cb1-21" aria-hidden="true"></a>    <span class="cf">if</span> (delta[i]) {</span>
-<span id="cb1-22"><a href="app-weibull-loglik-r.html#cb1-22" aria-hidden="true"></a>      s &lt;-<span class="st"> </span>s <span class="op">+</span><span class="st"> </span><span class="kw">log</span>(<span class="kw">sum</span>(shapes[C[i, ]] <span class="op">/</span><span class="st"> </span>scales[C[i, ]] <span class="op">*</span></span>
-<span id="cb1-23"><a href="app-weibull-loglik-r.html#cb1-23" aria-hidden="true"></a><span class="st">        </span>(t[i] <span class="op">/</span><span class="st"> </span>scales[C[i, ]])<span class="op">^</span>(shapes[C[i, ]] <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)))</span>
-<span id="cb1-24"><a href="app-weibull-loglik-r.html#cb1-24" aria-hidden="true"></a>    }</span>
-<span id="cb1-25"><a href="app-weibull-loglik-r.html#cb1-25" aria-hidden="true"></a>  }</span>
-<span id="cb1-26"><a href="app-weibull-loglik-r.html#cb1-26" aria-hidden="true"></a>  <span class="kw">return</span>(s)</span>
-<span id="cb1-27"><a href="app-weibull-loglik-r.html#cb1-27" aria-hidden="true"></a>}</span></code></pre></div>
+<div id="mle" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">4</span> Maximum Likelihood Estimation<a href="mle.html#mle" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+In our analysis, we use maximum likelihood estimation (MLE) to estimate the series
+system parameter <span class="math inline">\(\boldsymbol{\theta}\)</span> from the masked data <span class="citation">(Bain and Engelhardt <a href="#ref-bain1992" role="doc-biblioref">1992</a>; Casella and Berger <a href="#ref-casella2002statistical" role="doc-biblioref">2002</a>)</span>.
+The MLE finds parameter values that maximize the likelihood of the observed data
+under the assumed model. A maximum likelihood estimate, <span class="math inline">\(\hat{\boldsymbol{\theta}}\)</span>, is a
+solution of
+<span class="math display">\[\begin{equation}
+\label{eq:mle}
+L(\hat{\boldsymbol{\theta}}) = \max_{\boldsymbol{\theta }\in \boldsymbol{\Omega}} L(\boldsymbol{\theta}),
+\end{equation}\]</span>
+where <span class="math inline">\(L(\boldsymbol{\theta})\)</span> is the likelihood function of the observed data. For computational
+efficiency and analytical simplicity, we work with the log-likelihood function,
+denoted as <span class="math inline">\(\ell(\boldsymbol{\theta})\)</span>, instead of the likelihood function <span class="citation">(Casella and Berger <a href="#ref-casella2002statistical" role="doc-biblioref">2002</a>)</span>.
+<p>The MLE, <span class="math inline">\(\hat{\boldsymbol{\theta}}\)</span>, is often found by solving a system of equations derived from setting the derivative of the log-likelihood function to zero, i.e.,
+<span class="math display">\[\begin{equation}
+\label{eq:mle_eq}
+\frac{\partial}{\partial \theta_j} \ell(\boldsymbol{\theta}) = 0,
+\end{equation}\]</span>
+for each component <span class="math inline">\(\theta_j\)</span> of the parameter <span class="math inline">\(\boldsymbol{\theta}\)</span> <span class="citation">(Bain and Engelhardt <a href="#ref-bain1992" role="doc-biblioref">1992</a>)</span>. When there’s no closed-form solution,
+we resort to numerical methods like the Newton-Raphson method.</p>
+<p>Assuming some regularity conditions, such as the likelihood function being identifiable, the MLE has many desirable
+asymptotic properties that underpin statistical inference, namely that it is an asymptotically unbiased estimator
+of the parameter <span class="math inline">\(\boldsymbol{\theta}\)</span> and it is normally distributed with a variance given by the inverse of the Fisher
+Information Matrix (FIM) <span class="citation">(Casella and Berger <a href="#ref-casella2002statistical" role="doc-biblioref">2002</a>)</span>.
+However, for smaller samples, these asymptotic properties may not yield accurate approximations. We propose to use
+the bootstrap method to offer an empirical approach for estimating the sampling distribution of the MLE, in particular for
+computing confidence intervals.</p>
+</div>
+<h3>References</h3>
+<div id="refs" class="references hanging-indent">
+<div id="ref-bain1992">
+<p>Bain, L. J., and M. Engelhardt. 1992. <em>Introduction to Probability and Mathematical Statistics</em>. Second. Duxbury Press.</p>
+</div>
+<div id="ref-casella2002statistical">
+<p>Casella, George, and Roger L Berger. 2002. <em>Statistical Inference</em>. Duxbury Advanced Series.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="conclusion.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="app-score-fn-r.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="like-model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="boot.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

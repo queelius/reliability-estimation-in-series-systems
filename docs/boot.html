@@ -158,17 +158,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3" data-path="like-model.html"><a href="like-model.html#identifiability-and-convergence-issues"><i class="fa fa-check"></i><b>3.3</b> Identifiability and Convergence Issues</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="mle.html"><a href="mle.html"><i class="fa fa-check"></i><b>4</b> Maximum Likelihood Estimation</a></li>
-<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a>
-<ul>
-<li class="chapter" data-level="5.1" data-path="boot.html"><a href="boot.html#issues-with-resampling-from-the-observed-data"><i class="fa fa-check"></i><b>5.1</b> Issues with Resampling from the Observed Data</a></li>
-</ul></li>
+<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a></li>
 <li class="chapter" data-level="6" data-path="weibull.html"><a href="weibull.html"><i class="fa fa-check"></i><b>6</b> Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="weibull.html"><a href="weibull.html#reliability-1"><i class="fa fa-check"></i><b>6.1</b> Reliability</a></li>
 <li class="chapter" data-level="6.2" data-path="weibull.html"><a href="weibull.html#sys-weibull-like"><i class="fa fa-check"></i><b>6.2</b> Likelihood Model</a></li>
 <li class="chapter" data-level="6.3" data-path="weibull.html"><a href="weibull.html#reduced-weibull"><i class="fa fa-check"></i><b>6.3</b> Weibull Series System: Homogeneous Shape Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Full Model</a>
+<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="sim-study.html"><a href="sim-study.html#data-gen-proc"><i class="fa fa-check"></i><b>7.1</b> Data Generating Process</a>
 <ul>
@@ -205,7 +202,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="B" data-path="app-score-fn-r.html"><a href="app-score-fn-r.html"><i class="fa fa-check"></i><b>B</b> Score Function</a></li>
 <li class="chapter" data-level="C" data-path="app-sim-study-r.html"><a href="app-sim-study-r.html"><i class="fa fa-check"></i><b>C</b> Scenario Simulation</a></li>
 <li class="chapter" data-level="D" data-path="app-cand-model-r.html"><a href="app-cand-model-r.html"><i class="fa fa-check"></i><b>D</b> Bernoulli Candidate Set Model</a></li>
-<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a></li>
+<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a>
+<ul>
+<li class="chapter" data-level="E.1" data-path="app-series-quantile.html"><a href="app-series-quantile.html#introduction-1"><i class="fa fa-check"></i><b>E.1</b> Introduction</a></li>
+<li class="chapter" data-level="E.2" data-path="app-series-quantile.html"><a href="app-series-quantile.html#series-system-model"><i class="fa fa-check"></i><b>E.2</b> Series System Model</a></li>
+<li class="chapter" data-level="E.3" data-path="app-series-quantile.html"><a href="app-series-quantile.html#likelihood-model"><i class="fa fa-check"></i><b>E.3</b> Likelihood Model</a></li>
+<li class="chapter" data-level="E.4" data-path="app-series-quantile.html"><a href="app-series-quantile.html#estimation-methodology"><i class="fa fa-check"></i><b>E.4</b> Estimation Methodology</a></li>
+<li class="chapter" data-level="E.5" data-path="app-series-quantile.html"><a href="app-series-quantile.html#simulation-studies"><i class="fa fa-check"></i><b>E.5</b> Simulation Studies</a></li>
+<li class="chapter" data-level="E.6" data-path="app-series-quantile.html"><a href="app-series-quantile.html#conclusion-1"><i class="fa fa-check"></i><b>E.6</b> Conclusion</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -259,12 +264,10 @@ have a coverage probability greater than 95%, which conveys a lack of confidence
 in the precision of the MLE. We want confidence intervals to be as
 narrow as possible while still having a coverage probability close to the
 nominal level, 95%.</p>
-<div id="issues-with-resampling-from-the-observed-data" class="section level2 hasAnchor" number="5.1">
-<h2><span class="header-section-number">5.1</span> Issues with Resampling from the Observed Data<a href="boot.html#issues-with-resampling-from-the-observed-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>While the bootstrap method provides a robust and flexible tool for statistical
 estimation, its effectiveness can be influenced by several factors
-<span class="citation">(Efron and Tibshirani <a href="#ref-efron1994introduction" role="doc-biblioref">1994</a>)</span>.</p>
-<p>Firstly, instances of non-convergence in our bootstrap samples were observed.
+<span class="citation">(Efron and Tibshirani <a href="#ref-efron1994introduction" role="doc-biblioref">1994</a>)</span>. Firstly, instances of non-convergence in our bootstrap
+samples were observed.
 Such cases can occur when the estimation method, like the MLE used in our
 analysis, fails to converge due to the specifics of the resampled data
 <span class="citation">(Casella and Berger <a href="#ref-casella2002statistical" role="doc-biblioref">2002</a>)</span>. This issue can potentially introduce bias or
@@ -281,7 +284,6 @@ bias in the bootstrap distribution <span class="citation">(Klein and Moeschberge
 <p>Despite these challenges, we found the bootstrap method useful in approximating
 the sampling distribution of the MLE, taking care in interpreting the results,
 particularly as it relates to coverage probabilities.</p>
-</div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references hanging-indent">

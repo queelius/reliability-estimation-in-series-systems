@@ -158,17 +158,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3" data-path="like-model.html"><a href="like-model.html#identifiability-and-convergence-issues"><i class="fa fa-check"></i><b>3.3</b> Identifiability and Convergence Issues</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="mle.html"><a href="mle.html"><i class="fa fa-check"></i><b>4</b> Maximum Likelihood Estimation</a></li>
-<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a>
-<ul>
-<li class="chapter" data-level="5.1" data-path="boot.html"><a href="boot.html#issues-with-resampling-from-the-observed-data"><i class="fa fa-check"></i><b>5.1</b> Issues with Resampling from the Observed Data</a></li>
-</ul></li>
+<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a></li>
 <li class="chapter" data-level="6" data-path="weibull.html"><a href="weibull.html"><i class="fa fa-check"></i><b>6</b> Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="weibull.html"><a href="weibull.html#reliability-1"><i class="fa fa-check"></i><b>6.1</b> Reliability</a></li>
 <li class="chapter" data-level="6.2" data-path="weibull.html"><a href="weibull.html#sys-weibull-like"><i class="fa fa-check"></i><b>6.2</b> Likelihood Model</a></li>
 <li class="chapter" data-level="6.3" data-path="weibull.html"><a href="weibull.html#reduced-weibull"><i class="fa fa-check"></i><b>6.3</b> Weibull Series System: Homogeneous Shape Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Full Model</a>
+<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="sim-study.html"><a href="sim-study.html#data-gen-proc"><i class="fa fa-check"></i><b>7.1</b> Data Generating Process</a>
 <ul>
@@ -205,7 +202,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="B" data-path="app-score-fn-r.html"><a href="app-score-fn-r.html"><i class="fa fa-check"></i><b>B</b> Score Function</a></li>
 <li class="chapter" data-level="C" data-path="app-sim-study-r.html"><a href="app-sim-study-r.html"><i class="fa fa-check"></i><b>C</b> Scenario Simulation</a></li>
 <li class="chapter" data-level="D" data-path="app-cand-model-r.html"><a href="app-cand-model-r.html"><i class="fa fa-check"></i><b>D</b> Bernoulli Candidate Set Model</a></li>
-<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a></li>
+<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a>
+<ul>
+<li class="chapter" data-level="E.1" data-path="app-series-quantile.html"><a href="app-series-quantile.html#introduction-1"><i class="fa fa-check"></i><b>E.1</b> Introduction</a></li>
+<li class="chapter" data-level="E.2" data-path="app-series-quantile.html"><a href="app-series-quantile.html#series-system-model"><i class="fa fa-check"></i><b>E.2</b> Series System Model</a></li>
+<li class="chapter" data-level="E.3" data-path="app-series-quantile.html"><a href="app-series-quantile.html#likelihood-model"><i class="fa fa-check"></i><b>E.3</b> Likelihood Model</a></li>
+<li class="chapter" data-level="E.4" data-path="app-series-quantile.html"><a href="app-series-quantile.html#estimation-methodology"><i class="fa fa-check"></i><b>E.4</b> Estimation Methodology</a></li>
+<li class="chapter" data-level="E.5" data-path="app-series-quantile.html"><a href="app-series-quantile.html#simulation-studies"><i class="fa fa-check"></i><b>E.5</b> Simulation Studies</a></li>
+<li class="chapter" data-level="E.6" data-path="app-series-quantile.html"><a href="app-series-quantile.html#conclusion-1"><i class="fa fa-check"></i><b>E.6</b> Conclusion</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -228,11 +233,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Consider a system composed of <span class="math inline">\(m\)</span> components arranged in a series configuration.
 Each component and system has two possible states, functioning or failed.
 We have <span class="math inline">\(n\)</span> systems whose lifetimes are independent and identically distributed (i.i.d.).
-The lifetime of the <span class="math inline">\(i\)</span> system denoted by the random variable <span class="math inline">\(T_{i}\)</span>.
-The lifetime of the <span class="math inline">\(j\)</span> component in the <span class="math inline">\(i\)</span>
-system is denoted by the random variable <span class="math inline">\(T_{i j}\)</span>.
+The lifetime of the <span class="math inline">\(i\)</span> system is denoted by the random variable <span class="math inline">\(T_{i}\)</span>
+and the lifetime of its <span class="math inline">\(j\)</span> component is denoted by the random variable <span class="math inline">\(T_{i j}\)</span>.
 We assume the component lifetimes in a single system are statistically independent and non-identically distributed.
-Here, lifetime is defined as the elapsed time from when the new, functioning component
+Here, lifetime (or lifespan) is defined as the elapsed time from when the new, functioning component
 (or system) is put into operation until it fails for the first time.
 A series system fails when any component fails, thus the lifetime of the <span class="math inline">\(i\)</span>
 system is given by the component with the shortest lifetime,
@@ -242,7 +246,8 @@ system is given by the component with the shortest lifetime,
 <p>There are three particularly important distribution functions in reliability analysis: the
 reliability function, the probability density function, and the hazard function.
 The reliability function, <span class="math inline">\(R_{T_i}(t)\)</span>, is the
-probability that the <span class="math inline">\(i\)</span> system has a lifespan larger than a duration <span class="math inline">\(t\)</span>,
+probability that the <span class="math inline">\(i\)</span> system has a lifetime greater than
+given duration <span class="math inline">\(t\)</span>,
 <span class="math display">\[\begin{equation}
 R_{T_i}(t) = \Pr\{T_i &gt; t\}\\
 \end{equation}\]</span>
@@ -261,14 +266,17 @@ The failure rate is given by the dividing this equation by the length of the tim
 interval, <span class="math inline">\(\Delta t\)</span>:
 <span class="math display">\[
 \frac{\Pr\{t &lt; T_i &lt; t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T_i &gt; t\}} =
-    \frac{R_{T_i}(t) - R_{T_i}(t+\Delta t)}{R_{T_i}(t)}.
+    -\frac{R_{T_i}(t+\Delta t) - R_{T_i}(t)}{\Delta t} \frac{1}{R_{T_i}(t)}.
 \]</span>
-The hazard function <span class="math inline">\(h_{T_i}(t)\)</span> for <span class="math inline">\(T_i\)</span> is the instantaneous failure rate at time <span class="math inline">\(t\)</span>, which is given by
+The hazard function <span class="math inline">\(h_{T_i}(t)\)</span> for <span class="math inline">\(T_i\)</span> is the instantaneous failure rate at time <span class="math inline">\(t\)</span>,
+which is given by
 <span class="math display">\[\begin{equation}
 \label{eq:failure_rate}
 \begin{split}
-h_{T_i}(t) &amp;= \lim_{\Delta t \to 0} \frac{\Pr\{t &lt; T_i &lt; t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T_i &gt; t\}}\\
-       &amp;= \frac{f_{T_i}(t)}{R_{T_i}(t)}.
+h_{T_i}(t) 
+  &amp;= -\lim_{\Delta t \to 0} \frac{R_{T_i}(t+\Delta t) - R_{T_i}(t)}{\Delta t}
+    \frac{1}{R_{T_i}(t)}\\
+  &amp;= \left(-\frac{d}{dt} R_{T_i}(t)\right) \frac{1}{R_{T_i}(t)} = \frac{f_{T_i}(t)}{R_{T_i}(t)}.
 \end{split}
 \end{equation}\]</span></p>
 <p>The lifetime of the <span class="math inline">\(j\)</span> component is assumed to follow a parametric distribution indexed
@@ -278,8 +286,8 @@ by a parameter vector <span class="math inline">\(\boldsymbol{\theta_j}\)</span>
 \]</span></p>
 <p>When a random variable <span class="math inline">\(X\)</span> is parameterized by a particular <span class="math inline">\(\boldsymbol{\theta}\)</span>, we denote the
 reliability function by <span class="math inline">\(R_X(t;\boldsymbol{\theta})\)</span>, and the same for the other distribution functions.
-As a special case, for the components in the series system, we subscript by their labels, e.g,
-the <span class="math inline">\(j\)</span> component’s pdf is denoted by <span class="math inline">\(f_j(t;\boldsymbol{\theta_j})\)</span>. Two continuous
+As a special case, for the components in a series system, we subscript by their labels, e.g,
+the pdf of the <span class="math inline">\(j\)</span> component is denoted by <span class="math inline">\(f_j(t;\boldsymbol{\theta_j})\)</span>. Two continuous
 random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> have a joint pdf <span class="math inline">\(f_{X,Y}(x,y)\)</span>.
 Given the joint pdf <span class="math inline">\(f(x,y)\)</span>, the marginal pdf of <span class="math inline">\(X\)</span> is given by
 <span class="math display">\[
@@ -328,9 +336,9 @@ Performing this substitution obtains the result
 \]</span></p>
 </div>
 <p>Theorem <a href="statmod.html#thm:sys-reliability-function">2.1</a> shows that the system’s overall reliability is the
-product of the reliabilities of its individual components. This property is inherent to series
-systems and will be used in the subsequent derivations. Next, we turn our attention to the pdf
-of the system lifetime, described in the following theorem.</p>
+product of the reliabilities of its individual components. This is an important relationship
+in all series systems and will be used in the subsequent derivations. Next, we turn our
+attention to the pdf of the system lifetime, described in the following theorem.</p>
 <div class="theorem">
 <p><span id="thm:sys-pdf" class="theorem"><strong>Theorem 2.2  </strong></span>The series system has a pdf given by
 <span class="math display">\[\begin{equation}
@@ -364,8 +372,9 @@ f_{T_i}(t;\boldsymbol{\theta})= \sum_{j=1}^m f_j(t;\boldsymbol{\theta_j})
     \prod_{\substack{k=1\\k \neq j}}^m R_k(t;\boldsymbol{\theta_k}).
 \]</span></p>
 </div>
-<p>Theorem <a href="statmod.html#thm:sys-pdf">2.2</a> shows the pdf of the system lifetime as a function of the pdfs and reliabilities of its components.
-We continue with the hazard function of the system lifetime, defined in the next theorem.</p>
+<p>Theorem <a href="statmod.html#thm:sys-pdf">2.2</a> shows the pdf of the system lifetime is a function of
+the pdfs and reliabilities of its components. We continue with the hazard
+function of the system lifetime, defined in the next theorem.</p>
 <div class="theorem">
 <p><span id="thm:sys-failure-rate" class="theorem"><strong>Theorem 2.3  </strong></span>The series system has a hazard function given by
 <span class="math display">\[\begin{equation}
@@ -404,24 +413,21 @@ f_{T_i}(t;\boldsymbol{\theta}) &amp;= h_{T_i}(t;\boldsymbol{\theta}) R_{T_i}(t;\
                  \biggl\{ \prod_{j=1}^m R_j(t;\boldsymbol{\theta_j}) \biggr\},
 \end{split}
 \end{equation}\]</span>
-which we sometimes find to be a more convenient form than Equation .</p>
+which we find to be a more convenient form than Equation .</p>
 <p>In this section, we derived the mathematical forms for the system’s reliability,
 probability density, and hazard functions. Next, we build upon these concepts to
 derive distributions related to the component cause of failure.</p>
 <div id="comp-cause" class="section level2 hasAnchor" number="2.1">
 <h2><span class="header-section-number">2.1</span> Component Cause of Failure<a href="statmod.html#comp-cause" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Whenever a series system fails, precisely one of the components is the cause.
-We model the component cause of the series system failure as a random variable.</p>
-<div class="definition">
-<p><span id="def:unlabeled-div-4" class="definition"><strong>Definition 2.1  </strong></span>The component cause of failure of a series system is
-denoted by the random variable <span class="math inline">\(K_i\)</span> whose support is given by <span class="math inline">\(\{1,\ldots,m\}\)</span>.
+We denote the component cause of failure of a series system by the random
+variable <span class="math inline">\(K_i\)</span>, whose support is given by <span class="math inline">\(\{1,\ldots,m\}\)</span>.
 For example, <span class="math inline">\(K_i=j\)</span> indicates that the component indexed by <span class="math inline">\(j\)</span> failed first, i.e.,
 <span class="math display">\[
     T_{i j} &lt; T_{i j&#39;}
 \]</span>
 for every <span class="math inline">\(j&#39;\)</span> in the support of <span class="math inline">\(K_i\)</span> except for <span class="math inline">\(j\)</span>.
 Since we have series systems, <span class="math inline">\(K_i\)</span> is unique.</p>
-</div>
 <p>The system lifetime and the component cause of failure has a joint distribution
 given by the following theorem.</p>
 <div class="theorem">
@@ -431,22 +437,22 @@ given by the following theorem.</p>
 \label{eq:f_k_and_t}
   f_{K_i,T_i}(j,t;\boldsymbol{\theta}) = h_j(t;\boldsymbol{\theta_j}) \prod_{l=1}^m R_l(t;\boldsymbol{\theta}),
 \end{equation}\]</span>
-where <span class="math inline">\(h_j(t;\boldsymbol{\theta_j})\)</span> is the hazard function of the <span class="math inline">\(j\)</span>
-component and <span class="math inline">\(R_l(t;\boldsymbol{\theta_l})\)</span> is the reliability function of the series
-system.</p>
+where <span class="math inline">\(h_l(t;\boldsymbol{\theta_j})\)</span> and <span class="math inline">\(R_l(t;\boldsymbol{\theta_l})\)</span> are respectively the hazard
+and reliability functions of the <span class="math inline">\(l\)</span> component.</p>
 </div>
 <div class="proof">
-<p><span id="unlabeled-div-5" class="proof"><em>Proof</em>. </span>Consider a series system with <span class="math inline">\(3\)</span> components.
+<p><span id="unlabeled-div-4" class="proof"><em>Proof</em>. </span>Consider a series system with <span class="math inline">\(3\)</span> components.
 By the assumption that component lifetimes are mutually independent,
 the joint pdf of <span class="math inline">\(T_{i 1},T_{i 2},T_{i 3}\)</span> is given by
 <span class="math display">\[
-    f(t_1,t_2,t_3;\boldsymbol{\theta}) = \prod_{j=1}^{3} f_j(t;\boldsymbol{\theta_j}).
+    f(t_1,t_2,t_3;\boldsymbol{\theta}) = \prod_{j=1}^{3} f_j(t_j;\boldsymbol{\theta_j}),
 \]</span>
+where <span class="math inline">\(f_j(t_j;\boldsymbol{\theta_j})\)</span> is the pdf of the <span class="math inline">\(j\)</span> component.
 The first component is the cause of failure at time <span class="math inline">\(t\)</span> if <span class="math inline">\(K_i = 1\)</span> and
 <span class="math inline">\(T_i = t\)</span>, which may be rephrased as the likelihood that <span class="math inline">\(T_{i 1} = t\)</span>,
 <span class="math inline">\(T_{i 2} &gt; t\)</span>, and <span class="math inline">\(T_{i 3} &gt; t\)</span>. Thus,
 <span class="math display">\[\begin{align*}
-f_{K_i,T_i}(j;\boldsymbol{\theta}) 
+f_{K_i,T_i}(j,t;\boldsymbol{\theta}) 
     &amp;= \int_t^{\infty} \int_t^{\infty}
         f_1(t;\boldsymbol{\theta_1}) f_2(t_2;\boldsymbol{\theta_2}) f_3(t_3;\boldsymbol{\theta_3})
         dt_3 dt_2\\
@@ -454,16 +460,13 @@ f_{K_i,T_i}(j;\boldsymbol{\theta})
         R_3(t;\boldsymbol{\theta_3}) dt_2\\
      &amp;= f_1(t;\boldsymbol{\theta_1}) R_2(t;\boldsymbol{\theta_2}) R_3(t_1;\boldsymbol{\theta_3}).
 \end{align*}\]</span>
-Since <span class="math inline">\(h_1(t;\boldsymbol{\theta_1}) = f_1(t;\boldsymbol{\theta_1}) / R_1(t;\boldsymbol{\theta_1})\)</span>,
+By definition, <span class="math inline">\(f_1(t;\boldsymbol{\theta_1}) = h_1(t;\boldsymbol{\theta_1}) R_1(t;\boldsymbol{\theta_1})\)</span>,
+and when we make this substitution into the above expression for <span class="math inline">\(f_{K_i,T_i}(j,t;\boldsymbol{\theta})\)</span>,
+we obtain the result
 <span class="math display">\[
-f_1(t;\boldsymbol{\theta_1}) = h_1(t;\boldsymbol{\theta_1}) R_1(t;\boldsymbol{\theta_1}).
+f_{K_i,T_i}(j,t;\boldsymbol{\theta}) = h_1(t;\boldsymbol{\theta_1}) \prod_{l=1}^m R_l(t;\boldsymbol{\theta_l}).
 \]</span>
-Making this substitution into the above expression for <span class="math inline">\(f_{K_i,T_i}(j,t;\boldsymbol{\theta})\)</span>
-yields
-<span class="math display">\[
-f_{K_i,T_i}(j,t;\boldsymbol{\theta}) = h_1(t;\boldsymbol{\theta_1}) \prod_{l=1}^m R_l(t;\boldsymbol{\theta_l})\\
-\]</span>
-Generalizing from this completes the proof.</p>
+Generalizing this result completes the proof.</p>
 </div>
 <p>Theorem <a href="statmod.html#thm:f-k-and-t">2.4</a> shows that the joint pdf of the component cause of
 failure and system lifetime is a function of the hazard functions and reliability
@@ -487,7 +490,7 @@ where <span class="math inline">\(K_i\)</span> is the random variable denoting t
 lifetime of the <span class="math inline">\(i\)</span> system.</p>
 </div>
 <div class="proof">
-<p><span id="unlabeled-div-6" class="proof"><em>Proof</em>. </span>The probability the <span class="math inline">\(j\)</span> component is the cause of failure is given by
+<p><span id="unlabeled-div-5" class="proof"><em>Proof</em>. </span>The probability the <span class="math inline">\(j\)</span> component is the cause of failure is given by
 marginalizing the joint pdf of <span class="math inline">\(K_i\)</span> and <span class="math inline">\(T_i\)</span> over <span class="math inline">\(T_i\)</span>,
 <span class="math display">\[
 \Pr\{K_i = j\} = \int_0^{\infty} f_{K_i,T_i}(j,t;\boldsymbol{\theta}) dt.
@@ -502,25 +505,28 @@ By Theorem <a href="statmod.html#thm:f-k-and-t">2.4</a>, this is equivalent to
 </div>
 <div class="theorem">
 <p><span id="thm:prob-k-given-t" class="theorem"><strong>Theorem 2.6  </strong></span>The probability that the <span class="math inline">\(j\)</span>
-component is the cause of system failure given only that we know a system failure
+component is the cause of system failure given that we know the system failure
 occured at time <span class="math inline">\(t_i\)</span> is given by
 <span class="math display">\[
 \Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\boldsymbol{\theta_j})}{\sum_{l=1}^m h_l(t_i;\boldsymbol{\theta_l})}.
 \]</span></p>
 </div>
 <div class="proof">
-<p><span id="unlabeled-div-7" class="proof"><em>Proof</em>. </span>By the definition of conditional probability,
+<p><span id="unlabeled-div-6" class="proof"><em>Proof</em>. </span>By the definition of conditional probability,
 <span class="math display">\[\begin{align*}
     \Pr\{K_i = j|T_i = t_i\} 
         &amp;= \frac{f_{K_i,T_i}(j, t_i;\boldsymbol{\theta})}{f_{T_i}(t_i;\boldsymbol{\theta})}\\
-        &amp;= \frac{h_j(t_i;\boldsymbol{\theta_j})}{R_{T_i}(t_i;\boldsymbol{\theta})} / f_{T_i}(t_i;\boldsymbol{\theta})
+        &amp;= \frac{h_j(t_i;\boldsymbol{\theta_j}) R_{T_i}(t_i;\boldsymbol{\theta})}{f_{T_i}(t_i;\boldsymbol{\theta})}.
 \end{align*}\]</span>
-By the property that <span class="math inline">\(h_{T_i}(t_i;\boldsymbol{\theta}) = f_{T_i}(t_i;\boldsymbol{\theta}) / R_{T_i}(t_i;\boldsymbol{\theta})\)</span>,
-we may do this substitution and simplify to obtain
+Since <span class="math inline">\(f_{T_i}(t_i;\boldsymbol{\theta}) = h_{T_i}(t_i;\boldsymbol{\theta}) R_{T_i}(t_i;\boldsymbol{\theta})\)</span>,
+we make this substitution and simplify to obtain
 <span class="math display">\[
 \Pr\{K_i = j|T_i = t_i\} = \frac{h_j(t_i;\boldsymbol{\theta_j})}{\sum_{l=1}^m h_l(t_i;\boldsymbol{\theta_l})}.
 \]</span></p>
 </div>
+<p>Theorems <a href="statmod.html#thm:prob-k">2.5</a> and <a href="statmod.html#thm:prob-k-given-t">2.6</a> are closely related.
+Theorem <a href="statmod.html#thm:prob-k-given-t">2.6</a> is a special case of Theorem <a href="statmod.html#thm:prob-k">2.5</a>
+when <span class="math inline">\(T_i\)</span> is known to be <span class="math inline">\(t_i\)</span>.</p>
 </div>
 <div id="reliability" class="section level2 hasAnchor" number="2.2">
 <h2><span class="header-section-number">2.2</span> System and Component Reliabilities<a href="statmod.html#reliability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -530,14 +536,15 @@ MTTF is defined as the expectation of the lifetime,
 \label{mttf-sys}
 \text{MTTF} = E_{\boldsymbol{\theta}}\{T_i\},
 \end{equation}\]</span>
-which if certain assumptions are satisfied<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> is equivalent to the integration of the reliability function over its support.</p>
+which if certain assumptions are satisfied<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> is equivalent to the integration
+of the reliability function over its support.</p>
 <p>While the MTTF provides a summary measure of reliability, it is not a complete description.
 Depending on the failure characteristics, MTTF can be misleading. For example,
 a system that has a high likelihood of failing early in its life may still have a
 large MTTF if it is fat-tailed.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <p>The reliability of the components in the series system determines the reliability
 of the system. We denote the MTTF of the <span class="math inline">\(j\)</span> component by
-<span class="math inline">\(\text{MTTF}_j\)</span> and, according to Equation , the probability
+<span class="math inline">\(\text{MTTF}_j\)</span> and, according to Theorem <a href="statmod.html#thm:prob-k">2.5</a>, the probability
 that the <span class="math inline">\(j\)</span> component is the cause of failure is given by
 <span class="math inline">\(\Pr\{K_i = j\}\)</span>. In a well-designed series system, there is no component that is
 the “weakest link” that either has a much shorter MTTF or a much higher
@@ -565,8 +572,15 @@ its MTTF while retaining the same failure characteristics.</p></li>
 <div class="footnotes">
 <hr />
 <ol start="1">
-<li id="fn1"><p><span class="math inline">\(T_i\)</span> is non-negative and continuous, <span class="math inline">\(R_{T_i}(t;\boldsymbol{\theta})\)</span> is a well-defined, continuous, and differential function for <span class="math inline">\(t &gt; 0\)</span>, and <span class="math inline">\(\int_0^\infty R_{T_i}(t;\boldsymbol{\theta}) dt\)</span> converges.<a href="statmod.html#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>A “fat-tailed” distribution refers to a probability distribution with tails that decay more slowly than those of the exponential family, such as the case with the Weibull when its shape parameter is greater than <span class="math inline">\(1\)</span>. This means that extreme values are more likely to occur, and the distribution is more prone to “black swan” events or rare occurrences. In the context of reliability, a fat-tailed distribution might imply a higher likelihood of unusually long lifetimes, which can skew measures like the MTTF. <span class="citation">(Taleb <a href="#ref-taleb2007black" role="doc-biblioref">2007</a>)</span>.<a href="statmod.html#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p><span class="math inline">\(T_i\)</span> is non-negative and continuous, <span class="math inline">\(R_{T_i}(t;\boldsymbol{\theta})\)</span> is a well-defined,
+continuous, and differential function for <span class="math inline">\(t &gt; 0\)</span>, and <span class="math inline">\(\int_0^\infty R_{T_i}(t;\boldsymbol{\theta}) dt\)</span>
+converges.<a href="statmod.html#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>A “fat-tailed” distribution refers to a probability distribution with tails that
+decay more slowly than those of the exponential family, such as the case with the Weibull
+when its shape parameter is greater than <span class="math inline">\(1\)</span>. This means that extreme values are more
+likely to occur, and the distribution is more prone to “black swan” events or rare occurrences.
+In the context of reliability, a fat-tailed distribution might imply a higher likelihood of
+unusually long lifetimes, which can skew measures like the MTTF. <span class="citation">(Taleb <a href="#ref-taleb2007black" role="doc-biblioref">2007</a>)</span><a href="statmod.html#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>

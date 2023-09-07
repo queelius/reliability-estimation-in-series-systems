@@ -158,17 +158,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3" data-path="like-model.html"><a href="like-model.html#identifiability-and-convergence-issues"><i class="fa fa-check"></i><b>3.3</b> Identifiability and Convergence Issues</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="mle.html"><a href="mle.html"><i class="fa fa-check"></i><b>4</b> Maximum Likelihood Estimation</a></li>
-<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a>
-<ul>
-<li class="chapter" data-level="5.1" data-path="boot.html"><a href="boot.html#issues-with-resampling-from-the-observed-data"><i class="fa fa-check"></i><b>5.1</b> Issues with Resampling from the Observed Data</a></li>
-</ul></li>
+<li class="chapter" data-level="5" data-path="boot.html"><a href="boot.html"><i class="fa fa-check"></i><b>5</b> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a></li>
 <li class="chapter" data-level="6" data-path="weibull.html"><a href="weibull.html"><i class="fa fa-check"></i><b>6</b> Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="weibull.html"><a href="weibull.html#reliability-1"><i class="fa fa-check"></i><b>6.1</b> Reliability</a></li>
 <li class="chapter" data-level="6.2" data-path="weibull.html"><a href="weibull.html#sys-weibull-like"><i class="fa fa-check"></i><b>6.2</b> Likelihood Model</a></li>
 <li class="chapter" data-level="6.3" data-path="weibull.html"><a href="weibull.html#reduced-weibull"><i class="fa fa-check"></i><b>6.3</b> Weibull Series System: Homogeneous Shape Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Full Model</a>
+<li class="chapter" data-level="7" data-path="sim-study.html"><a href="sim-study.html"><i class="fa fa-check"></i><b>7</b> Simulation Study: Series System with Weibull Components</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="sim-study.html"><a href="sim-study.html#data-gen-proc"><i class="fa fa-check"></i><b>7.1</b> Data Generating Process</a>
 <ul>
@@ -205,7 +202,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="B" data-path="app-score-fn-r.html"><a href="app-score-fn-r.html"><i class="fa fa-check"></i><b>B</b> Score Function</a></li>
 <li class="chapter" data-level="C" data-path="app-sim-study-r.html"><a href="app-sim-study-r.html"><i class="fa fa-check"></i><b>C</b> Scenario Simulation</a></li>
 <li class="chapter" data-level="D" data-path="app-cand-model-r.html"><a href="app-cand-model-r.html"><i class="fa fa-check"></i><b>D</b> Bernoulli Candidate Set Model</a></li>
-<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a></li>
+<li class="chapter" data-level="E" data-path="app-series-quantile.html"><a href="app-series-quantile.html"><i class="fa fa-check"></i><b>E</b> Series System Quantile Function</a>
+<ul>
+<li class="chapter" data-level="E.1" data-path="app-series-quantile.html"><a href="app-series-quantile.html#introduction-1"><i class="fa fa-check"></i><b>E.1</b> Introduction</a></li>
+<li class="chapter" data-level="E.2" data-path="app-series-quantile.html"><a href="app-series-quantile.html#series-system-model"><i class="fa fa-check"></i><b>E.2</b> Series System Model</a></li>
+<li class="chapter" data-level="E.3" data-path="app-series-quantile.html"><a href="app-series-quantile.html#likelihood-model"><i class="fa fa-check"></i><b>E.3</b> Likelihood Model</a></li>
+<li class="chapter" data-level="E.4" data-path="app-series-quantile.html"><a href="app-series-quantile.html#estimation-methodology"><i class="fa fa-check"></i><b>E.4</b> Estimation Methodology</a></li>
+<li class="chapter" data-level="E.5" data-path="app-series-quantile.html"><a href="app-series-quantile.html#simulation-studies"><i class="fa fa-check"></i><b>E.5</b> Simulation Studies</a></li>
+<li class="chapter" data-level="E.6" data-path="app-series-quantile.html"><a href="app-series-quantile.html#conclusion-1"><i class="fa fa-check"></i><b>E.6</b> Conclusion</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -225,91 +230,70 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="like-model" class="section level1 hasAnchor" number="3">
 <h1><span class="header-section-number">3</span> Likelihood Model for Masked Data<a href="like-model.html#like-model" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>The object of interest is the (unknown) parameter value <span class="math inline">\(\boldsymbol{\theta}\)</span>.
-To estimate this <span class="math inline">\(\boldsymbol{\theta}\)</span>, we need <em>data</em>.
-In our case, we call it <em>masked data</em> because we do not necessarily observe
-the event of interest, say a system failure, directly.
-We consider two types of masking: masking the system failure lifetime and
-masking the component cause of failure.</p>
-<p>We generally encounter three types of system failure lifetime masking:</p>
-<ol style="list-style-type: decimal">
-<li>A system failure is observed at a particular point in time.</li>
-<li>A system failure is observed to occur within a particular interval of time.</li>
-<li>A system failure is not observed, but we know that the system survived at least
-until a particular point in time. This is known as <em>right-censoring</em>
-and can occur if, for instance, an experiment is terminated while the system
-is still functioning.</li>
-</ol>
-<p>We generally encounter two types of component cause of failure masking:</p>
-<ol style="list-style-type: decimal">
-<li>The component cause of failure is observed.</li>
-<li>The component cause of failure is not observed, but we know that the failed
-component is in some set of components. This is known as <em>masking</em> the
-component cause of failure.</li>
-</ol>
-<p>Thus, the component cause of failure masking will take the form of candidate sets. A
-candidate set consists of some subset of component labels that plausibly contains the
-label of the failed component.
-The sample space of candidate sets are all subsets of <span class="math inline">\(\{1,\ldots,m\}\)</span>, thus
-there are <span class="math inline">\(2^m\)</span> possible outcomes in the sample space.</p>
-<p>In this paper, we limit our focus to observing <em>right censored</em> lifetimes and exact
-lifetimes but with masked component cause of failures.
-We consider a sample of <span class="math inline">\(n\)</span> i.i.d. series systems, each of
-which is put into operation at some time and and observed until either it fails
-or is right-censored.
-We denote the right-censoring time of the <span class="math inline">\(i\)</span> system by
-<span class="math inline">\(\tau_i\)</span>.
-We do not directly observe the system lifetime, <span class="math inline">\(T_i\)</span>, but rather, we observe
-the right-censored lifetime, <span class="math inline">\(S_i\)</span>, which is given by
+<p>We aim to estimate an unknown parameter, <span class="math inline">\(\boldsymbol{\theta}\)</span>, using <em>masked data</em>,
+which can have two types of masking. We consider two types of masking:
+censoring of system failures and masking component causes of failure.</p>
+<div id="censoring" class="section level5 unnumbered hasAnchor" number="">
+<h5>Censoring<a href="like-model.html#censoring" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>We generally encounter two types of censoring: the system failure is observed
+to occur within some time interval, or the system failure is not observed
+but we know that it was functioning at least until some point in time. The latter
+is known as <em>right-censoring</em>, which is the type of censoring we consider in
+this paper.</p>
+</div>
+<div id="component-cause-of-failure-masking" class="section level5 unnumbered hasAnchor" number="">
+<h5>Component Cause of Failure Masking<a href="like-model.html#component-cause-of-failure-masking" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>In the case of masking the component cause of failure, we may not know the
+precise component cause of failure, but we may have some indication. A common
+example is when a diagnostician is able to isolate the cause of failure to a
+subset of the components. We call this subset the <em>candidate set</em>.</p>
+</div>
+<div id="masked-data" class="section level5 unnumbered hasAnchor" number="">
+<h5>Masked Data<a href="like-model.html#masked-data" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>In this paper, each system is put into operation and observed until either it
+fails or its failure is right-censored after some duration <span class="math inline">\(\tau\)</span>, so we do not
+directly observe the system lifetime but rather we observe the right-censored
+lifetime, <span class="math inline">\(S_i\)</span>, which is given by
 <span class="math display">\[\begin{equation}
-    S_i = \min\{\tau_i, T_i\},
+    S_i = \min\{\tau, T_i\}.
 \end{equation}\]</span>
-We also observe a right-censoring indicator, <span class="math inline">\(\delta_i\)</span>, which is given by
+We also observe an event indicator, <span class="math inline">\(\delta_i\)</span>, which is given by
 <span class="math display">\[\begin{equation}
-    \delta_i = 1_{T_i &lt; \tau_i}
+    \delta_i = 1_{T_i &lt; \tau},
 \end{equation}\]</span>
-where <span class="math inline">\(1_{\text{condition}}\)</span> is an indicator function that outputs <span class="math inline">\(1\)</span> if
-<em>condition</em> is true and <span class="math inline">\(0\)</span> otherwise.
-Here, <span class="math inline">\(\delta_i = 1\)</span> indicates the event of interest, a system failure, was
-observed.</p>
-<p>If a system failure lifetime is observed, then we also observe a candidate set
-that contains the component cause of failure. We denote the candidate set for
-the <span class="math inline">\(i\)</span> system by <span class="math inline">\(\mathcal{C}_i\)</span>, which is a subset of
-<span class="math inline">\(\{1,\ldots,m\}\)</span>.
-Since the data generating process for candidate sets may be subject to chance
-variations, it as a random set.</p>
-<p>Consider we have an independent and identically distributed (i.i.d.) random sample of masked data,
-<span class="math inline">\(D = \{D_1, \ldots, D_n\}\)</span>, where each <span class="math inline">\(D_i\)</span> contanis the following:</p>
-<ul>
-<li><span class="math inline">\(S_i\)</span>, the system lifetime of the <span class="math inline">\(i\)</span> system.</li>
-<li><span class="math inline">\(\delta_i\)</span>, the right-censoring indicator of the <span class="math inline">\(i\)</span> system.</li>
-<li><span class="math inline">\(\mathcal{C}_i\)</span>, the set of candidate component causes of failure for the
-<span class="math inline">\(i\)</span> system.</li>
-</ul>
-<p>The masked data generation process is illustrated by Figure .</p>
-<p>An example of masked data <span class="math inline">\(D\)</span> for exact, right-censored system failure times with
-candidate sets that mask the component cause of failure can be seen in Table 1
-for a series system with <span class="math inline">\(m=3\)</span> components.</p>
+where <span class="math inline">\(1_{\text{condition}}\)</span> is an indicator function that denotes <span class="math inline">\(1\)</span> if
+the condition is true and <span class="math inline">\(0\)</span> otherwise.
+Here, <span class="math inline">\(\delta_i = 1\)</span> indicates the <span class="math inline">\(i\)</span> system’s failure was
+observed and <span class="math inline">\(\delta_i = 0\)</span> indicates it was right-censored.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>
+If a system failure event is observed (<span class="math inline">\(\delta_i = 1\)</span>), then we also observe a
+candidate set that contains the component cause of failure. We denote the
+candidate set for the <span class="math inline">\(i\)</span> system by <span class="math inline">\(\mathcal{C}_i\)</span>, which
+is a subset of <span class="math inline">\(\{1,\ldots,m\}\)</span>.</p>
+In summary, the observed data is assumed to be i.i.d. and is given by
+<span class="math inline">\(D = \{D_1, \ldots, D_n\}\)</span>, where each <span class="math inline">\(D_i\)</span> contains the following elements:
+<p>The masked data generation process is illustrated in Figure .</p>
+<p>An example of masked data <span class="math inline">\(D\)</span> with a right-censoring time <span class="math inline">\(\tau = 5\)</span> can be seen in Table 1
+for a series system with <span class="math inline">\(3\)</span> components.</p>
 <table>
 <caption>Right-censored lifetime data with masked component cause of failure.</caption>
 <colgroup>
 <col width="7%" />
-<col width="33%" />
-<col width="33%" />
-<col width="25%" />
+<col width="36%" />
+<col width="31%" />
+<col width="24%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th>System</th>
-<th>Right-censoring time (<span class="math inline">\(S_i\)</span>)</th>
-<th>Right censoring indicator (<span class="math inline">\(\delta_i\)</span>)</th>
+<th>Right-censored lifetime (<span class="math inline">\(S_i\)</span>)</th>
+<th>Event indicator (<span class="math inline">\(\delta_i\)</span>)</th>
 <th>Candidate set (<span class="math inline">\(\mathcal{C}_i\)</span>)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>1</td>
-<td><span class="math inline">\(4.3\)</span></td>
+<td><span class="math inline">\(1.1\)</span></td>
 <td>1</td>
 <td><span class="math inline">\(\{1,2\}\)</span></td>
 </tr>
@@ -320,26 +304,26 @@ for a series system with <span class="math inline">\(m=3\)</span> components.</p
 <td><span class="math inline">\(\{2\}\)</span></td>
 </tr>
 <tr class="odd">
-<td>3</td>
-<td><span class="math inline">\(5.4\)</span></td>
-<td>0</td>
-<td><span class="math inline">\(\emptyset\)</span></td>
-</tr>
-<tr class="even">
 <td>4</td>
 <td><span class="math inline">\(2.6\)</span></td>
 <td>1</td>
 <td><span class="math inline">\(\{2,3\}\)</span></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>5</td>
 <td><span class="math inline">\(3.7\)</span></td>
 <td>1</td>
 <td><span class="math inline">\(\{1,2,3\}\)</span></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>6</td>
-<td><span class="math inline">\(10\)</span></td>
+<td><span class="math inline">\(5\)</span></td>
+<td>0</td>
+<td><span class="math inline">\(\emptyset\)</span></td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td><span class="math inline">\(5\)</span></td>
 <td>0</td>
 <td><span class="math inline">\(\emptyset\)</span></td>
 </tr>
@@ -349,11 +333,10 @@ for a series system with <span class="math inline">\(m=3\)</span> components.</p
 a specific parameter, represented as <span class="math inline">\(\boldsymbol{\theta}\)</span> within the parameter space <span class="math inline">\(\boldsymbol{\Omega}\)</span>.
 The joint pdf of the data <span class="math inline">\(D\)</span> can be represented as follows:
 <span class="math display">\[
-f(D ; \boldsymbol{\theta}) = \prod_{i=1}^n f(s_i,\delta_i,c_i;\boldsymbol{\theta}),
+f(D ; \boldsymbol{\theta}) = \prod_{i=1}^n f(D_i;\boldsymbol{\theta}) = \prod_{i=1}^n f(s_i,\delta_i,c_i;\boldsymbol{\theta}),
 \]</span>
-where <span class="math inline">\(s_i\)</span> is the observed system lifetime of the <span class="math inline">\(i\)</span> system,
-<span class="math inline">\(\delta_i\)</span> is the observed right-censoring indicator of the <span class="math inline">\(i\)</span> system,
-and <span class="math inline">\(c_i\)</span> is the observed candidate set of the <span class="math inline">\(i\)</span> system.</p>
+where <span class="math inline">\(s_i\)</span> is the observed system lifetime, <span class="math inline">\(\delta_i\)</span> is the observed event
+indicator, and <span class="math inline">\(c_i\)</span> is the observed candidate set of the <span class="math inline">\(i\)</span> system.</p>
 <p>This joint pdf tells us how likely we are to observe the particular data, <span class="math inline">\(D\)</span>, given
 the parameter <span class="math inline">\(\boldsymbol{\theta}\)</span>. When we keep the data constant and allow the parameter
 <span class="math inline">\(\boldsymbol{\theta}\)</span> to vary, we obtain what is called the likelihood function <span class="math inline">\(L\)</span>, defined as
@@ -364,16 +347,15 @@ where
 <span class="math display">\[
 L_i(\boldsymbol{\theta}) = f(s_i,\delta_i,c_i;\boldsymbol{\theta})
 \]</span>
-is the likelihood contribution of the <span class="math inline">\(i\)</span> system. In other words,
-the likelihood function quantifies how likely different parameter values <span class="math inline">\(\boldsymbol{\theta}\)</span>
-are, given the observed data.</p>
-<p>For each type of data, right-censored data and masked component cause of
+is the likelihood contribution of the <span class="math inline">\(i\)</span> system.</p>
+For each type of data, right-censored data and masked component cause of
 failure data, we will derive the <em>likelihood contribution</em> <span class="math inline">\(L_i\)</span>, which refers to the
-part of the likelihood function that this particular piece of data contributes to.</p>
+part of the likelihood function that this particular piece of data contributes to.
 We present the following theorem for the likelihood contribution model.
-<p>In the follow subsections, we prove this result for each type of masked data, right-censored
-system lifetime data <span class="math inline">\((\delta_i = 0)\)</span> and masking of the component cause of failure
-<span class="math inline">\((\delta_i = 1)\)</span>.</p>
+<p>In the following subsections, we prove this result for each type of masked data,
+right-censored system lifetime data <span class="math inline">\((\delta_i = 0)\)</span> and masking of the
+component cause of failure <span class="math inline">\((\delta_i = 1)\)</span>.</p>
+</div>
 <div id="candmod" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Masked Component Cause of Failure<a href="like-model.html#candmod" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Suppose a diagnostician is unable to identify the precise component cause of the
@@ -425,18 +407,17 @@ We denote the conditional pmf of <span class="math inline">\(\mathcal{C}_i\)</sp
 consider the joint distribution of <span class="math inline">\(T_i\)</span>, <span class="math inline">\(K_i\)</span>, and <span class="math inline">\(\mathcal{C}_i\)</span>.
 By Theorem <a href="statmod.html#thm:f-k-and-t">2.4</a>, the joint pdf of <span class="math inline">\(T_i\)</span> and <span class="math inline">\(K_i\)</span> is given by
 <span class="math display">\[
-f_{T_i,K_i}(t_i,j;\boldsymbol{\theta}) = h_j(t_i;\boldsymbol{\theta_j}) R_{T_i}(t_i;\boldsymbol{\theta}),
+f_{T_i,K_i}(t_i,j;\boldsymbol{\theta}) = h_j(t_i;\boldsymbol{\theta_j}) \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l}),
 \]</span>
-where <span class="math inline">\(h_j(t_i;\boldsymbol{\theta_j})\)</span> is the hazard function for the
-<span class="math inline">\(j\)</span> component and <span class="math inline">\(R_{T_i}(t_i;\boldsymbol{\theta})\)</span> is the
-reliability function of the system.
+where <span class="math inline">\(h_j(t_i;\boldsymbol{\theta_j})\)</span> and <span class="math inline">\(R_j(s_i;\boldsymbol{\theta_j})\)</span> are respectively the hazard
+and reliability functions of the <span class="math inline">\(j\)</span> component.
 Thus, the joint pdf of <span class="math inline">\(T_i\)</span>, <span class="math inline">\(K_i\)</span>, and <span class="math inline">\(\mathcal{C}_i\)</span> may be written as
 <span class="math display">\[\begin{equation}
 \label{eq:joint_pdf_t_k_c}
 \begin{split}
 f_{T_i,K_i,\mathcal{C}_i}(t_i,j,c_i;\boldsymbol{\theta})
     &amp;= f_{T_i,K_i}(t_i,k;\boldsymbol{\theta}) \Pr{}_{\!\boldsymbol{\theta}}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}\\
-    &amp;= h_j(t_i;\boldsymbol{\theta_j}) R_{T_i}(t_i;\boldsymbol{\theta})
+    &amp;= h_j(t_i;\boldsymbol{\theta_j}) \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l})
     \Pr{}_{\!\boldsymbol{\theta}}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}.
 \end{split}
 \end{equation}\]</span>
@@ -444,7 +425,7 @@ We are going to need the joint pdf of <span class="math inline">\(T_i\)</span> a
 may be obtained by summing over the support <span class="math inline">\(\{1,\ldots,m\}\)</span> of <span class="math inline">\(K_i\)</span> in
 Equation ,
 <span class="math display">\[
-f_{T_i,\mathcal{C}_i}(t_i,c_i;\boldsymbol{\theta}) = R_{T_i}(t_i;\boldsymbol{\theta})
+f_{T_i,\mathcal{C}_i}(t_i,c_i;\boldsymbol{\theta}) = \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l})
     \sum_{j=1}^m \biggl\{
         h_j(t_i;\boldsymbol{\theta_j}) \Pr{}_{\!\boldsymbol{\theta}}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}
     \biggr\}.
@@ -455,7 +436,7 @@ By Condition ,
 <span class="math inline">\(\mathcal{C}_i\)</span> as
 <span class="math display">\[\begin{equation}
 \label{eq:part1}
-f_{T_i,\mathcal{C}_i}(t_i,c_i;\boldsymbol{\theta}) = R_{T_i}(t_i;\boldsymbol{\theta})
+f_{T_i,\mathcal{C}_i}(t_i,c_i;\boldsymbol{\theta}) = \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l})
     \sum_{j \in c_i} \biggl\{
         h_j(t_i;\boldsymbol{\theta_j}) \Pr{}_{\!\boldsymbol{\theta}}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}
     \biggr\}.
@@ -478,7 +459,7 @@ summation in Equation , and thus the joint pdf of <span class="math inline">\(T_
 <span class="math inline">\(\mathcal{C}_i\)</span> may be rewritten as
 <span class="math display">\[
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\boldsymbol{\theta}) =
-    \Pr{}_{\!\boldsymbol{\theta}}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j&#39;\} R_{T_i}(t_i;\boldsymbol{\theta})
+    \Pr{}_{\!\boldsymbol{\theta}}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j&#39;\} \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l})
     \sum_{j \in c_i} h_j(t_i;\boldsymbol{\theta_j})
 \]</span>
 where <span class="math inline">\(j&#39; \in c_i\)</span>.</p>
@@ -494,7 +475,7 @@ and  are satisfied, the joint pdf of <span class="math inline">\(T_i\)</span> an
 <span class="math inline">\(\mathcal{C}_i\)</span> is given by
 <span class="math display">\[
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\boldsymbol{\theta}) =
-    \beta_i R_{T_i}(t_i;\boldsymbol{\theta})
+    \beta_i \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l})
     \sum_{j \in c_i} h_j(t_i;\boldsymbol{\theta_j}).
 \]</span>
 When we fix the sample and allow <span class="math inline">\(\boldsymbol{\theta}\)</span> to vary, we obtain the
@@ -503,7 +484,7 @@ when the system lifetime is exactly known (i.e., <span class="math inline">\(\de
 component cause of failure is masked by a candidate set <span class="math inline">\(c_i\)</span>:
 <span class="math display">\[\begin{equation}
 \label{eq:likelihood_contribution_masked}
-L_i(\boldsymbol{\theta}) = R_{T_i}(t_i;\boldsymbol{\theta}) \sum_{j \in c_i} h_j(t_i;\boldsymbol{\theta_j}).
+L_i(\boldsymbol{\theta}) = \beta_i \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l}) \sum_{j \in c_i} h_j(t_i;\boldsymbol{\theta_j}).
 \end{equation}\]</span></p>
 <p>To summarize this result, assuming Conditions ,
 , and ,
@@ -514,25 +495,25 @@ contribution is given by Equation .</p>
 <div id="right-censored-data" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Right-Censored Data<a href="like-model.html#right-censored-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>As described in Section <a href="like-model.html#like-model">3</a>, we observe realizations of
-<span class="math inline">\((S_i,\delta_i,\mathcal{C}_i)\)</span> where <span class="math inline">\(S_i = \min\{T_i,\tau_i\}\)</span> is the
-right-censored system lifetime, <span class="math inline">\(\delta_i = 1_{\{T_i &lt; \tau_i\}}\)</span> is
-the right-censoring indicator, and <span class="math inline">\(\mathcal{C}_i\)</span> is the candidate set.</p>
+<span class="math inline">\((S_i,\delta_i,\mathcal{C}_i)\)</span> where <span class="math inline">\(S_i = \min\{T_i,\tau\}\)</span> is the
+right-censored system lifetime, <span class="math inline">\(\delta_i = 1_{T_i &lt; \tau}\)</span> is
+the event indicator, and <span class="math inline">\(\mathcal{C}_i\)</span> is the candidate set.</p>
 In the previous section, we discussed the likelihood contribution from an
 observation of a masked component cause of failure, i.e., <span class="math inline">\(\delta_i = 1\)</span>.
-We now derive the likelihood contribution of a <em>right-censored</em> observation
-<span class="math inline">\((\delta_i = 0\)</span>) in our masked data model.
+We now derive the likelihood contribution of a <em>right-censored</em> observation,
+<span class="math inline">\(\delta_i = 0\)</span>, in our masked data model.
 <p>When we combine the two likelihood contributions, we obtain the likelihood
 contribution for the <span class="math inline">\(i\)</span> system shown in Theorem
 ,
 <span class="math display">\[
 L_i(\boldsymbol{\theta}) =
 \begin{cases}
-    R_{T_i}(s_i;\boldsymbol{\theta})                      &amp;\text{ if } \delta_i = 0\\
-    \beta_i R_{T_i}(s_i;\boldsymbol{\theta})
+    \prod_{l=1}^m R_l(s_i;\boldsymbol{\theta_l})         &amp;\text{ if } \delta_i = 0\\
+    \beta_i \prod_{l=1}^m R_l(t_i;\boldsymbol{\theta_l})
         \sum_{j\in c_i} h_j(s_i;\boldsymbol{\theta_j})   &amp;\text{ if } \delta_i = 1.
 \end{cases}
-\]</span></p>
-<p>We use this result in Section <a href="mle.html#mle">4</a> to derive the maximum likelihood
+\]</span>
+We use this result in Section <a href="mle.html#mle">4</a> to derive the maximum likelihood
 estimator (MLE) of <span class="math inline">\(\boldsymbol{\theta}\)</span>.</p>
 </div>
 <div id="identifiability-and-convergence-issues" class="section level2 hasAnchor" number="3.3">
@@ -566,6 +547,16 @@ masking and right-censoring.</p>
 <div id="ref-wu1983convergence">
 <p>Wu, C. F. Jeff. 1983. “On the Convergence Properties of the Em Algorithm.” <em>The Annals of Statistics</em> 11 (1): 95–103.</p>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="3">
+<li id="fn3"><p>In some likelihood models, there may be more than two possible values for
+<span class="math inline">\(\delta_i\)</span>, but in this paper, we only consider the case where <span class="math inline">\(\delta_i\)</span> is binary.
+Future work could consider the case where <span class="math inline">\(\delta_i\)</span> is categorical by
+including more types of censoring events and more types of component cause of
+failure masking.<a href="like-model.html#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
 </div>
             </section>
 
