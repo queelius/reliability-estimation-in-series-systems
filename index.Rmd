@@ -271,7 +271,7 @@ h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j})
 
 
 ::: {.proof}
-By Equation \eqref{eq:failure-rate}, the $i$\textsuperscript{th} series system lifetime has a hazard function defined as
+By Equation \@ref(eq:failure-rate), the $i$\textsuperscript{th} series system lifetime has a hazard function defined as
 $$
   h_{T_i}(t;\v\theta) = \frac{f_{T_i}(t;\v\theta)}{R_{T_i}(t;\v\theta)}.
 $$
@@ -302,7 +302,7 @@ f_{T_i}(t;\v\theta) &= h_{T_i}(t;\v\theta) R_{T_i}(t;\v\theta)\\
                  \biggl\{ \prod_{j=1}^m R_j(t;\v{\theta_j}) \biggr\},
 \end{split}
 \end{equation}
-which we find to be a more convenient form than Equation \eqref{eq:sys_pdf}.
+which we find to be a more convenient form than Equation \@ref(eq:sys_pdf).
 
 In this section, we derived the mathematical forms for the system's reliability,
 probability density, and hazard functions. Next, we build upon these concepts to
@@ -687,7 +687,7 @@ f_{T_i,K_i,\mathcal{C}_i}(t_i,j,c_i;\v{\theta})
 \end{equation}
 We are going to need the joint pdf of $T_i$ and $\mathcal{C}_i$, which
 may be obtained by summing over the support $\{1,\ldots,m\}$ of $K_i$ in
-Equation \eqref{eq:joint_pdf_t_k_c},
+Equation \@ref(eq:joint_pdf_t_k_c),
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = \prod_{l=1}^m R_l(t_i;\v{\theta_l})
     \sum_{j=1}^m \biggl\{
@@ -733,7 +733,7 @@ In this setting, Condition \ref{cond:equal_prob_failure_cause} generally holds.
 Assuming Conditions \ref{cond:c_contains_k} and
 \ref{cond:equal_prob_failure_cause},
 $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}$ may be factored out of the
-summation in Equation \eqref{eq:part1}, and thus the joint pdf of $T_i$ and
+summation in Equation \@ref(eq:part1), and thus the joint pdf of $T_i$ and
 $\mathcal{C}_i$ may be rewritten as
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) =
@@ -781,7 +781,7 @@ To summarize this result, assuming Conditions \ref{cond:c_contains_k},
 \ref{cond:equal_prob_failure_cause}, and \ref{cond:masked_indept_theta}, 
 if we observe an exact system failure time for the $i$-th system ($\delta_i = 1$),
 but the component that failed is masked by a candidate set $c_i$, then its likelihood
-contribution is given by Equation \eqref{eq:likelihood_contribution_masked}.
+contribution is given by Equation \@ref(eq:likelihood_contribution_masked).
 
 ## Right-Censored Data
 
@@ -884,7 +884,7 @@ $$
 \ell(\v\theta) = \log L(\v\theta) = \log \prod_{i=1}^n L_i(\v\theta) = \sum_{i=1}^n \log L_i(\v\theta).
 $$
 
-Substituting $L_i(\v\theta)$ from Equation \eqref{eq:like}, we consider these two cases of $\delta_i$
+Substituting $L_i(\v\theta)$ from Equation \@ref(eq:like), we consider these two cases of $\delta_i$
 seperately to obtain the result in Theorem \ref{thm:loglike_total}.
 
 \textbf{Case 1}: If the $i$-th system is right-censored ($\delta_i = 0$),
@@ -1077,8 +1077,8 @@ $$
 f_{T_i}(t;\v\theta) = h_{T_i}(t;\v\theta) R_{T_i}(t;\v\theta).
 $$
 Plugging in the failure rate and reliability functions given respectively by
-Equations \eqref{eq:sys_weibull_reliability_function} and
-\eqref{eq:sys_weibull_failure_rate_function} completes the proof.
+Equations \@ref(eq:sys_weibull_reliability_function) and
+\@ref(eq:sys_weibull_failure_rate_function) completes the proof.
 :::
 
 ## Reliability
@@ -1099,7 +1099,7 @@ and it can exhibit both a large MTTF and a high probability of failing early.
 Components may have similar MTTFs, but some components may be more likely to fail
 early and others may be more likely to fail late, depending upon their failure
 characterstics (shape parameters), and so the probability of component failure given by
-Equation \eqref{eq:prob_k} is a useful measure of component reliability compared to
+Equation \@ref(eq:prob_k) is a useful measure of component reliability compared to
 the other components in the system.
 
 In a well-designed series system, the component failure characteristics are similar:
@@ -1140,12 +1140,12 @@ L_i(\v\theta) =
         \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1.
 \end{cases}
 $$
-By Equation \eqref{eq:sys_weibull_reliability_function}, the system reliability
+By Equation \@ref(eq:sys_weibull_reliability_function), the system reliability
 function $R_{T_i}$ is given by
 $$
 R_{T_i}(t_i;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j}\biggr\}.
 $$
-and by Equation \eqref{eq:weibull_haz}, the Weibull component hazard function $h_j$ is
+and by Equation \@ref(eq:weibull_haz), the Weibull component hazard function $h_j$ is
 given by
 $$
 h_j(t_i;\v{\theta_j}) = \frac{k_j}{\lambda_j}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j-1}.
@@ -1171,7 +1171,7 @@ affect the MLE.
 See Appendix \@ref(app-weibull-loglik-r) for the R code that implements the log-likelihood function
 for the series system with Weibull components.
 
-We find an MLE by solving \eqref{eq:mle_eq}, i.e., a point
+We find an MLE by solving \@ref(eq:mle_eq), i.e., a point
 $\v{\hat\theta} = (\hat{k}_1,\hat{\lambda}_1,\ldots,\hat{k}_m,\hat{\lambda}_m)$
 satisfying $\nabla_{\theta} \ell(\v{\hat\theta}) = \v{0}$, where
 $\nabla_{\v\theta}$ is the gradient of the log-likelihood function (score) with
@@ -1228,7 +1228,7 @@ and
 
 The result follows from taking the partial derivatives of the log-likelihood
 contribution of the $i$-th system given by Equation
-\eqref{eq:weibull_likelihood_contribution}. It is a tedious calculation so the proof
+\@ref(eq:weibull_likelihood_contribution). It is a tedious calculation so the proof
 has been omitted, but the result has been verified by using a very precise numerical
 approximation of the gradient.
 
@@ -1795,7 +1795,7 @@ in system design can further impact these observations.
 
 ## Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3 {#scale-vs-mttf}
 
-By Equation \eqref{eq:mttf-weibull}, we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
+By Equation \@ref(eq:mttf-weibull), we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
 when we decrease the scale parameter of a component, we proportionally decrease the MTTF.
 In this scenario, we start with the well-designed series system described in Table \ref{tab:series-sys},
 and we will manipulate the MTTF of component 3, MTTF$_3$, by changing its
