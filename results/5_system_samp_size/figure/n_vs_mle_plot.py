@@ -3,11 +3,13 @@ import pandas as pd
 import numpy as np
 import random
 
+k = 1000
+
 def remove_outliers_iqr(df, param_mle):
     q1 = df[param_mle].quantile(0.25)
     q3 = df[param_mle].quantile(0.75)
     iqr = q3 - q1
-    return df[(df[param_mle] > q1 - 1.5 * iqr) & (df[param_mle] < q3 + 1.5 * iqr)]
+    return df[(df[param_mle] > q1 - k * iqr) & (df[param_mle] < q3 + k * iqr)]
 
 def plot_mles_and_cis(raw_data, x_col, true_params, param, param_label):
 
@@ -26,6 +28,7 @@ def plot_mles_and_cis(raw_data, x_col, true_params, param, param_label):
     x_values = sorted(iqr_data[x_col].unique())
     print(x_values)
 
+    median_mles = []
     mean_mles = []
     lower_quantile = []
     upper_quantile = []
@@ -34,19 +37,23 @@ def plot_mles_and_cis(raw_data, x_col, true_params, param, param_label):
 
     for i, x in enumerate(x_values):
         data = iqr_data[iqr_data[x_col] == x]
-        lower_q3, upper_q1 = np.percentile(data[param_lower], 75), np.percentile(data[param_upper], 25)
+        lower_q3, upper_q1 = np.percentile(data[param_lower], 50), np.percentile(data[param_upper], 50)
         print(lower_q3, upper_q1)
         mean_mle = data[param_mle].mean()
         mean_mles.append(mean_mle)
-        lower_quantile.append(np.percentile(data[param_mle], 5))
-        upper_quantile.append(np.percentile(data[param_mle], 95))
+        median_mle = data[param_mle].median()
+        median_mles.append(median_mle)
+        lower_quantile.append(np.percentile(data[param_mle], 2.5))
+        upper_quantile.append(np.percentile(data[param_mle], 97.5))
 
-        plt.vlines(i, lower_q3, upper_q1, color='blue', alpha=0.5, label='IQR of CIs' if i == 0 else "")
-        plt.plot(i, mean_mle, 'ro', label='Mean of MLEs' if i == 0 else "")
+        plt.vlines(i, lower_q3, upper_q1, color='blue', alpha=0.5, label='Median 95% CI' if i == 0 else "")
+        plt.plot(i, mean_mle, 'ro', label='Mean MLE' if i == 0 else "")
+        plt.plot(i, median_mle, 'bo', label='Median MLE' if i == 0 else "")
 
     plt.plot(np.arange(len(x_values)), [true_params[param]] * len(x_values), 'g-', label=f'True Value')
     plt.plot(np.arange(len(x_values)), mean_mles, 'r--')
-
+    plt.plot(np.arange(len(x_values)), median_mles, 'b--')
+    
     plt.fill_between(
         np.arange(len(x_values)),
         lower_quantile, upper_quantile,

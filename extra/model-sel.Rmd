@@ -57,6 +57,17 @@ where $l_R$ and $l_F$ are log-likelihoods under reduced and full models respecti
 
 If $\Lambda$ exceeds a critical value, the null model is rejected. Otherwise, there is insufficient evidence against the null. Larger samples provide greater power to detect lack of fit.
 
+# Loglikelihood Function
+We denote the full model log-likelihood function by $\ell_F$ and the reduced model log-likelihood
+by $\ell_R$. The reduced model is obtained by setting the shape parameter of each component to
+be the same, i.e., $k_1 = \cdots = k_m = k$. Thus, the reduced model log-likelihood function is given by
+$$
+\ell_R(k, \lambda_1, \lambda_2, \cdots, \lambda_m) =
+        \ell_F(k, \lambda_1, k, \lambda_2, \ldots, k, \lambda_m),
+$$
+The same may be done for the score and hessian of the log-likelihood functions.
+
+
 # Simulation Study
 A simulation study was conducted to demonstrate estimator sensitivity and explore reduced model adequacy using LRTs under various scenarios [1].
 
@@ -76,6 +87,113 @@ The reduced model with homogeneous shapes showed excellent fit for well-designed
 In practice, the choice between models entails weighing simplicity against representativeness. Well-founded reduced models excel for well-designed systems. But data inconsistencies or divergent components motivate fuller models. Proper specification requires understanding system characteristics and estimator behavior.
 
 By providing guidance on suitable models, this work improves component reliability assessment from limited system failure data. Further studies on modeling extensions were suggested in [1]. The methods enable quantifying latent component properties when failures are significantly masked.
+
+## Scenario: Assessing the Impact of Changing the Scale Parameter of Component 3 {#scale-vs-mttf}
+
+By Equation \@ref(eq:mttf-weibull), we see that MTTF$_j$ is proportional to the scale parameter $\lambda_j$, which means
+when we decrease the scale parameter of a component, we proportionally decrease the MTTF.
+In this scenario, we start with the well-designed series system described in Table \ref{tab:series-sys},
+and we will manipulate the MTTF of component 3, MTTF$_3$, by changing its
+scale parameter, $\lambda_3$, and observing the effect this has on the MLE. Since the other components
+had a similiar MTTF, we will arbitrarily choose component 1 to represent the other components.
+The bottom plot shows the coverage probabilities for all parameters.
+
+In Figure \ref{fig:mttf-vs-ci}, we show the effect of changing the scale parameter of component $3$, $lambda_3$,
+but map $\lambda_3$ to MTTF$_3$ to make it more intuitive to reason about. We vary the MTTF of component 3
+from $300$ to $1500$ and the other components have their MTTFs fixed at around $900$, as shown in
+Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$ (moderate masking),
+the right-censoring quantile to $q = 0.825$ (moderate censoring), and the sample size to $n = 100$ (moderate sample size).
+
+```{r mttf-vs-ci, fig.cap=c("MTTF$_3$ vs MLE By Varying Scale", "Mean-Time-To-Failure (MTTF) of Component 3 by Varying Its Scale Parameter"), fig.align="center", echo = F}
+# knitr::include_graphics("image/plot-scale3-vs-stats.pdf")
+# knitr::include_graphics("image/5_system_scale3_vary.pdf")
+knitr::include_graphics("image/5_system_mttf3_by_scale3.pdf")
+```
+
+### Key Observations
+
+##### Coverage Probability (CP) {-}
+When MTTF of component 3 is much smaller than other components,
+the CP for $k_3$ is very well calibrated (approximately obtaining the nominal level $95\%$)
+while the CP for other componentns are around $90\%$, which is still reasonable.
+(This is the case even though the width of the CI for $k_3$ is extremely narrow compared to the others).
+As MTTF$_3$ increases, the CP for $k_3$ decreases, while the CP for the other components increase
+slightly. The scale parameters are generally well-calibrated for all of the components, except
+for component 3 when its MTTF is large and it dips down to $90\%$. Despite the individual differences,
+the mean of the CPs for shape and scale parameters hardly change.
+
+##### Dispersion of MLEs {-}
+For component 3, as its MTTF decreases, the dispersion of MLEs narrows,
+indicating more precise estimates. Conversely, dispersion for other components widens. As MTTF
+of component 3 increases, its dispersion widens while others narrow. This is consistent with
+the fact that the smaller MTTF of component 3 means that, in this well-designed system at least,
+it is more likely to be the component cause of failure, and so we have more information about
+its parameters and are able to estimate them more accurately.
+
+##### IQR of Bootstrapped CIs {-}
+The dark blue vertical lines representing IQR are consistent with the dispersion of MLEs,
+which is the ideal behavior, and suggests that the BCa confidence intervals are performing well.
+
+##### Bias of MLEs {-}
+For component 3, the bias of MLE for the scale parameter becomes slightly more negatively biased
+as MTTF$_3$ increases, and the bias of the MLE for the shape parameter becomes slightly more positively
+biased. The MLE for the shape and scale parameters for component 1 have a very small bias, if any,
+and are not affected by the MTTF$_3$. The scale parameters are easier to estimate than the shape
+parameters, and so they are less sensitive to changes in scale than the shape parameters, as
+we will show in the next scenario.
+
+## Scenario: Assessing the Impact of Changing the Shape Parameter of Component 3 {#shape3-vary}
+
+The shape parameter determines the failure characteristics.
+We vary the shape paramenter of component 3 from $0.1$ to $3.5$ and observe the effect
+it has on the MLE.
+When $k_3 < 1$, this indicates infant mortality, and when $k_3 > 1$, this indicates
+wear-out failures.
+
+We analyze the effect of component 3's shape parameter on the MLE and the bootstrapped confidence intervals for the
+shape and scale parameters of components 1 and 3 (the component we are varying). First, we look at the effect
+on the scale parameter.
+
+
+```{r prob3-vs-mle, out.width="100%", fig.cap=c("Probability of Component 3 Failure vs MLE"), fig.align="center", echo = F}
+knitr::include_graphics("image/5_system_shape3_fig.pdf")
+```
+
+### Key Observations
+
+##### Coverage Probability (CP) {-}
+The CP for the scale parameters
+are well-calibrated and close to the nominal level of $0.95$ for all values of $\Pr\{K_i = 3\}$.
+For the the shape parameter of component 3 ($k_3$) in
+bold orange colors, we see that it is well-calibrated for all values of
+$\Pr\{K_i = 3\}$, but actually may become too large for extreme values of $\Pr\{K_i = 3\}$.
+The CP for the shape parameters of the other components decreases with $$\Pr\{K_i = 3\}$, dipping below $90\%$ for $\Pr\{K_i = 3\} > 0.4$. At a sample size of $n = 100$, the CP for the shape parameters of the other components is generally not well-calibrated for $\Pr\{K_i = 3\} > 0.4$.
+
+##### Dispersion of MLEs {-}
+The dispersion of the MLE for the shape and scale parameters of component 1, $k_1$ and $\lambda_1$,
+is fairly steady but begins to increase rapdily at the extreme values of $\Pr\{K_i = 3\}$. This is indicative of
+having less information about the failure characteristcs of component $1$ as component $3$ begins to dominate the
+component cause of failure.
+The dispersion of the shape parameter $k_3$ is initially quite large, indicative of having very little
+information about the failure characteristcs of component 3 since it is unlikely to be the component cause of
+failure, but its dispersion rapidly decreases as $\Pr\{K_i = 3\}$ increases and more information is
+available about component 3's failure characteristics. In fact, it nearly becomes a point at $\Pr\{K_i = 3\} = 0.6$.
+The dispersion of the the scale parameter of component $3$, $\lambda_1$, is quite steady and is less spread out
+than the MLE for $\lambda_1$, but at extreme values of $\Pr\{K_i = 3\}$, it also begins to rapidly increase,
+suggesting some complex interactions between the shape and scale parameters of component 3.
+
+##### IQR of Bootstrapped CIs {-}
+The CIs precisely track the dispersion of the MLEs, which is the ideal behavior,
+and suggests that the BCa confidence intervals are performing well.
+
+##### Bias of MLEs {-}
+The MLE for the scale parameters are nearly unbiased and generally seem unaffected by changes
+in $\Pr\{K_i = 3\}$. As $\Pr\{K_i = 3\}$ increases the MLE is adjusting $k_1$ to be more
+positively biased, decreasing its infant morality rate to make it less likely to be the
+component cause of failure, and adjusting $k_3$ to be less positively biased, increasing
+its infant mortality rate, to make it more likely to be the component cause of failure.
+
+
 
 # Simulation Study: Full Weibull Model vs Reduced (Homogenous Shape) Model {#full-vs-reduced}
 
@@ -216,6 +334,8 @@ $$
 If the LRT statistic is greater than the critical value of the chi-squared distribution with $m-1$
 degrees of freedom, $\chi^2_{m-1, 1-\alpha}$, where $\alpha$ denotes the significance level, then
 we find the data to be incompatible with the null hypothesis $H_0$.
+
+
 
 
 

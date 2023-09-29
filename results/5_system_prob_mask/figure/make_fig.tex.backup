@@ -5,44 +5,38 @@
 \begin{document}
 \pagestyle{empty}
 
+% First row of images (two minipages)
 \noindent
-\begin{minipage}[t]{0.475\textwidth}
+\begin{minipage}[t]{0.45\textwidth}
   \centering
   \includegraphics[width=\textwidth,height=0.33\textheight,keepaspectratio]{plot-p-vs-shape.1.pdf}
 \end{minipage}%
-%\hspace{0.05\textwidth} % Optional horizontal space
-\begin{minipage}[t]{0.475\textwidth}
+\hspace{0.05\textwidth} % Optional horizontal space
+\begin{minipage}[t]{0.45\textwidth}
   \centering
   \includegraphics[width=\textwidth,height=0.33\textheight,keepaspectratio]{plot-p-vs-scale.1.pdf}
 \end{minipage}
 
-%\vspace{0.25mm}
+\vspace{0.25mm}
 
+% Second row of images (two minipages)
 \noindent
-\begin{minipage}[t]{0.475\textwidth}
+\begin{minipage}[t]{0.45\textwidth}
   \centering
   \includegraphics[width=\textwidth,height=0.33\textheight,keepaspectratio]{plot-p-vs-shape.3.pdf}
 \end{minipage}%
-%\hspace{0.05\textwidth} % Optional horizontal space
-\begin{minipage}[t]{0.475\textwidth}
+\hspace{0.05\textwidth} % Optional horizontal space
+\begin{minipage}[t]{0.45\textwidth}
   \centering
   \includegraphics[width=\textwidth,height=0.33\textheight,keepaspectratio]{plot-p-vs-scale.3.pdf}
 \end{minipage}
 
-%\vspace{0.25mm}
+\vspace{0.25mm}
 
-\noindent
-\begin{minipage}[t]{0.55\textwidth}
-  \centering
-  \includegraphics[width=\textwidth,height=0.33\textheight,keepaspectratio]{combined-cp.pdf}
-\end{minipage}%
-%\hspace{0.05\textwidth} % Optional horizontal space
-\begin{minipage}[t]{0.4\textwidth}
-  \centering
-  \includegraphics[width=\textwidth,height=0.33\textheight,keepaspectratio]{p_vs_convergence.pdf}
-\end{minipage}
-
-
+% Last row with a single image, centered and a bit wider
+\begin{center}
+  \includegraphics[width=1\textwidth,height=0.33\textheight,keepaspectratio]{combined-cp.pdf}
+\end{center}
 
 \end{document}
 

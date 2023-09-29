@@ -33,36 +33,30 @@ coverage_probabilities['mean_shape_coverage_prob'] = mean_shape_coverage_prob
 coverage_probabilities['mean_scale_coverage_prob'] = mean_scale_coverage_prob
 
 # Plotting
-plt.figure(figsize=[5, 4])
+plt.figure(figsize=[4, 4])
 
-shape_cmap = plt.colormaps['Blues']
-scale_cmap = plt.colormaps['Reds']
+# Plot all individual shapes with a consistent style
+for j in range(1, 6):
+    plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'shape_coverage.{j}'], color='blue', linestyle='-')
+    plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'scale_coverage.{j}'], color='red', linestyle='-')
 
-line_styles = ['-', '--', '-.', ':', '-']
-markers = ['o', 's', '^', 'x', 'D']
+# Plot mean coverage probabilities with distinct styles
+plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_shape_coverage_prob'], color='darkblue', linewidth=2, linestyle='--', label='Mean Shape')
+plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_scale_coverage_prob'], color='darkred', linewidth=2, linestyle='--', label='Mean Scale')
 
-for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)), line_styles, markers):
-    plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'shape_coverage.{j}'], label=f'$k_{j}$', color=color, linestyle=ls, marker=mk)
+# 95% Level
+plt.axhline(y=0.95, color='grey', linestyle='--', label='95% Level')
 
-for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)), line_styles, markers):
-    plt.plot(coverage_probabilities[x_col], coverage_probabilities[f'scale_coverage.{j}'], label=f'$\lambda_{j}$', color=color, linestyle=ls, marker=mk)
+# Legend
+shape_legend, = plt.plot([], [], color='blue', linestyle='-', label='Shape $k$')
+scale_legend, = plt.plot([], [], color='red', linestyle='-', label='Scale $\lambda$')
+plt.legend(handles=[shape_legend, scale_legend], loc='upper left', bbox_to_anchor=(0, -0.2), ncol=3, fontsize='small')
 
-plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_shape_coverage_prob'], color='darkblue', linewidth=4, linestyle='-', label='$\\bar{k}$')
-plt.plot(coverage_probabilities[x_col], coverage_probabilities['mean_scale_coverage_prob'], color='darkred', linewidth=4, linestyle='-', label='$\\bar{\lambda}$')
-
-plt.axhline(y=0.95, color='green', linestyle='--', label='$95\\%$')
-plt.axhline(y=0.90, color='red', linestyle='--', label='$90\\%$')
+# Rest of the plot aesthetics...
 plt.xlabel('Masking Probability ($p$)')
 plt.ylabel('Coverage Probability (CP)')
 plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}'.format(y))) 
 plt.title('Coverage Probabilities for Parameters')
-plt.legend(loc='best', bbox_to_anchor=(1, 1))
-plt.tight_layout(rect=[0, 0, 0.85, 1])
+plt.tight_layout(rect=[0, 0.1, 1, 1])
 
-#plt.legend(loc='best')
-plt.tight_layout()
 plt.savefig('combined-cp.pdf')
-
-
-
-

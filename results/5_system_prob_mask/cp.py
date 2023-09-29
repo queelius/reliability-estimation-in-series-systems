@@ -56,8 +56,8 @@ plt.xlabel('Masking Probability ($p$)')
 plt.ylabel('Coverage Probability (CP)')
 plt.title('Coverage Probabilities for Shapes')
 plt.legend(loc='lower left', fontsize='small')
-plt.tight_layout()  # Adjust layout to prevent clipping
 plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
+plt.tight_layout()  # Adjust layout to prevent clipping
 plt.savefig('shapes-cp.pdf')
 
 
@@ -73,6 +73,6 @@ plt.title('Coverage Probabilities for Scales')
 # postion legend on the top right
 # and make it a bit smaller
 plt.legend(loc='lower left', fontsize='small')
-plt.tight_layout()  # Adjust layout to prevent clipping
 plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
+plt.tight_layout()  # Adjust layout to prevent clipping
 plt.savefig('scales-cp.pdf')
