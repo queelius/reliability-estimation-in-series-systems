@@ -1,8 +1,12 @@
 ---
 title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
-author: "Alex Towell"
-#abstract: "Accurately estimating reliability of individual components in multi-component systems is challenging when only system-level failure data is observable. This paper develops maximum likelihood techniques to estimate component reliability from right-censored lifetimes and candidate sets indicative of masked failure causes in series systems. A likelihood model accounts for right-censoring and candidate sets. Extensive simulation studies demonstrate accurate and robust performance of the maximum likelihood estimator despite small samples and significant masking and censoring. The bias-corrected accelerated bootstrap provides well-calibrated confidence intervals. The methods expand the capability to quantify latent component properties from limited system reliability data. Key contributions include derivations of likelihood models and validation of estimation techniques via simulations. Together, these advance rigorous component reliability assessment from masked failure data."
-abstract: "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time. The studies specifically examine the accuracy (bias) and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields reasonably well-calibrated confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data."
+author: |
+  \texorpdfstring{
+    \Large{Alex Towell} \\
+    \href{mailto:lex@metafunctor.com}{lex@metafunctor.com}
+  }{Alex Towell}
+date: "2023-09-30"
+abstract: "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields reasonably well-calibrated confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data."
 output:
     #bookdown::html_document2:
     #bookdown::pdf_document2:
@@ -43,9 +47,9 @@ link-citations: true
 #biblio-style: apalike
 #biblio-style: plainnat
 natbiboptions: "numbers"
-biblio-style: amsplain
+csl: ieee-with-url.csl
+#biblio-style: amsplain
 ---
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
@@ -2037,9 +2041,11 @@ for statistical learning from masked system failure data.
 
 # Series System with Weibull Component Lifetimes
 
-These functions are implemented in the R library `wei.series.md.c1.c2.c3` and
-are available on [GitHub](https://github.com/queelius/wei.series.md.c1.c2.c3).
-They are for the series system with Weibull component lifetimes with data
+These functions are implemented in the R library `wei.series.md.c1.c2.c3`, which
+is available on GitHub at
+[`github.com/queelius/wei.series.md.c1.c2.c3`](https://github.com/queelius/wei.series.md.c1.c2.c3)
+[@towell2023weibull].
+They are for series systems with Weibull component lifetimes with masked data
 described in Section \@ref(like-model). For clarity and brevity, we
 removed some of the functionality and safeguards in the actual code, but we
 provide the full code in the R package.
@@ -2196,101 +2202,20 @@ mle_lbfgsb_wei_series_md_c1_c2_c3 <- function(df, theta0) {
 }
 ```
 
-# Simulation
+## Bernoulli Masking Model {#app-cand-model-r}
 
-This appendix showcases select Python and R code instrumental in generating
-this paper. The entire source code can be found on GitHub:
-[`github.com/queelius/reliability-estimation-in-series-systems`](https://github.com/queelius/reliability-estimation-in-series-systems)
-[@towell2023reliability].
-
-For the sake of clarity and brevity within this appendix, certain
-functionalities and safeguards from the original code have been omitted.
-However, the full, unedited code, as well as the methods to reproduce this
-paper, are available in the GitHub repository.
-
-## Scenario Simulation {#app-sim-study-r}
-
-Below, you'll find the R code for the Monte-Carlo simulation, tailored to run
-the scenarios discussed in Section \@ref(sim-study).
-
-```{r bootstrap-sim-code, eval=FALSE}
-#### Setup simulation parameters here ####
-theta <- c(
-  shape1 = 1.2576, scale1 = 994.3661,
-  shape2 = 1.1635, scale2 = 908.9458,
-  shape3 = 1.1308, scale3 = 840.1141,
-  shape4 = 1.1802, scale4 = 940.1342,
-  shape5 = 1.2034, scale5 = 923.1631
-)
-
-N <- c(30, 60, 100) # sample sizes to simulate
-P <- c(.215) # masking probabilities to simulate
-Q <- c(.825) # right censoring probabilities to simulate
-R <- 1000L # number of simulations per scenario
-B <- 1000L # number of bootstrap samples
-max_iter <- 125L # max iterations for MLE
-max_boot_iter <- 125L # max iterations for bootstrap MLE
-n_cores <- detectCores() - 1 # number of cores to use for parallel processing
-experiment_name <- "data" # filename prefix for output files
-
-#### Simulation code below here ####
-file.meta <- paste0(experiment_name, ".txt")
-file.csv <- paste0(experiment_name, ".csv")
-shape <- theta[seq(1, length(theta), 2)]
-scale <- theta[seq(2, length(theta), 2)]
-m <- length(shape)
-
-for (n in N) {
-  for (p in P) {
-    for (q in Q) {
-      tau <- qwei_series(p = q, scales = scales, shapes = shapes)
-      for (iter in 1L:R) {
-        tryCatch({
-          df <- generate_guo_weibull_table_2_data(
-            shapes = shapes, scales = scales, n = n, p = p, tau = tau)
-          sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-            theta0 = theta, df = df, hessian = FALSE,
-            control = list(maxit = max_iter, parscale = theta))
-          mle_solver <- function(df, i) {
-            mle_lbfgsb_wei_series_md_c1_c2_c3(
-              theta0 = sol$par, df = df[i, ], hessian = FALSE,
-              control = list(maxit = max_boot_iter, parscale = sol$par)
-            )$par
-          }
-          sol.boot <- boot(df, mle_sol, R = B, parallel = "multicore",
-            ncpus = n_cores)
-          ci <- confint(mle_boot(sol.boot), type = ci_method,
-            level = ci_level)
-          shape.ci <- ci[seq(1, length(theta), 2), ]
-          scale.ci <- ci[seq(2, length(theta), 2), ]
-          shape.mle <- sol$par[seq(1, length(theta), 2)]
-          scale.mle <- sol$par[seq(2, length(theta), 2)]
-          row <- data.frame(
-            n = n, p = p, q = q, tau = tau, B = B,
-            shape = shape, scale = scale,
-            convergence = sol$convergence, iter = sol$iterations,
-            shape.mle = shape.mle, scale.mle = scale.mle,
-            shape.lower = shape.ci[, 1], shape.upper = shape.ci[, 2],
-            scale.lower = scale.ci[, 1], scale.upper = scale.ci[, 2])
-          cat("[info] ", row, "\n")
-          write.table(row,
-            file = file.csv, sep = ",", row.names = FALSE,
-            col.names = !file.exists(file.csv), append = TRUE)
-        }, error = function(e) { cat("[error] ", e$message, "\n") })       
-      }
-    }
-  }
-}
-```
-
-## Bernoulli Candidate Set Model {#app-cand-model-r}
+In the Bernoulli masking model, the failed component is guaranteed to be in the
+candidate set and each non-failed component is included with some fixed
+probability $p$.
 
 ```{r, eval = FALSE}
-#' Bernoulli candidate sets for masked data.
+#' Bernoulli candidate set model is a particular type of *uninformed* model.
+#' Note that we do not generate candidate sets with this function. See
+#' `md_cand_sampler` for that.
 #'
 #' @param df masked data frame.
-#' @param p prob vector (p[i] is Bernoulli prob for i-th system
-#' @returns masked data frame with Bernoulli candidate set probs
+#' @param p Bernoulli masking probability
+#' @returns masked data frame with Bernoulli candidate set probabilities
 md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
   n <- nrow(df)
   p <- rep(p, length.out = n)
@@ -2303,26 +2228,145 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 }
 ```
 
-## Plot Generation for Sampling Distribution of MLE {#app-plot-r}
 
-The following Python code generates the plots for the simulation study
-relating the sampling distribution of the MLE to some simulation parameter,
-like sample size ($n$) or masking probability ($p$). In the code below, we
-set the simulation parameter to be the masking probability $p$.
+# Simulation
+
+This appendix showcases select Python and R code instrumental in generating
+this paper. The entire source code can be found on GitHub:
+[`github.com/queelius/reliability-estimation-in-series-systems`](https://github.com/queelius/reliability-estimation-in-series-systems)
+[@towell2023reliability].
+
+For the sake of clarity and brevity, certain functionalities and safeguards from
+the original code have been omitted. However, the full, unedited code, as well
+as the methods to reproduce this paper, are available in the GitHub repository.
+
+## Scenario Simulation {#app-sim-study-r}
+
+Below, you'll find the R code for the Monte-Carlo simulation, tailored to run
+the scenarios discussed in Section \@ref(sim-study).
+
+```{r bootstrap-sim-code, eval=FALSE}
+# A function to simulate the effects of various parameters on the sampling
+# distribution of the MLE
+simulate_scenario <- function(
+    csv_file,            # Destination file to save simulation results
+    N,                   # Vector of sample sizes
+    P,                   # Vector of masking probabilities
+    Q,                   # Vector of quantiles of the series system
+    R,                   # Number of simulation replicates
+    B,                   # Number of bootstrap samples
+    theta                # True parameters for the Weibull distribution
+) {
+  shapes <- theta[seq(1, length(theta), 2)]
+  scales <- theta[seq(2, length(theta), 2)]
+  m <- length(scales)
+  cname <- c("n", "p", "q", "tau", "B",
+             paste0("shape.", 1:m), paste0("scale.", 1:m),
+             paste0("shape.mle.", 1:m), paste0("scale.mle.", 1:m),
+             paste0("shape.lower.", 1:m), paste0("shape.upper.", 1:m),
+             paste0("scale.lower.", 1:m), paste0("scale.upper.", 1:m),
+             "convergence", "loglik")
+
+  for (n in N) {
+    for (p in P) {
+      for (q in Q) {
+        tau <- qwei_series(p = q, scales = scales, shapes = shapes)
+        for (iter in 1:R) {
+          df <- generate_guo_weibull_table_2_data(shapes, scales, n, p, tau)
+          sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(theta0 = theta, df = df)
+
+          mle_solver <- function(df, i) {
+            mle_lbfgsb_wei_series_md_c1_c2_c3(theta0 = sol$par, df = df[i, ])
+          }
+          sol.boot <- boot::boot(df, mle_solver, R = B)
+          ci <- confint(mle_boot(sol.boot))
+
+          result <- c(n, p, q, tau, B, shapes, scales,
+                      sol$par[seq(1, length(theta), 2)],
+                      sol$par[seq(2, length(theta), 2)],
+                      ci[seq(1, length(theta), 2), 1:2],
+                      ci[seq(2, length(theta), 2), 1:2],
+                      sol$convergence, sol$value)
+          
+          result_df <- setNames(data.frame(t(result)), cname)
+          write.table(result_df, file = csv_file, sep = ",", append = TRUE)
+        }
+      }
+    }
+  }
+}
+```
+
+## Plot Generation Code {#app-plot-r}
+
+The following Python code generates the plots for the simulation study,
+`plot_cp` for the coverage probabilities and `plot_mle` for the
+the sampling distribution of the MLE, both with respect to some simulation
+parameter, like sample size ($n$) or masking probability ($p$).
 
 ```{python, eval=FALSE}
-###### Setup ##############################
-x_col = 'p'
-csv_file = "data.csv"
-params = ['scale.1', 'shape.1', 'scale.4', 'shape.4']
-param_labels = ['\lambda_1', 'k_1', '\lambda_4', 'k_4']
-############################################
+def plot_cp(data, x_col, x_col_label):
+  rel_cols = [x_col] + [f'shape.{i}' for i in range(1, 6)] + \
+    [f'scale.{i}' for i in range(1, 6)] + \
+    [f'shape.lower.{i}' for i in range(1, 6)] + \
+    [f'shape.upper.{i}' for i in range(1, 6)] + \
+    [f'scale.lower.{i}' for i in range(1, 6)] + \
+    [f'scale.upper.{i}' for i in range(1, 6)]
+  rel_data = data[rel_cols].copy()
 
-data = pd.read_csv(csv_file)
-for param, param_label in zip(params, param_labels):
-  plot_x_vs_mle(data, x_col, param)
+  def compute_coverage(row, j):
+    shape_in = row[f'shape.lower.{j}'] <= row[f'shape.{j}'] <= row[f'shape.upper.{j}']
+    scale_in = row[f'scale.lower.{j}'] <= row[f'scale.{j}'] <= row[f'scale.upper.{j}']
+    return pd.Series([shape_in, scale_in], index=[f'shape_cov.{j}', f'scale_cov.{j}'])
 
-def plot_x_vs_mle(raw_data, x_col, par):
+  for j in range(1, 6):
+    rel_data[[f'shape_cov.{j}', f'scale_cov.{j}']] = rel_data.apply(
+      lambda row: compute_coverage(row, j), axis=1)
+
+  coverage_cols = [f'shape_cov.{j}' for j in range(1, 6)] + \
+    [f'scale_cov.{j}' for j in range(1, 6)]
+  cps = rel_data.groupby(x_col)[coverage_cols].mean().reset_index()
+
+  # Mean coverage probabilities
+  mean_shape_cp = cps[[f'shape_cov.{j}' for j in range(1, 6)]].mean(axis=1)
+  mean_scale_cp = cps[[f'scale_cov.{j}' for j in range(1, 6)]].mean(axis=1)
+  cps['mean_shape_cp'] = mean_shape_cp
+  cps['mean_scale_cp'] = mean_scale_cp
+
+  plt.figure(figsize=[5, 4])
+  shape_cmap = plt.colormaps['Blues']
+  scale_cmap = plt.colormaps['Reds']
+
+  ls = ['-', '--', '-.', ':', '-']
+  mk = ['o', 's', '^', 'x', 'D']
+
+  for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)), ls, mk):
+    plt.plot(
+      cps[x_col], cps[f'shape_cov.{j}'], label=f'$k_{j}$',
+      color=color, linestyle=ls, marker=mk)
+
+  for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)), ls, mk):
+    plt.plot(
+      cps[x_col], cps[f'scale_cov.{j}'], label=f'$\lambda_{j}$',
+      color=color, linestyle=ls, marker=mk)
+
+  plt.plot(cps[x_col], cps['mean_shape_cp'],
+    color='darkblue', linewidth=4, linestyle='-', label='$\\bar{k}$')
+  plt.plot(cps[x_col], cps['mean_scale_cp'],
+    color='darkred', linewidth=4, linestyle='-', label='$\\bar{\lambda}$')
+
+  plt.axhline(y=0.95, color='green', linestyle='--', label='$95\\%$')
+  plt.axhline(y=0.90, color='red', linestyle='--', label='$90\\%$')
+  plt.xlabel(f'{x_col_label} (${x_col}$)')
+  plt.ylabel('Coverage Probability (CP)')
+  plt.gca().yaxis.set_major_formatter(
+    FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
+  plt.title('Coverage Probabilities for Parameters')
+  plt.legend(loc='best', bbox_to_anchor=(1, 1))
+  plt.tight_layout()
+  plt.savefig(f'plot-{x_col}-vs-cp.pdf')
+
+def plot_mle(raw_data, x_col, par, par_label, label, k=100, loc='upper left'):
   ps = par.split('.')
   par_low = f'{ps[0]}.lower.{ps[1]}'
   par_up = f'{ps[0]}.upper.{ps[1]}'
@@ -2330,6 +2374,7 @@ def plot_x_vs_mle(raw_data, x_col, par):
   x_vals = sorted(raw_data[x_col].unique())
 
   median_mles = []
+  true_vals = []
   mean_mles = []
   low_q = []
   up_q = []
@@ -2337,110 +2382,54 @@ def plot_x_vs_mle(raw_data, x_col, par):
 
   for i, x in enumerate(x_vals):
     data = raw_data[raw_data[x_col] == x]
-    low_med, up_med = np.percentile(data[par_low], 50), np.percentile(data[par_up], 50)
+    low_med, up_med = np.percentile(
+      data[par_low], 50), np.percentile(data[par_up], 50)
     mean_mle = data[par_mle].mean()
+    true_val = data[par].mean()
     median_mle = data[par_mle].median()
     mean_mles.append(mean_mle)
     median_mles.append(median_mle)
     low_q.append(np.percentile(data[par_mle], 2.5))
     up_q.append(np.percentile(data[par_mle], 97.5))
+    true_vals.append(true_val)
 
-    plt.vlines(i, low_med, up_med, color='blue', label='Median 95% CI' if i == 0 else "")
+    plt.vlines(i, low_med, up_med, color='blue',
+      label='Median 95% CI' if i == 0 else "")
     plt.plot(i, mean_mle, 'ro', label='Mean MLE' if i == 0 else "")
     plt.plot(i, median_mle, 'bo', label='Median MLE' if i == 0 else "")
-    plt.plot(i, data[par].mean(), 'g-', label='True Value' if i == 0 else "")
 
   plt.plot(np.arange(len(x_vals)), mean_mles, 'r--')
   plt.plot(np.arange(len(x_vals)), median_mles, 'b--')
+  plt.plot(np.arange(len(x_vals)), true_vals,
+    'g-', label='True Value', linewidth=2)
 
   plt.fill_between(np.arange(len(x_vals)), low_q, up_q,
     color='blue', alpha=0.15, label='95% Quantile Range')
 
   plt.xticks(np.arange(len(x_vals)), x_vals)
-  plt.xlabel(x_col)
-  plt.ylabel(par)
-  plt.title(f'MLE for ${par}$')
-  plt.legend(loc='upper left')
+  plt.xlabel(f'{label} (${x_col}$)')
+  plt.ylabel(f'Statistics for {par_label}')
+  plt.title(f'MLE for {par_label}')
+  plt.legend(loc=loc)
 
   leg = plt.gca().get_legend()
   for text in leg.get_texts():
     plt.setp(text, fontsize='small')
 
   plt.tight_layout(h_pad=4.0, w_pad=2.5)
-  plt.savefig(f'plot-{x_col}-vs-{par}.pdf')
+  plt.savefig(f'plot-{x_col}-vs-{par}-mle.pdf')
   plt.close()
 ```
 
-## Plot Generation for Coverage Probabilities {#app-plot-cp-r}
-
-The following Python code generates the plots relating the the coverage
-probabilities of the MLE for the simulation studies.
+For example, to generate a plot of the coverage probabilities with respect
+to sample size ($n$) for the CSV file `data.csv`, we would run the following
+code:
 
 ```{python, eval=FALSE}
-###### Setup ##############################
-csv_file = "data.csv"
-x_col = 'n'
-###########################################
+from plot_utils import plot_cp
+import pandas as pd
 
-data = pd.read_csv(csv_file)
-cols = (
-    [x_col] + [f'shape.{i}' for i in range(1, 6)] +
-    [f'scale.{i}' for i in range(1, 6)] +
-    [f'shape.lower.{i}' for i in range(1, 6)] +
-    [f'shape.upper.{i}' for i in range(1, 6)] +
-    [f'scale.lower.{i}' for i in range(1, 6)] +
-    [f'scale.upper.{i}' for i in range(1, 6)]
-)
-col_data = data[cols].copy()
-
-def compute_coverage(row, j):
-  shape_within = (
-    row[f'shape.lower.{j}'] <= row[f'shape.{j}'] <= row[f'shape.upper.{j}'])
-  scale_within = (
-    row[f'scale.lower.{j}'] <= row[f'scale.{j}'] <= row[f'scale.upper.{j}'])
-  return pd.Series([shape_within, scale_within], index=[
-    f'shape_coverage.{j}', f'scale_coverage.{j}'])
-
-for j in range(1, 6):
-  col_data[[f'shape_coverage.{j}', f'scale_coverage.{j}']] = (
-    col_data.apply(lambda row: compute_coverage(row, j), axis=1))
-
-coverage = [f'shape_coverage.{j}' for j in range(1, 6)] + \
-  [f'scale_coverage.{j}' for j in range(1, 6)]
-cp = col_data.groupby(x_col)[coverage].mean().reset_index()
-mean_shape_cp = cp[[f'shape_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
-mean_scale_cp = cp[[f'scale_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
-cp['mean_shape'] = mean_shape_cp
-cp['mean_scale'] = mean_scale_cp
-
-plt.figure(figsize=[5, 4])
-shape_cmap = plt.get_cmap('Blues')
-scale_cmap = plt.get_cmap('Reds')
-line_styles = ['-', '--', '-.', ':', '-']
-markers = ['o', 's', '^', 'x', 'D']
-
-for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)),
-                            line_styles, markers):
-  plt.plot(cp[x_col], cp[f'shape_coverage.{j}'],
-    label=f'$k_{j}$', color=color, linestyle=ls, marker=mk)
-for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)),
-                            line_styles, markers):
-  plt.plot(cp[x_col], cp[f'scale_coverage.{j}'],
-    label=f'$\lambda_{j}$', color=color, linestyle=ls, marker=mk)
-
-plt.plot(cp[x_col], cp['mean_shape'], color='darkblue',
-  linewidth=4, linestyle='-', label='$\\bar{k}$')
-plt.plot(cp[x_col], cp['mean_scale'], color='darkred',
-  linewidth=4, linestyle='-', label='$\\bar{\lambda}')
-plt.axhline(y=0.95, color='green', linestyle='--', label='$95\\%$')
-plt.axhline(y=0.90, color='red', linestyle='--', label='$90\\%$')
-plt.xlabel(x_col)
-plt.ylabel('Coverage Probability (CP)')
-plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
-plt.title('Coverage Probabilities for Parameters')
-plt.legend(loc='best', bbox_to_anchor=(1, 1))
-plt.tight_layout()
-plt.savefig(f'{x_col}-vs-cp.pdf')
+plot_cp(pd.read_csv("data.csv"), 'n', 'Sample Size')
 ```
 
 # Acknowledgements {-}

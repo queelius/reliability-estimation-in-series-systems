@@ -1,0 +1,53 @@
+{
+    "version": "0.2",
+    "ignorePaths": [],
+    "dictionaryDefinitions": [
+        {
+            "name": "custom-dictionary",
+            "path": "./.cspell/custom-dictionary.txt",
+            "addWords": true
+        }
+    ],
+    "dictionaries": [
+        "custom-dictionary"
+    ],
+    "words": [
+        "amsmath",
+        "amsthm",
+        "biggl",
+        "biggr",
+        "bigl",
+        "bigr",
+        "bookdown",
+        "covariates",
+        "figureone",
+        "gitbook",
+        "graphicx",
+        "hyperref",
+        "infty",
+        "kable",
+        "mathcal",
+        "MTTF",
+        "natbib",
+        "pdfs",
+        "quantile",
+        "quantiles",
+        "Raphson",
+        "resizebox",
+        "substack",
+        "taleb",
+        "textsuperscript",
+        "textwidth",
+        "tikz",
+        "Towell",
+        "usepackage",
+        "Weibull",
+        "xelatex"
+    ],
+    "ignoreWords": [],
+    "import": [],
+    "enabled": true,
+    "enableFiletypes": [
+        "rmd"
+    ]
+}

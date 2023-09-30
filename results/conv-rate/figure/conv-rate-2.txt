@@ -1,0 +1,4 @@
+p =  0.215 , q =  0.6 , n =  90 , convergence rate ~ 0.85 
+p =  0.215 , q =  0.7125 , n =  90 , convergence rate ~ 0.95 
+p =  0.215 , q =  0.9 , n =  90 , convergence rate = 1
+p =  0.215 , q =  1 , n =  90 , convergence rate = 1

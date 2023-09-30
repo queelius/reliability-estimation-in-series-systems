@@ -1,0 +1,18 @@
+p:
+p =  0.1 , q =  0.825 , n =  90 , convergence rate = 1 
+p =  0.25 , q =  0.825 , n =  90 , convergence rate ~ 0.99 
+p =  0.4 , q =  0.825 , n =  90 , convergence rate ~  0.95 
+p =  0.55 , q =  0.825 , n =  90 , convergence rate ~ 0.90 
+p =  0.7 , q =  0.825 , n =  90 , convergence rate ~ 0.875 
+
+q:
+p =  0.215 , q =  0.6 , n =  90 , convergence rate ~ 0.85 
+p =  0.215 , q =  0.7125 , n =  90 , convergence rate ~ 0.95 
+p =  0.215 , q =  0.9 , n =  90 , convergence rate = 1
+p =  0.215 , q =  1 , n =  90 , convergence rate = 1
+ 
+n:
+p =  0.215 , q =  0.825 , n =  50 , convergence rate ~  0.875 
+p =  0.215 , q =  0.825 , n =  100 , convergence rate ~ 0.99 
+p =  0.215 , q =  0.825 , n =  250 , convergence rate = 1 
+p =  0.215 , q =  0.825 , n =  500 , convergence rate = 1 
