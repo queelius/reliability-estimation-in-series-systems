@@ -85,27 +85,25 @@ lifetimes following a Weibull distribution. We assess the accuracy and precision
 of maximum likelihood estimates (MLE) under varying conditions related to sample
 size, masking probability, and right-censoring. We found that the MLE performs
 well in the presence of significant masking and censoring even for relatively small
-samples, but that the shape parameters is more difficult to estimate than the
-scale parameters.
+samples.
 
 - Evaluating the coverage probability (accuracy) and precision of the BCa
-confidence intervals constructed for the MLE. We found that the BCa confidence
-intervals are reasonably well-calibrated even for small sample sizes in the
-presence of significant masking and censoring, but that the confidence intervals
-for the shape parameters were slightly less well-calibrated than the confidence
-intervals for the scale parameters.
+confidence intervals (CI) constructed for the MLE. We found that the CIs are
+reasonably well-calibrated even for small sample sizes in the presence of
+significant masking and censoring, but that the CIs for the shape parameters
+were less well-calibrated, indicating that the shape parameters are more
+difficult to estimate than the scale parameters.
 
 The simulation studies focus on three key aspects:
 
-- The impact of right-censoring on component parameter estimates.
-- How masking probability for the cause of failure affects the estimates.
-- The role of sample size in mitigating challenges related to censoring and
-masking.
+1. The impact of right-censoring on component parameter estimates.
+2. How masking probability for the cause of failure affects the estimates.
+3. The role of sample size in mitigating challenges related to censoring and masking.
 
 Together, the likelihood framework and simulation methodology enable rigorous
-validation of learning component reliability from limited masked system data.
-This expands the capability to quantify latent properties and perform robust
-statistical inference given significant data challenges.
+validation of inferring component reliability from masked system data.
+This expands the capability to learn properties of the latent components and
+perform robust statistical inference given significant data challenges.
 
 Series System Model {#statmod}
 ==================================
@@ -127,21 +125,20 @@ $$
 $$
 
 There are three particularly important distribution functions in reliability analysis: the
-reliability function, the probability density function, and the hazard function.
+reliability function, the probability density function (pdf), and the hazard function.
 The reliability function, $R_{T_i}(t)$, is the
 probability that the $i$\textsuperscript{th} system has a lifetime greater than 
 given duration $t$,
 \begin{equation}
 R_{T_i}(t) = \Pr\{T_i > t\}\\
 \end{equation}
-The probability density function (pdf) of $T_i$ is denoted by
-$f_{T_i}(t)$ and may be defined as
+The pdf of $T_i$ is denoted by $f_{T_i}(t)$ and may be defined as
 $$
     f_{T_i}(t) = -\frac{d}{dt} R_{T_i}(t).
 $$
 Next, we introduce the hazard function.
-The probability that a failure occurs between $t$ and $\Delta t$ given that no
-failure occurs before time $t$ is given by
+The probability that a failure occurs between the times $t$ and $t+\Delta t$ given that no
+failure occurs before time $t$ may be written as
 $$
 \Pr\{T_i \leq t+\Delta t|T_i > t\} = \frac{\Pr\{t < T_i < t+\Delta t\}}{\Pr\{T_i > t\}}.
 $$
@@ -280,7 +277,8 @@ h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j})
 
 
 ::: {.proof}
-By Equation \@ref(eq:failure-rate), the $i$\textsuperscript{th} series system lifetime has a hazard function defined as
+By Equation \@ref(eq:failure-rate), the $i$\textsuperscript{th} series system
+lifetime has a hazard function defined as
 $$
   h_{T_i}(t;\v\theta) = \frac{f_{T_i}(t;\v\theta)}{R_{T_i}(t;\v\theta)}.
 $$
@@ -292,13 +290,15 @@ $$
 $$
 which can be simplified to
 $$
-h_{T_i}(t;\v\theta) = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})} = \sum_{j=1}^m h_j(t;\v{\theta_j}).
+h_{T_i}(t;\v\theta)
+  = \sum_{j=1}^m \frac{f_j(t;\v{\theta_j})}{R_j(t;\v{\theta_j})}
+  = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
 :::
 
-Theorem \@ref(thm:sys-failure-rate) reveals that the system's hazard function is the sum
-of the hazard functions of its components. By definition, the hazard function is the ratio of
-the pdf to the reliability function,
+Theorem \@ref(thm:sys-failure-rate) reveals that the system's hazard function is
+the sum of the hazard functions of its components. By definition, the hazard
+function is the ratio of the pdf to the reliability function,
 $$
 h_{T_i}(t;\v\theta) = \frac{f_{T_i}(t;\v\theta)}{R_{T_i}(t;\v\theta)},
 $$
@@ -1436,7 +1436,7 @@ knitr::kable(
 )
 ```
 
-## Performance Metrics and Convergence Rate
+## Performance Metrics
 
 In this section, we describe the measures we use to assess the performance of
 the MLE and the BCa confidence intervals in our simulation study. We assess two
@@ -1451,6 +1451,16 @@ important properties of the MLE for each simulation scenario:
   samples. Higher precision is demonstrated by smaller variability. We estimate
   this in our simulation study by plotting the quantiles of the sampling
   distribution of the MLE.
+
+- **Convergence Rate**: In Section \@ref(identifiability), we discussed
+  convergence issues with the MLE. We discard any result that did not converge
+  to a local maximum of the log-likelihood function within $125$ iterations.
+  The convergence rate of the MLE is defined as the proportion of MLEs that
+  converged to a local maximum. We take low convergence rates, say a convergence
+  rate less than $95\%$, to be evidence that the MLE is not a robust or reliable
+  estimator in these cases, due to the lack of information in the data to
+  identify the parameters of the likelihood model. Under these conditions, the
+  MLE should be taken with a grain of salt.
 
 In parallel, we assess the following properties of the BCa confidence intervals
 described in Section \@ref(boot):
@@ -1476,25 +1486,6 @@ confidence that the MLE is close to the true parameter value.
 near $100\%$ probability, but this would construct CIs that are too conservative
 (wide), underestimating the precision of the MLE.
 
-#### Convergence Rate {-}
-In Section \@ref(identifiability), we discussed convergence issues with the MLE.
-We discard any result that did not converge to a local maximum of the
-log-likelihood function within $125$ iterations. Figure \@ref(convergence-rate)
-illustrates the convergence rate of the MLE for each simulation scenario, where
-the convergence rate is defined as the proportion of MLEs that converged to a
-local maximum.
-
-```{r convergence-rate, out.width='95%', fig.cap="Simulation Scenarios vs Convergence Rate", fig.align="center", echo = F}
-knitr::include_graphics("image/convergence-rate.png")
-```
-
-The MLE converged to a local maximum in most simulation scenarios with very high
-probability. However, when we have significant masking ($p \geq 0.55$),
-significant right censoring ($q = 0.6$), or very small samples ($n = 50$), MLE
-convergence is sporadic. We take this as evidence that the MLE
-is not a robust or reliable estimator in these cases, due to the lack of
-information in the data to identify the parameters of the likelihood model.
-Under these conditions, the MLE should be taken with a grain of salt.
 
 ## Data Generating Process {#data-gen-proc}
 
@@ -1745,7 +1736,7 @@ sample contains insufficient information due to censoring.
 
 ##### Bias of MLEs {-}
 The red dashed line indicating the mean of MLEs initially is quite biased
-for the shape parameters, but quickly diminshes to neglible levels as the
+for the shape parameters, but quickly diminishes to negligible levels as the
 right-censoring quantile increases. The bias for the shape parameters never
 reach zero, but this is potentially due to masking.
 
@@ -1753,6 +1744,14 @@ The bias for the scale parameters is quite small and remains stable across
 different right-censoring quantiles, suggesting that the scale MLEs are
 reasonably unbiased. It could be the case that making or other factors are
 counteracting the bias due to right-censoring.
+
+##### Convergence Rate {-}
+The convergence rate increases as the right-censoring quantile $q$
+increases. This is consistent with the expectation that more censoring
+reduces the information in a sample, making the likelihood function less
+informative and more difficult to identify the parameters that maximize it. We
+see that the convergence rate is around $95\%$ or greater for right-censoring
+quantiles $q \geq 0.7$, but drops below $95\%$ for $q < 0.7$.
 
 ### Summary
 In this scenario, we find that right-censoring significantly influences the MLEs
@@ -1769,16 +1768,18 @@ mitigated.
 ## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#p-vs-mttf}
 
 In this scenario, we use the well-designed series system described in
-Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (reasonable sample size) and 
-we fix the right-censoring quantile to $q = 0.825$, and we vary the masking probability 
-from $p$ from $0.1$ (very slight masking the component cause of failure) to $0.7$
-(extreme masking of the component cause of failure).
+Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (moderate sample
+size) and we fix the right-censoring quantile to $q = 0.825$ (moderate
+right-censoring), and we vary the masking probability from $p$ from $0.1$
+(light masking of the component cause of failure) to $0.7$ (extreme masking of
+the component cause of failure).
 
-In Figure \ref{fig:masking-prob-vs-stats}, we show the effect of the masking probability
-$p$ on the MLE for the shape and scale parameters. The top four plots only show the effect
-on the MLEs for the the shape and scale parameters of components $1$ and $3$, since the
-rest were essentially identical, and the bottom two plots show the coverage probabilities for
-all parameters.
+In Figure \ref{fig:masking-prob-vs-stats}, we show the effect of the masking
+probability $p$ on the MLE for the shape and scale parameters. The top four
+plots only show the effect on the MLE for the the shape and scale parameters of
+components $1$ and $3$, since the rest demonstrated similar results. The bottom
+left plot shows the coverage probabilities for all parameters and the bottom
+right plot shows the convergence rate of the MLE.
 
 ```{r masking-prob-vs-stats, fig.cap="Component Cause of Failure Masking ($p$) vs MLE ($q = 0.825, n = 90$)", fig.align="center", echo = F}
 # knitr::include_graphics("image/p-vs-mle.pdf")
@@ -1795,32 +1796,35 @@ candidate set and each non-failed component is included with a probability $p$.
 This has the following implications on the MLE:
 
 - **Ambiguity**: A higher $p$ makes larger candidate sets more probable, making
-it less clear for the MLE which parameters should be adjusted to make the data
-more likely. This is particularly problematic for components that are not the
-cause of failure, since the MLE will adjust their parameters to make them more
-likely to be the cause of failure, which is not necessarily correct.
+it less clear which parameter estimates should be adjusted to make the data
+more likely in the MLE. This is particularly problematic for components that are
+not the cause of failure, since the MLE will adjust their parameters to make
+them more likely to be the cause of failure, which is not necessarily correct.
   
 - **Bias**: In an ideal scenario, knowing which component failed would allow
 the MLE to make that component's failure more likely and a right-censoring
-effect would be applied to the non-failed components. However, a larger $p$
-introduces uncertainty, making the MLE adjust parameters for non-failed
-components to be more likely to fail at the specified time. For a well-designed
-series system, this may be an too problematic, but if the system deviates from
-that design, the effect of masking is likely to be much more pronoucned source
-of bias.
+effect would be applied to the non-failed components. However, a larger masking
+probability $p$ introduces uncertainty, causing the MLE to adjust the estimates
+for the parameters of the non-failed components to be more likely to fail at the
+observed failure time while simultaneously applying a right-censoring effect to
+the other components, including the failed component. This introduces a bias
+similar to the bias introduced by right-censoring, and the greater the masking
+probability $p$, the greater the bias.
 
-- **Precision**: As $p$ increases, the likelihood function becomes less
-informative, reducing the precision of the MLE estimates.
+- **Precision**: As the masking probability $p$ increases, the likelihood
+function becomes less informative, reducing the precision of the estimates.
 
 ### Key Observations
 
 ##### Coverage Probability (CP) {-}
 For the scale parameters, the $95\%$ CI is well-calibrated
 for Bernoulli masking probabilities up to $p = 0.7$, which is quite significant,
-obtaining coverages over $90\%$, but drops precipitously after that point. For
-the shape parameters, the $95\%$ CI is well-calibrated for masking
-probabilities only up to $p = 0.4$, which is still large, obtaining coverages
-generally over $90%$, but begins to drop slowly after that point.
+obtaining coverages over $90\%$. For the shape parameters, the $95\%$ CI is
+well-calibrated for masking probabilities only up to $p = 0.4$, which is still
+large. At $p = 0.4$, the coverage probabiliy is around $90%$, but continues to
+drop after that point well below $90\%$. This suggests that the shape parameters
+are more difficult to estimate than the scale parameters, which is consistent
+with the previous scenario where we varied the amount of right-censoring.
   
 The BCa confidence intervals are well-calibrated for most realistic masking
 probabilities, constructing CIs that are neither too wide nor too narrow, but
@@ -1835,7 +1839,7 @@ component cause of failure. However, even for fairly significant Bernoulli
 masking, $p \leq 0.55$, the $95\%$ quantiles are narrow and the CP is
 well-calibrated, indicating that the MLEs are still precise and accurate.
 
-##### Median-Aggregrated CIs {-}
+##### Median-Aggregated CIs {-}
 The median-aggregated CIs (vertical dark blue bars) show that the bootstrapped
 BCa confidence intervals are becoming more spread out as the masking probability
 increases. They are also asymmetric, with the lower bound being more spread out
@@ -1849,22 +1853,23 @@ CPs to remain calibrated, although after $p = 0.55$, the CPs begin to drop
 off as previously mentioned.
 
 ##### Bias of MLEs {-}
-The red dashed line indicating the mean of the MLEs remains stable across
-different masking probabilities, only showing a significant positive bias when
-the masking probability $p$ becomes quite significant.
+The mean of the MLE (red dashed lines) demonstrates a steadily increasing
+positive bias as the masking probability increases. This is consistent with the
+expectation that the MLE will apply an increasing right-censoring effect to the
+estimates as the masking probability increases.
 
 ##### Convergence Rate {-}
-The convergence rate generally declines as the Bernoulli masking probability $p$
+The convergence rate decreases as the Bernoulli masking probability $p$
 increases. This is consistent with the expectation that a higher masking
-probability makes it more difficult for the MLE to identify the true cause of
-failure, making the likelihood function less informative and more difficult to
-identify the parameters that maximize it. We see that the convergence rate
-remains above $95\%$ for masking probabilities up to $p = 0.4$.
+probability decreases the information the sample contains about the the
+parameters. We see that the convergence rate remains above $95\%$ for masking
+probabilities up to $p = 0.4$, but drops below $95\%$ for $p > 0.4$. This is
+consistent with behavior of the CPs, which drop below $90\%$ for $p > 0.4$.
 
 ### Summary
 In this scenario, we examine the influence of masking probability $p$ on the
-MLEs for shape and scale parameters, keeping the sample size and right-censoring
-constant. As masking probability increases, the precision of the MLEs decreases,
+MLE, keeping the sample size and right-censoring constant. As the masking
+probability increases, the precision of the MLEs decreases,
 and the coverage probability of the $95\%$ BCa confidence intervals begins to
 drop. However, even at fairly significant Bernoulli masking probabilities
 $p \leq 0.55$, the MLEs remain precise and well-calibrated. These observations
@@ -1879,7 +1884,7 @@ In this scenario, we use the well-designed series system described in
 Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$
 (moderate masking), we fix the right-censoring quantile to $q = 0.825$
 (moderate censoring), and we vary the sample size $n$ from $50$ (small sample
-size) to $1000$ (very large sample size).
+size) to $500$ (large sample size).
 
 ```{r samp-size-n-vs-stats, out.width='100%', fig.cap="Sample Size ($n$) vs MLEs ($p = 0.215, q = 0.825$)", fig.align="center", echo = F}
 # knitr::include_graphics("image/n-vs-mles.pdf")
@@ -1889,8 +1894,9 @@ knitr::include_graphics("image/5_system_samp_size_fig.pdf")
 In Figure \ref{fig:samp-size-n-vs-stats}, we show the effect of the sample size
 $n$ on the MLEs for the shape and scale parameters. The top four plots only show
 the effect on the MLEs for the shape and scale parameters of components $1$ and
-$4$, since the rest were essentially identical, and the bottom two plots show
-the coverage probabilities for all parameters.
+$3$, since the rest showed similar results. The bottom left plot shows
+the coverage probabilities of the confidence intervals for all parameters and
+the bottom right plot shows the convergence rate of the MLE.
 
 ### Key Observations
 
@@ -1917,41 +1923,56 @@ the asymptotic properties of the MLE when the regularity conditions are
 satisfied, e.g., converges in probability to the true value of the parameter as
 $n$ goes to infinity.
 
-##### IQR of Bootstrapped CIs {-}
-The IQR (vertical blue bars) reduces with an increase in sample size. This
-suggests that the bootstrapped CIs are getting more consistent and focused
-around a narrower range with larger samples while maintaining a good coverage
-probability. As we get more data, the bootstrapped CIs are more likely to be
-closer to each other and the true value of the scale parameter.
+##### Median-Aggregated CIs {-}
+The median-aggregated CIs (vertical dark blue bars) show that the bootstrapped
+CIs are becoming less spread out as the sample size increases, indicating 
+that they are becoming more consistent and centered around a tighter range
+while maintaining a good coverage probability. The end result is that we can
+construct more precise and accurate CIs with larger samples and thus we can
+make more confident inferences about the true parameter value.
 
-For small sample sizes, they are quite large, but to maintain well-calibrated
-CIs, this was necessary. The estimator is quite sensitive to the data, and so
-the bootstrapped CIs are quite wide to account for this sensitivity when the
-sample size is small and not necessarily representative of the true
-distribution.
+The estimator is quite sensitive to the data, and so the bootstrapped CIs are
+wide to account for this sensitivity when the sample size is small and not
+necessarily representative of the true distribution.
+
+We also observe that the upper bound of the CI is more spread out than the lower
+bound. This is consistent with the behavior of the dispersion of the MLEs, which
+have a positive bias. Thus, the BCa (Bias-Corrected and Accelerated) CIs are
+accounting for this bias by being more spread out in the direction of the bias.
 
 ##### Bias of MLEs {-}
-The red dashed line indicating the mean of MLEs initially has a large positive
-bias for the shape parameters, but diminshes to neglible levels as the
-sample size increases. In the previous right-censoring scenario, the bias in the
-shape parameters never reached zero, but we see that in this scenario, at around
-a sample size of $250$, the bias approaches zero, suggesting that there is
-enough information in the sample to overcome the bias from the right-censoring
-($q = 0.825$) and masking ($p = 0.215$) effects.
+The mean of the MLE (red dashed lines) initially has a large positive
+bias, but diminishes to negligible levels as the sample size increases. In the
+previous right-censoring scenario, the bias never reached zero, but we see that
+in this scenario, at around a sample size of $250$, the estimator is essentially
+unbiased, suggesting that there is enough information in the sample to overcome
+the bias from the right-censoring ($q = 0.825$) and masking ($p = 0.215$)
+effects.
 
-The bias for the scale parameters is quite small and remains stable across
-different sample sizes, suggesting that the scale MLEs are reasonably unbiased,
-which was also the case in the previous scenario.
+##### Convergence Rate {-}
+The convergence rate increases as the sample size $n$ increases. This is
+consistent with the expectation that more data provides more information about
+the parameters, making the likelihood function more informative and easier to
+identify the parameters that maximize it. We see that the convergence rate is
+$95\%$ or greater for sample sizes $n \geq 100$ given moderate right-censoring
+(right-censoring quantile $q = 0.825$) and moderate masking (Bernoulli masking
+probability $p = 0.215$). Given how quickly the convergence rate increased,
+we anticipate that even for extreme censoring and masking, the convergence rate
+would likely rapidly increase to over $95\%$ as the sample size increases.
+However, for sample sizes $n < 100$, at least for series systems with $m = 5$
+components with Weibull lifetimes, the convergence rate is low. For small
+samples, any estimates should be taken with a grain of salt.
 
 ### Summary
 In this scenario, we delve into the mitigating effects of sample size on the
 challenges identified in previous scenarios concerning right-censoring and
-masking. As the sample size increases, the precision of the MLEs for both shape
-and scale parameters notably improves, and the bias approaches zero. This is
-consistent with statistical theory and suggests that increasing the sample size
-can mitigate the effects of right-censoring and masking. The Bootstrapped (BCa)
-confidence intervals also narrow and become more reliable with larger samples,
-reinforcing the role of sample size in achieving robust estimates.
+masking. The precision and accuracy of the MLE rapidly improves with a bias
+approaching zero. This is consistent with statistical theory and suggests that
+increasing the sample size can mitigate the effects of right-censoring and
+masking. The Bootstrapped (BCa) confidence intervals also narrow and become more
+reliable (with coverage probabilities approaching the nominal $95\%$ level) with
+larger samples, reinforcing the role of sample size in achieving robust
+estimates.
 
 Future Work
 ===========
@@ -2008,6 +2029,8 @@ properties from limited observational data on system reliability. The simulation
 studies validate the methods and provide practical insights into their
 performance under varying real-world conditions. This advances the capability
 for statistical learning from masked system failure data.
+
+# Appendices {-}
 
 (APPENDIX) Appendix {-}
 =======================
@@ -2169,19 +2192,26 @@ mle_lbfgsb_wei_series_md_c1_c2_c3 <- function(df, theta0) {
       theta[seq(1, length(theta), 2)], theta[seq(2, length(theta), 2)]),
     lower = rep(1e-9, length(theta0)),
     method = "L-BFGS-B",
-    control = list(fnscale = -1))
+    control = list(fnscale = -1, maxit = 125L))
 }
 ```
 
 # Simulation
 
-Here is where simulation-specific Python and R code resides, such as scenario
-simulation.
+This appendix showcases select Python and R code instrumental in generating
+this paper. The entire source code can be found on GitHub:
+[`github.com/queelius/reliability-estimation-in-series-systems`](https://github.com/queelius/reliability-estimation-in-series-systems)
+[@towell2023reliability].
+
+For the sake of clarity and brevity within this appendix, certain
+functionalities and safeguards from the original code have been omitted.
+However, the full, unedited code, as well as the methods to reproduce this
+paper, are available in the GitHub repository.
 
 ## Scenario Simulation {#app-sim-study-r}
 
-The following R code is the Monte-carlo simulation code for running the various
-scenarios described in Section \@ref(sim-study).
+Below, you'll find the R code for the Monte-Carlo simulation, tailored to run
+the scenarios discussed in Section \@ref(sim-study).
 
 ```{r bootstrap-sim-code, eval=FALSE}
 #### Setup simulation parameters here ####
@@ -2201,11 +2231,11 @@ B <- 1000L # number of bootstrap samples
 max_iter <- 125L # max iterations for MLE
 max_boot_iter <- 125L # max iterations for bootstrap MLE
 n_cores <- detectCores() - 1 # number of cores to use for parallel processing
-filename <- "data" # filename prefix for output files
+experiment_name <- "data" # filename prefix for output files
 
 #### Simulation code below here ####
-file.meta <- paste0(filename, ".txt")
-file.csv <- paste0(filename, ".csv")
+file.meta <- paste0(experiment_name, ".txt")
+file.csv <- paste0(experiment_name, ".csv")
 shape <- theta[seq(1, length(theta), 2)]
 scale <- theta[seq(2, length(theta), 2)]
 m <- length(shape)
@@ -2214,22 +2244,13 @@ for (n in N) {
   for (p in P) {
     for (q in Q) {
       tau <- qwei_series(p = q, scales = scales, shapes = shapes)
-      iter <- 0L
-      while (iter < R) {
-        retry <- FALSE
+      for (iter in 1L:R) {
         tryCatch({
-          repeat {
-            df <- generate_guo_weibull_table_2_data(
-              shapes = shapes, scales = scales, n = n, p = p, tau = tau)
-
-            sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
-              theta0 = theta, df = df, hessian = FALSE,
-              control = list(maxit = max_iter, parscale = theta)
-            )
-            if (sol$convergence == 0) {
-              break
-            }
-          }
+          df <- generate_guo_weibull_table_2_data(
+            shapes = shapes, scales = scales, n = n, p = p, tau = tau)
+          sol <- mle_lbfgsb_wei_series_md_c1_c2_c3(
+            theta0 = theta, df = df, hessian = FALSE,
+            control = list(maxit = max_iter, parscale = theta))
           mle_solver <- function(df, i) {
             mle_lbfgsb_wei_series_md_c1_c2_c3(
               theta0 = sol$par, df = df[i, ], hessian = FALSE,
@@ -2239,23 +2260,23 @@ for (n in N) {
           sol.boot <- boot(df, mle_sol, R = B, parallel = "multicore",
             ncpus = n_cores)
           ci <- confint(mle_boot(sol.boot), type = ci_method,
-              level = ci_level)
+            level = ci_level)
           shape.ci <- ci[seq(1, length(theta), 2), ]
           scale.ci <- ci[seq(2, length(theta), 2), ]
-        }, error = function(e) { retry <<- TRUE })
-        
-        shape.mle <- sol$par[seq(1, length(theta), 2)]
-        scale.mle <- sol$par[seq(2, length(theta), 2)]
-        row <- data.frame(
-          n = n, p = p, q = q, tau = tau, B = B,
-          shape = shape, scale = scale,
-          shape.mle = shape.mle, scale.mle = scale.mle,
-          shape.lower = shape.ci[, 1], shape.upper = shape.ci[, 2],
-          scale.lower = scale.ci[, 1], scale.upper = scale.ci[, 2])
-        write.table(row,
-          file = file.csv, sep = ",", row.names = FALSE,
-          col.names = !file.exists(file.csv), append = TRUE)
-        iter <- iter + 1L
+          shape.mle <- sol$par[seq(1, length(theta), 2)]
+          scale.mle <- sol$par[seq(2, length(theta), 2)]
+          row <- data.frame(
+            n = n, p = p, q = q, tau = tau, B = B,
+            shape = shape, scale = scale,
+            convergence = sol$convergence, iter = sol$iterations,
+            shape.mle = shape.mle, scale.mle = scale.mle,
+            shape.lower = shape.ci[, 1], shape.upper = shape.ci[, 2],
+            scale.lower = scale.ci[, 1], scale.upper = scale.ci[, 2])
+          cat("[info] ", row, "\n")
+          write.table(row,
+            file = file.csv, sep = ",", row.names = FALSE,
+            col.names = !file.exists(file.csv), append = TRUE)
+        }, error = function(e) { cat("[error] ", e$message, "\n") })       
       }
     }
   }
@@ -2284,20 +2305,23 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 
 ## Plot Generation for Sampling Distribution of MLE {#app-plot-r}
 
-The following Python code generates the plots relating the the sampling
-distribution of the MLE for the simulation studies.
+The following Python code generates the plots for the simulation study
+relating the sampling distribution of the MLE to some simulation parameter,
+like sample size ($n$) or masking probability ($p$). In the code below, we
+set the simulation parameter to be the masking probability $p$.
 
 ```{python, eval=FALSE}
-############### Setup ###############
+###### Setup ##############################
 x_col = 'p'
+csv_file = "data.csv"
 params = ['scale.1', 'shape.1', 'scale.4', 'shape.4']
 param_labels = ['\lambda_1', 'k_1', '\lambda_4', 'k_4']
+############################################
 
 data = pd.read_csv(csv_file)
 for param, param_label in zip(params, param_labels):
   plot_x_vs_mle(data, x_col, param)
 
-############### Plotting Functions ###############
 def plot_x_vs_mle(raw_data, x_col, par):
   ps = par.split('.')
   par_low = f'{ps[0]}.lower.{ps[1]}'
@@ -2313,7 +2337,7 @@ def plot_x_vs_mle(raw_data, x_col, par):
 
   for i, x in enumerate(x_vals):
     data = raw_data[raw_data[x_col] == x]
-    low, up = np.percentile(data[par_low], 50), np.percentile(data[par_up], 50)
+    low_med, up_med = np.percentile(data[par_low], 50), np.percentile(data[par_up], 50)
     mean_mle = data[par_mle].mean()
     median_mle = data[par_mle].median()
     mean_mles.append(mean_mle)
@@ -2321,7 +2345,7 @@ def plot_x_vs_mle(raw_data, x_col, par):
     low_q.append(np.percentile(data[par_mle], 2.5))
     up_q.append(np.percentile(data[par_mle], 97.5))
 
-    plt.vlines(i, low, up, color='blue', label='Median 95% CI' if i == 0 else "")
+    plt.vlines(i, low_med, up_med, color='blue', label='Median 95% CI' if i == 0 else "")
     plt.plot(i, mean_mle, 'ro', label='Mean MLE' if i == 0 else "")
     plt.plot(i, median_mle, 'bo', label='Median MLE' if i == 0 else "")
     plt.plot(i, data[par].mean(), 'g-', label='True Value' if i == 0 else "")
@@ -2338,7 +2362,6 @@ def plot_x_vs_mle(raw_data, x_col, par):
   plt.title(f'MLE for ${par}$')
   plt.legend(loc='upper left')
 
-  # decrease text side of legend
   leg = plt.gca().get_legend()
   for text in leg.get_texts():
     plt.setp(text, fontsize='small')
@@ -2354,11 +2377,11 @@ The following Python code generates the plots relating the the coverage
 probabilities of the MLE for the simulation studies.
 
 ```{python, eval=FALSE}
-###### Setup ######
+###### Setup ##############################
 csv_file = "data.csv"
 x_col = 'n'
+###########################################
 
-###### Plotting Functions ######
 data = pd.read_csv(csv_file)
 cols = (
     [x_col] + [f'shape.{i}' for i in range(1, 6)] +
@@ -2371,31 +2394,26 @@ cols = (
 col_data = data[cols].copy()
 
 def compute_coverage(row, j):
-    shape_within = (
-        row[f'shape.lower.{j}'] <= row[f'shape.{j}'] <= row[f'shape.upper.{j}']
-    )
-    scale_within = (
-        row[f'scale.lower.{j}'] <= row[f'scale.{j}'] <= row[f'scale.upper.{j}']
-    )
-    return pd.Series([shape_within, scale_within], index=[
-        f'shape_coverage.{j}', f'scale_coverage.{j}']
-    )
+  shape_within = (
+    row[f'shape.lower.{j}'] <= row[f'shape.{j}'] <= row[f'shape.upper.{j}'])
+  scale_within = (
+    row[f'scale.lower.{j}'] <= row[f'scale.{j}'] <= row[f'scale.upper.{j}'])
+  return pd.Series([shape_within, scale_within], index=[
+    f'shape_coverage.{j}', f'scale_coverage.{j}'])
 
 for j in range(1, 6):
-    col_data[[f'shape_coverage.{j}', f'scale_coverage.{j}']] = (
-        col_data.apply(lambda row: compute_coverage(row, j), axis=1)
-    )
+  col_data[[f'shape_coverage.{j}', f'scale_coverage.{j}']] = (
+    col_data.apply(lambda row: compute_coverage(row, j), axis=1))
 
 coverage = [f'shape_coverage.{j}' for j in range(1, 6)] + \
-    [f'scale_coverage.{j}' for j in range(1, 6)]
+  [f'scale_coverage.{j}' for j in range(1, 6)]
 cp = col_data.groupby(x_col)[coverage].mean().reset_index()
-
 mean_shape_cp = cp[[f'shape_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
 mean_scale_cp = cp[[f'scale_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
 cp['mean_shape'] = mean_shape_cp
 cp['mean_scale'] = mean_scale_cp
 
-plt.figure(figsize=[7, 4])
+plt.figure(figsize=[5, 4])
 shape_cmap = plt.get_cmap('Blues')
 scale_cmap = plt.get_cmap('Reds')
 line_styles = ['-', '--', '-.', ':', '-']
@@ -2403,25 +2421,25 @@ markers = ['o', 's', '^', 'x', 'D']
 
 for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)),
                             line_styles, markers):
-    plt.plot(cp[x_col], cp[f'shape_coverage.{j}'],
-             label=f'Shape $k_{j}$', color=color, linestyle=ls, marker=mk)
-
+  plt.plot(cp[x_col], cp[f'shape_coverage.{j}'],
+    label=f'$k_{j}$', color=color, linestyle=ls, marker=mk)
 for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)),
                             line_styles, markers):
-    plt.plot(cp[x_col], cp[f'scale_coverage.{j}'],
-             label=f'Scale $\lambda_{j}$', color=color, linestyle=ls, marker=mk)
+  plt.plot(cp[x_col], cp[f'scale_coverage.{j}'],
+    label=f'$\lambda_{j}$', color=color, linestyle=ls, marker=mk)
 
 plt.plot(cp[x_col], cp['mean_shape'], color='darkblue',
-         linewidth=4, linestyle='-', label='Mean Shape')
+  linewidth=4, linestyle='-', label='$\\bar{k}$')
 plt.plot(cp[x_col], cp['mean_scale'], color='darkred',
-         linewidth=4, linestyle='-', label='Mean Scale')
-plt.axhline(y=0.95, color='grey', linestyle='--', label='Nominal 95% Level')
+  linewidth=4, linestyle='-', label='$\\bar{\lambda}')
+plt.axhline(y=0.95, color='green', linestyle='--', label='$95\\%$')
+plt.axhline(y=0.90, color='red', linestyle='--', label='$90\\%$')
 plt.xlabel(x_col)
 plt.ylabel('Coverage Probability (CP)')
 plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
-plt.title('Coverage Probabilities for Shape and Scale Parameters')
+plt.title('Coverage Probabilities for Parameters')
 plt.legend(loc='best', bbox_to_anchor=(1, 1))
-plt.tight_layout(rect=[0, 0, 0.85, 1])
+plt.tight_layout()
 plt.savefig(f'{x_col}-vs-cp.pdf')
 ```
 
