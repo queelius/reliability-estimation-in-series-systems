@@ -23,11 +23,11 @@ output:
         citation_package: natbib
     bookdown::pdf_book:
         toc: true
-        latex_engine: xelatex
+        #latex_engine: xelatex
         #toc_depth: 3
         number_sections: true
         #extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
-        extra_dependencies: ["tikz", "caption", "amsthm"]
+        extra_dependencies: ["tikz", "caption", "amsthm", "amsmath"]
         df_print: kable
         #keep_tex: true
         citation_package: natbib
@@ -63,11 +63,6 @@ library(grid)
 library(glue)
 library(png)
 library(kableExtra)
-
-# \newtheorem{definition}{Definition}
-# \newtheorem{theorem}{Theorem}
-# \newtheorem{corollary}{Corollary}
-# \numberwithin{equation}{section}
 ```
 
 Introduction
@@ -92,11 +87,11 @@ well in the presence of significant masking and censoring even for relatively sm
 samples.
 
 - Evaluating the coverage probability (accuracy) and precision of the BCa
-confidence intervals (CI) constructed for the MLE. We found that the CIs are
-reasonably well-calibrated even for small sample sizes in the presence of
+confidence intervals (CI) constructed for the MLE. We found that the CIs have
+good empirical coverage probability even for small sample sizes in the presence of
 significant masking and censoring, but that the CIs for the shape parameters
-were less well-calibrated, indicating that the shape parameters are more
-difficult to estimate than the scale parameters.
+were less accurate, indicating that the shape parameters are more difficult to
+estimate than the scale parameters.
 
 The simulation studies focus on three key aspects:
 
@@ -116,7 +111,7 @@ Each component and system has two possible states, functioning or failed.
 We have $n$ systems whose lifetimes are independent and identically distributed
 (i.i.d.).
 The lifetime of the $i$\textsuperscript{th} system is denoted by the random
-variable $T_{i}$ and the lifetime of its $j$\textsuperscript{th} component is
+variable $T_i$ and the lifetime of its $j$\textsuperscript{th} component is
 denoted by the random variable $T_{i j}$. We assume the component lifetimes in a
 single system are statistically independent and non-identically distributed.
 Here, lifetime (or lifespan) is defined as the elapsed time from when the new,
@@ -132,9 +127,9 @@ There are three particularly important distribution functions in reliability ana
 reliability function, the probability density function (pdf), and the hazard function.
 The reliability function, $R_{T_i}(t)$, is the
 probability that the $i$\textsuperscript{th} system has a lifetime greater than 
-given duration $t$,
+the given duration $t$,
 \begin{equation}
-R_{T_i}(t) = \Pr\{T_i > t\}\\
+R_{T_i}(t) = \Pr\{T_i > t\}.
 \end{equation}
 The pdf of $T_i$ is denoted by $f_{T_i}(t)$ and may be defined as
 $$
@@ -146,7 +141,7 @@ failure occurs before time $t$ may be written as
 $$
 \Pr\{T_i \leq t+\Delta t|T_i > t\} = \frac{\Pr\{t < T_i < t+\Delta t\}}{\Pr\{T_i > t\}}.
 $$
-The failure rate is given by the dividing this equation by the length of the time
+The failure rate is given by dividing this equation by the length of the time
 interval, $\Delta t$:
 $$
 \frac{\Pr\{t < T_i < t+\Delta t\}}{\Delta t} \frac{1}{\Pr\{T_i > t\}} =
@@ -176,7 +171,7 @@ reliability function by $R_X(t;\v\theta)$, and the same for the other distributi
 As a special case, for the components in a series system, we subscript by their labels, e.g,
 the pdf of the $j$\textsuperscript{th} component is denoted by $f_j(t;\v{\theta_j})$. Two continuous
 random variables $X$ and $Y$ have a joint pdf $f_{X,Y}(x,y)$.
-Given the joint pdf $f(x,y)$, the marginal pdf of $X$ is given by
+Given the joint pdf $f_{X,Y}(x,y)$, the marginal pdf of $X$ is given by
 $$
 f_X(x) = \int_{\mathcal{Y}} f_{X,Y}(x,y) dy,
 $$
@@ -191,15 +186,16 @@ We may generalize all of the above to more than two random variables, e.g.,
 the joint pdf of $X_1,\ldots,X_m$ is denoted by $f(x_1,\ldots,x_m)$.
 
 Next, we dive deeper into these concepts and provide mathematical derivations for
-the reliability function, pdf, and hazard function of the series system.
+the reliability function, the pdf, and the hazard function of the series system.
 We begin with the reliability function of the series system, as given by the following theorem.
 
 ::: {.theorem #sys-reliability-fn}
 The series system has a reliability function given by
 \begin{equation}
 \label{eq:sys-reliability-fn}
-R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
+R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}),
 \end{equation}
+where $R_j(t;\v{\theta_j})$ is the reliability function of the $j$\textsuperscript{th} component.
 :::
 
 ::: {.proof}
@@ -237,8 +233,10 @@ The series system has a pdf given by
 \begin{equation}
 \label{eq:sys-pdf}
 f_{T_i}(t;\v\theta) = \sum_{j=1}^m f_j(t;\v{\theta_j})
-    \prod_{\substack{k=1\\k\neq j}}^m R_k(t;\v{\theta_j}).
+    \prod_{\substack{k=1\\k\neq j}}^m R_k(t;\v{\theta_j}),
 \end{equation}
+where $f_j(t;\v{\theta_j})$ is the pdf of the $j$\textsuperscript{th} component
+and $R_k(t;\v{\theta_k})$ is the reliability function of the $k$\textsuperscript{th} component.
 :::
 
 ::: {.proof}
@@ -273,10 +271,11 @@ function of the system lifetime, defined in the next theorem.
 
 ::: {.theorem #sys-failure-rate}
 The series system has a hazard function given by
-\[
+\begin{equation}
 \label{eq:sys-failure-rate}
-h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}) 
-\]
+h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}), 
+\end{equation}
+where $h_j(t;\v{\theta_j})$ is the hazard function of the $j$\textsuperscript{th} component.
 :::
 
 
@@ -324,8 +323,8 @@ derive distributions related to the component cause of failure.
 
 ## Component Cause of Failure {#comp-cause}
 Whenever a series system fails, precisely one of the components is the cause.
-We denote the component cause of failure of a series system by the random
-variable $K_i$, whose support is given by $\{1,\ldots,m\}$.
+We denote the component cause of failure of the $i$\textsuperscript{th} series
+system by the discrete random variable $K_i$, whose support is given by $\{1,\ldots,m\}$.
 For example, $K_i=j$ indicates that the component indexed by $j$ failed first, i.e.,
 $$
     T_{i j} < T_{i j'}
@@ -337,7 +336,7 @@ The system lifetime and the component cause of failure has a joint distribution
 given by the following theorem.
 
 ::: {.theorem #f-k-and-t}
-The joint pdf of the component cause of failure $K_i$ and series system lifetime
+The joint pdf of the component cause of failure $K_i$ and the series system lifetime
 $T_i$ is given by
 \begin{equation}
 \label{eq:f-k-and-t}
@@ -350,7 +349,7 @@ and reliability functions of the $l$\textsuperscript{th} component.
 ::: {.proof}
 Consider a series system with $3$ components.
 By the assumption that component lifetimes are mutually independent,
-the joint pdf of $T_{i 1},T_{i 2},T_{i 3}$ is given by
+the joint pdf of $T_{i 1}$, $T_{i 2}$, and $T_{i 3}$ is given by
 $$
     f(t_1,t_2,t_3;\v\theta) = \prod_{j=1}^{3} f_j(t_j;\v{\theta_j}),
 $$
@@ -378,7 +377,7 @@ Generalizing this result completes the proof.
 
 Theorem \@ref(thm:f-k-and-t) shows that the joint pdf of the component cause of
 failure and system lifetime is a function of the hazard functions and reliability
-functions of the components. This result will be used in the Section \@ref(like-model)
+functions of the components. This result will be used in Section \@ref(like-model)
 to derive the likelihood function for the masked data.
 
 The probability that the $j$\textsuperscript{th} component is the cause of failure
@@ -393,7 +392,7 @@ is given by
 \biggl[
     \frac{h_j(T_i;\v{\theta_j})}
          {\sum_{l=1}^m h_l(T_i ; \v{\theta_l})}
-\biggr]
+\biggr],
 \end{equation}
 where $K_i$ is the random variable denoting the component cause of failure of the
 $i$\textsuperscript{th} system and $T_i$ is the random variable denoting the
@@ -444,8 +443,7 @@ $$
 
 Theorems \@ref(thm:prob-k) and \@ref(thm:prob-k-given-t) are closely related
 and have similar forms. Theorem \@ref(thm:prob-k-given-t) can be seen as a
-special case of Theorem \@ref(thm:prob-k) because we can obtain Theorem
-\@ref(thm:prob-k-given-t) by setting $t_i = T_i$ in Theorem \@ref(thm:prob-k).
+special case of Theorem \@ref(thm:prob-k).
 
 ## System and Component Reliabilities {#reliability}
 
@@ -462,7 +460,7 @@ expectation of the system lifetime,
 which if certain assumptions are satisfied[^1] is equivalent to the integration
 of the reliability function over its support. While the MTTF provides a summary
 measure of reliability, it is not a complete description. Depending on the
-failure characteristics, MTTF can be misleading. For example, a system that has
+failure characteristics, the MTTF can be misleading. For example, a system that has
 a high likelihood of failing early in its life may still have a large MTTF if it
 is fat-tailed.[^2]
 
@@ -472,7 +470,7 @@ converges.
 
 [^2]: A "fat-tailed" distribution refers to a probability distribution with tails that
 decay more slowly than those of the exponential family, such as the case with the Weibull
-when its shape parameter is greater than $1$. This means that extreme values are more
+when its shape parameter is less than $1$. This means that extreme values are more
 likely to occur, and the distribution is more prone to "black swan" events or rare occurrences.
 In the context of reliability, a fat-tailed distribution might imply a higher likelihood of
 unusually long lifetimes, which can skew measures like the MTTF. [@taleb2007black]
@@ -484,7 +482,7 @@ that the $j$\textsuperscript{th} component is the cause of failure is given by
 $\Pr\{K_i = j\}$. In a **well-designed** series system, there are no components
 that are much "weaker" than any of the others, e.g., they have similar
 MTTFs and probabilities of being the component cause of failure. In this paper,
-we perform a sensivitivy analysis of the MLE for a well-designed series systems.
+we perform a sensivitivy analysis of the MLE for a well-designed series system.
 
 Likelihood Model for Masked Data {#like-model}
 ==============================================
@@ -552,7 +550,7 @@ related to both the unobserved component lifetimes $T_{i 1},\ldots,T_{i m}$ and
 other unknown and unobserved covariates, like ambient temperature or the
 particular diagnostician who generated the candidate set. These two complications
 for $\mathcal{C}_i$ are why we seek a way to construct a reduced likelihood function
-in later sections that is not a function of the distribution of $\mathcal{C}_i$.}
+in later sections that does not need to model the distribution of $\mathcal{C}_i$.}
 \label{fig:figureone}
 \end{figure}
 
@@ -598,7 +596,7 @@ contributes to. We present the following theorem for the likelihood contribution
 model.
 
 ::: {.theorem #likelihood-contribution}
-The likelihood contribution of the $i$-th system is given by
+The likelihood contribution of the $i$\textsuperscript{th} system is given by
 \begin{equation}
 \label{eq:like}
 L_i(\v\theta) \propto \prod_{j=1}^m R_j(s_i;\v{\theta_j}) \biggl(\sum_{j \in c_i} h_j(s_i;\v{\theta_j}) \biggr)^{\delta_i}
@@ -614,20 +612,17 @@ right-censored system lifetime data $(\delta_i = 0)$ and masking of the
 component cause of failure $(\delta_i = 1)$.
 
 ## Masked Component Cause of Failure {#candmod}
-Suppose a diagnostician is unable to identify the precise component cause of the
-failure, e.g., due to cost considerations he or she replaced multiple components
-at once, successfully repairing the system but failing to precisely identity
-the failed component.
-In this case, the cause of failure is said to be *masked*.
-
-The unobserved component lifetimes may have many covariates, like ambient
-operating temperature, but the only covariate we observe in our masked data
-model are the system's lifetime and additional masked data in the form of
-a candidate set that is somehow correlated with the unobserved component
-lifetimes.
+When a system failure occurs, two types of data are observed in our data model:
+the system's lifetime and a candidate set that is indicative of
+the component cause of failure without necessarily precisely identifying the
+failed component. For instance, suppose we have a failed electronic device and
+a diagnostician is only able to identity that a circuit board in the device has
+failed but is unable to identify the precise component that failed on the board.
+In this case, any of the components on the board may be the cause of failure.
+The cause of failure is said to be *masked* by the other components on the board.
 
 The key goal of our analysis is to estimate the parameter $\v{\theta}$, which 
-maximize the likelihood of the observed data, and to estimate the precision and
+maximizes the likelihood of the observed data, and to estimate the precision and
 accuracy of this estimate using the Bootstrap method. To achieve this, we first
 need to assess the joint distribution of the system's continuous lifetime,
 $T_i$, and the discrete candidate set, $\mathcal{C}_i$, which can be written as
@@ -655,7 +650,7 @@ $i$\textsuperscript{th} system is given by assuming the following condition.
 \label{cond:c-contains-k}
 The candidate set $\mathcal{C}_i$ contains the index of the the failed component, i.e.,
 $$
-\Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1
+\Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1,
 $$
 where $K_i$ is the random variable for the failed component index of the
 $i$\textsuperscript{th} system.
@@ -663,7 +658,6 @@ $i$\textsuperscript{th} system.
 Assuming Condition \ref{cond:c-contains-k}, $\mathcal{C}_i$ must contain the
 index of the failed component, but we can say little else about what other
 component indices may appear in $\mathcal{C}_i$.
-
 In order to derive the joint distribution of $\mathcal{C}_i$ and $T_i$ assuming
 Condition \ref{cond:c-contains-k}, we take the following approach.
 We notice that $\mathcal{C}_i$ and $K_i$ are statistically dependent.
@@ -735,7 +729,6 @@ for all $j, j' \in c_i$.
 According to [@Fran-1991], in many industrial problems, masking generally
 occurred due to time constraints and the expense of failure analysis. In this
 setting, Condition \ref{cond:equal-prob-failure-cause} generally holds.
-
 Assuming Conditions \ref{cond:c-contains-k} and
 \ref{cond:equal-prob-failure-cause},
 $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}$ may be factored out of the
@@ -761,7 +754,7 @@ The masking probabilities conditioned on failure time $T_i$ and component cause
 of failure $K_i$ are not functions of $\v{\theta}$. In this case, the conditional
 probability of $\mathcal{C}_i$ given $T_i=t_i$ and $K_i=j'$ is denoted by
 $$
-\beta_i = \Pr\{\mathcal{C}_i=c_i | T_i=t_i, K_i=j'\}
+\beta_i = \Pr\{\mathcal{C}_i=c_i | T_i=t_i, K_i=j'\},
 $$
 where $\beta_i$ is not a function of $\v\theta$.
 \end{condition}
@@ -776,7 +769,7 @@ f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) =
 $$
 When we fix the sample and allow $\v{\theta}$ to vary, we obtain the
 contribution to the likelihood $L$ from the $i$\textsuperscript{th} observation
-when the system lifetime is exactly known (i.e., $\delta_i = 1$) but the
+when the system lifetime is exactly known ($\delta_i = 1$) but the
 component cause of failure is masked by a candidate set $c_i$:
 \begin{equation}
 \label{eq:likelihood-contribution-masked}
@@ -792,9 +785,9 @@ likelihood function, and so we can drop it from the likelihood function.
 
 To summarize this result, assuming Conditions \ref{cond:c-contains-k},
 \ref{cond:equal-prob-failure-cause}, and \ref{cond:masked-indept-theta}, 
-if we observe an exact system failure time for the $i$-th system ($\delta_i = 1$),
-but the component that failed is masked by a candidate set $c_i$, then its
-likelihood contribution is given by Equation
+if we observe an exact system failure time for the $i$\textsuperscript{th}
+system ($\delta_i = 1$), but the component that failed is masked by a
+candidate set $c_i$, then its likelihood contribution is given by Equation
 \@ref(eq:likelihood-contribution-masked).
 
 ## Right-Censored Data
@@ -857,14 +850,20 @@ flat likelihood regions can complicate convergence [@wu1983convergence].
 
 In our simulation study, we address these challenges in a pragmatic way. Specifically,
 failure to converge to a solution within a maximum of 125 iterations is interpreted as
-evidence of the aforementioned issues, leading to the discarding of the sample, with
-the process then repeated with a new synthetic sample. Note, however, that in Section
-\@ref(boot) where we discuss the bias-corrected and accelerated (BCa) bootstrap
-method for constructing confidence intervals, we do not discard any resamples.
+evidence of the aforementioned issues, leading to the discarding of the sample.[^600]
+However, in Section \@ref(boot), where we discuss the bias-corrected and
+accelerated (BCa) bootstrap method for constructing confidence intervals, we
+do not discard any resamples. This strategy helps ensure the robustness of the
+results, while acknowledging the inherent complexities of likelihood-based
+estimation in models characterized by masking and right-censoring. In our
+simulation study, we report the convergence rates, and find that for most
+scenarios, the convergence rate is greater than $95\%$ ($100\%$ once
+the sample is sufficiently large).
 
-This strategy helps ensure the robustness of the results, while acknowledging the
-inherent complexities of likelihood-based estimation in models characterized by
-masking and right-censoring.
+[^600]: The choice of 125 iterations was also made for practical reasons.
+Since we are generating millions of samples and trying to find an MLE for
+each in our simulation study, if we did not limit the number of iterations, the
+simulation study would have taken too long to run.
 
 Maximum Likelihood Estimation {#mle}
 ========================================
@@ -947,73 +946,72 @@ computing confidence intervals.
 
 Bias-Corrected and Accelerated Bootstrap Confidence Intervals {#boot}
 ===============================================================
-We utilize the non-parametric bootstrap to approximate the sampling distribution
+We utilize the non-parametric bootstrap to estimate the sampling distribution
 of the MLE. In the non-parametric bootstrap, we resample from the observed data
 with replacement to generate a bootstrap sample. The MLE is then computed for
-the bootstrap sample. This process is repeated $B$ times, giving us $B$ bootstrap
-replicates of the MLE. The sampling distribution of the MLE is then approximated
+the bootstrap sample. This process is repeated to generate numerous bootstrap
+replicates of the MLE. The sampling distribution of the MLE is then estimated
 by the empirical distribution of the bootstrap replicates of the MLE.
 
-The method we use to generate confidence intervals is known as Bias-Corrected
-and Accelerated Bootstrap Confidence Intervals (BCa), which applies two
+Our main focus is on generating confidence intervals for the MLE. The method we
+use to generate confidence intervals is known as Bias-Corrected and Accelerated
+Bootstrap Confidence Intervals (BCa) [@efron1987better], which applies two
 corrections to the standard bootstrap method:
 
-- Bias correction: This adjusts for bias in the bootstrap distribution itself.
+- **Bias Correction**: This adjusts for bias in the bootstrap distribution itself.
   This bias is measured as the difference between the mean of the bootstrap
   distribution and the observed statistic. It works by transforming the
-  percentiles of the bootstrap distribution to correct for these issues.
-  
-  This may be a useful transformation in our case since we are dealing with
-  small samples and we have two potential sources of bias: right-censoring and
-  masking component cause of failure. They seem to have opposing effects on the
-  MLE, but the relationship is difficult to quantify.
+  percentiles of the bootstrap distribution to correct for these issues.  
+  This may be a useful adjustment in our case since we are dealing with
+  small samples with two potential sources of bias: right-censoring and
+  masking component cause of failure.
 
-- Acceleration: This adjusts for the rate of change of the statistic as a
+- **Acceleration**: This adjusts for the rate of change of the statistic as a
   function of the true, unknown parameter. This correction is important when the
   shape of the statistic's distribution changes with the true parameter.
-
   Since we have a number of different shape parameters, $k_1,\ldots,k_m$, we may
   expect the shape of the distribution of the MLE to change as a function of the
   true parameter, making this correction potentially useful.
 
-Since we are primarly interested in generating confidence intervals for small
-samples for a potentially biased MLE, the BCa method may be a good choice for
-our analysis. For more details on BCa, see [@efron1987better].
+#### Correctly Specified Confidence Intervals {-}
+Since we are primarily interested in generating confidence intervals for small
+samples for a biased MLE, the BCa method is a reasonable choice for our
+simulation study. In our simulation study, we evaluate the performance of the
+BCa confidence intervals by calculating their coverage probability. A *correctly
+specified* $95\%$ confidence interval contains the true parameter value
+approximately $95\%$ of the time in repeated sampling.
 
-In our simulation study, we will assess the performance of the bootstrapped BCa
-confidence intervals by computing the coverage probability of the confidence
-intervals. A well-calibrated 95% confidence interval contains the true
-value around 95% of the time. If the confidence interval is too narrow, it will
-have a coverage probability less than 95%, which conveys a sort of false
-confidence in the precision of the MLE. If the confidence interval is too wide,
-it will have a coverage probability greater than 95%, which conveys a lack of
-confidence in the precision of the MLE. We want confidence intervals to be as
-narrow as possible while still having a coverage probability close to the
-nominal level, 95%.
+In this study, we consider a coverage probability above $90\%$ to be
+satisfactory, as it offers a reasonable trade-off between precision and
+reliability. A coverage probability below this would signify undue confidence in
+the precision of the MLE. Conversely, a coverage probability near $100\%$ may
+indicate excessively wide intervals, thereby diminishing the precision of the
+MLE. Our objective is to construct confidence intervals that are as narrow as
+possible while achieving good empirical coverage close to the nominal level of
+$95\%$.
 
+##### Challenges {-}
 While the bootstrap method provides a robust and flexible tool for statistical
-estimation, its effectiveness can be influenced by several factors
-[@efron1994introduction]. Firstly, instances of non-convergence in our bootstrap
-samples were observed.
-Such cases can occur when the estimation method, like the MLE used in our
+estimation, its effectiveness can be influenced by many factors. A few of these
+factors are particularly relevant to our study:
+
+- **Convergence**: Instances of non-convergence in our bootstrap samples were
+observed, which can occur when the estimation method, like the MLE used in our
 analysis, fails to converge due to the specifics of the resampled data
 [@casella2002statistical]. This issue can potentially introduce bias or
 reduce the effective sample size of our bootstrap distribution.
+- **Small Samples**: The bootstrap's accuracy can be compromised with small
+sample sizes, as the method relies on the Law of Large Numbers to approximate
+the true sampling distribution. For small samples, the bootstrap resamples might
+not adequately represent the true variability in the data, leading to inaccurate
+results [@efron1994introduction].
+- **Masking**: Our data involves right censoring and a masking of the component
+cause of failure when a system failure is observed. These aspects can cause
+certain data points or trends to be underrepresented or not represented at all
+in our data, introducing bias in the bootstrap distribution [@klein2005survival].
 
-Secondly, the bootstrap's accuracy can be compromised with small sample sizes,
-as the method relies on the law of large numbers to approximate the true sampling
-distribution. For small datasets, the bootstrap samples might not adequately
-represent the true variability in the data, leading to inaccurate results
-[@efron1994introduction].
-
-Thirdly, our data involves right censoring and a masking of the component cause
-of failure when a system failure is observed. These aspects can cause certain
-data points or trends to be underrepresented or not represented at all in our
-data, introducing bias in the bootstrap distribution [@klein2005survival].
-
-Despite these challenges, we found the bootstrap method useful in approximating
-the sampling distribution of the MLE, taking care in interpreting the results,
-particularly as it relates to coverage probabilities.
+Despite these challenges, we found the bootstrap method useful in constructing
+correctly specified confidence intervals.
 
 Series System with Weibull Components {#weibull}
 ================================================
@@ -1044,7 +1042,7 @@ given respectively by
         &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}.
 \end{align}
 
-The shape parameter of the Weibull distribtion is of particular importance:
+The shape parameter of the Weibull distribution is of particular importance:
 
 - $k_j < 1$ indicates infant mortality. An example of how this might arise is
 a result of defective components being weeded out early, and the remaining
@@ -1077,8 +1075,11 @@ f_{T_i}(t;\v\theta) &= \biggl\{
 \exp
 \biggl\{
     -\sum_{j=1}^m \bigl(\frac{t}{\lambda_j}\bigr)^{k_j}
-\biggr\}.
+\biggr\},
 \end{align}
+where $\v\theta = (k_1, \lambda_1, \ldots, k_m, \lambda_m)$ is the parameter
+vector of the series system and $\v{\theta_j} = (k_j, \lambda_j)$ is the
+parameter vector of the $j$\textsuperscript{th} component.
 :::
 
 ::: {.proof}
@@ -1114,15 +1115,14 @@ components, the MTTF of the $j$\textsuperscript{th} component is given by
 \label{eq:mttf-weibull}
 \text{MTTF}_j = \lambda_j \Gamma\biggl(1 + \frac{1}{k_j}\biggr),
 \end{equation}
-where $\Gamma$ is the gamma function.
-
-We mentioned that the MTTF can sometimes be a poor measure of reliability, e.g.,
-the MTTF and the probability of failing early can be large. The Weibull is a good
-example of this phenomenon. If $k_j > 1$, the $j$\textsuperscript{th} component
-is fat-tailed and it can exhibit both a large MTTF and a high probability of
-failing early. The probability of component failure given by Equation
-\@ref(eq:prob-k) is a particularly useful measure of component reliability
-relative to the other components in the system.
+where $\Gamma$ is the gamma function. We mentioned that the MTTF can sometimes
+be a poor measure of reliability, e.g., the MTTF and the probability of failing
+early can *both* be large. The Weibull is a good example of this phenomenon.
+If $k_j > 1$, the $j$\textsuperscript{th} component is fat-tailed and it can
+exhibit both a large MTTF and a high probability of failing early. The
+probability of component failure given by Equation \@ref(eq:prob-k) is a
+particularly useful measure of component reliability relative to the other
+components in the system.
 
 ## Likelihood Model {#sys-weibull-like}
 In Section \@ref(like-model), we discussed two separate kinds of likelihood
@@ -1158,16 +1158,19 @@ L_i(\v\theta) \propto
 \end{cases}
 $$
 By Equation \@ref(eq:sys-weibull-reliability-fn), the system reliability
-function $R_{T_i}$ is given by
+function is given by
 $$
-R_{T_i}(t_i;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j}\biggr\}.
+R_{T_i}(t_i;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j}\biggr\}
 $$
-and by Equation \@ref(eq:weibull-haz), the Weibull component hazard function $h_j$ is
-given by
+where $\v\theta = (k_1,\lambda_1,\ldots,k_m,\lambda_m)$ is the parameter vector and by
+Equation \@ref(eq:weibull-haz), the hazard function of the $j$\textsuperscript{th}
+component is given by
 $$
 h_j(t_i;\v{\theta_j}) = \frac{k_j}{\lambda_j}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j-1}.
 $$
-Plugging these into the likelihood contribution function obtains the result.
+where $\v{\theta_j} = (k_j,\lambda_j)$ is the parameter vector of the
+$j$\textsuperscript{th} component. Plugging these into the likelihood contribution
+function obtains the result.
 :::
 
 Taking the log of the likelihood contribution function obtains the following result.
@@ -1191,17 +1194,17 @@ for the series system with Weibull components.
 
 We find an MLE by solving \@ref(eq:mle-eq), i.e., a point
 $\v{\hat\theta} = (\hat{k}_1,\hat{\lambda}_1,\ldots,\hat{k}_m,\hat{\lambda}_m)$
-satisfying $\nabla_{\theta} \ell(\v{\hat\theta}) = \v{0}$, where
-$\nabla_{\v\theta}$ is the gradient of the log-likelihood function (score) with
-respect to $\v\theta$. To solve this system of equations, we use the
-Newton-Raphson method, which requires the score and the Hessian of the
-log-likelihood function. We analytically derive the score since it is useful to
-have for the Newton-Raphson method, but we do not do the same for the Hessian of
-the log-likelihood for the following reasons:
+satisfying $\nabla_{\v\theta} \ell(\v{\hat{\v\theta}}) = \v{0}$, where
+$\nabla_{\v\theta} \ell$ is the gradient of the log-likelihood function (score) with
+respect to $\v\theta$. To solve this system of equations, we use Newton-like
+methods, which sometimes require both the gradient and the Hessian of the
+log-likelihood function. We analytically derive the score but we do not do the
+same for the Hessian of the log-likelihood. Our reasoning is based on the
+following two observations:
 
-- The gradient is easy to derive, and it is useful to have for computing
-gradients efficiently and accurately, which will be useful for numerically
-approximating the Hessian.
+- The score function is relatively easy to derive, and it is useful to have for
+computing gradients efficiently and accurately, which will be useful for
+accurately numerically approximating the Hessian of the log-likelihood function.
 
 - The Hessian is tedious and error prone to derive, and Newton-like methods
 often do not require the Hessian to be explicitly computed.
@@ -1366,9 +1369,9 @@ that consists of components with similar reliabilities, where we define
 reliability in three ways: the reliability function, MTTF, and probability that
 a specific component will be the cause of failure (which is a measure of
 relative reliability of the components). We will use these three measures of
-reliability to assess the base system. To a first approximation, the base system
+reliability to assess the base system. The base system
 defined in Table \ref{tab:series-sys} satisfies this definition of being a
-well-designed system. We see that there are no components that are significantly
+well-designed system since there are no components that are significantly
 less reliable than any of the others, component 1 being the most reliable and
 component 3 being the least reliable.
 
@@ -1460,36 +1463,38 @@ important properties of the MLE for each simulation scenario:
   convergence issues with the MLE. We discard any result that did not converge
   to a local maximum of the log-likelihood function within $125$ iterations.
   The convergence rate of the MLE is defined as the proportion of MLEs that
-  converged to a local maximum. We take low convergence rates, say a convergence
-  rate less than $95\%$, to be evidence that the MLE is not a robust or reliable
-  estimator in these cases, due to the lack of information in the data to
-  identify the parameters of the likelihood model. Under these conditions, the
-  MLE should be taken with a grain of salt.
+  converged to a local maximum. We take a convergence rate less than $95\%$ to
+  be evidence that the MLE is not a robust or reliable estimator in these cases,
+  due to the insufficient information.
 
 In parallel, we assess the following properties of the BCa confidence intervals
 described in Section \@ref(boot):
 
-- **Accuracy (Coverage Probability)**: A primary measure is the proportion of
-  the computed $95\%$ confidence intervals that contain the true parameter
-  values.[^2000] Ideally, we would like the CIs to contain the true parameter
-  values around $95\%$ of the time, which is the nominal coverage probability.
-  In this case, the CIs are said to be well-calibrated, but anything over $90\%$
-  is considered acceptable. 
+- **Accuracy (Coverage Probability)**: In Section \@ref(boot), we discussed
+  the importance of the coverage probability of the confidence intervals. The
+  coverage probability is the proportion of the computed confidence intervals
+  that contain the true parameter values. Ideally, we would like the CIs to
+  contain the true parameter values around $95\%$ of the time, which is the
+  nominal coverage probability. In this case, the CIs are said to be
+  correctly specified, but we consider anything over $90\%$ satisfactory.
 
 - **Precision**: A useful measure of the precision of the confidence intervals
   are their widths. Narrower, consistent intervals across samples indicate
   higher precision. We measure this in our simulation study by plotting the
   *median-aggregated* CIs, where we aggregate the CIs by taking the medians of
   the upper and lower bounds. This gives us a sense of the central tendency
-  of the CIs.
+  of the CIs. There is a trade-off between accuracy and precision, where we
+  want the CIs to be as narrow as possible with nominal coverage probability.
 
-If the confidence intervals are both accurate and precise, then we can have high
-confidence that the MLE is close to the true parameter value.
-
-[^2000]: The best-case scenario is that the CIs contain the true parameter with
-near $100\%$ probability, but this would construct CIs that are too conservative
-(wide), underestimating the precision of the MLE.
-
+If the confidence intervals are not accurate, then we cannot be sure that the
+intervals contain the true parameters. If the confidence intervals are not
+precise, then there is significant uncertainty in the locations of the true
+parameters. In either case, we cannot be confident in the results of the
+analysis, and we should consider alternative methods for estimating the
+parameters of the series system. However, we will see that the BCa confidence
+intervals are accurate and precise for most of the simulation scenarios we
+consider, providing a reliable method for estimating the parameters of the
+series system.
 
 ## Data Generating Process {#data-gen-proc}
 
@@ -1643,7 +1648,7 @@ Section \@ref(effect-censoring) explores how varying the right-censoring affects
 the estimator with the masking and sample size fixed. Section \@ref(p-vs-mttf)
 explores how varying the masking affects the estimator with the right-censoring
 and sample size fixed. Section \@ref(effect-samp-size) explores how varying
-the sample affects the estimator with the right-censoring and masking fixed.
+the sample size affects the estimator with the right-censoring and masking fixed.
 Each scenario aims to provide insights into how these parameters influence the
 behavior of MLEs, which is crucial for understanding their performance in
 real-world applications.
@@ -1992,15 +1997,79 @@ key results were:
   samples.
 - Estimation of shape parameters was more challenging than scale parameters.
 
-Building on these findings, promising areas for future work include:
+Building on these findings, next we consider promising areas for future work.
 
-- Relaxing assumptions on masking conditions to further generalize the likelihood
-model.
-- Assessing sensitivity to deviations from well-designed systems.
-- Exploring regularization methods like data augmentation and penalized
-likelihood to improve shape parameter estimates.
-- Incorporating predictors into a more general likelihood model.
-- Evaluating the bootstrap for related statistics like prediction intervals.
+#### Relaxing Masking Conditions {-}
+To further generalize the likelihood model, we can relax conditions
+\@ref(cond:c-contains-k), \@ref(cond:equal-prob-failure-cause), and
+\@ref(cond:masked-indept-theta) on the masking model. We could perform
+a sensitivity analysis to violations of these conditions, which would provide
+insights into the robustness of the likelihood model, or we could develop
+alternative likelihood models that are less stringent.
+
+#### Deviations from Well-Designed Series Systems {-}
+Assess the sensitivity of the estimator to deviations from well-designed
+series systems, in which there are no components that are significantly more
+likely to fail than others. We could vary the probabilities of component failure
+(while keeping the system reliability constant) to assess how the estimator
+behaves when the system deviates from the well-designed system criteria. We did
+some preliminary investigation of this, and we found that the estimator was
+quite sensitive to deviations in system design.
+
+#### Homogenous Shape Parameter {-}
+Assess the trade-off between using the homogenous shape parameter model and the
+full model. The homogenous shape parameter model assumes that the shape
+parameters are equal, which is a simplification of the full model. We could
+assess the sensitivity of the estimator to deviations in the homogenous shape
+parameter assumption. By the bias-variance trade-off, we expect that
+the homogenous shape parameter model will have less variance but more bias than
+the full model.[^10000] We did some preliminary investigation of this, and we
+found that the homogenous shape parameter model worked quite well for
+moderate masking and censoring when the true system was a reasonably
+well-designed series system, and only had more bias than the full model when
+the sample size was extremely large.
+
+[^10000]: The bias-variance trade-off is a fundamental trade-off in statistics
+  that states that as the bias of an estimator decreases, its variance
+  increases, and vice versa. An estimator with more variance is
+  more sensitive to the data, while an estimator with more bias is less
+  sensitive to the data. If the assumption of homogeneity is reasonable, then
+  the bias can be quite small while the variance is also small, potentially
+  making the homogenous shape parameter model a good choice in such cases.
+
+#### Semi-Parametric Bootstrap {-}
+We used the non-parametric bootstrap to construct confidence intervals, but we
+could also investigate the semi-parametric bootstrap. In the semi-parametric
+bootstrap, instead of resampling from the original data, we sample component
+lifetimes from the parametric distribution fitted to the original data and
+sample candidate sets from the conditional empirical distribution of the
+candidate sets in the original data. This is a compromise between the
+non-parametric bootstrap and the fully parametric bootstrap.[^30]
+
+[^30]: The fully parametric bootstrap is not appropriate for our likelihood
+model because we do not assume a parametric form for the distribution of the
+candidate sets.
+
+#### Regularization Methods {-}
+Investigate regularization methods like data augmentation and penalized
+likelihood to improve parameter estimates, in particular shape parameter
+estimates. 
+
+#### Extending the Likelihood Model with Predictors {-}
+Our research is based on a general likelihood model. A straightforward extension
+is to integrate predictors, allowing each observation's hazard function to be
+influenced by specific variables, such as in the Cox proportional hazards model
+[@cox1972regression], but any function that satisfies the fundamental
+mathematical principles of a hazard function could be used. This would allow
+the likelihood model to be more flexible and adaptable to a wider range of
+applications.
+
+#### Bootstrapped Prediction Intervals {-}
+In this paper, we applied the bootstrap method to construct confidence
+intervals for the parameter $\v\theta$, which generated well-calibrated
+confidence intervals in our simulation study. We could do a similar analysis for
+other statistics, in particular prediction intervals, which are useful for
+predicting the reliability of a system or a component at a future time.
 
 The current results provide a solid foundation for extensions like these that
 can further refine the methods and expand their applicability. By leveraging the
@@ -2018,21 +2087,20 @@ masking and right-censoring.
 
 Simulation studies revealed particular sensitivities in estimating shape
 parameters of component lifetimes that follow Weibull distributions.
-
-Right-censoring and masking positively biased these shape estimates. However,
-with sufficiently large sample sizes around ($n > 200$), these biases were overcome,
+Right-censoring and masking positively biased the estimates. However,
+with sufficiently large sample sizes around, these biases were overcome,
 suggesting enough information existed in the data to mitigate censoring and
-masking effects. In contrast, scale parameters exhibited more robust properties
-even with smaller samples.
+masking effects.
 
-
-Despite the challenges, bootstrapping yielded reasonably well-calibrated
-confidence intervals even for small sample sizes. The modeling framework
-provides a statistically rigorous basis for quantifying latent component
-properties from limited observational data on system reliability. The simulation
-studies validate the methods and provide practical insights into their
-performance under varying real-world conditions. This advances the capability
-for statistical learning from masked system failure data.
+Despite the challenges, bootstrapping produced confidence intervals that are
+correctly specified, even for small sample sizes. This good empirical coverage
+demonstrates the reliability of these intervals for statistical inference,
+striking a balance between precision and robustness. The modeling framework
+offers a statistically rigorous method for estimating latent component
+properties based on limited observational data concerning system reliability.
+The simulation studies validate these techniques and provide practical insights
+into their efficacy under diverse real-world scenarios. This enhances our
+capacity for statistical learning from obscured system failure data.
 
 # Appendices {-}
 
