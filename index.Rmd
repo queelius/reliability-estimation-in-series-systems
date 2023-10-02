@@ -6,7 +6,7 @@ author: |
     \href{mailto:lex@metafunctor.com}{lex@metafunctor.com}
   }{Alex Towell}
 date: "2023-09-30"
-abstract: "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields reasonably well-calibrated confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data."
+abstract: "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields correctly specified confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data."
 output:
     #bookdown::html_document2:
     #bookdown::pdf_document2:
@@ -421,7 +421,7 @@ failure. This is given by the following theorem.
 ::: {.theorem #prob-k-given-t}
 The probability that the $j$\textsuperscript{th}
 component is the cause of system failure given that we know the system failure
-occured at time $t_i$ is given by
+occurred at time $t_i$ is given by
 $$
 \Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\v{\theta_j})}{\sum_{l=1}^m h_l(t_i;\v{\theta_l})}.
 $$
@@ -482,7 +482,7 @@ that the $j$\textsuperscript{th} component is the cause of failure is given by
 $\Pr\{K_i = j\}$. In a **well-designed** series system, there are no components
 that are much "weaker" than any of the others, e.g., they have similar
 MTTFs and probabilities of being the component cause of failure. In this paper,
-we perform a sensivitivy analysis of the MLE for a well-designed series system.
+we perform a sensitivity analysis of the MLE for a well-designed series system.
 
 Likelihood Model for Masked Data {#like-model}
 ==============================================
@@ -900,14 +900,14 @@ $$
     \sum_{i=1}^n \log L_i(\v\theta).
 $$
 Substituting $L_i(\v\theta)$ from Equation \@ref(eq:like), we consider these two
-cases of $\delta_i$ seperately to obtain the result in Theorem
+cases of $\delta_i$ separately to obtain the result in Theorem
 \@ref(thm:loglike-total).
-\textbf{Case 1}: If the $i$-th system is right-censored ($\delta_i = 0$),
+\textbf{Case 1}: If the $i$\textsuperscript{th} system is right-censored ($\delta_i = 0$),
 $$
 \ell_i(\v\theta) = \log \prod_{l=1}^m R_l(s_i;\v{\theta_l}) =
     \sum_{l=1}^m \log R_l(s_i;\v{\theta_l}).
 $$
-\textbf{Case 2}: If the $i$-th system's component cause of failure is masked but
+\textbf{Case 2}: If the $i$\textsuperscript{th} system's component cause of failure is masked but
 the failure time is known ($\delta_i = 1$),
 $$
 \ell_i(\v\theta) = \sum_{l=1}^m \log R_l(t_i;\v{\theta_l}) + \log \beta_i +
@@ -1019,8 +1019,8 @@ The Weibull distribution, introduced by Waloddi Weibull in 1937, has been
 instrumental in reliability analysis due to its ability to model a wide range
 of failure behaviors. Reflecting on its utility, Weibull
 modestly noted that it "[...] may sometimes render good service." [@Abernethy2006]
-In the context of our study, we utilize the Weibull
-to model a system as originating from Weibull components in a series configuration,
+In the context of our study, we model a system as originating from components 
+with Weibull distributed lifetimes arranged in a series configuration,
 producing a specific form of the likelihood model described in Section \@ref(like-model),
 which deals with challenges such as right censoring and masked component cause of failure.
 
@@ -1097,7 +1097,7 @@ The proof for the hazard function follows from Theorem \@ref(thm:sys-failure-rat
 \begin{align*}
 h_{T_i}(t;\v\theta)
     = \sum_{j=1}^{m} h_j(t;\v{\theta_j})
-    = \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
+    = \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}.
 \end{align*}
 The proof for the pdf follows from Theorem \@ref(thm:sys-pdf). By definition,
 $$
@@ -1148,7 +1148,7 @@ L_i(\v\theta) \propto
 
 ::: {.proof}
 By Theorem \@ref(thm:likelihood-contribution), the likelihood contribution of the
-$i$-th system is given by
+$i$\textsuperscript{th} system is given by
 $$
 L_i(\v\theta) \propto
 \begin{cases}
@@ -1160,13 +1160,13 @@ $$
 By Equation \@ref(eq:sys-weibull-reliability-fn), the system reliability
 function is given by
 $$
-R_{T_i}(t_i;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j}\biggr\}
+R_{T_i}(t_i;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j}\biggr\},
 $$
 where $\v\theta = (k_1,\lambda_1,\ldots,k_m,\lambda_m)$ is the parameter vector and by
 Equation \@ref(eq:weibull-haz), the hazard function of the $j$\textsuperscript{th}
 component is given by
 $$
-h_j(t_i;\v{\theta_j}) = \frac{k_j}{\lambda_j}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j-1}.
+h_j(t_i;\v{\theta_j}) = \frac{k_j}{\lambda_j}\biggl(\frac{t_i}{\lambda_j}\biggr)^{k_j-1},
 $$
 where $\v{\theta_j} = (k_j,\lambda_j)$ is the parameter vector of the
 $j$\textsuperscript{th} component. Plugging these into the likelihood contribution
@@ -1176,7 +1176,7 @@ function obtains the result.
 Taking the log of the likelihood contribution function obtains the following result.
 
 ::: {.corollary #cor:weibull-log-likelihood-contribution}
-The log-likelihood contribution of the $i$-th system is given by
+The log-likelihood contribution of the $i$\textsuperscript{th} system is given by
 \begin{equation}
 \label{eq:weibull-log-likelihood-contribution}
 \ell_i(\v\theta) =
@@ -1199,8 +1199,8 @@ $\nabla_{\v\theta} \ell$ is the gradient of the log-likelihood function (score) 
 respect to $\v\theta$. To solve this system of equations, we use Newton-like
 methods, which sometimes require both the gradient and the Hessian of the
 log-likelihood function. We analytically derive the score but we do not do the
-same for the Hessian of the log-likelihood. Our reasoning is based on the
-following two observations:
+same for the Hessian of the log-likelihood function. Our reasoning is based on
+the following two observations:
 
 - The score function is relatively easy to derive, and it is useful to have for
 computing gradients efficiently and accurately, which will be useful for
@@ -1212,7 +1212,7 @@ often do not require the Hessian to be explicitly computed.
 The following theorem derives the score function.
 
 ::: {.theorem #weibull-score}
-The gradient of the log-likelihood contribution of the $i$-th system is given by
+The gradient of the log-likelihood contribution of the $i$\textsuperscript{th} system is given by
 \begin{equation}
 \label{eq:weibull-score}
 \nabla \ell_i(\v\theta) = \biggl(
@@ -1242,12 +1242,12 @@ and
     {
         \sum_{j \in c_i} \frac{k_j}{\lambda_j}\bigl(\frac{t_i}{\lambda_j}\bigr)^{k_j-1}
     }
-    1_{\delta_i = 1 \land r \in c_i}
+    1_{\delta_i = 1 \land r \in c_i}.
 \end{equation}
 :::
 
 The result follows from taking the partial derivatives of the log-likelihood
-contribution of the $i$-th system given by Equation
+contribution of the $i$\textsuperscript{th} system given by Equation
 \@ref(eq:weibull-likelihood-contribution). It is a tedious calculation so the
 proof has been omitted, but the result has been verified by using a very precise
 numerical approximation of the gradient.
@@ -1402,7 +1402,7 @@ the MLE of the homogeneous model was very close to the true parameter values for
 slight deviations from the base system, but the MLE was biased for larger
 deviations from the base system. This is consistent with the bias-variance
 trade-off, where the MLE of the homogeneous model is more biased but has less
-variance than the MLE of the full model. We do not explore this furhter in this
+variance than the MLE of the full model. We do not explore this further in this
 simulation study, but it is an interesting avenue for future research.
 
 
@@ -1459,14 +1459,6 @@ important properties of the MLE for each simulation scenario:
   this in our simulation study by plotting the quantiles of the sampling
   distribution of the MLE.
 
-- **Convergence Rate**: In Section \@ref(identifiability), we discussed
-  convergence issues with the MLE. We discard any result that did not converge
-  to a local maximum of the log-likelihood function within $125$ iterations.
-  The convergence rate of the MLE is defined as the proportion of MLEs that
-  converged to a local maximum. We take a convergence rate less than $95\%$ to
-  be evidence that the MLE is not a robust or reliable estimator in these cases,
-  due to the insufficient information.
-
 In parallel, we assess the following properties of the BCa confidence intervals
 described in Section \@ref(boot):
 
@@ -1496,6 +1488,11 @@ intervals are accurate and precise for most of the simulation scenarios we
 consider, providing a reliable method for estimating the parameters of the
 series system.
 
+Finally, we also consider the convergence rate of the MLE, discussed in
+Section \@ref(identifiability). We take a convergence rate less than $95\%$ to
+be evidence that the MLE is not a robust or reliable estimator in these cases,
+due to the insufficient information.
+
 ## Data Generating Process {#data-gen-proc}
 
 In this section, we describe the data generating process for our simulation studies.
@@ -1504,9 +1501,10 @@ right-censoring model.
 
 #### Series System Lifetime {-}
 
-We generate data from a Weibull series system with $m$ components.
-As described in Section \@ref(weibull), the $j$\textsuperscript{th} component
-of the $i$\textsuperscript{th} system has a lifetime distribution given by
+We generate data from a series system with $m = 5$ components with Weibull
+lifetimes. As described in Section \@ref(weibull), the $j$\textsuperscript{th}
+component of the $i$\textsuperscript{th} system has a lifetime distribution
+given by
 $$
     T_{i j} \sim \operatorname{Weibull}(k_j, \lambda_j)
 $$
@@ -1530,7 +1528,7 @@ $$
 $$
 So, after we generate the system failure time $T_i$, we generate the censoring
 time $S_i$ by taking the minimum of $T_i$ and $\tau$.
-In our simulation study, we paramaterize the right-censoring time $\tau$ by the
+In our simulation study, we parameterize the right-censoring time $\tau$ by the
 quantile $q = 0.825$ of the series system,
 $$
     \tau = F_{T_i}^{-1}(q).
@@ -1541,15 +1539,15 @@ quantile of the series system, we define the function $g$ as
 $$
 g(\tau) = F_{T_i}(\tau;\v\theta) - q
 $$
-and find its root using the Newton-Raphson method. See Appendix \@ref(app-series-quantile) for the R code that
-implements this procedure.
+and find its root using the Newton's method. See Appendix
+\@ref(app-series-quantile) for the R code that implements this procedure.
 
 #### Masking Model for Component Cause of Failure {-}
 
 We must generate data that satisfies the masking conditions described in
 Section \@ref(candmod).
-There are many ways to satisfying the masking conditions. We choose the simplest
-method, which we call the *Bernoulli candidate set model*. In this model, we
+There are many ways to satisfying the masking conditions. We choose a simple
+method, which we call the *Bernoulli masking model*. In this model, we
 satisfy Conditions \@ref(cond:c-contains-k), \@ref(cond:equal-prob-failure-cause),
 and \@ref(cond:masked-indept-theta) by generating a candidate set $c_i$ for
 each system $i$ as follows:
@@ -1605,7 +1603,7 @@ since the Bernoulli random variables are not a function of $\v\theta$.
   components in $c_i$ and for all system failure times $t_i$.
 
   There are many more ways to satisfy the masking conditions, but we choose
-  the Bernoulli candidate set model because it is simple to understand and
+  the Bernoulli masking model because it is simple to understand and
   allows us to easily vary the masking probability $p$ for our simulation
   study.
 
@@ -1614,7 +1612,7 @@ See Appendix \@ref(app-cand-model-r) for the R code that implements this model.
 ## Overview of Simulations
 
 We define a simulation scenario to be some combination of $n$ (sample size),
-$p$ (masking probability in our Bernoulli candidate set model), and $q$
+$p$ (masking probability in our Bernoulli masking model), and $q$
 (right-censoring quantile). We are interested in choosing a small number of
 scenarios that are representative of real-world scenarios and that are
 interesting to analyze. For how we run a simulation scenario, see Appendix
@@ -1667,8 +1665,10 @@ knitr::include_graphics("image/5_system_tau_fig.pdf")
 
 In Figure \ref{fig:q-vs-stats}, we show the effect of right-censoring on the
 MLEs for the shape and scale parameters. The top four plots only show the effect
-on the MLEs for the shape and scale parameters of components $1$ and $4$, since
-the rest were essentially identical, and the bottom two plots show the coverage
+on the MLEs for the shape and scale parameters of components $1$ and $3$.
+We chose these components because they are the most and least reliable
+components, respectively, and so we expect them to be the most and least
+sensitive to right-censoring. The bottom two plots show the coverage
 probabilities for all parameters.
 
 ### Background
@@ -1711,7 +1711,7 @@ for most of the quantiles $q$.
 ### Key Observations
 
 ##### Coverage Probability (CP) {-}
-The confidence intervals are generally well-calibrated, obtaining coverages
+The confidence intervals are generally correctly specified, obtaining coverages
 above $90\%$ for most of the parameters across the entire range of right-censoring
 quantiles, and they are converging to the nominal $95\%$ level as the
 right-censoring quantile increases. This suggests that the bootstrapped CIs will
@@ -1721,14 +1721,30 @@ with high probability. The CIs are neither too wide nor too narrow.
 However, the scale parameters are better calibrated than the shape parameters.
 The scale parameters are consistently around the nominal $95\%$ level for all
 right-censoring quantiles, but the shape parameters are consistently less
-well-calibrated, suggesting that the shape parameters are more difficult to
+correctly specified, suggesting that the shape parameters are more difficult to
 estimate than the scale parameters.
+
+We also see that the coverage probabilities for $k_1$ and $\lambda_1$ are
+generally have worse coverage than the other parameters. This is likely due to
+the fact that component 1 is the most reliable component, and so it is less
+likely to fail before the right-censoring time $\tau$. This means that the
+likelihood contribution of component 1 is less informative than the other
+components. Conversely, we see that $k_3$ and $\lambda_3$ generally have
+better coverage than the other parameters. This is likely due to the fact that
+component 3 is the least reliable component, and so it is more likely to fail
+before the right-censoring time. This means that the likelihood contribution of
+component 3 is more informative than the other components in the presence of
+right-censoring.
 
 ##### Dispersion of MLEs {-}
 The shaded regions representing the 95% probability range of the MLEs get
 narrower as the right-censoring quantile increases. This is an indicator of the
 increased precision in the estimates as more data is available due to decreased
 censoring.
+
+We see that the dispersion of the MLEs for $k_1$ and $\lambda_1$ are much
+larger than the dispersion of the MLEs for $k_3$ and $\lambda_3$. This is
+consistent with the previous analysis for the coverage probabilities.
 
 ##### Median-Aggregated CIs {-}
 The median CI (vertical blue bars) decreases in length as the right-censoring
@@ -1738,10 +1754,12 @@ increases, while maintaining a good coverage probability. As right-censoring
 events become less likely, the bootstrapped CIs gravitate closer to each other
 and the true parameter values.
 
-For small right-censoring quantiles, the CIs are quite large, but to maintain
-well-calibrated CIs, this was necessary. The estimator is sensitive to the data,
+For small right-censoring quantiles, the CIs are quite large, which was
+necessary to maintain good coverage. The estimator is sensitive to the data,
 and so the bootstrapped CIs are wide to account for this sensitivity when the
-sample contains insufficient information due to censoring.
+sample contains insufficient information due to censoring. Again, we see
+that the median-aggregated CIs for $k_1$ and $\lambda_1$ are much wider than
+the median-aggregated CIs for $k_3$ and $\lambda_3$.
 
 ##### Bias of MLEs {-}
 The red dashed line indicating the mean of MLEs initially is quite biased
@@ -1753,6 +1771,9 @@ The bias for the scale parameters is quite small and remains stable across
 different right-censoring quantiles, suggesting that the scale MLEs are
 reasonably unbiased. It could be the case that making or other factors are
 counteracting the bias due to right-censoring.
+
+Again, we see that the bias for $k_1$ and $\lambda_1$ is much greater than the
+bias for $k_3$ and $\lambda_3$, which is consistent with the previous analysis.
 
 ##### Convergence Rate {-}
 The convergence rate increases as the right-censoring quantile $q$
@@ -1767,19 +1788,24 @@ In this scenario, we find that right-censoring significantly influences the MLEs
 of shape and scale parameters. As the degree of right-censoring decreases, the
 precision of these estimates improves, and the bias in the shape parameters
 diminishes, although it never fully disappears, possibly due to masking effects.
-Additionally, Bootstrapped (BCa) confidence intervals are generally
-well-calibrated, particularly for scale parameters, and become more focused as
-right-censoring decreases. These insights set the stage for the subsequent
-scenario on masking probability, where we will explore how masking adds another
-layer of complexity to parameter estimation and how these effects might be
-mitigated.
+Additionally, Bootstrapped (BCa) confidence intervals generally show good
+coverage probabilities, particularly for scale parameters, and become more
+focused as right-censoring decreases. As expected, the estimates for the most
+reliable component are more sensitive to right-censoring than the least
+reliable component. We also find that the convergence rate of the MLE decreases
+as the degree of right-censoring increases, suggesting that the MLE is less
+reliable in these cases.
+
+These insights set the stage for the subsequent scenario on masking probability,
+where we will explore how masking adds another layer of complexity to parameter
+estimation and how these effects might be mitigated.
 
 ## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#p-vs-mttf}
 
 In this scenario, we use the well-designed series system described in
 Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (moderate sample
 size) and we fix the right-censoring quantile to $q = 0.825$ (moderate
-right-censoring), and we vary the masking probability from $p$ from $0.1$
+right-censoring), and we vary the masking probability $p$ from $0.1$
 (light masking of the component cause of failure) to $0.7$ (extreme masking of
 the component cause of failure).
 
@@ -1826,16 +1852,16 @@ function becomes less informative, reducing the precision of the estimates.
 ### Key Observations
 
 ##### Coverage Probability (CP) {-}
-For the scale parameters, the $95\%$ CI is well-calibrated
-for Bernoulli masking probabilities up to $p = 0.7$, which is quite significant,
+For the scale parameters, the $95\%$ CI is correctly specified for Bernoulli
+masking probabilities up to $p = 0.7$, which is quite significant,
 obtaining coverages over $90\%$. For the shape parameters, the $95\%$ CI is
-well-calibrated for masking probabilities only up to $p = 0.4$, which is still
-large. At $p = 0.4$, the coverage probabiliy is around $90%$, but continues to
+correctly specified for masking probabilities only up to $p = 0.4$, which is still
+large. At $p = 0.4$, the coverage probability is around $90%$, but continues to
 drop after that point well below $90\%$. This suggests that the shape parameters
 are more difficult to estimate than the scale parameters, which is consistent
 with the previous scenario where we varied the amount of right-censoring.
   
-The BCa confidence intervals are well-calibrated for most realistic masking
+The BCa confidence intervals are correctly specified for most realistic masking
 probabilities, constructing CIs that are neither too wide nor too narrow, but
 when the masking is severe and the sample size is small, one should take the CIs
 with a grain of salt.
@@ -1844,22 +1870,16 @@ with a grain of salt.
 The shaded regions representing the $95\%$ quantile of the MLEs become wider as
 the masking probability increases. This is an indicator of the decreased
 precision in the estimates when provided with more ambiguous data about the
-component cause of failure. However, even for fairly significant Bernoulli
-masking, $p \leq 0.55$, the $95\%$ quantiles are narrow and the CP is
-well-calibrated, indicating that the MLEs are still precise and accurate.
+component cause of failure.
 
 ##### Median-Aggregated CIs {-}
-The median-aggregated CIs (vertical dark blue bars) show that the bootstrapped
-BCa confidence intervals are becoming more spread out as the masking probability
-increases. They are also asymmetric, with the lower bound being more spread out
-than the upper-bound, which is consistent with the behavior of the dispersion
-of the MLEs. The width of the CIs consistently increase as the masking
-probability increases, which we intuitively expected given the increased
-uncertainty about the component cause of failure. For Bernoulli masking
-probabilities $p \leq 0.25$, the width of the CIs remains fairly constant,
-but then starts increasing rapidly after that point, which was necessary for the
-CPs to remain calibrated, although after $p = 0.55$, the CPs begin to drop
-off as previously mentioned.
+The median-aggregated CIs (vertical dark blue bars) show that the BCa CIs are
+becoming more spread out as the masking probability increases. They are also
+asymmetric, with the lower bound being more spread out than the upper-bound,
+which is consistent with the behavior of the dispersion of the MLEs. The width
+of the CIs consistently increase as the masking probability increases, which we
+intuitively expected given the increased uncertainty about the component cause
+of failure.
 
 ##### Bias of MLEs {-}
 The mean of the MLE (red dashed lines) demonstrates a steadily increasing
@@ -1879,13 +1899,12 @@ consistent with behavior of the CPs, which drop below $90\%$ for $p > 0.4$.
 In this scenario, we examine the influence of masking probability $p$ on the
 MLE, keeping the sample size and right-censoring constant. As the masking
 probability increases, the precision of the MLEs decreases,
-and the coverage probability of the $95\%$ BCa confidence intervals begins to
-drop. However, even at fairly significant Bernoulli masking probabilities
-$p \leq 0.55$, the MLEs remain precise and well-calibrated. These observations
-highlight the challenges of parameter estimation under varying degrees of
-masking and set the stage for the subsequent scenario on sample size, which
-shows how increasing the sample size can mitigate the effects of both
-right-censoring and masking.
+and the coverage probability of the CIs begins to drop. However, even at fairly
+significant Bernoulli masking probabilities, particularly for the scale
+parameters, the CIs have good coverage. These observations highlight the
+challenges of parameter estimation under varying degrees of masking and set the
+stage for the subsequent scenario on sample size, which shows how increasing the
+sample size can mitigate the effects of both right-censoring and masking.
 
 ## Scenario: Assessing the Impact of Sample Size {#effect-samp-size}
 
@@ -1903,51 +1922,51 @@ knitr::include_graphics("image/5_system_samp_size_fig.pdf")
 In Figure \ref{fig:samp-size-n-vs-stats}, we show the effect of the sample size
 $n$ on the MLEs for the shape and scale parameters. The top four plots only show
 the effect on the MLEs for the shape and scale parameters of components $1$ and
-$3$, since the rest showed similar results. The bottom left plot shows
-the coverage probabilities of the confidence intervals for all parameters and
-the bottom right plot shows the convergence rate of the MLE.
+$3$, component 1 being the most reliable component in the system and component 3
+being the least reliable component. The bottom left plot shows the coverage
+probabilities of the confidence intervals for all parameters and the bottom
+right plot shows the convergence rate of the MLE.
 
 ### Key Observations
 
 ##### Coverage Probability (CP) {-}
-The confidence intervals are generally well-calibrated, obtaining coverages
+The confidence intervals are correctly specified, obtaining coverages
 above $90\%$ for most of the parameters across the entire sample size range,
 and they are converging to the nominal $95\%$ level as the sample size
-increases. This suggests that the bootstrapped CIs will contain the true value
-of the parameters with the specified confidence level with high probability.
-The CIs are neither too wide nor too narrow.
+increases. The BCa CIs contain the true value of the parameters with the
+specified confidence level, and the CIs neither too wide nor too narrow.
 
 However, as in the previous scenario where we varied the right-censoring
-amount, the scale parameters are better calibrated than the shape parameters.
+amount, the scale parameters have better coverage than the shape parameters.
 The scale parameters are consistently around the nominal $95\%$ level for all
-sample sizes, but the shape parameters are consistently less
-well-calibrated, which reinforces the earlier claim that the shape parameters
-are more difficult to estimate than the scale parameters.
+sample sizes, but the shape parameters lag behind, suggesting that the shape
+parameters are more difficult to estimate than the scale parameters.
 
 ##### Dispersion of MLEs {-}
-The shaded regions representing the $95\%$ probability range of the MLEs get
-narrower as the sample size increases. This is an indicator of the increased
-precision in the estimates when provided with more data. This is consistent with
-the asymptotic properties of the MLE when the regularity conditions are
-satisfied, e.g., converges in probability to the true value of the parameter as
-$n$ goes to infinity.
+The shaded regions representing the $95\%$ quantile range of the MLEs become
+more narrow as the sample size increases. This is an indicator of the increased
+precision in the estimates when provided with more data.
+
+We also see that the dispersion of the MLEs for $k_1$ and $\lambda_1$ are much
+larger than the dispersion of the MLEs for $k_3$ and $\lambda_3$. This is
+consistent with the previous analysis in the right-censoring scenario.
 
 ##### Median-Aggregated CIs {-}
-The median-aggregated CIs (vertical dark blue bars) show that the bootstrapped
-CIs are becoming less spread out as the sample size increases, indicating 
-that they are becoming more consistent and centered around a tighter range
-while maintaining a good coverage probability. The end result is that we can
-construct more precise and accurate CIs with larger samples and thus we can
-make more confident inferences about the true parameter value.
+The median-aggregated CIs (vertical dark blue bars) show that the CIs are
+becoming less spread out as the sample size increases, indicating that they are
+becoming more consistent and centered around a tighter range while maintaining
+good coverage probability. The end result is that we can construct more precise
+and accurate CIs with larger samples and thus we can make more confident
+inferences about the true parameter value.
 
-The estimator is quite sensitive to the data, and so the bootstrapped CIs are
-wide to account for this sensitivity when the sample size is small and not
-necessarily representative of the true distribution.
+The estimator is quite sensitive to the data, and so the CIs are wide to account
+for this sensitivity when the sample size is small and not necessarily
+representative of the true distribution.
 
 We also observe that the upper bound of the CI is more spread out than the lower
 bound. This is consistent with the behavior of the dispersion of the MLEs, which
-have a positive bias. Thus, the BCa (Bias-Corrected and Accelerated) CIs are
-accounting for this bias by being more spread out in the direction of the bias.
+have a positive bias. Thus, the CIs are accounting for this bias by being
+more spread out in the direction of the bias.
 
 ##### Bias of MLEs {-}
 The mean of the MLE (red dashed lines) initially has a large positive
@@ -1964,13 +1983,12 @@ consistent with the expectation that more data provides more information about
 the parameters, making the likelihood function more informative and easier to
 identify the parameters that maximize it. We see that the convergence rate is
 $95\%$ or greater for sample sizes $n \geq 100$ given moderate right-censoring
-(right-censoring quantile $q = 0.825$) and moderate masking (Bernoulli masking
-probability $p = 0.215$). Given how quickly the convergence rate increased,
-we anticipate that even for extreme censoring and masking, the convergence rate
-would likely rapidly increase to over $95\%$ as the sample size increases.
-However, for sample sizes $n < 100$, at least for series systems with $m = 5$
-components with Weibull lifetimes, the convergence rate is low. For small
-samples, any estimates should be taken with a grain of salt.
+and masking. Given how quickly the convergence rate increased, we anticipate
+that even for extreme censoring and masking, the convergence rate would likely
+rapidly increase to over $95\%$ as the sample size increases. However, for
+sample sizes $n < 100$, at least for series systems with $m = 5$ components with
+Weibull lifetimes, the convergence rate is low. For small samples, any estimates
+should be taken with a grain of salt.
 
 ### Summary
 In this scenario, we delve into the mitigating effects of sample size on the
@@ -1978,10 +1996,9 @@ challenges identified in previous scenarios concerning right-censoring and
 masking. The precision and accuracy of the MLE rapidly improves with a bias
 approaching zero. This is consistent with statistical theory and suggests that
 increasing the sample size can mitigate the effects of right-censoring and
-masking. The Bootstrapped (BCa) confidence intervals also narrow and become more
-reliable (with coverage probabilities approaching the nominal $95\%$ level) with
-larger samples, reinforcing the role of sample size in achieving robust
-estimates.
+masking. The BCa CIs also narrow and become more reliable (with coverage
+probabilities approaching the nominal $95\%$ level) with larger samples,
+reinforcing the role of sample size in achieving robust estimates.
 
 Future Work
 ===========
@@ -1993,8 +2010,7 @@ key results were:
   right-censoring and candidate sets.
 - Despite masking and censoring, the MLE demonstrated accurate and robust
   performance in simulation studies.
-- Bootstrap confidence intervals were reasonably well-calibrated, even for small
-  samples.
+- BCa confidence intervals had good coverage probability even for small samples.
 - Estimation of shape parameters was more challenging than scale parameters.
 
 Building on these findings, next we consider promising areas for future work.
@@ -2066,7 +2082,7 @@ applications.
 
 #### Bootstrapped Prediction Intervals {-}
 In this paper, we applied the bootstrap method to construct confidence
-intervals for the parameter $\v\theta$, which generated well-calibrated
+intervals for the parameter $\v\theta$, which generated correctly specified
 confidence intervals in our simulation study. We could do a similar analysis for
 other statistics, in particular prediction intervals, which are useful for
 predicting the reliability of a system or a component at a future time.
@@ -2085,22 +2101,25 @@ reliability from masked failure data in series systems. The methods demonstrated
 accurate and robust performance despite significant challenges introduced by
 masking and right-censoring.
 
-Simulation studies revealed particular sensitivities in estimating shape
-parameters of component lifetimes that follow Weibull distributions.
-Right-censoring and masking positively biased the estimates. However,
-with sufficiently large sample sizes around, these biases were overcome,
-suggesting enough information existed in the data to mitigate censoring and
-masking effects.
+Simulation studies revealed that for our well-designed series system with
+Weibull component lifetimes, right-censoring and masking positively biased the
+estimates and the more reliable components were more sensitive to these effects.
+Additionally, the shape parameters were more difficult to estimate than the
+scale parameters. However, with sufficiently large sample sizes, these 
+difficulties were overcome, suggesting enough information existed in the data to
+mitigate censoring and masking effects.
 
-Despite the challenges, bootstrapping produced confidence intervals that are
-correctly specified, even for small sample sizes. This good empirical coverage
-demonstrates the reliability of these intervals for statistical inference,
-striking a balance between precision and robustness. The modeling framework
-offers a statistically rigorous method for estimating latent component
-properties based on limited observational data concerning system reliability.
-The simulation studies validate these techniques and provide practical insights
-into their efficacy under diverse real-world scenarios. This enhances our
-capacity for statistical learning from obscured system failure data.
+Despite the challenges, the bootstrapped bias-corrected and accelerated
+confidence intervals were generally correctly specified with good overall
+coverage probabilities, even for relatively small sample sizes. This good
+empirical coverage demonstrates the reliability of these intervals for
+statistical inference, striking a balance between precision and robustness. The
+modeling framework offers a statistically rigorous method for estimating latent
+component properties based on limited observational data concerning system
+reliability. The simulation studies validate these techniques and provide
+practical insights into their efficacy under diverse real-world scenarios. This
+enhances our capacity for statistical learning from obscured system failure
+data.
 
 # Appendices {-}
 
@@ -2277,7 +2296,7 @@ candidate set and each non-failed component is included with some fixed
 probability $p$.
 
 ```{r, eval = FALSE}
-#' Bernoulli candidate set model is a particular type of *uninformed* model.
+#' Bernoulli masking model is a particular type of *uninformed* model.
 #' Note that we do not generate candidate sets with this function. See
 #' `md_cand_sampler` for that.
 #'

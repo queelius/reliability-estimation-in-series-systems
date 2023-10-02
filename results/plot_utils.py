@@ -12,48 +12,45 @@ def remove_outliers(data, par_mle, k=100):
 def plot_cp(data, x_col, x_col_label):
     rel_cols = [x_col] + [f'shape.{i}' for i in range(1, 6)] + [f'scale.{i}' for i in range(1, 6)] + \
         [f'shape.lower.{i}' for i in range(1, 6)] + [f'shape.upper.{i}' for i in range(1, 6)] + \
-        [f'scale.lower.{i}' for i in range(
-            1, 6)] + [f'scale.upper.{i}' for i in range(1, 6)]
+        [f'scale.lower.{i}' for i in range(1, 6)] + [f'scale.upper.{i}' for i in range(1, 6)]
     rel_data = data[rel_cols].copy()
 
     def compute_coverage(row, j):
-        shape_within_ci = row[f'shape.lower.{j}'] <= row[f'shape.{j}'] <= row[f'shape.upper.{j}']
-        scale_within_ci = row[f'scale.lower.{j}'] <= row[f'scale.{j}'] <= row[f'scale.upper.{j}']
-        return pd.Series([shape_within_ci, scale_within_ci], index=[f'shape_coverage.{j}', f'scale_coverage.{j}'])
+        shape_in_ci = row[f'shape.lower.{j}'] <= row[f'shape.{j}'] <= row[f'shape.upper.{j}']
+        scale_in_ci = row[f'scale.lower.{j}'] <= row[f'scale.{j}'] <= row[f'scale.upper.{j}']
+        return pd.Series([shape_in_ci, scale_in_ci], index=[f'shape_coverage.{j}', f'scale_coverage.{j}'])
 
     for j in range(1, 6):
-        rel_data[[f'shape_coverage.{j}', f'scale_coverage.{j}']] = rel_data.apply(
-            lambda row: compute_coverage(row, j), axis=1)
+        rel_data[[f'shape_coverage.{j}', f'scale_coverage.{j}']] = rel_data.apply(lambda row: compute_coverage(row, j), axis=1)
 
-    coverage_cols = [f'shape_coverage.{j}' for j in range(
-        1, 6)] + [f'scale_coverage.{j}' for j in range(1, 6)]
-    cps = rel_data.groupby(
-        x_col)[coverage_cols].mean().reset_index()
+    coverage_cols = [f'shape_coverage.{j}' for j in range(1, 6)] + [f'scale_coverage.{j}' for j in range(1, 6)]
+    cps = rel_data.groupby(x_col)[coverage_cols].mean().reset_index()
 
     # Mean coverage probabilities
-    mean_shape_cp = cps[[
-        f'shape_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
-    mean_scale_cp = cps[[
-        f'scale_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
+    mean_shape_cp = cps[[f'shape_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
+    mean_scale_cp = cps[[f'scale_coverage.{j}' for j in range(1, 6)]].mean(axis=1)
     cps['mean_shape_cp'] = mean_shape_cp
     cps['mean_scale_cp'] = mean_scale_cp
 
+    print(cps[[f'scale_coverage.{j}' for j in range(1, 6)]].head())
+    print(cps[[f'shape_coverage.{j}' for j in range(1, 6)]].head())
+
     plt.figure(figsize=[5, 4])
-    shape_cmap = plt.colormaps['Blues']
-    scale_cmap = plt.colormaps['Reds']
+    shape_cmap = plt.get_cmap('Blues')
+    scale_cmap = plt.get_cmap('Reds')
 
-    ls = ['-', '--', '-.', ':', '-']
-    mk = ['o', 's', '^', 'x', 'D']
+    shape_ls = ['-', '--', '-.', ':', '-']
+    shape_mk = ['o', 's', '^', 'x', 'D']
 
-    for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)), ls, mk):
-        plt.plot(
-            cps[x_col], cps[f'shape_coverage.{j}'], label=f'$k_{j}$',
-            color=color, linestyle=ls, marker=mk)
+    for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)), shape_ls, shape_mk):
+        plt.plot(cps[x_col], cps[f'shape_coverage.{j}'], label=f'$k_{j}$', color=color, linestyle=ls, marker=mk)
 
-    for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)), ls, mk):
-        plt.plot(
-            cps[x_col], cps[f'scale_coverage.{j}'], label=f'$\lambda_{j}$',
-            color=color, linestyle=ls, marker=mk)
+    scale_ls = ['-', '--', '-.', ':', '-']
+    scale_mk = ['o', 's', '^', 'x', 'D']
+
+    for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)), scale_ls, scale_mk):
+        plt.plot(cps[x_col], cps[f'scale_coverage.{j}'], label=f'$\lambda_{j}$', color=color, linestyle=ls, marker=mk)
+
 
     plt.plot(cps[x_col], cps['mean_shape_cp'],
              color='darkblue', linewidth=4, linestyle='-', label='$\\bar{k}$')
