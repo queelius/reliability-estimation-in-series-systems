@@ -1600,7 +1600,10 @@ since the Bernoulli random variables are not a function of $\v\theta$.
   \end{align}
   The same pattern holds for the third component. We see that the probability
   of the candidate set being equal to some set $c_i$ is the same for all
-  components in $c_i$ and for all system failure times $t_i$.
+  components in that $c_i$ and for all system failure times $t_i$, e.g., if
+  the probability that $c_i = \{1,2\}$ is $p(1-p)$ when we condition in either
+  compoent $1$ or component $2$ being the cause of failure, which satisfies
+  Condition \@ref(cond:equal-prob-failure-cause).
 
   There are many more ways to satisfy the masking conditions, but we choose
   the Bernoulli masking model because it is simple to understand and
@@ -2321,11 +2324,10 @@ md_bernoulli_cand_c1_c2_c3 <- function(df, p) {
 This appendix showcases select Python and R code instrumental in generating
 this paper. The entire source code can be found on GitHub:
 [`github.com/queelius/reliability-estimation-in-series-systems`](https://github.com/queelius/reliability-estimation-in-series-systems)
-[@towell2023reliability].
-
-For the sake of clarity and brevity, certain functionalities and safeguards from
-the original code have been omitted. However, the full, unedited code, as well
-as the methods to reproduce this paper, are available in the GitHub repository.
+[@towell2023reliability]. For clarity and brevity, certain functionalities and
+safeguards from the original code have been omitted. However, the full, unedited
+code, as well as the methods to reproduce this paper, are available in the
+GitHub repository.
 
 ## Scenario Simulation {#app-sim-study-r}
 
@@ -2384,6 +2386,26 @@ simulate_scenario <- function(
 }
 ```
 
+For example, to run the simulation study for the effect of masking probability,
+we would run the following code:
+
+```{r, eval=FALSE}
+source("sim-scenario.R")
+library(wei.series.md.c1.c2.c3)
+simulate_scenario(
+    theta = alex_weibull_series$theta, # the well-designed system
+    N = c(90L), # sample size
+    P = c(0.1, 0.215, 0.4, 0.55, 0.7), # vary masking probability
+    Q = c(0.825), # right-censoring quantile
+    R = 400L, B = 1000L,
+    max_iter = 125L, max_boot_iter = 125L,
+    n_cores = 2L, csv_file = "masking-prob-sim.csv",
+    ci_method = "bca", ci_level = .95)
+```
+
+Please see the GitHub repository for the full code, since the code as presented
+will not run without supporting functions.
+
 ## Plot Generation Code {#app-plot-r}
 
 The following Python code generates the plots for the simulation study,
@@ -2404,50 +2426,53 @@ def plot_cp(data, x_col, x_col_label):
   def compute_coverage(row, j):
     shape_in = row[f'shape.lower.{j}'] <= row[f'shape.{j}'] <= row[f'shape.upper.{j}']
     scale_in = row[f'scale.lower.{j}'] <= row[f'scale.{j}'] <= row[f'scale.upper.{j}']
-    return pd.Series([shape_in, scale_in], index=[f'shape_cov.{j}', f'scale_cov.{j}'])
+    return pd.Series([shape_in, scale_in], index=[f'shape.cov.{j}', f'scale.cov.{j}'])
 
   for j in range(1, 6):
-    rel_data[[f'shape_cov.{j}', f'scale_cov.{j}']] = rel_data.apply(
-      lambda row: compute_coverage(row, j), axis=1)
+    rel_data[[f'shape.cov.{j}', f'scale.cov.{j}']] = \
+      rel_data.apply(lambda row: compute_coverage(row, j), axis=1)
 
-  coverage_cols = [f'shape_cov.{j}' for j in range(1, 6)] + \
-    [f'scale_cov.{j}' for j in range(1, 6)]
-  cps = rel_data.groupby(x_col)[coverage_cols].mean().reset_index()
+  cols.cov = [f'shape.cov.{j}' for j in range(1, 6)] + \
+             [f'scale.cov.{j}' for j in range(1, 6)]
+  cps = rel_data.groupby(x_col)[cols.cov].mean().reset_index()
 
   # Mean coverage probabilities
-  mean_shape_cp = cps[[f'shape_cov.{j}' for j in range(1, 6)]].mean(axis=1)
-  mean_scale_cp = cps[[f'scale_cov.{j}' for j in range(1, 6)]].mean(axis=1)
+  mean_shape_cp = cps[[f'shape.cov.{j}' for j in range(1, 6)]].mean(axis=1)
+  mean_scale_cp = cps[[f'scale.cov.{j}' for j in range(1, 6)]].mean(axis=1)
   cps['mean_shape_cp'] = mean_shape_cp
   cps['mean_scale_cp'] = mean_scale_cp
 
   plt.figure(figsize=[5, 4])
-  shape_cmap = plt.colormaps['Blues']
-  scale_cmap = plt.colormaps['Reds']
+  shape_cmap = plt.get_cmap('Blues')
+  scale_cmap = plt.get_cmap('Reds')
 
-  ls = ['-', '--', '-.', ':', '-']
-  mk = ['o', 's', '^', 'x', 'D']
+  shape.ls = ['-', '--', '-.', ':', '-']
+  shape.mk = ['o', 's', '^', 'x', 'D']
 
-  for j, color, ls, mk in zip(range(1, 6), shape_cmap(np.linspace(0.4, 1, 5)), ls, mk):
-    plt.plot(
-      cps[x_col], cps[f'shape_cov.{j}'], label=f'$k_{j}$',
+  for j, color, ls, mk in zip(range(1, 6), \
+      shape_cmap(np.linspace(0.4, 1, 5)), shape.ls, shape.mk):
+    plt.plot(cps[x_col], cps[f'shape.cov.{j}'], label=f'$k_{j}$', \
       color=color, linestyle=ls, marker=mk)
 
-  for j, color, ls, mk in zip(range(1, 6), scale_cmap(np.linspace(0.4, 1, 5)), ls, mk):
-    plt.plot(
-      cps[x_col], cps[f'scale_cov.{j}'], label=f'$\lambda_{j}$',
+  scale.ls = ['-', '--', '-.', ':', '-']
+  scale.mk = ['o', 's', '^', 'x', 'D']
+
+  for j, color, ls, mk in zip(range(1, 6), \
+      scale_cmap(np.linspace(0.4, 1, 5)), scale.ls, scale.mk):
+    plt.plot(cps[x_col], cps[f'scale.cov.{j}'], label=f'$\lambda_{j}$', \
       color=color, linestyle=ls, marker=mk)
 
-  plt.plot(cps[x_col], cps['mean_shape_cp'],
-    color='darkblue', linewidth=4, linestyle='-', label='$\\bar{k}$')
-  plt.plot(cps[x_col], cps['mean_scale_cp'],
-    color='darkred', linewidth=4, linestyle='-', label='$\\bar{\lambda}$')
+  plt.plot(cps[x_col], cps['mean_shape_cp'], color='darkblue', linewidth=4, \
+    linestyle='-', label='$\\bar{k}$')
+  plt.plot(cps[x_col], cps['mean_scale_cp'], color='darkred', linewidth=4, \
+    linestyle='-', label='$\\bar{\lambda}$')
 
   plt.axhline(y=0.95, color='green', linestyle='--', label='$95\\%$')
   plt.axhline(y=0.90, color='red', linestyle='--', label='$90\\%$')
   plt.xlabel(f'{x_col_label} (${x_col}$)')
   plt.ylabel('Coverage Probability (CP)')
   plt.gca().yaxis.set_major_formatter(
-    FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
+      FuncFormatter(lambda y, _: '{:.2f}'.format(y)))
   plt.title('Coverage Probabilities for Parameters')
   plt.legend(loc='best', bbox_to_anchor=(1, 1))
   plt.tight_layout()
@@ -2505,7 +2530,6 @@ def plot_mle(raw_data, x_col, par, par_label, label, k=100, loc='upper left'):
 
   plt.tight_layout(h_pad=4.0, w_pad=2.5)
   plt.savefig(f'plot-{x_col}-vs-{par}-mle.pdf')
-  plt.close()
 ```
 
 For example, to generate a plot of the coverage probabilities with respect
@@ -2515,16 +2539,23 @@ code:
 ```{python, eval=FALSE}
 from plot_utils import plot_cp
 import pandas as pd
-
 plot_cp(pd.read_csv("data.csv"), 'n', 'Sample Size')
 ```
 
+Please see the GitHub repository for the full code, since the code as presented
+will not run without supporting functions.
+
 # Acknowledgements {-}
 
-I would like to thank my advisor, Dr. Marcus Agustin, for his invaluable
-guidance and support throughout this research project and my graduate studies.
-His expertise and encouragement as I faced health challenges were invaluable.
-I am also grateful to my committee member, Dr. Beidi Qiang, for reviewing my
-work and providing helpful feedback. She is an exceptional teacher and I fondly
-remember her classes. Finally, I would also like to thank my committee member, 
-____, for reviewing my work and providing helpful feedback.
+I am grateful to my advisor, Dr. Marcus Agustin, for his invaluable guidance and
+unwavering support throughout my extended period of research and graduate
+studies. His expertise and support were notably important as I navigated through
+health challenges.
+
+Special acknowledgment goes to Dr. Beidi Qiang, whose teachings and feedback
+have been instrumental in my academic progress. I have benefited from her
+insights both in and out of the classroom over the years.
+
+I also thank Dr. Ed Sewell for his willingness to contribute to my committee.
+His expertise in reviewing and providing feedback is an important component of
+this research.

@@ -1,0 +1,147 @@
+---
+title: "Reliability Estimation in Series Systems"
+subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
+author: Alex Towell
+output: 
+    beamer_presentation:
+        theme: Boadilla
+        #theme: "AnnArbor"
+        #colortheme: "dolphin"
+        #fonttheme: "structurebold"
+        slide_level: 2
+header-includes:
+   - \usepackage{tikz}
+   - \usepackage{caption}
+   - \usepackage{amsthm}
+   - \renewcommand{\v}[1]{\boldsymbol{#1}}
+   - \theoremstyle{definition}
+   - \newtheorem{condition}{Condition}
+   - \theoremstyle{plain}
+bibliography: ../refs.bib
+link-citations: true
+natbiboptions: "numbers"
+csl: ../ieee-with-url.csl
+---
+
+# Introduction
+
+## Presentation Overview
+- Reliability estimation in series systems
+- Challenges of masked and right-censored failure data
+- New maximum likelihood techniques
+- Modeling framework and results from simulation studies
+
+## Context & Motivation
+- Quantifying reliability in series systems is essential.
+- Real-world systems often only provide system-level failure data.
+- Masked and right-censored data obscure true reliability metrics.
+- Need robust techniques to decipher this data and make accurate estimations.
+
+## Core Contributions
+1. Derivation of likelihood model that accounts for right-censoring and masking.
+2. Extensive simulation studies with Weibull distributed component lifetimes.
+3. Evaluations of BCa confidence intervals.
+4. Insights into the performance of the maximum likelihood estimator.
+
+## Aim
+- Offer a comprehensive understanding of reliability estimation techniques.
+- Validate the use of masked reliability data in such analyses.
+
+# Series System Derivations
+
+## System Reliability Function
+- Describes the probability a system functions at a specific time.
+\( R_{T_i}(t';\v\theta) \) represents the probability the \(i^{th}\) system functions at time \( t' \).
+- Defined as the product of the reliabilities of its individual components.
+\[ R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}) \]
+- Reliability function is important in our likelihood model for right-censoring events (discussed later).
+
+## System Hazard Function
+- Sum of the hazard functions of its components.
+\[ h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}) \]
+- Relation to the system's reliability and pdf:
+\[ f_{T_i}(t;\v\theta) = \biggl\{\sum_{j=1}^m h_j(t;\v{\theta_j})\biggr\} \biggl\{ \prod_{j=1}^m R_j(t;\v{\theta_j}) \biggr\} \]
+
+## Component Cause of Failure
+- System's reliability is determined by its components.
+- Only one component causes a series system failure.
+- MTTF is a summary measure of reliability:
+  - Equivalent to integrating its reliability function over its support.
+- MTTF can be misleading.
+  - We can't assume components with longer MTTFs are more reliable.
+- Probability that the \( j^{th} \) component causes failure:
+\[ \Pr\{K_i = j\} = E_{\v\theta} \biggl[ \frac{h_j(T_i;\v{\theta_j})} {\sum_{l=1}^m h_l(T_i ; \v{\theta_l})} \biggr] \]
+- Joint distribution of the system lifetime and the component cause of failure:
+\[ f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) \prod_{l=1}^m R_l(t;\v\theta) \]
+- Joint PDF of \( T_i \) and \( K_i \) is important in our likelihood model for masked failures (discuss later).
+
+## Well-Designed Series Systems
+
+- A series system is only as strong as its weakest component.
+- In a **well-designed** series system, the components have similiar failure characteristics:
+  - Similar MTTFs and probability of being the cause of failure.
+- Our simulation study is based on a reasonably well-designed series system.
+
+
+
+
+
+
+
+# Future Work
+
+## Preface to Future Work
+
+Before I conclude, I want to take a moment to share some promising avenues for further research that emerged during my studies but were beyond the scope of the primary paper. These areas present intriguing opportunities for further exploration.
+
+## Collaborative Invitation
+
+I am genuinely excited about the potential these paths hold and am keen on collaborating with anyone interested in diving deeper into these topics. Whether you're considering a new research direction or seeking ideas for projects for students you're mentoring, I believe there's a wealth of possibilities here. It would be a privilege to work together, contribute to your efforts, or simply discuss these ideas further.
+
+## Relaxation of Masking Conditions
+
+Investigate relaxations of Conditions 1, 2, and 3...
+
+- Condition 1 stipulates that...
+- Explore potential of **KL-divergence**...
+
+## Deviations from Well-Designed Systems
+
+Assess the sensitivity of the estimator to deviations in system design...
+
+- Preliminary findings suggest...
+
+## Semi-Parametric Bootstrap
+
+Consider the semi-parametric bootstrap approach...
+
+- Possible benefits over the non-parametric method...
+
+## Data Augmentation
+
+Assess the robustness of Data Augmentation (DA)...
+
+- Potential advantages of DA as an implicit prior...
+
+## Penalized Likelihood For Homogenous Shape Parameters
+
+Explore penalized likelihood methods...
+
+- Weigh benefits against Data Augmentation...
+
+## General Likelihood Model with Predictors
+
+Expand the likelihood model to accommodate predictors...
+
+- Incorporate different hazard function forms...
+
+## Assess Calibration of Other Bootstrapped Statistics
+
+Evaluate calibration of other bootstrapped statistics...
+
+- Possible insights into system behaviors...
+
+## Conclusion
+
+The current results provide a solid foundation for extensions that can further refine the methods and expand their applicability. I welcome further discussions and collaborations in these domains.
+

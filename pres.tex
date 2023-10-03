@@ -1,0 +1,266 @@
+\documentclass[]{tufte-book}
+
+% ams
+\usepackage{amssymb,amsmath}
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \makeatletter
+  \@ifpackageloaded{fontspec}{}{\usepackage{fontspec}}
+  \makeatother
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \makeatletter
+  \@ifpackageloaded{soul}{
+     \renewcommand\allcapsspacing[1]{{\addfontfeature{LetterSpace=15}#1}}
+     \renewcommand\smallcapsspacing[1]{{\addfontfeature{LetterSpace=10}#1}}
+   }{}
+  \makeatother
+
+\fi
+
+% graphix
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+
+% booktabs
+\usepackage{booktabs}
+
+% url
+\usepackage{url}
+
+% hyperref
+\usepackage{hyperref}
+
+% units.
+\usepackage{units}
+
+
+\setcounter{secnumdepth}{2}
+
+% citations
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+
+% pandoc syntax highlighting
+
+% table with pandoc
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+
+% multiplecol
+\usepackage{multicol}
+
+% strikeout
+\usepackage[normalem]{ulem}
+
+% morefloats
+\usepackage{morefloats}
+
+
+% tightlist macro required by pandoc >= 1.14
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% title / author / date
+\title{Reliability Estimation in Series Systems}
+\author{Alex Towell}
+\date{}
+
+\usepackage{tikz}
+\usepackage{caption}
+\usepackage{amsthm}
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\theoremstyle{definition}
+\newtheorem{condition}{Condition}
+\theoremstyle{plain}
+
+\begin{document}
+
+\maketitle
+
+
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+
+\hypertarget{introduction}{%
+\chapter{Introduction}\label{introduction}}
+
+\hypertarget{presentation-overview}{%
+\section{Presentation Overview}\label{presentation-overview}}
+
+\begin{itemize}
+\tightlist
+\item
+  Reliability estimation in series systems
+\item
+  Challenges of masked and right-censored failure data
+\item
+  New maximum likelihood techniques
+\item
+  Modeling framework and results from simulation studies
+\end{itemize}
+
+\hypertarget{context-motivation}{%
+\section{Context \& Motivation}\label{context-motivation}}
+
+\begin{itemize}
+\tightlist
+\item
+  Quantifying reliability in series systems is essential.
+\item
+  Real-world systems often only provide system-level failure data.
+\item
+  Masked and right-censored data obscure true reliability metrics.
+\item
+  Need robust techniques to decipher this data and make accurate estimations.
+\end{itemize}
+
+\hypertarget{core-contributions}{%
+\section{Core Contributions}\label{core-contributions}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  New likelihood model that accounts for right-censoring and masking.
+\item
+  Extensive simulation studies with Weibull-distributed lifetimes.
+\item
+  Evaluations of BCa confidence intervals.
+\item
+  Insights into the performance of the maximum likelihood estimator.
+\end{enumerate}
+
+\hypertarget{aim}{%
+\section{Aim}\label{aim}}
+
+\begin{itemize}
+\tightlist
+\item
+  Offer a comprehensive understanding of reliability estimation techniques.
+\item
+  Validate the use of masked reliability data in such analyses.
+\end{itemize}
+
+\hypertarget{series-system-derivations}{%
+\chapter{Series System Derivations}\label{series-system-derivations}}
+
+\hypertarget{system-reliability-function}{%
+\section{System Reliability Function}\label{system-reliability-function}}
+
+\begin{itemize}
+\tightlist
+\item
+  Describes the probability a system functions at a specific time.
+  \(R_{T_i}(t';\boldsymbol{\theta})\) represents the probability the \(i^{th}\) system functions at time \(t'\).
+\item
+  Defined as the product of the reliabilities of its individual components.
+  \[ R_{T_i}(t;\boldsymbol{\theta}) = \prod_{j=1}^m R_j(t;\boldsymbol{\theta_j}) \]
+\end{itemize}
+
+\hypertarget{system-hazard-function}{%
+\section{System Hazard Function}\label{system-hazard-function}}
+
+\begin{itemize}
+\tightlist
+\item
+  Sum of the hazard functions of its components.
+  \[ h_{T_i}(t;\boldsymbol{\theta}) = \sum_{j=1}^m h_j(t;\boldsymbol{\theta_j}) \]
+\item
+  Relation to the system's reliability and pdf:
+  \[ f_{T_i}(t;\boldsymbol{\theta}) = \biggl\{\sum_{j=1}^m h_j(t;\boldsymbol{\theta_j})\biggr\} \biggl\{ \prod_{j=1}^m R_j(t;\boldsymbol{\theta_j}) \biggr\} \]
+\end{itemize}
+
+\hypertarget{system-pdf}{%
+\section{System PDF}\label{system-pdf}}
+
+\begin{itemize}
+\tightlist
+\item
+  Represents how the likelihood of system failure varies over time.
+  \[ f_{T_i}(t;\boldsymbol{\theta}) = h_{T_i}(t;\boldsymbol{\theta}) R_{T_i}(t;\boldsymbol{\theta}) \]
+\end{itemize}
+
+\hypertarget{summary}{%
+\section{Summary}\label{summary}}
+
+\begin{itemize}
+\tightlist
+\item
+  Series system models derive mathematical relationships between component and system lifetimes.
+\item
+  These derivations provide a foundation for understanding system reliability and predicting failures.
+\end{itemize}
+
+\hypertarget{system-and-component-reliabilities}{%
+\chapter{System and Component Reliabilities}\label{system-and-component-reliabilities}}
+
+\hypertarget{mean-time-to-failure-mttf}{%
+\section{Mean Time to Failure (MTTF)}\label{mean-time-to-failure-mttf}}
+
+\begin{itemize}
+\tightlist
+\item
+  A summary measure of the system's reliability.
+  \[ \text{MTTF} = E_{\boldsymbol{\theta}}[T_i] \]
+\item
+  Integration of the reliability function over its support given certain assumptions\footnote{Assumptions: \(T_i\) is non-negative and continuous, \(R_{T_i}(t;\boldsymbol{\theta})\) is continuous and differentiable for \(t > 0\), and \(\int_0^\infty R_{T_i}(t;\boldsymbol{\theta}) dt\) converges.}.
+\item
+  MTTF can be misleading, especially for systems with fat-tailed distributions\footnote{Fat-tailed distributions have tails that decay slower than the exponential family. They can affect MTTF with higher likelihoods of extreme values.}.
+\end{itemize}
+
+\hypertarget{component-reliabilities}{%
+\section{Component Reliabilities}\label{component-reliabilities}}
+
+\begin{itemize}
+\tightlist
+\item
+  System's reliability is determined by its components.
+\item
+  MTTF for the \(j^{th}\) component: \(\text{MTTF}_j\).
+\item
+  Probability \(j^{th}\) component causes failure: \(\Pr\{K_i = j\}\).
+\item
+  In a \textbf{well-designed} series system:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Components have similar MTTFs.
+  \item
+    Equal probabilities of being the failure cause.
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{upcoming}{%
+\subsection{Upcoming}\label{upcoming}}
+
+\begin{itemize}
+\tightlist
+\item
+  Use the joint PDF of \(T\) and \(K\) in the likelihood model derivation.
+\item
+  Incorporate the reliability function in the likelihood model for right censoring.
+\end{itemize}
+
+\bibliography{refs.bib}
+
+
+
+\end{document}
