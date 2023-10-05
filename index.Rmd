@@ -8,28 +8,41 @@ author: |
 date: "2023-09-30"
 abstract: "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields correctly specified confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data."
 output:
-    #bookdown::html_document2:
-    #bookdown::pdf_document2:
+    bookdown::html_document2:
+        toc: true
+        toc_depth: 2
+        number_sections: true
+        df_print: kable
+        citation_package: natbib
+    bookdown::html_book:
+        toc: true
+        toc_depth: 2
+        number_sections: true
+        df_print: kable
+        citation_package: natbib
+    bookdown::word_document2:
+        toc: true
+        toc_depth: 2
+        number_sections: true
+        df_print: kable
+        citation_package: natbib
     bookdown::gitbook:
         split_by: none
         config:
-            toc:
-                collapse: none
-                scroll_highlight: true
-            toolbar:
-                position: fixed  # makes the toolbar float
-            search: true
-#       df_print: kable
+          toc:
+            collapse: section
+            scroll_highlight: true
+          toolbar:
+            position: fixed  # makes the toolbar float
+          search: true
         citation_package: natbib
     bookdown::pdf_book:
         toc: true
         #latex_engine: xelatex
-        #toc_depth: 3
+        toc_depth: 2
         number_sections: true
-        #extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
         extra_dependencies: ["tikz", "caption", "amsthm", "amsmath"]
         df_print: kable
-        #keep_tex: true
         citation_package: natbib
 indent: true
 header-includes:
@@ -44,11 +57,8 @@ header-includes:
    - \theoremstyle{plain}
 bibliography: refs.bib
 link-citations: true
-#biblio-style: apalike
-#biblio-style: plainnat
 natbiboptions: "numbers"
 csl: ieee-with-url.csl
-#biblio-style: amsplain
 ---
 
 ```{r setup, include=FALSE}

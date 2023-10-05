@@ -1,0 +1,2 @@
+#!/bin/bash
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::word_document2', output_dir = './word')"
