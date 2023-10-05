@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="7.6 Scenario: Assessing the Impact of Sample Size | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="date" content="2023-09-30" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="/usr/share/javascript/mathjax/tex-mml-chtml.js" type="text/javascript"></script>
+
+<meta name="description" content="7.6 Scenario: Assessing the Impact of Sample Size | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data">
+
+<title>7.6 Scenario: Assessing the Impact of Sample Size | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+<style type="text/css">
+  p.abstract{
+    text-align: center;
+    font-weight: bold;
+  }
+  div.abstract{
+    margin: auto;
+    width: 90%;
+  }
+</style>
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+/* show arrow before summary tag as in bootstrap
+TODO: remove if boostrap in updated in html_document (rmarkdown#1485) */
+details > summary {
+  display: list-item;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container-fluid main-container">
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li><a href="index.html#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
+<li class="has-sub"><a href="2-statmod.html#statmod"><span class="toc-section-number">2</span> Series System Model</a>
+<ul>
+<li><a href="2.1-comp-cause.html#comp-cause"><span class="toc-section-number">2.1</span> Component Cause of Failure</a></li>
+<li><a href="2.2-reliability.html#reliability"><span class="toc-section-number">2.2</span> System and Component Reliabilities</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-like-model.html#like-model"><span class="toc-section-number">3</span> Likelihood Model for Masked Data</a>
+<ul>
+<li><a href="3.1-candmod.html#candmod"><span class="toc-section-number">3.1</span> Masked Component Cause of Failure</a></li>
+<li><a href="3.2-right-censored-data.html#right-censored-data"><span class="toc-section-number">3.2</span> Right-Censored Data</a></li>
+<li><a href="3.3-identifiability.html#identifiability"><span class="toc-section-number">3.3</span> Identifiability and Convergence Issues</a></li>
+</ul></li>
+<li><a href="4-mle.html#mle"><span class="toc-section-number">4</span> Maximum Likelihood Estimation</a></li>
+<li><a href="5-boot.html#boot"><span class="toc-section-number">5</span> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a></li>
+<li class="has-sub"><a href="6-weibull.html#weibull"><span class="toc-section-number">6</span> Series System with Weibull Components</a>
+<ul>
+<li><a href="6.1-sys-weibull-like.html#sys-weibull-like"><span class="toc-section-number">6.1</span> Likelihood Model</a></li>
+<li><a href="6.2-reduced-weibull.html#reduced-weibull"><span class="toc-section-number">6.2</span> Weibull Series System: Homogeneous Shape Parameters</a></li>
+</ul></li>
+<li class="has-sub"><a href="7-sim-study.html#sim-study"><span class="toc-section-number">7</span> Simulation Study: Series System with Weibull Components</a>
+<ul>
+<li><a href="7.1-performance-metrics.html#performance-metrics"><span class="toc-section-number">7.1</span> Performance Metrics</a></li>
+<li><a href="7.2-data-gen-proc.html#data-gen-proc"><span class="toc-section-number">7.2</span> Data Generating Process</a></li>
+<li><a href="7.3-overview-of-simulations.html#overview-of-simulations"><span class="toc-section-number">7.3</span> Overview of Simulations</a></li>
+<li class="has-sub"><a href="7.4-effect-censoring.html#effect-censoring"><span class="toc-section-number">7.4</span> Scenario: Assessing the Impact of Right-Censoring</a>
+<ul>
+<li><a href="7.4-effect-censoring.html#background"><span class="toc-section-number">7.4.1</span> Background</a></li>
+<li><a href="7.4-effect-censoring.html#key-observations"><span class="toc-section-number">7.4.2</span> Key Observations</a></li>
+<li><a href="7.4-effect-censoring.html#summary"><span class="toc-section-number">7.4.3</span> Summary</a></li>
+</ul></li>
+<li class="has-sub"><a href="7.5-p-vs-mttf.html#p-vs-mttf"><span class="toc-section-number">7.5</span> Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure</a>
+<ul>
+<li><a href="7.5-p-vs-mttf.html#background-1"><span class="toc-section-number">7.5.1</span> Background</a></li>
+<li><a href="7.5-p-vs-mttf.html#key-observations-1"><span class="toc-section-number">7.5.2</span> Key Observations</a></li>
+<li><a href="7.5-p-vs-mttf.html#summary-1"><span class="toc-section-number">7.5.3</span> Summary</a></li>
+</ul></li>
+<li class="has-sub"><a href="7.6-effect-samp-size.html#effect-samp-size"><span class="toc-section-number">7.6</span> Scenario: Assessing the Impact of Sample Size</a>
+<ul>
+<li><a href="7.6-effect-samp-size.html#key-observations-2"><span class="toc-section-number">7.6.1</span> Key Observations</a></li>
+<li><a href="7.6-effect-samp-size.html#summary-2"><span class="toc-section-number">7.6.2</span> Summary</a></li>
+</ul></li>
+</ul></li>
+<li><a href="8-future-work.html#future-work"><span class="toc-section-number">8</span> Future Work</a></li>
+<li><a href="9-conclusion.html#conclusion"><span class="toc-section-number">9</span> Conclusion</a></li>
+<li><a href="appendices.html#appendices">Appendices</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="has-sub"><a href="A-series-system-with-weibull-component-lifetimes.html#series-system-with-weibull-component-lifetimes"><span class="toc-section-number">A</span> Series System with Weibull Component Lifetimes</a>
+<ul>
+<li><a href="A.1-app-weibull-loglik-r.html#app-weibull-loglik-r"><span class="toc-section-number">A.1</span> Log-likelihood Function</a></li>
+<li><a href="A.2-app-score-fn-r.html#app-score-fn-r"><span class="toc-section-number">A.2</span> Score Function</a></li>
+<li><a href="A.3-app-series-quantile.html#app-series-quantile"><span class="toc-section-number">A.3</span> Quantile Function</a></li>
+<li><a href="A.4-app-mle-r.html#app-mle-r"><span class="toc-section-number">A.4</span> Maximum Likelihood Estimation</a></li>
+<li><a href="A.5-app-cand-model-r.html#app-cand-model-r"><span class="toc-section-number">A.5</span> Bernoulli Masking Model</a></li>
+</ul></li>
+<li class="has-sub"><a href="B-simulation.html#simulation"><span class="toc-section-number">B</span> Simulation</a>
+<ul>
+<li><a href="B.1-app-sim-study-r.html#app-sim-study-r"><span class="toc-section-number">B.1</span> Scenario Simulation</a></li>
+<li><a href="B.2-app-plot-r.html#app-plot-r"><span class="toc-section-number">B.2</span> Plot Generation Code</a></li>
+</ul></li>
+<li><a href="acknowledgements.html#acknowledgements">Acknowledgements</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="effect-samp-size" class="section level2" number="7.6">
+<h2><span class="header-section-number">7.6</span> Scenario: Assessing the Impact of Sample Size</h2>
+<p>In this scenario, we use the well-designed series system described in
+Table . We fix the masking probability to <span class="math inline">\(p = 0.215\)</span>
+(moderate masking), we fix the right-censoring quantile to <span class="math inline">\(q = 0.825\)</span>
+(moderate censoring), and we vary the sample size <span class="math inline">\(n\)</span> from <span class="math inline">\(50\)</span> (small sample
+size) to <span class="math inline">\(500\)</span> (large sample size).</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:samp-size-n-vs-stats"></span>
+<embed src="image/5_system_samp_size_fig.pdf" title="Sample Size ($n$) vs MLEs ($p = 0.215, q = 0.825$)" width="100%" type="application/pdf" />
+<p class="caption">
+Figure 7.3: Sample Size (<span class="math inline">\(n\)</span>) vs MLEs (<span class="math inline">\(p = 0.215, q = 0.825\)</span>)
+</p>
+</div>
+<p>In Figure , we show the effect of the sample size
+<span class="math inline">\(n\)</span> on the MLEs for the shape and scale parameters. The top four plots only show
+the effect on the MLEs for the shape and scale parameters of components <span class="math inline">\(1\)</span> and
+<span class="math inline">\(3\)</span>, component 1 being the most reliable component in the system and component 3
+being the least reliable component. The bottom left plot shows the coverage
+probabilities of the confidence intervals for all parameters and the bottom
+right plot shows the convergence rate of the MLE.</p>
+<div id="key-observations-2" class="section level3" number="7.6.1">
+<h3><span class="header-section-number">7.6.1</span> Key Observations</h3>
+<div id="coverage-probability-cp-2" class="section level5 unnumbered" number="">
+<h5>Coverage Probability (CP)</h5>
+<p>The confidence intervals are correctly specified, obtaining coverages
+above <span class="math inline">\(90\%\)</span> for most of the parameters across the entire sample size range,
+and they are converging to the nominal <span class="math inline">\(95\%\)</span> level as the sample size
+increases. The BCa CIs contain the true value of the parameters with the
+specified confidence level, and the CIs neither too wide nor too narrow.</p>
+<p>However, as in the previous scenario where we varied the right-censoring
+amount, the scale parameters have better coverage than the shape parameters.
+The scale parameters are consistently around the nominal <span class="math inline">\(95\%\)</span> level for all
+sample sizes, but the shape parameters lag behind, suggesting that the shape
+parameters are more difficult to estimate than the scale parameters.</p>
+</div>
+<div id="dispersion-of-mles-2" class="section level5 unnumbered" number="">
+<h5>Dispersion of MLEs</h5>
+<p>The shaded regions representing the <span class="math inline">\(95\%\)</span> quantile range of the MLEs become
+more narrow as the sample size increases. This is an indicator of the increased
+precision in the estimates when provided with more data.</p>
+<p>We also see that the dispersion of the MLEs for <span class="math inline">\(k_1\)</span> and <span class="math inline">\(\lambda_1\)</span> are much
+larger than the dispersion of the MLEs for <span class="math inline">\(k_3\)</span> and <span class="math inline">\(\lambda_3\)</span>. This is
+consistent with the previous analysis in the right-censoring scenario.</p>
+</div>
+<div id="median-aggregated-cis-2" class="section level5 unnumbered" number="">
+<h5>Median-Aggregated CIs</h5>
+<p>The median-aggregated CIs (vertical dark blue bars) show that the CIs are
+becoming less spread out as the sample size increases, indicating that they are
+becoming more consistent and centered around a tighter range while maintaining
+good coverage probability. The end result is that we can construct more precise
+and accurate CIs with larger samples and thus we can make more confident
+inferences about the true parameter value.</p>
+<p>The estimator is quite sensitive to the data, and so the CIs are wide to account
+for this sensitivity when the sample size is small and not necessarily
+representative of the true distribution.</p>
+<p>We also observe that the upper bound of the CI is more spread out than the lower
+bound. This is consistent with the behavior of the dispersion of the MLEs, which
+have a positive bias. Thus, the CIs are accounting for this bias by being
+more spread out in the direction of the bias.</p>
+</div>
+<div id="bias-of-mles-2" class="section level5 unnumbered" number="">
+<h5>Bias of MLEs</h5>
+<p>The mean of the MLE (red dashed lines) initially has a large positive
+bias, but diminishes to negligible levels as the sample size increases. In the
+previous right-censoring scenario, the bias never reached zero, but we see that
+in this scenario, at around a sample size of <span class="math inline">\(250\)</span>, the estimator is essentially
+unbiased, suggesting that there is enough information in the sample to overcome
+the bias from the right-censoring (<span class="math inline">\(q = 0.825\)</span>) and masking (<span class="math inline">\(p = 0.215\)</span>)
+effects.</p>
+</div>
+<div id="convergence-rate-2" class="section level5 unnumbered" number="">
+<h5>Convergence Rate</h5>
+<p>The convergence rate increases as the sample size <span class="math inline">\(n\)</span> increases. This is
+consistent with the expectation that more data provides more information about
+the parameters, making the likelihood function more informative and easier to
+identify the parameters that maximize it. We see that the convergence rate is
+<span class="math inline">\(95\%\)</span> or greater for sample sizes <span class="math inline">\(n \geq 100\)</span> given moderate right-censoring
+and masking. Given how quickly the convergence rate increased, we anticipate
+that even for extreme censoring and masking, the convergence rate would likely
+rapidly increase to over <span class="math inline">\(95\%\)</span> as the sample size increases. However, for
+sample sizes <span class="math inline">\(n &lt; 100\)</span>, at least for series systems with <span class="math inline">\(m = 5\)</span> components with
+Weibull lifetimes, the convergence rate is low. For small samples, any estimates
+should be taken with a grain of salt.</p>
+</div>
+</div>
+<div id="summary-2" class="section level3" number="7.6.2">
+<h3><span class="header-section-number">7.6.2</span> Summary</h3>
+<p>In this scenario, we delve into the mitigating effects of sample size on the
+challenges identified in previous scenarios concerning right-censoring and
+masking. The precision and accuracy of the MLE rapidly improves with a bias
+approaching zero. This is consistent with statistical theory and suggests that
+increasing the sample size can mitigate the effects of right-censoring and
+masking. The BCa CIs also narrow and become more reliable (with coverage
+probabilities approaching the nominal <span class="math inline">\(95\%\)</span> level) with larger samples,
+reinforcing the role of sample size in achieving robust estimates.</p>
+</div>
+</div>
+<!-- </div> -->
+<p style="text-align: center;">
+<a href="7.5-p-vs-mttf.html"><button class="btn btn-default">Previous</button></a>
+<a href="8-future-work.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# build a nice bootstrap-based website
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::gitbook')"
+# build a nice html-based website
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::html_book')"
+# build a nice pdf-based book
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::pdf_book')"
+# build a nice epub-based book
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::epub_book')"
+# build a nice word-based book
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::word_document2')"
+# build a nice odt-based book
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::odt_book')"
+# build a nice md-based book
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::md_book')"
+# build a nice tufte-based book
+Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::tufte_book')"

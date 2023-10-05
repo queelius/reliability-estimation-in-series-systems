@@ -3,12 +3,16 @@ title: "Reliability Estimation in Series Systems"
 subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
 author: Alex Towell
 output: 
-    beamer_presentation:
-        theme: Boadilla
+  powerpoint_presentation:
+    keep_md: true
+    slide_level: 2
+
+    #beamer_presentation:
+    #    theme: Boadilla
         #theme: "AnnArbor"
         #colortheme: "dolphin"
         #fonttheme: "structurebold"
-        slide_level: 2
+        #slide_level: 2
 header-includes:
    - \usepackage{tikz}
    - \usepackage{caption}
@@ -17,6 +21,7 @@ header-includes:
    - \theoremstyle{definition}
    - \newtheorem{condition}{Condition}
    - \theoremstyle{plain}
+   - "\\setbeameroption{show notes on second screen=right}"
 bibliography: ../refs.bib
 link-citations: true
 natbiboptions: "numbers"
@@ -47,86 +52,71 @@ csl: ../ieee-with-url.csl
 \resizebox{0.7\textwidth}{!}{\input{../image/series.tex}}
 \end{figure}
 
-A lot of complex systems have *critical* components $(x_1, \ldots, x_5)$.
+- **Main Concept**: If one component fails, the entire system fails.
+\note{Remember the analogy: "A chain is only as strong as its weakest link."}
 
-- One component fails, the system fails.
-- "A chain is only as strong as its weakest link." - Thomas Reid
-- We call these *series systems*. Let $T_i = \min(T_{i 1}, \ldots, T_{i 5})$ be
-the lifetime of system $i$.
-  - $T_{i j}$ is the lifetime of component $j$ in system $i$.
+## Reliability Function
 
-## Reliability Function: System Longevity
-**Definition**: Represents the probability that a system or component functions
-beyond a specified time $t$:
+**Definition**: Probability a system/component works beyond time \( t \):
 $$
 R_X(x) = \Pr\{X > x\}.
 $$
 
-**Interpretation**:
+\note{High reliability = low failure probability. Used directly in likelihood models for right-censoring events.}
 
-- A high reliability value indicates a lower probability of failure.
-- Essential for understanding the longevity and dependability of systems and components.
-
-**Series System Reliability**: Product of the reliabilities of its components:
+For series systems:
 $$
 R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
 $$
 
-**Relevance**: Forms the basis for most reliability analyses and helps in
-  making informed decisions about system design and maintenance.
+\note{Core of many reliability analyses. Influences system design and maintenance decisions.}
 
-  - Directly used in our likelihood model for right-censoring events.
+## Hazard Function
 
-## Hazard Function: Failures Characteristics
-
-**Definition**: Instantaneous failure rate at a specific time, given survival up
-to that point:
+**Definition**: Instantaneous failure rate, given survival to a time:
 $$
 h_X(x) = \frac{f_X(t)}{R_X(t)}.
 $$
 
-**Interpretation**
+Characterizes failure risk over time:
+- Rising: wear-out.
+- Declining: defects.
+- Constant: random events.
 
-  - A tool to understand how failure risk evolves over time.
-  - Guides maintenance schedules and interventions.
-  - Failure characteristics:
-    - Rising: wear-out (aging).
-    - Declining: infant mortality (defects).
-    - Constant: random (accidents).
+\note{Useful for guiding maintenance and interventions based on failure patterns.}
 
-**Series System Hazard Function**:  Sum of the hazard functions of its components:
+For series systems:
 $$
 h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
 
 ## Component Cause of Failure
-Let $K_i$ denote component cause of failure of $i$\textsuperscript{th} system.
 
-- The probability that the $j$\textsuperscript{th} component causes failure:
+Defining \( K_i \) as the component causing the \( i^{th} \) system's failure:
+
+Probabilities:
+- Component \( j \) is the cause:
 $$
-\Pr\{K_i = j\} = E_{\v\theta} \biggl[ \frac{h_j(T_i;\v{\theta_j})} {h_{T_i}(T_i ; \v{\theta_l})} \biggr].
+\Pr\{K_i = j\} = E_{\v\theta} \left[ \frac{h_j(T_i;\v{\theta_j})} {h_{T_i}(T_i ; \v{\theta_l})} \right].
 $$
-- The conditional probability that the $j$\textsuperscript{th} component causes
-  a failure, given that the system failed at time $t$:
+- Given the system failed at time \( t \):
 $$
 \Pr\{K_i = j | T_i = t\} = \frac{h_j(t;\v{\theta_j})} {h_{T_i}(t ; \v{\theta_l})}.
 $$
-- Joint Distribution of System Lifetime and Component Cause of Failure
+- Joint distribution:
 $$
 f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) R_{T_i}(t;\v\theta).
 $$
-- **Relevance**: Important in our likelihood model for masked failures.
 
-## Reliability of Well-Designed Series Systems
-- MTTF is a summary measure of reliability:
-  - Equivalent to integrating its reliability function over its support.
-  - MTTF can be misleading. We can't assume components with longer MTTFs are more reliable.
-- A series system is only as strong as its weakest component.
-- In a *well-designed series system*, components have similar failure
-  characteristics:
-  - Similar MTTFs and probabilities of being the cause of failure.
-- **Relevance**: Our simulation study is based on a (reasonably) well-designed
-  series system.
+\note{Critical for understanding masked failures in our likelihood model.}
+
+## Well-Designed Series Systems
+
+Key Points:
+- MTTF is a measure of reliability but can be misleading.
+- Components should have similar failure patterns.
+
+\note{A well-designed series system has components with matching MTTFs and failure causes. The simulation study focuses on such systems.}
 
 # Likelihood Model
 We have our system model, but we don't observe component lifetimes. We observe

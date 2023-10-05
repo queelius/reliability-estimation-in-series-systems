@@ -1,9 +1,0 @@
-bookdown::tufte_book2:
-  latex_engine: xelatex  # Use XeLaTeX engine for better font support
-  citation_package: natbib  # Use natbib for citation
-  keep_tex: yes  # Keep the intermediate .tex file
-  toc: true  # Include table of contents
-  toc_depth: 2  # Depth of TOC
-  number_sections: true  # Number the sections
-  fig_caption: true  # Enable figure captions
-  dev: cairo_pdf  # Use cairo_pdf for graphics device
