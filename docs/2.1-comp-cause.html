@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="2.1 Component Cause of Failure | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="date" content="2023-09-30" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="/usr/share/javascript/mathjax/tex-mml-chtml.js" type="text/javascript"></script>
+
+<meta name="description" content="2.1 Component Cause of Failure | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data">
+
+<title>2.1 Component Cause of Failure | Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data</title>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+<style type="text/css">
+  p.abstract{
+    text-align: center;
+    font-weight: bold;
+  }
+  div.abstract{
+    margin: auto;
+    width: 90%;
+  }
+</style>
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+/* show arrow before summary tag as in bootstrap
+TODO: remove if boostrap in updated in html_document (rmarkdown#1485) */
+details > summary {
+  display: list-item;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container-fluid main-container">
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li><a href="index.html#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
+<li class="has-sub"><a href="2-statmod.html#statmod"><span class="toc-section-number">2</span> Series System Model</a>
+<ul>
+<li><a href="2.1-comp-cause.html#comp-cause"><span class="toc-section-number">2.1</span> Component Cause of Failure</a></li>
+<li><a href="2.2-reliability.html#reliability"><span class="toc-section-number">2.2</span> System and Component Reliabilities</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-like-model.html#like-model"><span class="toc-section-number">3</span> Likelihood Model for Masked Data</a>
+<ul>
+<li><a href="3.1-candmod.html#candmod"><span class="toc-section-number">3.1</span> Masked Component Cause of Failure</a></li>
+<li><a href="3.2-right-censored-data.html#right-censored-data"><span class="toc-section-number">3.2</span> Right-Censored Data</a></li>
+<li><a href="3.3-identifiability.html#identifiability"><span class="toc-section-number">3.3</span> Identifiability and Convergence Issues</a></li>
+</ul></li>
+<li><a href="4-mle.html#mle"><span class="toc-section-number">4</span> Maximum Likelihood Estimation</a></li>
+<li><a href="5-boot.html#boot"><span class="toc-section-number">5</span> Bias-Corrected and Accelerated Bootstrap Confidence Intervals</a></li>
+<li class="has-sub"><a href="6-weibull.html#weibull"><span class="toc-section-number">6</span> Series System with Weibull Components</a>
+<ul>
+<li><a href="6.1-sys-weibull-like.html#sys-weibull-like"><span class="toc-section-number">6.1</span> Likelihood Model</a></li>
+<li><a href="6.2-reduced-weibull.html#reduced-weibull"><span class="toc-section-number">6.2</span> Weibull Series System: Homogeneous Shape Parameters</a></li>
+</ul></li>
+<li class="has-sub"><a href="7-sim-study.html#sim-study"><span class="toc-section-number">7</span> Simulation Study: Series System with Weibull Components</a>
+<ul>
+<li><a href="7.1-performance-metrics.html#performance-metrics"><span class="toc-section-number">7.1</span> Performance Metrics</a></li>
+<li><a href="7.2-data-gen-proc.html#data-gen-proc"><span class="toc-section-number">7.2</span> Data Generating Process</a></li>
+<li><a href="7.3-overview-of-simulations.html#overview-of-simulations"><span class="toc-section-number">7.3</span> Overview of Simulations</a></li>
+<li><a href="7.4-effect-censoring.html#effect-censoring"><span class="toc-section-number">7.4</span> Scenario: Assessing the Impact of Right-Censoring</a></li>
+<li><a href="7.5-p-vs-mttf.html#p-vs-mttf"><span class="toc-section-number">7.5</span> Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure</a></li>
+<li><a href="7.6-effect-samp-size.html#effect-samp-size"><span class="toc-section-number">7.6</span> Scenario: Assessing the Impact of Sample Size</a></li>
+</ul></li>
+<li><a href="8-future-work.html#future-work"><span class="toc-section-number">8</span> Future Work</a></li>
+<li><a href="9-conclusion.html#conclusion"><span class="toc-section-number">9</span> Conclusion</a></li>
+<li><a href="appendices.html#appendices">Appendices</a></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="has-sub"><a href="A-series-system-with-weibull-component-lifetimes.html#series-system-with-weibull-component-lifetimes"><span class="toc-section-number">A</span> Series System with Weibull Component Lifetimes</a>
+<ul>
+<li><a href="A.1-app-weibull-loglik-r.html#app-weibull-loglik-r"><span class="toc-section-number">A.1</span> Log-likelihood Function</a></li>
+<li><a href="A.2-app-score-fn-r.html#app-score-fn-r"><span class="toc-section-number">A.2</span> Score Function</a></li>
+<li><a href="A.3-app-series-quantile.html#app-series-quantile"><span class="toc-section-number">A.3</span> Quantile Function</a></li>
+<li><a href="A.4-app-mle-r.html#app-mle-r"><span class="toc-section-number">A.4</span> Maximum Likelihood Estimation</a></li>
+<li><a href="A.5-app-cand-model-r.html#app-cand-model-r"><span class="toc-section-number">A.5</span> Bernoulli Masking Model</a></li>
+</ul></li>
+<li class="has-sub"><a href="B-simulation.html#simulation"><span class="toc-section-number">B</span> Simulation</a>
+<ul>
+<li><a href="B.1-app-sim-study-r.html#app-sim-study-r"><span class="toc-section-number">B.1</span> Scenario Simulation</a></li>
+<li><a href="B.2-app-plot-r.html#app-plot-r"><span class="toc-section-number">B.2</span> Plot Generation Code</a></li>
+</ul></li>
+<li><a href="acknowledgements.html#acknowledgements">Acknowledgements</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="comp-cause" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Component Cause of Failure</h2>
+<p>Whenever a series system fails, precisely one of the components is the cause.
+We denote the component cause of failure of the <span class="math inline">\(i\)</span> series
+system by the discrete random variable <span class="math inline">\(K_i\)</span>, whose support is given by <span class="math inline">\(\{1,\ldots,m\}\)</span>.
+For example, <span class="math inline">\(K_i=j\)</span> indicates that the component indexed by <span class="math inline">\(j\)</span> failed first, i.e.,
+<span class="math display">\[
+    T_{i j} &lt; T_{i j&#39;}
+\]</span>
+for every <span class="math inline">\(j&#39;\)</span> in the support of <span class="math inline">\(K_i\)</span> except for <span class="math inline">\(j\)</span>.
+Since we have series systems, <span class="math inline">\(K_i\)</span> is unique.</p>
+<p>The system lifetime and the component cause of failure has a joint distribution
+given by the following theorem.</p>
+<div class="theorem">
+<p><span id="thm:f-k-and-t" class="theorem"><strong>Theorem 2.4  </strong></span>The joint pdf of the component cause of failure <span class="math inline">\(K_i\)</span> and the series system lifetime
+<span class="math inline">\(T_i\)</span> is given by
+<span class="math display">\[\begin{equation}
+\label{eq:f-k-and-t}
+  f_{K_i,T_i}(j,t;\boldsymbol{\theta}) = h_j(t;\boldsymbol{\theta_j}) \prod_{l=1}^m R_l(t;\boldsymbol{\theta}),
+\end{equation}\]</span>
+where <span class="math inline">\(h_l(t;\boldsymbol{\theta_j})\)</span> and <span class="math inline">\(R_l(t;\boldsymbol{\theta_l})\)</span> are respectively the hazard
+and reliability functions of the <span class="math inline">\(l\)</span> component.</p>
+</div>
+<div class="proof">
+<p><span id="unlabeled-div-4" class="proof"><em>Proof</em>. </span>Consider a series system with <span class="math inline">\(3\)</span> components.
+By the assumption that component lifetimes are mutually independent,
+the joint pdf of <span class="math inline">\(T_{i 1}\)</span>, <span class="math inline">\(T_{i 2}\)</span>, and <span class="math inline">\(T_{i 3}\)</span> is given by
+<span class="math display">\[
+    f(t_1,t_2,t_3;\boldsymbol{\theta}) = \prod_{j=1}^{3} f_j(t_j;\boldsymbol{\theta_j}),
+\]</span>
+where <span class="math inline">\(f_j(t_j;\boldsymbol{\theta_j})\)</span> is the pdf of the <span class="math inline">\(j\)</span> component.
+The first component is the cause of failure at time <span class="math inline">\(t\)</span> if <span class="math inline">\(K_i = 1\)</span> and
+<span class="math inline">\(T_i = t\)</span>, which may be rephrased as the likelihood that <span class="math inline">\(T_{i 1} = t\)</span>,
+<span class="math inline">\(T_{i 2} &gt; t\)</span>, and <span class="math inline">\(T_{i 3} &gt; t\)</span>. Thus,
+<span class="math display">\[\begin{align*}
+f_{K_i,T_i}(j,t;\boldsymbol{\theta}) 
+    &amp;= \int_t^{\infty} \int_t^{\infty}
+        f_1(t;\boldsymbol{\theta_1}) f_2(t_2;\boldsymbol{\theta_2}) f_3(t_3;\boldsymbol{\theta_3})
+        dt_3 dt_2\\
+     &amp;= \int_t^{\infty} f_1(t;\boldsymbol{\theta_1}) f_2(t_2;\boldsymbol{\theta_2})
+        R_3(t;\boldsymbol{\theta_3}) dt_2\\
+     &amp;= f_1(t;\boldsymbol{\theta_1}) R_2(t;\boldsymbol{\theta_2}) R_3(t_1;\boldsymbol{\theta_3}).
+\end{align*}\]</span>
+By definition, <span class="math inline">\(f_1(t;\boldsymbol{\theta_1}) = h_1(t;\boldsymbol{\theta_1}) R_1(t;\boldsymbol{\theta_1})\)</span>,
+and when we make this substitution into the above expression for <span class="math inline">\(f_{K_i,T_i}(j,t;\boldsymbol{\theta})\)</span>,
+we obtain the result
+<span class="math display">\[
+f_{K_i,T_i}(j,t;\boldsymbol{\theta}) = h_1(t;\boldsymbol{\theta_1}) \prod_{l=1}^m R_l(t;\boldsymbol{\theta_l}).
+\]</span>
+Generalizing this result completes the proof.</p>
+</div>
+<p>Theorem <a href="2.1-comp-cause.html#thm:f-k-and-t">2.4</a> shows that the joint pdf of the component cause of
+failure and system lifetime is a function of the hazard functions and reliability
+functions of the components. This result will be used in Section <a href="3-like-model.html#like-model">3</a>
+to derive the likelihood function for the masked data.</p>
+<p>The probability that the <span class="math inline">\(j\)</span> component is the cause of failure
+is given by the following theorem.</p>
+<div class="theorem">
+<p><span id="thm:prob-k" class="theorem"><strong>Theorem 2.5  </strong></span>The probability that the <span class="math inline">\(j\)</span> component is the cause of failure
+is given by
+<span class="math display">\[\begin{equation}
+\label{eq:prob-k}
+\Pr\{K_i = j\} = E_{\boldsymbol{\theta}}
+\biggl[
+    \frac{h_j(T_i;\boldsymbol{\theta_j})}
+         {\sum_{l=1}^m h_l(T_i ; \boldsymbol{\theta_l})}
+\biggr],
+\end{equation}\]</span>
+where <span class="math inline">\(K_i\)</span> is the random variable denoting the component cause of failure of the
+<span class="math inline">\(i\)</span> system and <span class="math inline">\(T_i\)</span> is the random variable denoting the
+lifetime of the <span class="math inline">\(i\)</span> system.</p>
+</div>
+<div class="proof">
+<p><span id="unlabeled-div-5" class="proof"><em>Proof</em>. </span>The probability the <span class="math inline">\(j\)</span> component is the cause of failure is given by
+marginalizing the joint pdf of <span class="math inline">\(K_i\)</span> and <span class="math inline">\(T_i\)</span> over <span class="math inline">\(T_i\)</span>,
+<span class="math display">\[
+\Pr\{K_i = j\} = \int_0^{\infty} f_{K_i,T_i}(j,t;\boldsymbol{\theta}) dt.
+\]</span>
+By Theorem <a href="2.1-comp-cause.html#thm:f-k-and-t">2.4</a>, this is equivalent to
+<span class="math display">\[\begin{align*}
+\Pr\{K_i = j\}
+    &amp;= \int_0^{\infty} h_j(t;\boldsymbol{\theta_j}) R_{T_i}(t;\boldsymbol{\theta}) dt\\
+    &amp;= \int_0^{\infty} \biggl(\frac{h_j(t;\boldsymbol{\theta_j})}{h_{T_i}(t ; \boldsymbol{\theta})}\biggr) f_{T_i}(t ; \boldsymbol{\theta}) dt\\
+    &amp;= E_{\boldsymbol{\theta}}\biggl[\frac{h_j(T_i;\boldsymbol{\theta_j})}{\sum_{l=1}^m h_l(T_i ; \boldsymbol{\theta_l})}\biggr].
+\end{align*}\]</span></p>
+</div>
+<p>If we know the system failure time, then we can simplify the above expression
+for the probability that the <span class="math inline">\(j\)</span> component is the cause of
+failure. This is given by the following theorem.</p>
+<div class="theorem">
+<p><span id="thm:prob-k-given-t" class="theorem"><strong>Theorem 2.6  </strong></span>The probability that the <span class="math inline">\(j\)</span>
+component is the cause of system failure given that we know the system failure
+occurred at time <span class="math inline">\(t_i\)</span> is given by
+<span class="math display">\[
+\Pr\{K_i = j|T_i=t_i\} = \frac{h_j(t_i;\boldsymbol{\theta_j})}{\sum_{l=1}^m h_l(t_i;\boldsymbol{\theta_l})}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span id="unlabeled-div-6" class="proof"><em>Proof</em>. </span>By the definition of conditional probability,
+<span class="math display">\[\begin{align*}
+    \Pr\{K_i = j|T_i = t_i\} 
+        &amp;= \frac{f_{K_i,T_i}(j, t_i;\boldsymbol{\theta})}{f_{T_i}(t_i;\boldsymbol{\theta})}\\
+        &amp;= \frac{h_j(t_i;\boldsymbol{\theta_j}) R_{T_i}(t_i;\boldsymbol{\theta})}{f_{T_i}(t_i;\boldsymbol{\theta})}.
+\end{align*}\]</span>
+Since <span class="math inline">\(f_{T_i}(t_i;\boldsymbol{\theta}) = h_{T_i}(t_i;\boldsymbol{\theta}) R_{T_i}(t_i;\boldsymbol{\theta})\)</span>,
+we make this substitution and simplify to obtain
+<span class="math display">\[
+\Pr\{K_i = j|T_i = t_i\} = \frac{h_j(t_i;\boldsymbol{\theta_j})}{\sum_{l=1}^m h_l(t_i;\boldsymbol{\theta_l})}.
+\]</span></p>
+</div>
+<p>Theorems <a href="2.1-comp-cause.html#thm:prob-k">2.5</a> and <a href="2.1-comp-cause.html#thm:prob-k-given-t">2.6</a> are closely related
+and have similar forms. Theorem <a href="2.1-comp-cause.html#thm:prob-k-given-t">2.6</a> can be seen as a
+special case of Theorem <a href="2.1-comp-cause.html#thm:prob-k">2.5</a>.</p>
+</div>
+<p style="text-align: center;">
+<a href="2-statmod.html"><button class="btn btn-default">Previous</button></a>
+<a href="2.2-reliability.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+</body>
+</html>
