@@ -292,17 +292,14 @@ but keep all resamples for the bootstrap.
 
 # Series System with Weibull Component Lifetimes
 
-The Weibull distribution has been crucial in reliability analysis due to its
-versatility. In our study, we model a system's components using Weibull
+**Weibull Distribution**: We model a system's components using Weibull
 distributed lifetimes.
 
-- Introduced by Waloddi Weibull in 1937.
+\note{Weibull Distribution: Crucial and versatile distribution in reliability
+analysis.}
 
-- Reflecting on its utility, Weibull modestly noted: "[...] may sometimes render good service."
-  
-## Weibull Distribution Characteristics
-
-The lifetime distribution for the $j$\textsuperscript{th} component of the $i$\textsuperscript{th} system is:
+The lifetime distribution for the $j$\textsuperscript{th} component of the
+$i$\textsuperscript{th} system is:
 $$
     T_{i j} \sim \operatorname{Weibull}(k_j,\lambda_j)
 $$
@@ -327,8 +324,8 @@ h_{T_i}(t;\v\theta) &= \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lamb
 where $\v\theta = (k_1, \lambda_1, \ldots, k_m, \lambda_m)$ is the parameter vector of the series system.
 
 ### Likelihood Model
-We deal with right censoring and masked component cause of failure. The
-likelihood contribution of system $i$:
+**Right Censoring and Masked Failures**: The likelihood contribution of
+$i$\textsuperscript{th} system:
 $$
 L_i(\v\theta) \propto
 \begin{cases}
@@ -339,11 +336,8 @@ $$
 
 # Simulation Study Overview
 
-We conduct a simulation study based on a series system.
-
-### System Description
-
-This study is centered around the following *well-designed series system*:
+This study is centered around the following *well-designed series system*
+with Weibull component lifetimes:
 
 | Component   | Shape | Scale | MTTF | $\Pr\{K_i\}$ |
 |-------------|------------|----------|---------|-------|
@@ -356,15 +350,17 @@ This study is centered around the following *well-designed series system*:
 
 ## Performance Metrics
 
-Our main objective is to evaluate the MLE and BCa confidence intervals'
-performance across various scenarios.
+**Objective**: Evaluate the MLE and BCa confidence intervals' performance across
+various scenarios.
 
 - **MLE Evaluation**:
   - **Accuracy**: Proximity of the MLE's expected value to the actual value. 
   - **Precision**: Consistency of the MLE across samples.
 
 - **BCa Confidence Intervals Evaluation**:
-  - **Accuracy**: Ideally, Confidence Intervals (CIs) should encompass true parameters around $95\%$ of the time.
+  - **Accuracy**: Confidence intervals (CIs) should cover true parameters
+    around $95\%$ of the time.
+      - Coverage probability (CP)
   - **Precision**: Assessed by the width of the CIs.
   
 Both accuracy and precision are crucial for confidence in the analysis.

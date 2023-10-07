@@ -1,0 +1,8 @@
+rmd_files: ["index.Rmd"]
+#rmd_files: ["future-work.Rmd"]
+delete_merged_file: true
+
+bookdown::gitbook:
+  css: custom.css
+
+
