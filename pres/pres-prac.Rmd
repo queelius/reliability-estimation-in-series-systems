@@ -38,18 +38,21 @@ csl: ../ieee-with-url.csl
 - Need robust techniques to decipher this data and make accurate estimations.
 
 \note{
-We'll delve deep into reliability estimation in series systems, focusing on the challenges posed by right-censored and masked failure data.
+Reliability is a fundamental concept in systems analysis.
 
-\begin{itemize}
-\item \textbf{Reliability} is a critical metric in reliability analysis.
-\item It is a key factor in decision-making for system design and maintenance.
-\end{itemize}
+Think of it as a measure of trustworthiness.
 
-\textbf{Challenge}
-\begin{itemize}
-\item Estimating component reliability from system-level failure date is challenging due to ambiguous data from masking and right-censoring.
-\item We need robust techniques to interpret this data for precise reliability estimations.
-\end{itemize}
+But the data we have to analyze reliability is often limited.
+
+We might only see system-level failures, but not component-level details or
+only ambiguous component-level details.
+
+Imagine a car breaking down but not knowing exactly which part caused the failure.
+
+This makes estimating individual component reliability challenging.
+
+Our goal is to use this limited data and provide accurate reliability estimates
+of components.
 }
 
 ## Core Contributions
@@ -62,11 +65,17 @@ We'll delve deep into reliability estimation in series systems, focusing on the 
     scenarios.
 
 \note{
-\begin{itemize}
-\item Derived a likelihood model accounting for right-censoring and masking.
-\item Released an R Library for this model.
-\item Outlined the assumptions needed for the model.
-\item Carried out simulation studies for Weibull distributed component lifetimes.
+Our core contributions can be broken into three parts.
+
+First we've derived a model to account for the complexities in failure data, like right-censoring and masking.
+
+Imagine trying to solve a puzzle with missing pieces; our model helps fill in the gaps.
+
+Second, we've clarified what assumptions we need to make this model work.
+
+And third, we've simulated various scenarios using Weibull distributions to see how our model performs.
+
+Also, for those interested in implementation, we've made our methods available in an R Library.
 }
 
 # Series System
@@ -79,10 +88,26 @@ We'll delve deep into reliability estimation in series systems, focusing on the 
 A lot of complex systems have *critical* components $(x_1, \ldots, x_5)$.
 
 - One component fails, the system fails.
-- "A chain is only as strong as its weakest link." - Thomas Reid
-- We call these *series systems*. Let $T_i = \min(T_{i 1}, \ldots, T_{i 5})$ be
-the lifetime of system $i$.
-  - $T_{i j}$ is the lifetime of component $j$ in system $i$.
+- We call these *series systems*.
+- Let $T_i$ be the lifetime of system $i$ and $T_{i j}$ is the lifetime of component $j$ in system $i$.
+- The system lifetime is the minimum of the component lifetimes:
+$$
+T_i = \min(T_{i 1}, \ldots, T_{i 5})
+$$
+
+\note{
+Many complex systems have components that are critical for their functioning.
+
+We depict this in the graph above, with five components.
+
+Think of a car's engine or brakes. If one of these components fails, the entire system goes down.
+
+We call these series systems.
+
+For notation, we let $T_i$ be the lifetime of system $i$ and $T_{i j}$ be the lifetime of component $j$ in system $i$.
+
+Then, the lifetime of the system is the minimum of the component lifetimes.
+}
 
 ## Reliability Function: System Longevity
 **Definition**: Represents the probability that a system or component functions
@@ -106,6 +131,18 @@ $$
 
   - Directly used in our likelihood model for right-censoring events.
 
+\note{
+At its core, the reliability function tells us the probability a system will function beyond a certain time, $t$.
+
+It tells us how dependable a system is.
+
+In series systems, the reliability is the product of its component reliabilities.
+
+This function lays the groundwork for our analysis and helps in making strategic decisions about design and upkeep.
+
+It's also directly used in our likelihood model for right-censoring events.
+}
+
 ## Hazard Function: Failures Characteristics
 
 **Definition**: Instantaneous failure rate at a specific time, given survival up
@@ -128,28 +165,71 @@ $$
 h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
 
+\note{
+The hazard function, on the other hand, gives us insight into the risk of failure over time.
+
+It's like a health monitor.
+
+It helps guide maintenance schedules and predict when failures might occur.
+
+The hazard function can take on different failure characteristics.
+
+It can rise, indicating wear-out failures, or decline, indicating infant mortality, or stay constant, indicating random failures.
+
+In a series system, the hazard function is simply the sum of its components' hazards.
+}
+
 ## Component Cause of Failure
 
-We must understand the cause of failure to improve reliability estimates.
+We must understand the cause of failure in order to estimate component
+reliability.
+
 Let $K_i$ denote component cause of failure of $i$\textsuperscript{th} system.
 
-**Joint Distribution of System Lifetime and Component Cause of Failure**: In
-order to understand the cause of failure, we need to understand the joint
-distribution of the system lifetime and the component cause of failure:
+**Joint Distribution of System Lifetime and Component Cause of Failure**: Understanding why something fails is crucial for estimating its reliability.
+
+- To predict component failure causes, we need the joint distribution of the system lifetime and the component cause of failure:
 $$
 f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) R_{T_i}(t;\v\theta).
 $$
-- **Relevance**: Important in our likelihood model for masked failures.
+- **Relevance**: Important in our likelihood model for contributions from
+masked failures.
 
-**Probability Component $j$ Causes Failure:**:
-- **Marginal Probability**: Probability that component $j$ causes failure:
+**Probability of Component Failure:** Component $j$ causes failure:
 $$
 \Pr\{K_i = j\} = E_{\v\theta} \biggl[ \frac{h_j(T_i;\v{\theta_j})} {h_{T_i}(T_i ; \v{\theta_l})} \biggr].
 $$
-- **Conditional Probability**: Probability component $j$ causes given a system failure:
+- Marginalize the joint distribution over the system lifetime.
+
+**Conditional Probability of Component Failure**: Component $j$ causes failure given a system failure:
 $$
 \Pr\{K_i = j | T_i = t\} = \frac{h_j(t;\v{\theta_j})} {h_{T_i}(t ; \v{\theta_l})}.
 $$
+- By conditioning on the system lifetime.
+
+\note{
+Understanding why something fails is crucial for improving and estimating its reliability.
+
+For notation, let $K_i$ denotes which component caused the failure in a system. 
+
+If a failure occurs, it is unique since only one component can cause failure.
+This is not the case in non-series systems.
+
+The joint distribution between the system lifetime and cause of failure is
+needed for estimating component reliabilities in our likelihood model.
+
+We can also use this joint distribution to calculate the probability that a
+component caused failure.
+
+Both the marginal and conditional probabilities of component failure can be
+derived from the joint distribution.
+
+The marginal probability is the expected value of the hazard function of the
+component divided by the hazard function of the system.
+
+The conditional probability is the hazard function of the component divided by
+the hazard function of the system, conditioned on the system lifetime.
+}
 
 ## Reliability of Well-Designed Series Systems
 - MTTF is a summary measure of reliability:
@@ -161,6 +241,28 @@ $$
   - Similar MTTFs and probabilities of being the cause of failure.
 - **Relevance**: Our simulation study is based on a (reasonably) well-designed
   series system.
+
+\note{
+Components with longer MTTFs aren't necessarily more reliable.
+
+Recall earlier that the hazard function can take on different failure
+characteristics. A component that has a high chance of failing early on might
+last a very long time if it survives the initial period, and so have a high
+MTTF, and vice versa.
+
+Since a series system is only as strong as its weakest component, in a
+well-designed series system, components have similar failure characteristics.
+
+Similar MTTFs and probabilities of being the cause of failure.
+
+Our simulation study is based on a reasonably well-designed series system.
+
+We'll see how the MLE and BCa confidence intervals perform under various
+scenarios. We did a preliminary study with a poorly designed system, and we
+did find that the MLE and BCa confidence intervals were less accurate and
+precise. We don't report those results here, but they are interesting
+for future work.
+}
 
 # Likelihood Model
 We have our system model, but we don't observe component lifetimes. We observe
@@ -177,6 +279,20 @@ data related to component lifetimes.
     - $\delta_i = 1$ indicates system failure for system $i$.
     - $\mathcal{C}_i$ are a subset of components that could have caused failure.
 
+\note{
+Our likelihood model is based on the observed data.
+
+We observe right-censoring and masked causes of failure.
+
+Right-censoring occurs when the experiment ends before the system fails.
+
+For notation, we let $\tau$ be the right-censoring time and $\delta_i = 0$
+indicates right-censoring for system $i$.
+
+Masking occurs when we observe a system failure lifetime, but we don't know the precise component cause but instead a candidate set of components that
+could have caused failure.
+}
+
 ## Observed Data Example
 Observed data with a right-censoring time $\tau = 5$ for a series system with
 $3$ components.
@@ -185,10 +301,29 @@ System | Right-censored lifetime | Event indicator | Candidate set  |
 ------ | ----------------------- | --------------- | -------------- |
    1   | $1.1$                   | 1               | $\{1,2\}$      |
    2   | $1.3$                   | 1               | $\{2\}$        |
-   4   | $2.6$                   | 1               | $\{2,3\}$      |
-   5   | $3.7$                   | 1               | $\{1,2,3\}$    |
+   3   | $2.6$                   | 1               | $\{2,3\}$      |
+   4   | $3.7$                   | 1               | $\{1,2,3\}$    |
+   5   | $5$                     | 0               | $\emptyset$    |
    6   | $5$                     | 0               | $\emptyset$    |
-   7   | $5$                     | 0               | $\emptyset$    |
+
+\note{
+Here's an example of observed data for a series system with three components.
+
+We have a right-censoring time of $\tau = 5$.
+
+We see the first four systems failed. System 2 is a special case, since it
+only includes component 2. In our model, this means we do in fact know that component 2 caused the failure.
+
+In the other failed systems, we don't know the precise component cause, but
+we do have subsets of the components that could have caused failure.
+
+System 4 is also a special case, since all components could have caused failure.
+If all the observations were like this, we'd have a lot of ambiguity in our
+data.
+
+The last two systems are right-censored. The experiment ended before these
+systems failed.
+}
 
 ## Data Generating Process
 DGP is underlying process that generates observed data:
@@ -204,7 +339,23 @@ DGP is underlying process that generates observed data:
 \resizebox{0.7\textwidth}{!}{\input{../image/dep_model.tex}}
 \end{figure}
 
+\note{
+This is the data generating process for our observed data.
+
+It is a graphical model, where green elements are observed and red elements are
+unobserved.
+
+The candidate sets are related to the component lifetimes and potentially many
+other factors. The distribution of candidate sets could be quite complex
+and difficult to model. We seek a simple model that is valid under certain
+assumptions. We'll discuss these assumptions soon.
+
+We see that the right-censoring time is independent of the component lifetimes
+and parameters in our model. This is a reasonable assumption in many cases.
+}
+
 ## Likelihood Function
+
 ### Assumptions
 - Right-censoring time $\tau$ independent of component lifetimes and parameters:
 \begin{align*}
@@ -228,11 +379,17 @@ conditions (discussed later).
 
 **Masking**: When a system fails, but the precise failed component is ambiguous. 
 
-**To make problem more tractable, we introduce certain conditions
+**Simplification**: To make problem more tractable, we introduce certain conditions.
 
-  - Reasonable for many real-world systems.
+  - Reasonable for many realistic situations.
 
-\note{Masking occurs when a system fails but the precise failed component is ambiguous. To make problem more tractable, we introduce certain conditions (which are reasonable for many real-world systems).}
+\note{
+Masking occurs when a system fails but the precise failed component is ambiguous. 
+
+To make problem more tractable, we introduce certain conditions.
+
+These conditions are reasonable for many real-world systems.
+}
 
 ## Masking Conditions
 
@@ -281,15 +438,12 @@ $$
 \nabla_{\v\theta} \ell(\hat{\v\theta}) = \v{0}.
 $$
 
-\note{Log-likelihood easier to work with and numerically more stable:
-$$
-\ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta),
-$$
-where $\ell_i$ is the log-likelihood contribution for the $i$\textsuperscript{th} observation:
-$$
-\ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) +
-    \delta_i \log \biggl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
-$$}
+\note{
+MLE is all about finding the parameter values that make the observed data most probable. It's a way of fitting our model to our data.
+
+But the computation can get tricky. We need to solve some equations numerically. 
+
+To simplify, we often work with the log-likelihood, which is just the log of the likelihood.}
 
 ## Bootstrap Method: Confidence Intervals
 
@@ -311,7 +465,20 @@ distribution of the bootstrapped MLEs to construct CIs.
   adjust for bias (bias correction) and skewness (acceleration) in the estimate.
   Coverage probabilities above $90\%$ acceptable.
 
-\note{Percentile Method is a non-parametric method for constructing confidence intervals. It is simple and intuitive. However, it may not be accurate. The BCa method is a parametric method that adjusts for bias and skewness in the estimate. A coverage probability above $90\%$ is acceptable.}
+\note{
+We need a way to measure the uncertainty in our estimates.
+
+This is where confidence intervals come in. They help us pin down the likely range of our estimates.
+
+We Bootstrap the confidence intervals since there is likely to be a lot of
+bias and variability in our estimates due to the masking and censoring
+in our small data sets.
+
+So, to ensure our intervals are accurate, we use the BCa method to adjust the
+intervals for bias and skewness in the estimate.
+  
+A coverage probability above $90\%$ is acceptable.
+}
 
 ## Challenges with MLE on Masked Data
 
@@ -333,6 +500,10 @@ but keep all resamples for the bootstrap.
   variability in the original data.
 
 - We report convergence rates in our simulation study.
+
+\note{
+Like any model, ours has its challenges. For instance, the ambiguity in masked data, combined with small sample sizes, can create flat regions in our likelihood, causing convergence issues. Also, bootstrapping may not always capture the true variability in our data. But we've taken steps to address these. We discard non-convergent samples for MLE on original data but retain all for bootstrapping, ensuring variability is captured.
+}
 
 # Series System with Weibull Component Lifetimes
 

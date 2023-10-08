@@ -3,16 +3,11 @@ title: "Reliability Estimation in Series Systems"
 subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
 author: Alex Towell
 output: 
-  powerpoint_presentation:
-    keep_md: true
+  beamer_presentation:
+    theme: Boadilla
     slide_level: 2
-
-    #beamer_presentation:
-    #    theme: Boadilla
-        #theme: "AnnArbor"
-        #colortheme: "dolphin"
-        #fonttheme: "structurebold"
-        #slide_level: 2
+  powerpoint_presentation:
+    slide_level: 2
 header-includes:
    - \usepackage{tikz}
    - \usepackage{caption}
@@ -52,14 +47,18 @@ csl: ../ieee-with-url.csl
 \resizebox{0.7\textwidth}{!}{\input{../image/series.tex}}
 \end{figure}
 
-- **Main Concept**: If one component fails, the entire system fails.
-\note{Remember the analogy: "A chain is only as strong as its weakest link."}
+**Main Concept**: If one component fails, the entire system fails.
+\note{Analogy: "A chain is only as strong as its weakest link."}
+
+**Useful Abstraction**: Series systems are useful abstractions for many
+real systems.
+  - A person's mortality as a series system of organs.
 
 ## Reliability Function
 
-**Definition**: Probability a system/component works beyond time \( t \):
+**Definition**: Probability a system/component works beyond time $t$:
 $$
-R_X(x) = \Pr\{X > x\}.
+R_{T_i}(x) = \Pr\{T_i > t\}.
 $$
 
 \note{High reliability = low failure probability. Used directly in likelihood models for right-censoring events.}
