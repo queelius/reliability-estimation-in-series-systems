@@ -2,13 +2,12 @@
 title: "Reliability Estimation in Series Systems"
 subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
 author: Alex Towell
-output: 
-    beamer_presentation:
-        theme: Boadilla
-        #theme: "AnnArbor"
-        #colortheme: "dolphin"
-        #fonttheme: "structurebold"
-        slide_level: 2
+output:
+  beamer_presentation:
+    theme: Boadilla
+    slide_level: 2
+  powerpoint_presentation:
+    slide_level: 2
 header-includes:
    - \usepackage{tikz}
    - \usepackage{caption}
@@ -26,9 +25,20 @@ csl: ../ieee-with-url.csl
 # Introduction
 
 ## Context & Motivation
-- Quantifying reliability in series systems is essential.
-- Real-world systems often only provide system-level failure data.
-  - Masked and right-censored data obscure reliability metrics.
+
+- Quantifying reliability is crucial for system design and maintenance.
+
+\note{Reliability is a key performance metric in reliability analysis and a key
+factor in decision-making for system design and maintenance.}
+
+- We often only have system-level failure data.
+
+\note{Makes it a challenge to estimate component reliability.}
+
+  - Masked and right-censored data obscure reliability estimates.
+
+  - Makes it difficult to estimate component reliability.
+
 - Need robust techniques to decipher this data and make accurate estimations.
 
 ## Core Contributions
@@ -190,41 +200,53 @@ conditions (discussed later).
   \end{cases}
   $$
 
-## Derivation: Likelihood Contribution for Masked Failures
+## Likelihood Contribution: Masked Failures
 
-Masking occurs when a system fails but the precise failed component is ambiguous.
+**Masking**: When a system fails, but the precise failed component is ambiguous. 
+
+\note{Masking occurs when a system fails but the precise failed component is ambiguous.
 To make problem more tractable, we introduce certain conditions (which are reasonable
-for many real-world systems).
+for many real-world systems).}
 
-### Conditions
+**To make problem more tractable, we introduce certain conditions
 
-1. **Candidate Set Contains Failed Component**:
-The candidate set, $\mathcal{C}_i$, always includes the failed component:
-    - $\Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1$.
+  - Reasonable for many real-world systems.
 
-2. **Equal Probabilities Across Candidate Sets**:
-For an observed system failure time $T_i=t_i$ and a candidate set $\mathcal{C}_i = c_i$, the candidate set probability is constant across different component failure causes within the set:
-    - $\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j, T_i = t_i\} = \Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j', T_i = t_i\}$
-  for every $j,j' \in c_i$.
 
-3. **Masking Probabilities Independent of $\v{\theta}$**:
-Masking probabilities, when conditioned on $T_i$ and failed component, aren't functions of $\v{\theta}$.
+## Masking Conditions
+
+**Candidate Set Contains Failed Component**: The candidate set, $\mathcal{C}_i$,
+always includes the failed component:
+
+$$
+\Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1
+$$
+
+**Equal Probabilities Across Candidate Sets**: For an observed system failure
+time $T_i=t_i$ and a candidate set $\mathcal{C}_i = c_i$, the probability of
+of the set is constant across different component failures within the set:
+
+$$
+\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j, T_i = t_i\} = \Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j', T_i = t_i\}
+$$
+for every $j,j' \in c_i$.
+
+**Masking Probabilities Independent of Parameters**: The masking probabilities
+when conditioned on $T_i$ and failed component $K_i$ aren't functions of $\v{\theta}$.
 
 ## Likelihood Contribution: Masked Component Cause of Failure
 
-We construct the likelihood contribution for masked data like so:
-
-- The joint distribution of $T_i$, $K_i$, and $\mathcal{C}_i$ is written as:
+**Joint distribution** of $T_i$, $K_i$, and $\mathcal{C}_i$:
 $$
 f_{T_i,K_i,\mathcal{C}_i}(t_i,j,c_i;\v{\theta}) = f_{T_i,K_i}(t_i,j;\v{\theta})\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\}.
 $$
-- Marginalizing over $K_i$ and applying Conditions 1, 2, and 3 yields:
+**Marginalize** over $K_i$ and apply Conditions 1, 2, and 3:
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = \beta_i \prod_{l=1}^m R_l(t_i;\v{\theta_l}) \sum_{j \in c_i} h_j(t_i;\v{\theta_j}).
 $$
-- The likelihood contribution: $L_i(\v\theta) \propto f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta})$.
+**Result**: We don't need to model the distribution of the candidate sets $\mathcal{C}_i$.
 
-  - We do not need to model the distribution of the candidate sets.
+  - $L_i(\v\theta) \propto f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta})$.
 
 ## Methodology: Maximum Likelihood Estimation
 
@@ -233,6 +255,7 @@ $$
 \hat{\v\theta} = \arg\max_{\v\theta} L(\v\theta).
 $$
 
+\note{
 **Log-likelihood**: Easier to work with and numerically more stable:
 $$
 \ell(\v\theta) = \sum_{i=1}^n \ell_i(\v\theta),
@@ -241,9 +264,9 @@ where $\ell_i$ is the log-likelihood contribution for the $i$\textsuperscript{th
 $$
 \ell_i(\v\theta) = \sum_{j=1}^m \log R_j(s_i;\v{\theta_j}) +
     \delta_i \log \biggl(\sum_{j\in c_i} h_j(s_i;\v{\theta_j}) \biggr).
-$$
+$$}
 
-**Solution**: Numerically solve the following system of equations for $\hat{\v\theta}$:
+**Solution**: Numerically solved system of equations for $\hat{\v\theta}$:
 $$
 \nabla_{\v\theta} \ell(\hat{\v\theta}) = \v{0}.
 $$
@@ -260,10 +283,12 @@ distribution of the bootstrapped MLEs to construct CIs.
 
 - **Percentile Method**: Simple and intuitive.
 
-- **Coverage Probability**: Probability that the confidence interval contains
-  the true parameter value $\v\theta$.
+\note{**Percentile Method**: A non-parametric method for constructing confidence
+intervals.}
 
 **Correctly Specified CIs**: A coverage probability close to the nominal level of $95\%$.
+
+  - **Issue**: Coverage probability may be too low or too high.
 
 - **Adjustments**: To improve coverage probability, we use the BCa method to
   adjust for bias (bias correction) and skewness (acceleration) in the estimate.
