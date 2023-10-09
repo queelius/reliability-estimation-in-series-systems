@@ -12,6 +12,7 @@ header-includes:
    - \usepackage{tikz}
    - \usepackage{caption}
    - \usepackage{amsthm}
+   - \usepackage{xcolor}
    - \renewcommand{\v}[1]{\boldsymbol{#1}}
    - \theoremstyle{definition}
    - \newtheorem{condition}{Condition}
@@ -25,57 +26,74 @@ csl: ../ieee-with-url.csl
 
 ## Context & Motivation
 
-**Reliability** is a critical metric in reliability analysis.
+**Reliability** in **series systems** is like a chain's strength -- determined
+by its weakest link.
 
-- Crucial for system design and maintenance.
+- Essential for system design and maintenance.
 
-**Challenge**: We often only have system-level failure data.
+**Main Goal**: Estimate individual component reliability from *failure data*.
 
-  - Masked and right-censored data obscure reliability estimates.
+**Challenges**:
 
-  - Makes it difficult to estimate component reliability.
+- *Masked* component-level failure data.
+- *Right-censoring* in system-level failure data.
 
-- Need robust techniques to decipher this data and make accurate estimations.
+**Our Response**:
+
+- Derive techniques to interpret such ambiguous data.
+- Aim for precise and accurate reliability estimates for individual components
+using maximum likelihood estimation (MLE) and bootstrapped (BCa) confidence
+intervals.
 
 \note{
-Reliability is a fundamental concept in systems analysis.
-
-Think of it as a measure of trustworthiness.
-
-But the data we have to analyze reliability is often limited.
-
-We might only see system-level failures, but not component-level details or
-only ambiguous component-level details.
-
-Imagine a car breaking down but not knowing exactly which part caused the failure.
-
-This makes estimating individual component reliability challenging.
-
-Our goal is to use this limited data and provide accurate reliability estimates
-of components.
+\begin{itemize}
+\item \textbf{Chain Analogy}: Think of a series system as a chain. Its reliability,
+just like a chain's strength, is determined by its weakest link or component.
+When any component fails, the whole system does.
+\item \textbf{Reliability Importance}: Understanding the reliability of each component is essential for the design and
+maintenance of these systems. 
+\item \textbf{Data Challenge}: The data we rely on can come with its own challenges. We
+sometimes encounter ambiguous data like right-censored information or masked
+component-level failures, where we don't know precisely which component failed.
+\item \textbf{Aim}: Our goal is to interpret such ambiguous data and provide
+accurate reliability estimates for each component, which includes providing
+correctly specified 95% CIs, meaning they cover the true parameter value around
+95% of the time. We do this using MLE and bootstrap the confidence intervals
+using the BCa method.
+\end{itemize}
 }
 
 ## Core Contributions
-- Derivation of a likelihood model that accounts for right-censoring and masking.
-  - Easy to add more failure data via likelihood contribution model.
-  - R Library: [github.com/queelius/wei.series.md.c1.c2.c3](https://github.com/queelius/wei.series.md.c1.c2.c3)
-- Clarification of the assumptions required for the likelihood model.
-- Simulation studies with Weibull distributed component lifetimes.
-  - Assess performance of MLE and BCa confidence intervals under various
-    scenarios.
+
+**Likelihood Model** for **series systems**.
+
+- Accounts for *right-censoring* and *masked component failure*.
+- Can easily incorporate additional failure data.
+
+**Specifications of Conditions**:
+
+- Assumptions about the masking of component failures.
+- Simplifies and makes the model more tractable.
+
+**Simulation studies**:
+
+- Components with *Weibull* lifetimes.
+
+- Evaluate MLE and confidence intervals under different scenarios.
+
+**R Library**: Methods available on GitHub.
+
+- [github.com/queelius/wei.series.md.c1.c2.c3](https://github.com/queelius/wei.series.md.c1.c2.c3)
 
 \note{
-Our core contributions can be broken into three parts.
-
-First we've derived a model to account for the complexities in failure data, like right-censoring and masking.
-
-Imagine trying to solve a puzzle with missing pieces; our model helps fill in the gaps.
-
-Second, we've clarified what assumptions we need to make this model work.
-
-And third, we've simulated various scenarios using Weibull distributions to see how our model performs.
-
-Also, for those interested in implementation, we've made our methods available in an R Library.
+Our core contributions can be broken down into several parts:
+\begin{itemize}
+\item \textbf{Likelihood model}: We've derived a likelihood model for series systems that accounts for the
+ambiguous data.
+\item \textbf{Explain conditions}: We've clarified the conditions this model assumes about the masking of component failures. These conditions simplify the model and make it more tractable.
+\item \textbf{Validated with simulation study}: We've validated our model with extensive simulations using Weibull distributions to gauge its performance under various scenarios.
+\item \textbf{R Library}: For those interested, we made our methods available in an R Library hosted on GitHub.
+\end{itemize}
 }
 
 # Series System
@@ -85,258 +103,199 @@ Also, for those interested in implementation, we've made our methods available i
 \resizebox{0.7\textwidth}{!}{\input{../image/series.tex}}
 \end{figure}
 
-A lot of complex systems have *critical* components $(x_1, \ldots, x_5)$.
+**Critical Components**: Complex systems often comprise *critical* components.
+If any component fails, the entire system fails.
 
-- One component fails, the system fails.
-- We call these *series systems*.
-- Let $T_i$ be the lifetime of system $i$ and $T_{i j}$ is the lifetime of component $j$ in system $i$.
-- The system lifetime is the minimum of the component lifetimes:
+- We call such systems *series systems*.
+- **Example**: A car's engine and brakes.
+
+**System Lifetime** is dictated by its shortest-lived component:
 $$
 T_i = \min(T_{i 1}, \ldots, T_{i 5})
 $$
 
+- Where: $T_i$ and $T_{i j}$ are the system and component lifetimes for the
+$i$\textsuperscript{th} system and $j$\textsuperscript{th} component, respectively.
+
 \note{
-Many complex systems have components that are critical for their functioning.
-
-We depict this in the graph above, with five components.
-
-Think of a car's engine or brakes. If one of these components fails, the entire system goes down.
-
-We call these series systems.
-
-For notation, we let $T_i$ be the lifetime of system $i$ and $T_{i j}$ be the lifetime of component $j$ in system $i$.
-
-Then, the lifetime of the system is the minimum of the component lifetimes.
+\begin{itemize}
+\item \textbf{Critical Components}: Many complex systems have components that
+are essential to their operation.
+\item \textbf{Series System}: If any of these components fail, the entire system
+fails. We call these series systems.
+\item \textbf{Car}: Think of a car - if the engine or brakes fail, the car can't
+be operated.
+\item \textbf{Lifetime}: Its lifetime is the lifetime of its shortest-lived
+component.
+\item \textbf{Notation}: For reference, we show the math notation we'll use
+throughout the talk.
+\end{itemize}
 }
 
-## Reliability Function: System Longevity
-**Definition**: Represents the probability that a system or component functions
-beyond a specified time $t$:
-$$
-R_{T_i}(t) = \Pr\{T_i > t\}.
-$$
+## Reliability Function
+**Reliability Function** represents the probability that a system or component functions
+beyond a specified time.
 
-**Interpretation**:
+- Essential for understanding longevity and dependability.
 
-- A high reliability value indicates a lower probability of failure.
-- Essential for understanding the longevity and dependability of systems and components.
-
-**Series System Reliability**: Product of the reliabilities of its components:
+**Series System Reliability**: Product of the reliability of its components:
 $$
 R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
 $$
 
-**Relevance**: Forms the basis for most reliability analyses and helps in
-  making informed decisions about system design and maintenance.
+- Here, $R_{T_i}(t;\v\theta)$ and $R_j(t;\v{\theta_j})$ are the reliability
+  functions for the system $i$ and component $j$, respectively.
 
-  - Directly used in our likelihood model for right-censoring events.
+**Relevance**:
+
+  - Forms the foundation for most reliability studies.
+  - Integral to our likelihood model, e.g., right-censoring events.
 
 \note{
-At its core, the reliability function tells us the probability a system will function beyond a certain time, $t$.
-
-It tells us how dependable a system is.
-
-In series systems, the reliability is the product of its component reliabilities.
-
-This function lays the groundwork for our analysis and helps in making strategic decisions about design and upkeep.
-
-It's also directly used in our likelihood model for right-censoring events.
+\begin{itemize}
+\item \textbf{Reliability Function} The reliability function tells us the chance
+a component or system functions past a specific time. It's our key metric for longevity.
+\item \textbf{Product of Component Reliability}: In a series system, the
+overall reliability is the product of its component reliabilities. So, if even
+one component has a low reliability, it can impact the whole system.
+\item \textbf{Relevance}: Why does this matter to us? This concept is foundational to our studies,
+especially when we're handling right-censored data.
+\end{itemize}
 }
 
-## Hazard Function: Failures Characteristics
+## Hazard Function: Understanding Risks
 
-**Definition**: Instantaneous failure rate at a specific time, given survival up
-to that point:
-$$
-h_{T_i}(x) = \frac{f_{T_i}(t)}{R_{T_i}(t)}.
-$$
+**Hazard Function**: Measures the immediate risk of failure at a given time,
+assuming survival up to that moment.
 
-**Interpretation**
-
-- A tool to understand how failure risk evolves over time.
+- Reveals how the risk of failure evolves over time.
 - Guides maintenance schedules and interventions.
-- Failure characteristics:
-  - Rising: wear-out (aging).
-  - Declining: infant mortality (defects).
-  - Constant: random (accidents).
 
-**Series System Hazard Function**:  Sum of the hazard functions of its components:
+**Series System Hazard Function** is the sum of the hazard functions of its components:
 $$
 h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
 
+  - Components' risks are additive.
+
 \note{
-The hazard function, on the other hand, gives us insight into the risk of failure over time.
+\textbf{Hazard Function}: Let's shift focus to the hazard function. Essentially,
+it's a way to gauge the immediate risk of failure, especially if it's been
+functioning up until that point.
 
-It's like a health monitor.
+\textbf{Series Hazard Function} Lastly, the hazard function for a series system
+is just the sum of the hazard functions of its components.
 
-It helps guide maintenance schedules and predict when failures might occur.
-
-The hazard function can take on different failure characteristics.
-
-It can rise, indicating wear-out failures, or decline, indicating infant mortality, or stay constant, indicating random failures.
-
-In a series system, the hazard function is simply the sum of its components' hazards.
+\textbf{Additive}: We see that the component risks are additive.
 }
 
-## Component Cause of Failure
+## Joint Distribution of Component Failure and System Lifetime
+Our likelihood model depends on the **joint distribution** of the system
+lifetime and the component that caused the failure.
 
-We must understand the cause of failure in order to estimate component
-reliability.
-
-Let $K_i$ denote component cause of failure of $i$\textsuperscript{th} system.
-
-**Joint Distribution of System Lifetime and Component Cause of Failure**: Understanding why something fails is crucial for estimating its reliability.
-
-- To predict component failure causes, we need the joint distribution of the system lifetime and the component cause of failure:
+- **Formula**: Product of the failing component's hazard function and the system
+reliability function:
 $$
 f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) R_{T_i}(t;\v\theta).
 $$
-- **Relevance**: Important in our likelihood model for contributions from
-masked failures.
+- **Single Point of Failure**: A series system fails due to one component's malfunction.
+- **Representation**: 
+  - $K_i$: Component causing the $i$\textsuperscript{th} system's failure.
+  - $h_j(t;\v{\theta_j})$: Hazard function for the $j$\textsuperscript{th} component.
 
-**Probability of Component Failure:** Component $j$ causes failure:
+\note{
+\begin{itemize}
+\item \textbf{Joint Distribution} In our likelihood model, understanding the
+joint distribution of a system's lifetime and the component that led to its
+failure is fundamental.
+\item \textbf{Formula}: It is the product of the failing component's hazard
+function and the system reliability function.
+\item \textbf{Unique Cause}: Which emphasizes that in a series system, failure
+can be attributed to a single component's malfunction.
+\item \textbf{Notation}: Here, $K_i$ denotes the component responsible for the failure.
+\end{itemize}
+}
+
+
+## Component Failure & Well-Designed Series Systems
+
+The **marginal probability** of component failure helps predict the cause of
+failure.
+
+- **Derivation**: Marginalize the joint distribution over the system lifetime:
 $$
 \Pr\{K_i = j\} = E_{\v\theta} \biggl[ \frac{h_j(T_i;\v{\theta_j})} {h_{T_i}(T_i ; \v{\theta_l})} \biggr].
 $$
-- Marginalize the joint distribution over the system lifetime.
 
-**Conditional Probability of Component Failure**: Component $j$ causes failure given a system failure:
-$$
-\Pr\{K_i = j | T_i = t\} = \frac{h_j(t;\v{\theta_j})} {h_{T_i}(t ; \v{\theta_l})}.
-$$
-- By conditioning on the system lifetime.
+**Well-Designed Series System**: Components exhibit comparable chances of
+causing system failures.
 
-\note{
-Understanding why something fails is crucial for improving and estimating its reliability.
-
-For notation, let $K_i$ denotes which component caused the failure in a system. 
-
-If a failure occurs, it is unique since only one component can cause failure.
-This is not the case in non-series systems.
-
-The joint distribution between the system lifetime and cause of failure is
-needed for estimating component reliabilities in our likelihood model.
-
-We can also use this joint distribution to calculate the probability that a
-component caused failure.
-
-Both the marginal and conditional probabilities of component failure can be
-derived from the joint distribution.
-
-The marginal probability is the expected value of the hazard function of the
-component divided by the hazard function of the system.
-
-The conditional probability is the hazard function of the component divided by
-the hazard function of the system, conditioned on the system lifetime.
-}
-
-## Reliability of Well-Designed Series Systems
-- MTTF is a summary measure of reliability:
-  - Equivalent to integrating its reliability function over its support.
-  - MTTF can be misleading. We can't assume components with longer MTTFs are more reliable.
-- A series system is only as strong as its weakest component.
-- In a *well-designed series system*, components have similar failure
-  characteristics:
-  - Similar MTTFs and probabilities of being the cause of failure.
-- **Relevance**: Our simulation study is based on a (reasonably) well-designed
-  series system.
+- **Relevance**: Our simulation study employs a (reasonably) well-designed
+series system.
 
 \note{
-Components with longer MTTFs aren't necessarily more reliable.
-
-Recall earlier that the hazard function can take on different failure
-characteristics. A component that has a high chance of failing early on might
-last a very long time if it survives the initial period, and so have a high
-MTTF, and vice versa.
-
-Since a series system is only as strong as its weakest component, in a
-well-designed series system, components have similar failure characteristics.
-
-Similar MTTFs and probabilities of being the cause of failure.
-
-Our simulation study is based on a reasonably well-designed series system.
-
-We'll see how the MLE and BCa confidence intervals perform under various
-scenarios. We did a preliminary study with a poorly designed system, and we
-did find that the MLE and BCa confidence intervals were less accurate and
-precise. We don't report those results here, but they are interesting
-for future work.
+\begin{itemize}
+\item \textbf{Marginal}: We can use this joint distribution to calculate the marginal probability
+of component failure.
+\item \textbf{Expected Value}: When we do so, we find that it is the expected value of
+the ratio of component and system hazard functions.
+\item \textbf{Well-Designed}: We say that a series system is \emph{well-designed}
+if each components has a comparable chance of failing.
+\item \textbf{Relevance}: Our simulation study is based on a reasonably
+well-designed series system.
+\end{itemize}
 }
 
 # Likelihood Model
-We have our system model, but we don't observe component lifetimes. We observe
-data related to component lifetimes.
 
-### Observed Data
-- Right censoring: No failure observed.
-  - The experiment ended before the system failed.
-    - $\tau$ is the right-censoring time.
-    - $\delta_i = 0$ indicates right-censoring for system $i$.
-- Masked causes
-  - The system failed, but we don't know the component cause.
-    - $S_i$ is the observed time of system failure.
-    - $\delta_i = 1$ indicates system failure for system $i$.
-    - $\mathcal{C}_i$ are a subset of components that could have caused failure.
+Our **likelihood model** handles the following data:
 
-\note{
-Our likelihood model is based on the observed data.
+- **Right-Censored**: Experiment ends before failure ($\tau$): $S_i = \min(\tau, T_i)$.
+- **Event Indicator**: $\delta_i = 1_{\{T_i < \tau\}}$
+- **Masked Failure**: Candidate set $\mathcal{C}_i$ of components masking
+the component cause of failure.
 
-We observe right-censoring and masked causes of failure.
+**Example**:
 
-Right-censoring occurs when the experiment ends before the system fails.
-
-For notation, we let $\tau$ be the right-censoring time and $\delta_i = 0$
-indicates right-censoring for system $i$.
-
-Masking occurs when we observe a system failure lifetime, but we don't know the precise component cause but instead a candidate set of components that
-could have caused failure.
-}
-
-## Observed Data Example
-Observed data with a right-censoring time $\tau = 5$ for a series system with
-$3$ components.
-
-System | Right-censored lifetime | Event indicator | Candidate set  |
+System | Right-Censored Lifetime | Event Indicator | Candidate Set  |
 ------ | ----------------------- | --------------- | -------------- |
    1   | $1.1$                   | 1               | $\{1,2\}$      |
-   2   | $1.3$                   | 1               | $\{2\}$        |
-   3   | $2.6$                   | 1               | $\{2,3\}$      |
-   4   | $3.7$                   | 1               | $\{1,2,3\}$    |
-   5   | $5$                     | 0               | $\emptyset$    |
-   6   | $5$                     | 0               | $\emptyset$    |
+   2   | $5$                     | 0               | $\emptyset$    |
+
+  - **System 1**: Failure observed at $1.1$. Component 1 or 2 failed.
+  - **System 2**: Right-censored at $\tau = 5$. No candidate set.
 
 \note{
-Here's an example of observed data for a series system with three components.
-
-We have a right-censoring time of $\tau = 5$.
-
-We see the first four systems failed. System 2 is a special case, since it
-only includes component 2. In our model, this means we do in fact know that component 2 caused the failure.
-
-In the other failed systems, we don't know the precise component cause, but
-we do have subsets of the components that could have caused failure.
-
-System 4 is also a special case, since all components could have caused failure.
-If all the observations were like this, we'd have a lot of ambiguity in our
-data.
-
-The last two systems are right-censored. The experiment ended before these
-systems failed.
+\begin{itemize}
+\item \textbf{Data}: Our likelihood model deals with right-censoring and masked cause of failure.
+\item \textbf{Right-censoring} occurs when the experiment ends before the system fails.
+\item For \textbf{notation}, we let $\tau$ be the right-censoring time and $\delta_i$
+be the event indicator. If $\delta_i = 0$, the system is right-censored.
+\item \textbf{Masking} occurs when we observe a failure but we don't know the
+precise component cause. Instead, we observe a candidate set of components that
+could have failure.
+\item Here's an example of observed data.
+\item \textbf{System 1}: We see that the system failed at $1.1$. We don't know
+which component failed, but we know it was either component 1 or 2.
+\item \textbf{System 2}: The experiment ended before the system failed. Since no
+component failed, the candidate set is empty.
+\item Candidate sets may have a single component too, in which case there is
+no masking.
+\end{itemize}
 }
 
 ## Data Generating Process
 DGP is underlying process that generates observed data:
 
-- Green elements are observed.
-- Red elements are unobserved (latent).
-- Candidate sets ($\mathcal{C}_i$) related to component lifetimes ($T_{i j})$
-  and other (unknown) covariates.
-  - Distribution of candidate sets complex. Seek a simple model valid under certain assumptions.
+- **\textcolor{green}{Green}** elements are observed.
+- **\textcolor{red}{Red}** elements are unobserved (latent).
+- Candidate set ($\mathcal{C}_i$) related to components ($T_{i j})$
+  and other unknowns.
+  - Problematic. Seek a simple model valid under certain assumptions.
 
 \begin{figure}
 \centering
-\resizebox{0.7\textwidth}{!}{\input{../image/dep_model.tex}}
+\resizebox{0.65\textwidth}{!}{\input{../image/dep_model.tex}}
 \end{figure}
 
 \note{
@@ -354,65 +313,69 @@ We see that the right-censoring time is independent of the component lifetimes
 and parameters in our model. This is a reasonable assumption in many cases.
 }
 
-## Likelihood Function
+## Likelihood Contribution: Right-Censoring
 
-### Assumptions
-- Right-censoring time $\tau$ independent of component lifetimes and parameters:
-\begin{align*}
-S_i       &= \min(\tau, T_i),\\
-\delta_i  &= 1_{\{T_i < \tau\}}.
-\end{align*}
-- Observed failure time with candidate sets. Candidate sets satisfy some
-conditions (discussed later).
+**Total likelihood** is the product of the **likelihood contributions** of each
+system:
+$$
+L(\v\theta) = \prod_{i=1}^n L_i(\v\theta).
+$$
 
-### Likelihood Contributions
-  $$
-  L_i(\v\theta) \propto
-  \begin{cases}
-      \prod_{l=1}^m R_l(s_i;\v{\theta_l})         &\text{ if } \delta_i = 0\\
-      \prod_{l=1}^m R_l(s_i;\v{\theta_l})
-          \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1.
-  \end{cases}
-  $$
+**Right-Censoring**: The likelihood contribution of the $i$\textsuperscript{th}
+when it is right-censored ($\delta_i = 0$) is proportional to the system reliability:
+$$
+L_i(\v\theta) \propto \prod_{l=1}^m R_l(\tau;\v{\theta_l}).
+$$
+
+**Assumptions**: Right-censoring time $\tau$ independent of component lifetimes
+and parameters.
+
+\note{
+\begin{itemize}
+\item \textbf{Total likelihood} is the product of the likelihood contributions
+of each system.
+\item \textbf{Right-Censored} Let's look at the likelihood contribution for
+right-censored data.
+\item When a system is right-censored, the likelihood contribution is proportional to
+the system reliability.
+\item \textbf{Assumption} In our model, we assume that the right-censoring time
+is independent of the component lifetimes and parameters.
+\item This is a \textbf{reasonable} assumption in many cases.
+\end{itemize}
+}
 
 ## Likelihood Contribution: Masked Failures
 
-**Masking**: When a system fails, but the precise failed component is ambiguous. 
+Likelihood contribution ($\delta_i = 1$) proportional to the product of the
+system reliability and the sum of the component hazards in the masking set:
+$$
+L_i(\v\theta) \propto R_{T_i}(s_i;\v\theta) \sum_{j\in c_i} h_j(s_i;\v{\theta_j}).
+$$
 
-**Simplification**: To make problem more tractable, we introduce certain conditions.
+**Candidate Set Contains Failed Component**: The candidate set, $\mathcal{C}_i$,
+always includes the failed component: $\Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1$.
 
-  - Reasonable for many realistic situations.
+**Equal Probabilities Across Candidate Sets**: The probability of of the
+candidate set is constant across different components within it, i.e., for every
+$j,j' \in c_i$:
+$$
+\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j, T_i = t_i\} = \Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j', T_i = t_i\}.
+$$
+
+**Masking Probabilities Independent of Parameters**: The masking probabilities
+when conditioned on $T_i$ and $K_i$ aren't functions of $\v{\theta}$.
 
 \note{
 Masking occurs when a system fails but the precise failed component is ambiguous. 
 
 To make problem more tractable, we introduce certain conditions.
 
-These conditions are reasonable for many real-world systems.
+Reasonable for many realistic situations.
 }
 
-## Masking Conditions
 
-**Candidate Set Contains Failed Component**: The candidate set, $\mathcal{C}_i$,
-always includes the failed component:
+## Likelihood Contribution: Masked Failures (cont.)
 
-$$
-\Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1
-$$
-
-**Equal Probabilities Across Candidate Sets**: For an observed system failure
-time $T_i=t_i$ and a candidate set $\mathcal{C}_i = c_i$, the probability of
-of the set is constant across different component failures within the set:
-
-$$
-\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j, T_i = t_i\} = \Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | K_i = j', T_i = t_i\}
-$$
-for every $j,j' \in c_i$.
-
-**Masking Probabilities Independent of Parameters**: The masking probabilities
-when conditioned on $T_i$ and failed component $K_i$ aren't functions of $\v{\theta}$.
-
-## Likelihood Contribution: Masked Component Cause of Failure
 
 **Joint distribution** of $T_i$, $K_i$, and $\mathcal{C}_i$:
 $$
@@ -505,65 +468,71 @@ but keep all resamples for the bootstrap.
 Like any model, ours has its challenges. For instance, the ambiguity in masked data, combined with small sample sizes, can create flat regions in our likelihood, causing convergence issues. Also, bootstrapping may not always capture the true variability in our data. But we've taken steps to address these. We discard non-convergent samples for MLE on original data but retain all for bootstrapping, ensuring variability is captured.
 }
 
-# Series System with Weibull Component Lifetimes
+# Simulation Study
 
-**Weibull Distribution**: We model a system's components using Weibull
-distributed lifetimes.
+## Series System: Weibull Components
 
-The lifetime distribution for the $j$\textsuperscript{th} component of the
-$i$\textsuperscript{th} system is:
+The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system:
 $$
     T_{i j} \sim \operatorname{Weibull}(k_j,\lambda_j)
 $$
 
-Where:
+- $\lambda_j$ is the *scale* parameter 
+- $k_j$ is the *shape* parameter, where:
+  - $k_j < 1$: Indicates infant mortality.
+  - $k_j = 1$: Indicates random failures.
+  - $k_j > 1$: Indicates wear-out failures.
 
-- $\lambda_j > 0$ is the scale parameter.
-- $k_j > 0$ is the shape parameter.
+Recall that for a series system:
 
-#### Significance of the Shape Parameter:
+- **Series Reliability** is the product of the component reliabilities.
+- **Hazard** is the sum of the component hazard functions.
+- **Likelihood**: $L(\v\theta) \propto \prod_{i=1}^n R_{T_i}(t_i;\v\theta) \left[\sum_{j \in c_i} h_j(t_i;\v{\theta_j})\right]^{\delta_i}$.
 
-- $k_j < 1$: Indicates infant mortality. E.g., defective components weeded out early.
-- $k_j = 1$: Indicates random failures. E.g., result of random shocks.
-- $k_j > 1$: Indicates wear-out failures. E.g., components wearing out with age.
+\note{
+\begin{itemize}
+\item \textbf{Weibull}: We model a series system with Weibull components.
+\item \textbf{Component Functions}: Hazard and reliability functions are well-known for Weibull.
+\item \textbf{Shape} parameter tells us a lot about the failure characteristics.
+\item \textbf{Increasing}: When the function is increasing, think of it as
+wearing-out over time.
+\item \textbf{Decreasing}: If it's decreasing, it usually signals some
+early-life challenges.
+\item \textbf{Series System}: Recall that for a series system, the reliability
+is the product of the component reliabilities and the hazard function is the
+sum of the component hazard functions.
+\item \textbf{Likelihood}: The likelihood is the same as before, we've just
+reproduced it here.
+\end{itemize}
+}
 
-\note{Weibull Distribution: Crucial and versatile distribution in reliability
-analysis.}
-
-## Theoretical Results
-
-Reliability and hazard functions of a series system with Weibull components:
-\begin{align*}
-R_{T_i}(t;\v\theta) &= \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\},\\
-h_{T_i}(t;\v\theta) &= \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1},
-\end{align*}
-where $\v\theta = (k_1, \lambda_1, \ldots, k_m, \lambda_m)$ is the parameter vector of the series system.
-
-### Likelihood Model
-
-**Right Censoring and Masked Failures**: The likelihood contribution of
-$i$\textsuperscript{th} system:
-$$
-L_i(\v\theta) \propto
-\begin{cases}
-    R_{T_i}(t_i;\v\theta) & \text{if } \delta_i = 0,\\
-    R_{T_i}(t_i;\v\theta) \sum_{j \in c_i} h_j(t_i;\v{\theta_j}) & \text{if } \delta_i = 1.
-\end{cases}
-$$
-
-# Simulation Study Overview
+## Well-Designed Series System
 
 This study is centered around the following *well-designed series system*
 with Weibull component lifetimes:
 
-| Component   | Shape | Scale | MTTF | $\Pr\{K_i\}$ |
-|-------------|------------|----------|---------|-------|
-| 1      | 1.26 | 994.37 | 924.87 | 0.17 | 0.74 |
-| 2      | 1.16 | 908.95 | 862.16 | 0.21 | 0.70 |
-| 3      | 1.13 | 840.11 | 803.56 | 0.23 | 0.67 |
-| 4      | 1.18 | 940.13 | 888.24 | 0.20 | 0.71 |
-| 5      | 1.20 | 923.16 | 867.75 | 0.20 | 0.71 |
-| System | NA   | NA     | 222.88 | NA   | 0.18 |
+| Component | Shape | Scale  | $\Pr\{K_i\}$ |
+|-----------|-------|--------|--------------|
+| 1         | 1.26  | 994.37 | 0.17         |
+| 2         | 1.16  | 908.95 | 0.21         |
+| 3         | 1.13  | 840.11 | 0.23         |
+| 4         | 1.18  | 940.13 | 0.20         |
+| 5         | 1.20  | 923.16 | 0.20         |
+
+
+\note{
+\begin{itemize}
+\item \textbf{Well-Designed}: This study is centered around a well-designed
+series system with Weibull component lifetimes.
+\item \textbf{Parameters}: We show the parameters for each component.
+\item \textbf{Shape}: We see that the shape parameter is greater than 1 for
+each component, indicating wear-out failures.
+\item \textbf{Probability}: We also show the probability of each component
+being the cause of failure.
+\item \textbf{Uniform}: The probabilities are comparable, which is what we
+want for a well-designed system.
+\end{itemize}
+}
 
 ## Performance Metrics
 
