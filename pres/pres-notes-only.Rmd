@@ -17,11 +17,15 @@ header-includes:
 - \theoremstyle{definition}
 - \newtheorem{condition}{Condition}
 - \theoremstyle{plain}
-- \setbeameroption{show notes on second screen}
+#- \usepackage{pgfpages}
+#- \pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+- \setbeameroption{show only notes}
 bibliography: ../refs.bib
+classoption: handout
 #link-citations: true
 #csl: ../ieee-with-url.csl
 ---
+
 
 ## Context & Motivation
 
