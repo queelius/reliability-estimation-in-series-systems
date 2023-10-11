@@ -56,9 +56,9 @@ sometimes encounter ambiguous data like right-censored information or masked
 component-level failures, where we don't know precisely which component failed.
 \item \textbf{Aim}: Our goal is to interpret such ambiguous data and provide
 accurate reliability estimates for each component, which includes providing
-correctly specified 95% CIs, meaning they cover the true parameter value around
-95% of the time. We do this using MLE and bootstrap the confidence intervals
-using the BCa method.
+correctly specified $95\%$ CIs, meaning they cover the true parameter value around
+$95\%$ of the time.
+\item To obtain good coverage, we bootstrap the confidence intervals using the BCa method.
 \end{itemize}
 }
 
@@ -67,7 +67,6 @@ using the BCa method.
 **Likelihood Model** for **series systems**.
 
 - Accounts for *right-censoring* and *masked component failure*.
-- Can easily incorporate additional failure data.
 
 **Specifications of Conditions**:
 
@@ -77,7 +76,6 @@ using the BCa method.
 **Simulation studies**:
 
 - Components with *Weibull* lifetimes.
-
 - Evaluate MLE and confidence intervals under different scenarios.
 
 **R Library**: Methods available on GitHub.
@@ -87,10 +85,11 @@ using the BCa method.
 \note{
 Our core contributions can be broken down into several parts:
 \begin{itemize}
-\item \textbf{Likelihood model}: We've derived a likelihood model for series systems that accounts for the
-ambiguous data.
-\item \textbf{Explain conditions}: We've clarified the conditions this model assumes about the masking of component failures. These conditions simplify the model and make it more tractable.
-\item \textbf{Validated with simulation study}: We've validated our model with extensive simulations using Weibull distributions to gauge its performance under various scenarios.
+\item We've \textbf{derived a likelihood model} for series systems that accounts for
+\textbf{right-censoring} and \textbf{masked component failure}.
+\item We've \textbf{clarified} the conditions this model assumes about the masking of component failures. These conditions simplify the model and make it more tractable.
+\item We've \textbf{validated} our model with extensive simulations to gauge its performance under various simulation scenarios.
+\item The simulation is based on components with \textbf{Weibull} lifetimes.
 \item \textbf{R Library}: For those interested, we made our methods available in an R Library hosted on GitHub.
 \end{itemize}
 }
@@ -112,22 +111,24 @@ If any component fails, the entire system fails.
 $$
 T_i = \min(T_{i 1}, \ldots, T_{i 5})
 $$
+where:
 
-- Where: $T_i$ and $T_{i j}$ are the system and component lifetimes for the
-$i$\textsuperscript{th} system and $j$\textsuperscript{th} component, respectively.
+- $T_i$ is the lifetime of $i$\textsuperscript{th} system.
+- $T_{i j}$ is the $j$\textsuperscript{th} component of $i$\textsuperscript{th} system.
 
 \note{
 \begin{itemize}
-\item \textbf{Critical Components}: Many complex systems have components that
+\item Many complex systems have \textbf{Critical Components} that
 are essential to their operation.
-\item \textbf{Series System}: If any of these components fail, the entire system
-fails. We call these series systems.
-\item \textbf{Car}: Think of a car - if the engine or brakes fail, the car can't
+\item If any of these components fail, the entire system
+fails. We call these \textbf{Series System}.
+\item Think of a \textbf{Car}- if the engine or brakes fail, it can't
 be operated.
-\item \textbf{Lifetime}: Its lifetime is the lifetime of its shortest-lived
-component.
-\item \textbf{Notation}: For reference, we show the math notation we'll use
-throughout the talk.
+\item Its \textbf{Lifetime} is the lifetime of its \textbf{shortest-lived
+component}.
+\item For reference, we show the some notation we'll use
+throughout the talk. $T_i$ is the system's lifetime and $T_{i j}$ is the
+$j$\textsuperscript{th} component's lifetime.
 \end{itemize}
 }
 
