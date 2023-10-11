@@ -1,0 +1,14 @@
+1. talk about how $p = 0.215$ was chosen
+2. mention that $q = 0.825$ was chosen arbitrarily. seemed like a good value.
+3. incorporate skewness/bias into talk -- particularly for graphs. (BCa)
+4. talk about the industrial settings that make it reason:
+
+	- e.g., circuit board is replaced, reparing the system, but don't know which
+	component on board failed. by design, this means that any time the board fails,
+	these same components are usually in the candidate set, thus equal probability
+	across components in candidate set.
+
+---
+challenges:
+
+	1. BCa: adjusts for bias, re-centering the ...

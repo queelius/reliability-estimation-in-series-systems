@@ -648,7 +648,7 @@ The most important way in which $\mathcal{C}_i$ is correlated with the
 $i$\textsuperscript{th} system is given by assuming the following condition.
 \begin{condition}
 \label{cond:c-contains-k}
-The candidate set $\mathcal{C}_i$ contains the index of the the failed component, i.e.,
+The candidate set $\mathcal{C}_i$ contains the index of the failed component, i.e.,
 $$
 \Pr{}_{\!\v\theta}\{K_i \in \mathcal{C}_i\} = 1,
 $$
@@ -1814,7 +1814,7 @@ the component cause of failure).
 
 In Figure \ref{fig:masking-prob-vs-stats}, we show the effect of the masking
 probability $p$ on the MLE for the shape and scale parameters. The top four
-plots only show the effect on the MLE for the the shape and scale parameters of
+plots only show the effect on the MLE for the shape and scale parameters of
 components $1$ and $3$, since the rest demonstrated similar results. The bottom
 left plot shows the coverage probabilities for all parameters and the bottom
 right plot shows the convergence rate of the MLE.
@@ -1893,7 +1893,7 @@ estimates as the masking probability increases.
 ##### Convergence Rate {-}
 The convergence rate decreases as the Bernoulli masking probability $p$
 increases. This is consistent with the expectation that a higher masking
-probability decreases the information the sample contains about the the
+probability decreases the information the sample contains about the
 parameters. We see that the convergence rate remains above $95\%$ for masking
 probabilities up to $p = 0.4$, but drops below $95\%$ for $p > 0.4$. This is
 consistent with behavior of the CPs, which drop below $90\%$ for $p > 0.4$.
