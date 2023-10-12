@@ -6,26 +6,19 @@ output:
   beamer_presentation:
     theme: Boadilla
     slide_level: 2
-  powerpoint_presentation:
-    slide_level: 2
 header-includes:
 - \usepackage{tikz}
 - \usepackage{caption}
 - \usepackage{amsthm}
 - \usepackage{xcolor}
 - \renewcommand{\v}[1]{\boldsymbol{#1}}
-- \theoremstyle{definition}
-- \newtheorem{condition}{Condition}
-- \theoremstyle{plain}
-- \setbeameroption{show notes on second screen}
-bibliography: ../refs.bib
-#link-citations: true
-#csl: ../ieee-with-url.csl
+- \setbeameroption{show notes on second screen=right}
+#bibliography: ../refs.bib
 ---
 
 ## Context & Motivation
 
-**Reliability** in **series systems** is like a chain's strength -- determined
+**Reliability** in **Series Systems** is like a chain's strength -- determined
 by its weakest link.
 
 - Essential for system design and maintenance.
@@ -35,36 +28,34 @@ by its weakest link.
 **Challenges**:
 
 - *Masked* component-level failure data.
-- *Right-censoring* in system-level failure data.
+- *Right-censoring* system-level failure data.
 
 **Our Response**:
 
 - Derive techniques to interpret such ambiguous data.
 - Aim for precise and accurate reliability estimates for individual components
-using maximum likelihood estimation (MLE) and bootstrapped (BCa) confidence
+using maximum likelihood estimation (MLE) and BCa confidence
 intervals.
 
 \note{
 \begin{itemize}
-\item \textbf{Chain Analogy}: Think of a series system as a chain. Its reliability,
-just like a chain's strength, is determined by its weakest link or component.
-When any component fails, the whole system does.
-\item \textbf{Reliability Importance}: Understanding the reliability of each component is essential for the design and
-maintenance of these systems. 
-\item \textbf{Data Challenge}: The data we rely on can come with its own challenges. We
-sometimes encounter ambiguous data like right-censored information or masked
-component-level failures, where we don't know precisely which component failed.
-\item \textbf{Aim}: Our goal is to interpret such ambiguous data and provide
-accurate reliability estimates for each component, which includes providing
-correctly specified $95\%$ CIs, meaning they cover the true parameter value around
-$95\%$ of the time.
-\item To obtain good coverage, we bootstrap the confidence intervals using the BCa method.
+\item Think of a series system as a \textbf{chain}: reliability is determined by its weakest component.
+\item When any component \textbf{fails}, the whole system does.
+\item So, understanding the \textbf{reliability} of each component is needed for
+the \textbf{design} and \textbf{maintenance} of these systems. 
+\item So, our \textbf{main goal} is to estimate the reliability of each component
+from failure data.
+\item But the \textbf{data} can pose \textbf{challenges}, like right-censoring or masked failures where we don't know which component failed.
+\item Our \textbf{goal} is to use this data to provide accurate reliability
+estimates for each component, including accurate confidence intervals to
+quantify the uncertainty in our estimate.
+\item To obtain good \textbf{coverage}, we bootstrap the confidence intervals using the \textbf{BCa method}.
 \end{itemize}
 }
 
 ## Core Contributions
 
-**Likelihood Model** for **series systems**.
+**Likelihood Model** for **Series Systems**.
 
 - Accounts for *right-censoring* and *masked component failure*.
 
@@ -73,24 +64,24 @@ $95\%$ of the time.
 - Assumptions about the masking of component failures.
 - Simplifies and makes the model more tractable.
 
-**Simulation studies**:
+**Simulation Studies**:
 
 - Components with *Weibull* lifetimes.
 - Evaluate MLE and confidence intervals under different scenarios.
 
 **R Library**: Methods available on GitHub.
 
-- [github.com/queelius/wei.series.md.c1.c2.c3](https://github.com/queelius/wei.series.md.c1.c2.c3)
+- See: [www.github.com/queelius/wei.series.md.c1.c2.c3](https://github.com/queelius/wei.series.md.c1.c2.c3)
 
 \note{
-Our core contributions can be broken down into several parts:
 \begin{itemize}
-\item We've \textbf{derived a likelihood model} for series systems that accounts for
-\textbf{right-censoring} and \textbf{masked component failure}.
+\item Our \textbf{core contributions} can be broken down into several parts.
+\item We \textbf{derived} a \textbf{likelihood model} for series systems that accounts for
+\textbf{Right-censoring} and \textbf{masking} of \textbf{component failures}.
 \item We've \textbf{clarified} the conditions this model assumes about the masking of component failures. These conditions simplify the model and make it more tractable.
 \item We've \textbf{validated} our model with extensive simulations to gauge its performance under various simulation scenarios.
-\item The simulation is based on components with \textbf{Weibull} lifetimes.
-\item \textbf{R Library}: For those interested, we made our methods available in an R Library hosted on GitHub.
+\item The \textbf{simulation study} is based on components with \textbf{Weibull} lifetimes.
+\item For those interested, we made our methods available in an \textbf{R Library} hosted on GitHub.
 \end{itemize}
 }
 
@@ -118,17 +109,12 @@ where:
 
 \note{
 \begin{itemize}
-\item Many complex systems have \textbf{Critical Components} that
-are essential to their operation.
-\item If any of these components fail, the entire system
-fails. We call these \textbf{Series System}.
-\item Think of a \textbf{Car}- if the engine or brakes fail, it can't
-be operated.
-\item Its \textbf{Lifetime} is the lifetime of its \textbf{shortest-lived
-component}.
-\item For reference, we show the some notation we'll use
-throughout the talk. $T_i$ is the system's lifetime and $T_{i j}$ is the
-$j$\textsuperscript{th} component's lifetime.
+\item Many complex systems have \textbf{critical components} that are essential to their operation.
+\item If any of these components fail, the entire system fails. We call these \textbf{series systems}.
+\item Think of a \textbf{car} - if the engine or brakes fail, it can't be operated.
+\item Its \textbf{lifetime} is the lifetime of its \textbf{shortest-lived} component.
+\item For reference, we show the some notation we'll use throughout the talk.
+\item $T_i$ is the system's lifetime and $T_{i j}$ is its $j$\textsuperscript{th} component's lifetime.
 \end{itemize}
 }
 
@@ -153,13 +139,10 @@ $$
 
 \note{
 \begin{itemize}
-\item \textbf{Reliability Function} The reliability function tells us the chance
-a component or system functions past a specific time. It's our key metric for longevity.
-\item \textbf{Product of Component Reliability}: In a series system, the
-overall reliability is the product of its component reliabilities. So, if even
-one component has a low reliability, it can impact the whole system.
-\item \textbf{Relevance}: Why does this matter to us? This concept is foundational to our studies,
-especially when we're handling right-censored data.
+\item The \textbf{reliability function} tells us the chance a component or system functions past a specific time.
+\item It's a \textbf{key metric} for longevity.
+\item In a series system, the overall reliability is the \textbf{product} of its \text{component reliabilities}.
+\item So, even if \textbf{one component} has a low reliability, it can impact the whole system.
 \end{itemize}
 }
 
@@ -176,17 +159,16 @@ $$
 h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
 
-  - Components' risks are additive.
+- Components' risks are additive.
 
 \note{
-\textbf{Hazard Function}: Let's shift focus to the hazard function. Essentially,
-it's a way to gauge the immediate risk of failure, especially if it's been
+\begin{itemize}
+\item Let's shift focus to the hazard function.
+\item Essentially, it's a way to gauge the immediate risk of failure, especially if it's been
 functioning up until that point.
-
-\textbf{Series Hazard Function} Lastly, the hazard function for a series system
-is just the sum of the hazard functions of its components.
-
-\textbf{Additive}: We see that the component risks are additive.
+\item The hazard function for a series system is just the \text{sum} of the \textbf{component hazards}.
+\item We see that the component risks are \textbf{additive}.
+\end{itemize}
 }
 
 ## Joint Distribution of Component Failure and System Lifetime
@@ -205,14 +187,11 @@ $$
 
 \note{
 \begin{itemize}
-\item \textbf{Joint Distribution} In our likelihood model, understanding the
-joint distribution of a system's lifetime and the component that led to its
-failure is fundamental.
-\item \textbf{Formula}: It is the product of the failing component's hazard
-function and the system reliability function.
-\item \textbf{Unique Cause}: Which emphasizes that in a series system, failure
-can be attributed to a single component's malfunction.
-\item \textbf{Notation}: Here, $K_i$ denotes the component responsible for the failure.
+\item In our likelihood model, understanding the \textbf{joint distribution} of
+a system's lifetime and the component that led to its failure is essential.
+\item It is the \textbf{product} of the failed component's hazard function and
+the system reliability function.
+\item Here, $K_i$ denotes \textbf{failed component}.
 \end{itemize}
 }
 
@@ -235,31 +214,29 @@ series system.
 
 \note{
 \begin{itemize}
-\item \textbf{Marginal}: We can use this joint distribution to calculate the marginal probability
-of component failure.
-\item \textbf{Expected Value}: When we do so, we find that it is the expected value of
+\item We can use the \textbf{joint distribution} of the system lifetime and the failed component to calculate the \textbf{marginal} probability of component failure.
+\item When we do so, we find that it is the \textbf{expected value} of
 the ratio of component and system hazard functions.
-\item \textbf{Well-Designed}: We say that a series system is \emph{well-designed}
-if each components has a comparable chance of failing.
-\item \textbf{Relevance}: Our simulation study is based on a reasonably
-well-designed series system.
+\item We say that a series system is \textbf{well-designed} if each components has a \textbf{comparable} chance of failing.
+\item Our simulation study is \textbf{based} on a reasonably well-designed series system.
 \end{itemize}
 }
 
-# Likelihood Model
+# Likelihood Function
 
-Likelihood measures how well our model parameters ($\v\theta$) explain the data.
-Each system contributes to the **total likelihood** via its *likelihood contribution*:
+**Likelihood**: Measures how well model explains the data. Each system
+contributes to *total likelihood* via its *likelihood contribution*:
 $$
-L(\v\theta|\text{data}) = \prod_{i=1}^n L_i(\v\theta|\text{data}_i).
+L(\v\theta|\text{data}) = \prod_{i=1}^n L_i(\v\theta|\text{data}_i)
 $$
-where **data$_i$** is the data for the $i$\textsuperscript{th} system and $L_i$ is its contribution.
+where **data$_i$** $=$ data for $i$\textsuperscript{th} system and $L_i$ $=$ its contribution.
 
 Our model handles the following data:
-**Right-Censored**: Experiment ends before failure (Event Indicator: $\delta_i = 0$).
+
+- **Right-Censored**: Experiment ends before failure (Event Indicator: $\delta_i = 0$).
   - Contribution is system reliability: $L_i(\v\theta) = R_{T_i}(\tau;\v\theta)$.
-**Masked Failure**: Failure observed, but the failed component is masked by a
-*candidate set*. More on its contribution later.
+- **Masked Failure**: Failure observed, but the failed component is masked by a
+  *candidate set*. More on its contribution later.
 
 System | Right-Censored Lifetime | Event Indicator | Candidate Set  |
 ------ | ----------------------- | --------------- | -------------- |
@@ -267,29 +244,20 @@ System | Right-Censored Lifetime | Event Indicator | Candidate Set  |
    2   | $5$                     | 0               | $\emptyset$    |
 
 \note{
-Let's talk about the likelihood model, which is a way of measuring how well our
-model explains the data.
-
 \begin{itemize}
-\item \textbf{Total likelihood} is the product of the likelihood contributions of each system.
-\item \textbf{Contributions}: Our likelihood model deals with right-censoring and masked cause of failure.
-\item \textbf{Right-Censoring} occurs when the experiment ends before the system fails. Its contribution is just the system reliability,
+\item Let's talk about the \textbf{likelihood function}, which is a way of \textbf{measuring} how well our model explains the data.
+\item The \textbf{total likelihood} is the product of the likelihood contributions of each system.
+\item Our model deals with right-censoring and masked failures.
+\item \textbf{Right-censoring} occurs when the experiment ends before the system fails. Its contribution is just the system reliability,
 since the event indicator tells us if the system was right-censored.
-\item \textbf{Masking} occurs when we observe a failure but we don't know the
-precise component cause. Instead, we observe a candidate set of components that
-could have failure. More on this later.
-\item Here's an example of observed data.
-\item \textbf{System 1}: We see that the system failed at $1.1$. We don't know
-which component failed, but we know it was either component 1 or 2.
-\item \textbf{System 2}: The experiment ended before the system failed. Since no
-component failed, the candidate set is empty.
-\item Candidate sets may have a single component too, in which case there is
-no masking.
+\item \textbf{Masking} occurs when we observe a failure but we don't know which component failed. Instead, we see a set of components that mask the failure. More on this later.
+\item We show an \textbf{example} data set here. \textbf{System 1} failed and either component 1 or 2 caused it and \textbf{System 2} was right-censored.
 \end{itemize}
 }
 
 ## Data Generating Process
-DGP is underlying process that generates the data:
+
+The data generating process (DGP) is the underlying process that generates the data:
 
 - *\textcolor{green}{Green}* elements are observed, *\textcolor{red}{Red}* elements are latent.
 - **Right-Censored** lifetime: $S_i = \min(T_i, \tau)$.
@@ -304,17 +272,16 @@ DGP is underlying process that generates the data:
 
 \note{
 \begin{itemize}
-\item \textbf{DGP}: Let's discuss the data generating process to motivate our model.
-\item \textbf{Graph}: Here's the graph: green is observed and red is latent.
-\item \textbf{Infer}: We don't get to see the red elements, but we can infer most of them
+\item Let's discuss the \textbf{data generating process} to motivate our model.
+\item Here's the graph: \textbf{green} is observed and \textbf{red} is latent.
+\item We don't get to see the red elements, but we can \textbf{infer} most of them
 from the green elements.
-\item \textbf{Green}: So, let's focus on the green elements.
-\item \textbf{Right-censoring} time is the minimum of the system lifetime and the
-right-censoring time.
-\item \textbf{Event} indicator is 1 if the system fails before the right-censoring time, 0 otherwise.
-\item The candidate sets are related to the component lifetimes and many other factors.
-\item \textbf{Difficult} to model. Seek a simple model that is valid under certain
-assumptions, which we discuss next.
+\item So, let's focus on the \textbf{green} elements, the \textbf{observed} data.
+\item The \textbf{right-censored} time is the minimum of the system lifetime and the
+right-censoring time $\tau$.
+\item The \textbf{event} indicator is 1 if the system fails before the right-censoring time, 0 otherwise.
+\item The candidate set is related to the component lifetimes and many other factors.
+\item The candidate sets are difficult \textbf{difficult} to model, so we seek a simple model that is valid under certain assumptions, which we discuss next.
 \end{itemize}
 }
 
@@ -323,26 +290,21 @@ assumptions, which we discuss next.
 The candidate sets that **mask** the failed component are assumed to satisfy the following
 conditions:
 
-**Candidate Set Contains Failed Component**: The candidate set includes the failed component.
+- **Candidate Set Contains Failed Component**: The candidate set includes the failed component.
 
-**Equal Probabilities Across Candidate Sets**: The probability of of the
-candidate set is constant across different components within it.
+- **Masking Probabilities Uniform Across Candidate Sets**: The probability of of the candidate set is constant across different components within it.
 
-**Masking Probabilities Independent of Parameters**: The masking probabilities
-when conditioned on the system lifetime and the failed component aren't functions of the system parameter.
-
-- Reasonable conditions in many industrial settings.
+- **Masking Probabilities Independent of Parameters**: The masking probabilities when conditioned on the system lifetime and the failed component aren't functions of the system parameter.
 
 \note{
 \begin{itemize}
-\item The right-censoring contribution is straightforward. But the masked failure
-contribution is a bit more complicated.
+\item The right-censoring contribution is straightforward. The \textbf{masked failure contribution} is more complex.
 \item \textbf{Masking} occurs when a system fails but the precise failed component is masked by a candidate set.
-\item \textbf{Tractable}: To make problem more tractable, we introduce certain conditions.
-\item \textbf{Condition 1}: The candidate set always includes the failed component.
-\item \textbf{Condition 2}: The probability of the candidate set is constant across different components within it.
-\item \textbf{Condition 3}: The masking probabilities when conditioned on the system lifetime and the failed component aren't functions of the system parameter.
-\item \textbf{Reasonable}: These conditions are often reasonable.
+\item To make the problem \textbf{tractable}, we introduce certain conditions or assumptions about the candidate sets.
+\item In \textbf{Condition 1}, the candidate set always includes the failed component.
+\item In \textbf{Condition 2}, the probability of the candidate set is constant across different components within it.
+\item In \textbf{Condition 3}, the masking probabilities when conditioned on the system lifetime and the failed component aren't functions of the system parameter.
+\item These conditions are often \textbf{reasonable} in industrial settings.
 \end{itemize}
 }
 
@@ -368,21 +330,21 @@ $$
 
 \note{
 \begin{itemize}
-\item \textbf{Derive}: Here, we derive the likelihood contribution for masked failures.
-\item \textbf{Joint}: To start, we use the joint distribution of the system lifetime, the failed component, and the candidate set.
-\item \textbf{Marginalize}: We marginalize over the failed component, since we don't know which component failed.
-\item Apply Condition 1 to get a sum over the candidate set instead.
-\item Apply Condition 2 to move the probability outside the sum.
-\item Apply condition 3 to remove the probability's dependence on $\v\theta$.
-\item The result: the likelihood contribution is proportional to the product of the system reliability and the sum of the component hazards in the masking set.
+\item Here, we \textbf{derive} the likelihood contribution for masked failures.
+\item To start, we use the \textbf{joint distribution} of the system lifetime, the failed component, and the candidate set.
+\item Then, we \textbf{marginalize} over the failed component, since we don't know which component failed.
+\item We apply \textbf{condition 1} to get a \textbf{sum} over the \textbf{candidate set} instead.
+\item We apply \textbf{condition 2} to move the probability \textbf{outside} the sum.
+\item We apply \textbf{condition 3} to \textbf{remove} the probability's dependence on the system parameter.
+\item And we \textbf{end up} with a likelihood contribution proportional to the product of the system reliability and the sum of the component hazards in the candidate set.
 \end{itemize}
 }
 
 ## Methodology: Maximum Likelihood Estimation
 
-**Maximum Likelihood Estimation (MLE)**: Maximize the likelihood function:
+**Maximum Likelihood Estimation (MLE)**: Maximize the log-likelihood function:
 $$
-\hat{\v\theta} = \arg\max_{\v\theta} L(\v\theta).
+\hat{\v\theta} = \arg\max_{\v\theta} \log L(\v\theta).
 $$
 
 **Solution**: Numerically solved system of equations for $\hat{\v\theta}$:
@@ -392,43 +354,32 @@ $$
 
 \note{
 \begin{itemize}
-\item \textbf{MLE}: We use the standard MLE approach.
-\item \textbf{ArgMax}: We find the parameter values that maximize the
-log-likelihood function.
-\item \textbf{Solution}: Since there is no closed-form solution, we numerically solve it.
+\item We use the standard \textbf{maximum likelihood} approach.
+\item We find a parameter value that \textbf{maximizes} the likelihood function using numerical methods.
 \end{itemize}
 }
 
 ## Bootstrap Confidence Intervals (CIs)
 
-Confidence Intervals (CI) quantify the uncertainty in our estimate.
+**Confidence Intervals (CI)** help capture the *uncertainty* in our estimate.
 
-**Asymptotic Sampling Distribution of MLE** is a popular choice for constructing
-CIs.
-
-- **Challenge**: Asymptotic distribution may not be accurate for small sample sizes.
-  - Particularly since we're dealing with right-censoring and masking.
-
-**Bootstrapped CIs**: Resample data and obtain MLE for each.
-
-- Use **percentiles** of bootstrapped MLEs for CIs.
-
-**Correctly Specified CIs**:
-
-- Desired: Coverage probability near $95\%$. ($>90\%$ acceptable.)
-- **Challenge**: Actual coverage may deviate.
-
-**BCa adjustments** counteracts bias and skewness in estimates.
+- **Normal** assumption for constructing CIs may not be accurate.
+  - *Masking* and *censoring*.
+- **Bootstrapped CIs**: Resample data and obtain MLE for each.
+  - Use **percentiles** of bootstrapped MLEs for CIs.
+- **Coverage Probability**: Probability the interval covers the true parameter value.
+  - **Challenge**: Actual coverage may deviate to bias and skew in MLEs.
+- **BCa** adjusts the CIs to counteract bias and skew in the MLEs.
 
 \note{
 \begin{itemize}
-\item \textbf{Goal}: Need a way to measure the uncertainty in our estimate.
-\item \textbf{CIs} are a popular; they help us pin down the likely range of values for our parameters.
-\item \textbf{Bootstrap} the CIs, since there is a lot of bias and variability in our estimate due to the masking and censoring
-in our small data sets and the asymptotic distribution is not likely to be accurate.
-\item \textbf{Specified}: We want our CIs to be correctly specified, meaning they cover the true parameter value around 95% of the time.
-\item \textbf{BCa}: But they may be too low or too high; we use the BCa method to adjust for bias and skewness in the estimate.
-A coverage probability above $90\%$ is acceptable.
+\item We need to measure the \textbf{uncertainty} in our estimate.
+\item \textbf{Confidence intervals} are a popular choice and help us pin down the likely range of values for our parameters.
+\item Due to masking and censoring, the \textbf{normal} approximation for constructing CIs may be inaccurate.
+\item So, we've chosen to \textbf{bootstrap} the intervals instead, which isn't as sensitive to these issues.
+\item \textbf{Coverage probability} is the probability the interval covers the true parameter value.
+\item Due to bias and skew in the MLE, the coverage probability may be too low/high, indicating over/under confidence.
+\item We use the \textbf{BCa method} to adjust the confidence intervals to counteract bias and skew.
 \end{itemize}
 }
 
@@ -436,36 +387,32 @@ A coverage probability above $90\%$ is acceptable.
 
 We discovered some challenges with the MLE.
 
-**Convergence Issues**: Flat likelihood regions were observed due to the
-  ambiguity in the masked data and small sample sizes.
+- **Convergence Issues**: Flat likelihood regions observed.
+  - Ambiguity in masked data with small samples.
   
-**Bootstrap Issues**: Bootstrap relies on the Law of Large Numbers.
+- **Bootstrap Issues**: Bootstrap relies on the Law of Large Numbers.
+  - It might not represent the true variability for small samples.
+  - Censoring and masking reduces effective sample size.
 
-- It might not represent the true variability for small samples.
+- **Mitigation**: In simulation study, discard non-convergent samples for the
+MLE on original data, but keep all resamples for the BCa CIs.
 
-- Due to censoring and masking, the effective sample size is reduced.
+  - Helps ensure robustness of the results, while acknowledging the inherent
+    complexities introduced by masking and censoring.
 
-**Mitigation**: In simulation study, we discard non-convergent samples for the
-MLE on original data, but keep all resamples for the bootstrap.
-
-- Helps ensure robustness of the results, while acknowledging the inherent
-  complexities introduced by masking and censoring.
-
-- We report convergence rates in our simulation study.
+  - We report convergence rates in our simulation study.
 
 \note{
-Like any model, ours has its challenges:
 \begin{itemize}
-\item \textbf{Masking}: Masking and censoring, combined with small sample sizes,
-can cause flat likelihood regions, which can lead to convergence issues.
-\item \textbf{Small}: For small samples, bootstrapping may not always capture
-the true variability in the data
-\textbf{Approach}: We take the following approach in our simulation study.
-\textbf{Discard}: We discard non-convergent samples for the MLE on original data
-but retain all MLEs for the resampled data.
-\textbf{Robustness}: This helps ensure the robustness of our results while
+\item Like any model, ours has its challenges. \textbf{Masking} and \textbf{censoring}, combined with small sample sizes, can cause flat likelihood regions, which can lead to convergence issues.
+\item For \textbf{small samples}, bootstrapping may not always capture
+the true variability in the data.
+\item To \textbf{deal} with these issues in our simulation study, we \textbf{discard} samples that did not converge within 125 iterations
+for the MLE on original data.
+\item However, we \textbf{retain} all MLEs for the resampled data in the bootstrap for the confidence intervals.
+\item This helps ensure the \textbf{robustness} of our results while
 acknowledging the inherent complexities introduced by masking and censoring.
-\textbf{Convergence Rate}: We report the convergence rate in our simulation study.
+\item We report the \textbf{convergence rate} in our simulation studies.
 \end{itemize}
 }
 
@@ -481,10 +428,11 @@ $$
 - $\lambda_j$ is the **scale** parameter 
 - $k_j$ is the **shape** parameter:
   - $k_j < 1$: Indicates infant mortality.
-  - $k_j = 1$: Indicates random failures.
+  - $k_j = 1$: Indicates random failures (exponential distribution).
   - $k_j > 1$: Indicates wear-out failures.
 
-Recall that for a series system:
+Weibull has well known *reliability* and *hazard* functions, so we won't
+reproduce them here. Recall that for a series system:
 
 - **Series Reliability** is the product of the component reliabilities.
 - **Hazard** is the sum of the component hazard functions.
@@ -492,18 +440,17 @@ Recall that for a series system:
 
 \note{
 \begin{itemize}
-\item \textbf{Weibull}: We model a series system with Weibull components.
-\item \textbf{Component Functions}: Hazard and reliability functions are well-known for Weibull.
+\item In our \textbf{simulation study}, we analyze a series system with \textbf{Weibull} components.
+\item The Weibull has two parameters: the \textbf{scale} and \textbf{shape}.
 \item \textbf{Shape} parameter tells us a lot about the failure characteristics.
-\item \textbf{Increasing}: When the function is increasing, think of it as
-wearing-out over time.
-\item \textbf{Decreasing}: If it's decreasing, it usually signals some
-early-life challenges.
-\item \textbf{Series System}: Recall that for a series system, the reliability
-is the product of the component reliabilities and the hazard function is the
-sum of the component hazard functions.
-\item \textbf{Likelihood}: The likelihood is the same as before, we've just
-reproduced it here.
+\begin{itemize}
+\item When its \textbf{greater} than \textbf{one}, think of it as wearing-out over time.
+\item If it's \textbf{less} than one, that usually signals some early-life challenges.
+\end{itemize}
+\item For the Weibull, the \textbf{hazard} and \textbf{reliability} functions are well-known, so we won't reproduce them here.
+\item Recall that for a series system, the \textbf{reliability} is the product of the
+component reliabilities and the \textbf{hazard} function is the sum of the component hazard functions.
+\item The \textbf{formula} for the \textbf{likelihood function} for our data is the same as before, we've just reproduced it here as a reminder.
 \end{itemize}
 }
 
@@ -519,82 +466,79 @@ reproduced it here.
 | 4         | 1.18  | 940.13 | 0.20         |
 | 5         | 1.20  | 923.16 | 0.20         |
 
-- Based on (Guo, Niu, and Szidarovszky 2013) which studies a 3-component series system.
-  - We add components 4 and 5 to make the system more complex.
+- Based on (Guo, Niu, and Szidarovszky 2013) study of 3 components.
+  - We added components 4 and 5.
 - **Probabilities** are comparable: it is *reasonably well-designed*.
-  - Component 1 is most reliable, component 3 is least reliable.
-- **Shape** parameters are greater than 1, indicating wear-out failures.
+  - **Reliability**: Components 1 and 3 *most* and *least* reliable, respectively.
+  - **Simulation Study**: Only show estimates for these two components.
+- **Shapes** greater than 1, indicating wear-outs.
 
 \note{
 \begin{itemize}
-\item \textbf{Centered}: This study is centered around a series system with Weibull components.
-\item \textbf{Based}: It's based on a paper that studies a 3-component series system.
-\item \textbf{Added}: We added components 4 and 5 to make it more complex.
-\item \textbf{Probability}: We show the probability of each component being the cause of failure.
-\item \textbf{Well-Designed}: The probabilities are comparable, so no weak links.
-It's reasonably well-designed. Component 1 is most reliable, component 3 is least.
-\item \textbf{Parameters}: We show the shape and scale parameters for each component.
-\item \textbf{Wear-Out}: The shape parameters are greater than 1, indicating
-components are likely to fail due to wear-out.
+\item This study is \textbf{centered} around a series system with \textbf{five} Weibull components.
+\item It's \textbf{based} on a paper that studies a 3-component series system.
+\item We \textbf{added} components 4 and 5 to make it more complex.
+\item We show the \textbf{probability} of each component being the cause of failure.
+\item Since the probabilities are comparable, no weak links, it's reasonably \textbf{well-designed}.
+\item Component 1 is the \textbf{most} reliable and component 3 is the \textbf{least}.
+\item In our simulation study, we only show the estimates for these two components, as they will show the biggest differences.
+\item We show the \textbf{shape} and \textbf{scale} parameters for each component.
+\item We see that the \textbf{shape} parameters are \textbf{greater} than 1, which indicates \textbf{wear-out} failures.
 \end{itemize}
 }
 
-## Data Generation
+## Data Generation and Simulation Values
 
-**Latent Component Lifetimes** are generated for each system in the study.
+How is the data generated in our simulation study?
 
-**Right-censoring**: In our simulation study, we independently control the
-probability $q$ (quantile) of right-censoring by finding the value $\tau$ that satisfies
-$\Pr\{T_i < \tau\} = q$.
-
-  - $S_i = \min(T_i, \tau)$ and $\delta_i = 1_{\{T_i < \tau\}}$.
-
-**Masking Component Failures**: The *Bernoulli Masking Model* is used to mask
-component cause of failure, parameterized by masking probability $p$.
-
-- $p$ chosen independently: at the extremes, if $p = 0$ there is no masking, and if $p = 1$, there is total masking.
-- We describe the process and how it satisfies the masking conditions next.
-
+- **Component Lifetimes** (latent $T_{i 1}, \cdots, T_{i m}$) generated for each system.
+  - **Observed Data** is a function of latent components.
+- **Right-Censoring** amount controlled with simulation value $q$.
+  - Quantile $q$ is probability system won't be right-censored.
+  - Solve for right-censoring time $\tau$ in $\Pr\{T_i \leq \tau\} = q$.
+  - $S_i = \min(T_i, \tau)$ and $\delta_i = 1_{\{T_i \leq \tau\}}$.
+- **Candidate Sets** are generated using the *Bernoulli Masking Model*.
+  - Masking level controlled with simulation value $p$.
+  - Failed component (latent $K_i$) placed in candidate set (observed $\mathcal{C}_i$).
+  - Each functioning component included with probability $p$.
 
 \note{
 \begin{itemize}
-\item \textbf{Data Generation}: We generate the latent component lifetimes for the series system we just discussed.
-\item \textbf{Observed Data}: Then, we generate the data we actually see, which is based on the component data.
-\item \textbf{Right-Censoring}: We control the probability of right-censoring by
-finding the value of $\tau$ that satisfies the quantile $q$. Then, we set the
-right-censoring time to be the minimum of the system lifetime and $\tau$. The
-event indicator is 1 if the system fails before $\tau$, 0 otherwise.
-\item \textbf{Masking}: We use a Bernoulli masking model to mask the component
-cause of failure. We parameterize the level of masking by the masking probability, $p$.
-\item We parameterize the level of masking by the masking probability, $p$, which
-specifies that each non-failed component has a $p$ probability of masking the failed component
-by including it in the candidate set.
+\item Let's talk about how we \textbf{generate} the data for our \textbf{simulation} study.
+\item First, we generate the latent \textbf{component lifetimes} for the system just discussed.
+\item Then, we generate the data we actually \textbf{see} based on these lifetimes.
+\item The \textbf{right-censored} lifetimes, the \textbf{censoring indicators}, and \textbf{candidate sets}.
+\item In the simulations, we \textbf{control} the amount of \textbf{right-censoring} with the value $q$, the probability the system won't be right-censored.
+\item We use the \textbf{Bernoulli Masking Model} to generate the candidate sets.
+\item We \textbf{control} the masking level with the value $p$, the \textbf{Bernoulli} probability.
+\item -- Explain procedure for generating candidates --
 \end{itemize}
 }
-
 
 ## Data Generation: Satisfying Masking Conditions
 
-We generate the candidate sets for each system in the study.
-
-**Satisfying Masking Conditions**:
+The Bernoulli Masking Model *satisfies* the masking conditions:
 
 - **Condition 1**: The failed component deterministically placed in candidate set. 
-- **Condition 2**: By using a Bernoulli distribution with a constant probability
-  $p$ for all components, probability of a candidate set is constant as we
-  vary which component failed within set.
-- **Condition 3**: Masking only depends on the fixed parameter $p$ and
-  doesn't interact with the system parameter $\theta$.
+- **Condition 2** and **3**: Bernoulli probability $p$ is same for all components
+and fixed by us.
+  - Probability of candidate set is constant conditioned on component failure within set.
+  - Probability of candidate set, conditioned on a component failure, only
+    depends on the $p$.
+
+**Future Research**: Realistically conditions may be violated.
+
+  - Explore sensitivity of likelihood model to violations.
 
 \note{
 \begin{itemize}
-\item \textbf{Masking}: We use a Bernoulli masking model for masking the failed
-component.
-\item This satisifes the masking failure conditions in the following ways:
-\item \textbf{Condition 1}: The failed component is deterministically placed in the candidate set.
-\item \textbf{Condition 2}: The probability of masking is the same for all components,
-so the probability of the candidate set is constant across components.
-\item \textbf{Condition 3}: The masking probability is independent of the parameters.
+\item It's important to show how our \textbf{Bernoulli} masking model used in our simulation study \textbf{satisfies} these masking conditions.
+\item We obviously satisfy \textbf{Condition 1} because the failed component is always placed in the candidate set.
+\item We satisfy \textbf{Condition 2} because the Bernoulli probability is the same for all components. As
+we vary the component failure within the set, the probability of the set doesn't change.
+\item We satisfy \textbf{Condition 3} because, conditioned on a failed component,
+the probability of the candidate set only depends on the Bernoulli probability, which is fixed by us and doesn't interact with the the system parameters.
+\item In \textbf{real life}, these conditions may be violated. Future research could explore the \textbf{sensitivity} of our likelihood model to violations of these conditions.
 \end{itemize}
 }
 
@@ -603,144 +547,191 @@ so the probability of the candidate set is constant across components.
 **Objective**: Evaluate the MLE and BCa confidence intervals' performance across
 various scenarios.
 
+- Visualize the **simulated** sampling distribution of MLEs and $95\%$ CIs.
 - **MLE Evaluation**:
-  - **Accuracy**: Proximity of the MLE's expected value to the actual value. 
-  - **Precision**: Consistency of the MLE across samples.
-
-- **BCa Confidence Intervals Evaluation**:
-  - **Accuracy**: Confidence intervals (CIs) should cover true parameters
-    around $95\%$ of the time.
-      - Coverage probability (CP)
-  - **Precision**: Assessed by the width of the CIs.
+  - **Accuracy**: Bias 
+  - **Precision**: Dispersion of MLEs
+    - $95\%$ quantile range of MLEs.
+- **95\% CI Evaluation**:
+  - **Accuracy**: Coverage probability (CP).
+    - *Correctly Specified* CIs: CP near $95\%$ ($>90\%$ acceptable).
+  - **Precision**: Width of median CI.
   
-Both accuracy and precision are crucial for confidence in the analysis.
 
 \note{
 \begin{itemize}
-\item \textbf{Objective}: We want to evaluate the performance of the MLE and
-BCa confidence intervals across various scenarios.
-\item \textbf{MLE Evaluation}: We evaluate the MLE in terms of accuracy and precision.
-\item \textbf{Accuracy}: Accuracy is the proximity of the MLE's expected value
-to the actual value.
-\item \textbf{Precision}: Precision is the consistency of the MLE across samples.
-\item \textbf{BCa Confidence Intervals Evaluation}: We evaluate the BCa confidence
-intervals in terms of accuracy and precision.
-\item \textbf{Accuracy}: Accuracy is measured by the coverage probability, which
-is the proportion of times the confidence interval covers the true parameter.
-\item \textbf{Precision}: Precision is assessed by the width of the confidence
-interval.
-\item Both accuracy and precision are crucial for confidence in the analysis.
+\item We want to evaluate the accuracy and precision of our MLE and CIs under
+various conditions.
+\item For the \textbf{MLE}, we're looking at its \textbf{bias} and \textbf{spread}.
+\item A \textbf{tight spread} indicates \textbf{high precision}, but if it's biased, we can't trust it.
+\item For the \textbf{CIs}, when we talk about accuracy, we're looking at \textbf{coverage probability}.
+\item We want our intervals to be \textbf{correctly specified}, meaning they cover the true parameter value around $95\%$ of the time.
+\item Our \textbf{goal} is to get close to the nominal $95\%$ level, but we'll consider anything above 90% acceptable.
+\item As for \textbf{precision}, we use the width of these intervals.
+\item A \textbf{narrow width} points to a \textbf{higher precision}, but that's meaningless if the CP is too low.
+\item \textbf{Accuracy} and \textbf{precision} are needed for confidence in the estimate.
 \end{itemize}
 }
 
 ## Scenario: Impact of Right-Censoring
 
-**Simulation Setup**:
-- Vary the right-censoring quantile ($q$): $60\%$ to $100\%$.
-- Fixed the masking probability $p$ to $21.5\%$
-- Fixed the sample size $n$ to $90$.
+Assess the impact of right-censoring on MLE and CIs.
 
-### Background
-- **Right-Censoring**: No failure observed.
-- **Impact**: Reduces the effective sample size.
-- **MLE**: Bias and precision affected by censoring.
+- **Right-Censoring**: Failure observed with probability $q$: $60\%$ to $100\%$.
+  - Right censoring occurs with probability $1-q$: $40\%$ to $0\%$.
+- **Bernoulli Masking Probability**: Each component is a candidate with probability $p$ fixed at $21.5\%$.
+  - Estimated from original study (Guo, Niu, and Szidarovszky 2013).  
+  - Chance of **no** masking: $\Pr\{\text{only failed component in $\mathcal{C}_i$}\} \approx 62\%$.
+- **Sample Size**: $n$ fixed at $90$.
+  - Small enough to show impact of right-censoring.
+
+\note{
+\begin{itemize}
+\item We assess the impact of \textbf{right-censoring} on the MLE and confidence intervals.
+\item We \textbf{vary} the probability of observing a failure from $60\%$ to $100\%$.
+\item We fix the masking probability at $21.5\%$, which is the probability that each component is a candidate.
+\item This masking probability is \textbf{based} on estimates from the original study.
+\item We fix the \textbf{sample size} at 90, which was small enough to show the
+impact of right-censoring on the MLE, but large enough so that the convergence rate was reasonable.
+\end{itemize}
+}
 
 ## Scale Parameters
 
 \begin{figure}
 \begin{minipage}{.5\textwidth}
-```{r fig-scale-tau-1, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+```{r fig-scale-tau-1, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-q-vs-scale.1-mle.pdf")
 ```
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
-```{r fig-scale-tau-3, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+```{r fig-scale-tau-3, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-q-vs-scale.3-mle.pdf")
 ```
 \end{minipage}
 \end{figure}
 
-
 - **Dispersion**: Less censoring improves MLE precision.
-- **Bias**: Both parameters are biased. Bias decreases with less censoring.
-- **Median-Aggregated CIs**: Bootstrapped CIs become consistent with more data.
+  - Most reliable component more affected by censoring.
+- **Bias**: MLE *positively* biased; decreases with less censoring.
+- **Median CIs**: Tracks MLE dispersion.
 
+\note{
+\begin{itemize}
+\item Here, we show the impact of \textbf{right-censoring} on the MLE and
+confidence intervals for the \textbf{scale parameters}, the most reliable component on the \textbf{left} and the least reliable component on the \textbf{right}. 
+\item In \textbf{light solid blue}, we show the dispersion of the MLE. We see that it improves with less censoring.
+\item We see that the \textbf{more reliable} component has more dispersion than the other component.
+\item This is \textbf{due} to more reliable components being more likely to be censored.
+\item In the \textbf{dashed red line}, we show the bias. The MLE is \textbf{positively} biased, but that bias decreases as censoring level is reduced.
+\item In the \textbf{dark blue} vertical lines, we show the \text{median} confidence intervals.
+\item We see they they \textbf{track} the MLE's dispersion, which is good.
+\end{itemize}
+}
 
 ## Shape Parameters
 
 \begin{figure}
 \begin{minipage}{.5\textwidth}
-```{r fig-shape-tau-1, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+```{r fig-shape-tau-1, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-q-vs-shape.1-mle.pdf")
 ```
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
-```{r fig-shape-tau-3, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+```{r fig-shape-tau-3, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-q-vs-shape.3-mle.pdf")
 ```
 \end{minipage}
 \end{figure}
 
-- **Dispersion**: Less censoring improves MLE precision.
-- **Bias**: Both parameters are biased. Bias decreases with less censoring.
-- **Median-Aggregated CIs**: Bootstrapped CIs become consistent with more data.
+- Show a similar pattern as scale parameters.
+
+\note{
+\begin{itemize}
+\item We see similar results for the \textbf{shape parameters}.
+\item So, let's move on to evaluating the \textbf{accuracy} of the
+\textbf{confidence intervals}, where we do see some notable differences.
+\end{itemize}
+}
 
 ## Coverage Probability and Convergence Rate
 
 \begin{figure}
 \begin{minipage}{.5\textwidth}
-```{r fig-tau-cp, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+```{r fig-tau-cp, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-q-vs-cp.pdf")
 ```
 \end{minipage}%
-\begin{minipage}{.5\textwidth}
-```{r fig-tau-conv, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\begin{minipage}{.4\textwidth}
+```{r fig-tau-conv, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/q_vs_convergence.pdf")
 ```
 \end{minipage}
 \end{figure}
 
-- **Coverage**: CIs converge to $95\%$. Scale parameters better specified.
-- **Convergence Rate**: Increases as right-censoring reduces.
+- **Coverage** (left figure): CIs show good empirical coverage.
+  - Scale parameters *correctly specified* (CP $\approx 95\%$)
+  - Shape parameters *good enough* (CP $> 90\%$).
+- **Convergence Rate** (right figure): Increases with less censoring.
+  - \textbf{Caution}: Dips below $95\%$ with more than $30\%$ censoring.
 
-## Conclusion
-- MLE precision improves, bias drops with decreased right-censoring.
-- BCa CIs perform well, particularly for scale parameters.
-- MLE of most reliable component more affected by right-censoring.
+\note{
+\begin{itemize}
+\item On the \textbf{left} figure, we show the impact of
+\textbf{right-censoring} on the \textbf{coverage probability}.
+\item In the \textbf{bold} red line, we show the \textbf{mean} coverage for the
+scale parameters.
+\item It shows that the \textbf{coverage} is \textbf{correctly specified} across
+all censoring levels.
+\item In the \textbf{bold} blue line, we show the \textbf{mean} coverage for the
+shape parameters. They are \textbf{acceptable}, with coverage above $90\%$.
+\item In the \textbf{right} figure, we show the \textbf{convergence rate} for
+the MLE.
+\item At more than $30\%$ censoring, the convergence rate dips below $95\%$.
+\item Combined with moderate failure masking and small samples, we suggest
+\textbf{caution} in interpreting the results.
+\end{itemize}
+}
 
-## Impact of Masking Probability
+## Key Takeaways: Right-Censoring
 
-**Simulation Setup**:
-- Vary the masking probability $p$: $0.1$ to $0.7$.
-- Fixed the right-censoring quantile $q$ to $0.825$.
-- Fixed the sample size $n$ to $90$.
+Right-censoring has a notable impact on the MLE:
 
-### Background
-- **Masking** adds ambiguity in identifying the failed component.
-- Impacts on MLE:
-  - **Ambiguity**: Higher $p$ increases uncertainty in parameter adjustment.
-  - **Bias**: Similar to right-censoring, but affected by both $p$ and $q$.
-  - **Precision**: Reduces as $p$ increases.
+- **MLE Precision**:
+  - Improves notably with reduced right-censoring levels.
+  - More reliable components benefit more from reduced right-censoring.
+- **Bias**:
+  - MLEs show positive bias, but decreases with reduced right-censoring.
+- **Convergence Rates**:
+  - MLE convergence rate improves with reduced right-censoring.
+  - Dips: $< 95\%$ at $> 30\%$ right-censoring.
 
-## Scale Parameters
+BCa confidence intervals show good empirical coverage.
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-scale-p-1, echo=F, out.width="0.95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-p-vs-scale.1-mle.pdf")
-```
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-```{r fig-scale-p-3, echo=F, out.width="0.95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-p-vs-scale.3-mle.pdf")
-```
-\end{minipage}
-\end{figure}
+  - CIs offer reliable *empirical coverage*.
+  - Scale parameters *correctly specified* across all right-censoring levels.
 
+## Scenario: Impact of Failure Masking
 
-- **Dispersion**: Increases with $p$, indicating reduced precision.
-- **Bias**: Positive bias rises with $p$.
-- **Median-Aggregated CIs**: Widen and show asymmetry as $p$ grows.
+Assessing the impact of the failure masking level on MLE and CIs.
+
+- **Bernoulli Masking Probability**: Vary Bernoulli probability $p$ from $10\%$ to $70\%$.
+- **Right-Censoring**: $q$ fixed at $82.5\%$.
+  - Right-censoring occurs with probability $1-q$: $17.5\%$.
+  - Censoring less prevalent than masking.
+- **Sample Size**: $n$ fixed at $90$.
+  - Small enough to show impact of masking.
+
+\note{
+\begin{itemize}
+\item Here, we assess the impact of \textbf{masking levels} on the MLE and confidence intervals.
+\item We \textbf{vary} the Bernoulli masking probability from $10\%$ to $70\%$.
+\item We fix the right-censoring probability at $17.5\%$.
+\item The \textbf{chances} of \textbf{censoring} are less than masking.
+\item We fix the \textbf{sample size} at $90$, which was small enough to show the
+impact of masking on the MLE, but large enough so that the convergence rate was reasonable.
+\end{itemize}
+}
 
 ## Shape Parameters
 
@@ -757,145 +748,209 @@ knitr::include_graphics("../image/plot-p-vs-shape.3-mle.pdf")
 \end{minipage}
 \end{figure}
 
+- **Dispersion**: Precision decreases with masking level ($p$).
+- **Bias**: MLE *positively* biased and increases with masking level.
+  - Applies a right-censoring like effect to the components.
+- **Median CIs**: Tracks MLE dispersion.
 
-- **Dispersion**: Increases with $p$, indicating reduced precision.
-- **Bias**: Positive bias rises with $p$.
-- **Median-Aggregated CIs**: Widen and show asymmetry as $p$ grows.
 
+\note{
+\begin{itemize}
+\item Here, we show the impact of \textbf{masking} on the MLE and
+confidence intervals, this time for the \textbf{shape parameters}.
+\item In \textbf{light solid blue}, we show the dispersion of the MLE. We see that as increases with masking level.
+\item Unlike for the scale parameter, the \textbf{more reliable} component on the left has only slightly more dispersion than the other component.
+\item In the \textbf{dashed red line}, we show the bias. The MLE is \textbf{positively} biased, and increases with masking level.
+\item In the \textbf{dark blue} vertical lines, we show the \text{median} confidence intervals.
+\item Again, we see they they \textbf{track} the MLE's dispersion.
+\end{itemize}
+}
+
+## Scale Parameters
+
+\begin{figure}
+\begin{minipage}{.45\textwidth}
+```{r fig-scale-p-1, echo=F, out.width="\\linewidth", fig.align="center"}
+knitr::include_graphics("../image/plot-p-vs-scale.1-mle.pdf")
+```
+\end{minipage}%
+\begin{minipage}{.45\textwidth}
+```{r fig-scale-p-3, echo=F, out.width="\\linewidth", fig.align="center"}
+knitr::include_graphics("../image/plot-p-vs-scale.3-mle.pdf")
+```
+\end{minipage}
+\end{figure}
+
+- These graphs resemble the last ones for shape parameters.
+
+\note{
+\begin{itemize}
+\item We see similar results for the \textbf{scale parameters}.
+\item So, let's move on to evaluating the \textbf{accuracy} of the
+\textbf{confidence intervals}, where we do continue to see some differences.
+\end{itemize}
+}
 
 ## Coverage Probability and Convergence Rate
 
 \begin{figure}
-\begin{minipage}{.45\textwidth}
-```{r fig-p-cp, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\begin{minipage}{.5\textwidth}
+```{r fig-p-cp, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-p-vs-cp.pdf")
 ```
 \end{minipage}%
-\begin{minipage}{.45\textwidth}
-```{r fig-p-conv, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\begin{minipage}{.4\textwidth}
+```{r fig-p-conv, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/p_vs_convergence.pdf")
 ```
 \end{minipage}
 \end{figure}
 
 
-**Coverage**: Caution advised for severe masking with small samples.
+- **Coverage**: Caution advised for severe masking with small samples.
+  - Scale parameter CIs show acceptable coverage across all masking levels.
+  - Shape parameter CIs dip below $90\%$ when $p > 0.4$.
+- **Convergence Rate**: Increases with less masking.
+  - \textbf{Caution}: Dips under $95\%$ when $p > 0.4$ (consistent with CP behavior).
 
-- Scale parameter CIs are correctly specified up to $p = 0.7$.
-- Shape parameter CIs drop below $90\%$ if $p > 0.4$.
 
-**Convergence Rate**: Drops below $95\%$ if $p > 0.4$, consistent with CP behavior.
+## Key Takeaways: Masking
 
+The masking level of component failures profoundly affects the MLE:
 
-## Conclusion
+- **MLE Precision**:
+  - Decreases with more masking.
+- **MLE Bias**:
+  - Positive bias is amplified with increased masking.
+  - Masking exhibits a right-censoring-like effect.
+- **Convergence Rate**:
+  - Commendable for Bernoulli masking levels $p \leq 0.4$.
+    - *Extreme* masking: some masking occurs $90\%$ of the time at $p = 0.4$.
 
-- Masking influences MLE precision, coverage probability, and introduces bias.
-- The bias is positive and increases with $p$, essentially adding a
-  censoring-like effect to the components.
-- Despite significant masking, scale parameters have commendable CI coverage.
+The BCa confidence intervals show good coverage:
 
-## Impact of Sample Size
-Assess the impact of sample size on MLEs and BCa CIs.
+- **Scale** parameters maintain good coverage across all masking levels.
+- **Shape** parameter coverage dip below $90\%$ when $p > 0.4$.
+  - Caution advised for severe masking with small samples.
 
-**Simulation Setup**:
-- Vary sample size $n$: $50$ to $500$.
-- Fixed the masking probability $p$ to $0.215$.
-- Fixed the right-censoring quantile $q$ to $0.825$.
+## Scenario: Impact of Sample Size
 
-### Background
-- **Sample Size**: Number of systems observed.
-- **Impact**: More data reduces uncertainty in parameter estimation.
-- **MLE**: Mitigates biasing effects of right-censoring and masking.
+Assess the mitigating affects of sample size.
 
-## Both Scale and Shape Parameters
+- **Sample Size**: We vary the same size $n$ from 50 to 500..
+- **Right-Censoring**: $q$ fixed at $82.5\%$
+  - $17.5\%$ chance of right-censoring.
+- **Bernoulli Masking Probability**: $p$ fixed at $21.5\%$
+  - Some masking occurs $62\%$ of the time.
+
+\note{
+\begin{itemize}
+\item We assess the impact of the \textbf{sample size} on the MLE and confidence intervals.
+\item We want to see how will it mitigate the challenges from right-censoring and masking.
+\item We \textbf{vary} the sample sie from size 50 to size 500.
+\item We fix the masking probability at $21.5\%$ and the right-censoring probability at $17.5\%$.
+\end{itemize}
+}
+
+## Scale Parameters
 
 \begin{figure}
-\begin{minipage}{.375\textwidth}
-```{r fig-scale-n-1, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\begin{minipage}{.5\textwidth}
+```{r fig-scale-n-1, echo=F, out.width=".95\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-n-vs-scale.1-mle.pdf")
 ```
 \end{minipage}%
-\begin{minipage}{.375\textwidth}
-```{r fig-scale-n-3, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\begin{minipage}{.5\textwidth}
+```{r fig-scale-n-3, echo=F, out.width=".95\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-n-vs-scale.3-mle.pdf")
 ```
 \end{minipage}
-\begin{minipage}{.375\textwidth}
-```{r fig-shape-n-1, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\end{figure}
+
+- **Dispersion**: Increasing sample size improves MLE precision.
+  - Extremely precise for $n \geq 250$.
+- **Bias**: Large *positive* bias initially, but diminishes to zero.
+  - Large samples counteract right-censoring and masking effects.
+- **Median CIs**: Track MLE dispersion. Very tight for $n \geq 250$.
+
+
+## Shape Parameters
+
+\begin{figure}
+\begin{minipage}{.5\textwidth}
+```{r fig-shape-n-1, echo=F, out.width=".95\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-n-vs-shape.1-mle.pdf")
 ```
 \end{minipage}%
-\begin{minipage}{.375\textwidth}
-```{r fig-shape-n-3, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\begin{minipage}{.5\textwidth}
+```{r fig-shape-n-3, echo=F, out.width=".95\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-n-vs-shape.3-mle.pdf")
 ```
 \end{minipage}
 \end{figure}
 
-## Parameters
+- These graphs resemble the last ones for scale parameters.
 
-- **Dispersion**:
-  - Dispersion reduces with $n$—indicating improved precision.
-  - Disparity observed between components $k_1, \lambda_1$ and $k_3, \lambda_3$.
-- **Bias**:
-  - High positive bias initially, but diminishes around $n=250$.
-  - Enough sample data can counteract right-censoring and masking effects.
-
-- **Median-Aggregated CIs**:
-  - CIs tighten as $n$ grows—showing more consistency.
-  - Upper bound more dispersed than lower, reflecting the MLE bias direction.
-
+\note{
+\begin{itemize}
+\item Again, we see similar results for the \textbf{shape parameters}.
+\end{itemize}
+}
 
 ## Coverage Probability and Convergence Rate
 
 \begin{figure}
-\begin{minipage}{.4\textwidth}
-```{r fig-n-cp, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+\begin{minipage}{.5\textwidth}
+```{r fig-n-cp, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/plot-n-vs-cp.pdf")
 ```
 \end{minipage}%
 \begin{minipage}{.4\textwidth}
-```{r fig-n-conv, echo=F, out.width="0.95\\linewidth", fig.align="center"}
+```{r fig-n-conv, echo=F, out.width="\\linewidth", fig.align="center"}
 knitr::include_graphics("../image/n_vs_convergence.pdf")
 ```
 \end{minipage}
 \end{figure}
 
-- **Calibration**: 
-  - CIs are mostly above $90\%$ across sample sizes.
-  - Converge to $95\%$ as $n$ grows.
-  - Scale parameters have better coverage than shape.
+- **Coverage**: Good empirical coverage.
+  - Correctly specified CIs for $n > 250$.
 
-- **Convergence Rate**:
-  - Improves with $n$, surpassing $95\%$ for $n \geq 100$.
-  - Caution for estimates with $n < 100$ in specific setups.
+- **Convergence Rate**: Total convergence for $n \geq 250$.
+  - Caution advised for estimates with $n < 100$ in specific setups.
 
-## Conclusion
-- Sample size significantly mitigates challenges from right-censoring and masking.
-- MLE precision and accuracy enhance notably with growing samples.
-- BCa CIs become narrower and more reliable as sample size increases.
+## Key Takeaways: Sample Size
 
-# Conclusion
+Sample size has a notable impact on the MLE:
 
-### Key Findings
+- **Precision**: Very precise for large samples ($n > 200$).
+- **Bias**: Diminishes to near zero for large samples.
+- **Coverage**: Correctly specified CIs for large samples.
+- **Convergence**: Total convergence for large samples.
+
+### **Summary** 
+Larger samples lead to more accurate, unbiased, and reliable estimations.
+
+  - Mitigates the effects of right-censoring and masking.
+
+# Overall Conclusion
+
+**Key Findings**:
+
 - Employed maximum likelihood techniques for component reliability estimation in series systems with masked failure data.
-- Methods performed robustly despite masking and right-censoring challenges.
+- Methods were robust despite masking and right-censoring challenges.
 
-### Simulation Insights
-- Right-censoring and masking introduce positive bias; more reliable components are most affected.
-- Shape parameters harder to estimate than scale.
-- Large samples can counteract these challenges.
+**MLE Performance**:
 
-## Conclusion (cont.)
+- Right-censoring and masking introduce positive bias for our setup.
+  - More reliable components are more affected.
+- Shape parameters harder to estimate than scale parameters.
+- Large samples can mitigate the affects of masking and right-censoring.
 
-### Confidence Intervals
-- Bootstrapped BCa CIs demonstrated commendable coverage probabilities, even in smaller sample sizes.
+**BCa Confidence Interval Performance**:
+
+- Width of CIs tracked MLE dispersion.
+- Good empirical coverage in most scenarios.
   
-### Takeaways
-- Framework offers a rigorous method for latent component property estimation from limited observational data.
-- Techniques validated to provide practical insights in diverse scenarios.
-- Enhanced capability for learning from obscured system failure data.
-
 ## Future Work and Discussion
 
 Directions to enhance learning from masked data:
