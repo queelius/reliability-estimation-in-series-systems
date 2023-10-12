@@ -1,3 +1,23 @@
+## Methodology: Maximum Likelihood Estimation
+
+**Maximum Likelihood Estimation (MLE)**: Maximize the log-likelihood function:
+$$
+\hat{\v\theta} = \arg\max_{\v\theta} \log L(\v\theta).
+$$
+
+**Solution**: Numerically solved system of equations for $\hat{\v\theta}$:
+$$
+\nabla_{\v\theta} \log L(\hat{\v\theta}) = \v{0}.
+$$
+
+\note{
+\begin{itemize}
+\item We use the standard \textbf{maximum likelihood} approach.
+\item We find a parameter value that \textbf{maximizes} the likelihood function using numerical methods.
+\end{itemize}
+}
+
+
 ## Data Generation: Latent Lifetimes & Right-Censoring
 
 **Latent Component Lifetimes**:
@@ -112,3 +132,7 @@ in our small data sets.
 
 
 }
+
+
+
+

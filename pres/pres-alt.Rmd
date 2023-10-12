@@ -12,7 +12,7 @@ header-includes:
 - \usepackage{amsthm}
 - \usepackage{xcolor}
 - \renewcommand{\v}[1]{\boldsymbol{#1}}
-- \setbeameroption{show notes on second screen=right}
+#- \setbeameroption{show notes on second screen=right}
 #bibliography: ../refs.bib
 ---
 
@@ -34,8 +34,7 @@ by its weakest link.
 
 - Derive techniques to interpret such ambiguous data.
 - Aim for precise and accurate reliability estimates for individual components
-using maximum likelihood estimation (MLE) and BCa confidence
-intervals.
+  using maximum likelihood estimation (MLE) and confidence intervals (BCa).
 
 \note{
 \begin{itemize}
@@ -143,6 +142,7 @@ $$
 \item It's a \textbf{key metric} for longevity.
 \item In a series system, the overall reliability is the \textbf{product} of its \text{component reliabilities}.
 \item So, even if \textbf{one component} has a low reliability, it can impact the whole system.
+\item For notation, we denote the reliability function for the system as $R_{T_i}$ and the reliability function for the $j$\textsuperscript{th} component as $R_j$.
 \end{itemize}
 }
 
@@ -166,6 +166,7 @@ $$
 \item Let's shift focus to the hazard function.
 \item Essentially, it's a way to gauge the immediate risk of failure, especially if it's been
 functioning up until that point.
+\item For notation, we denote the hazard function for the system as $h_{T_i}$ and the hazard function for the $j$\textsuperscript{th} component as $h_j$.
 \item The hazard function for a series system is just the \text{sum} of the \textbf{component hazards}.
 \item We see that the component risks are \textbf{additive}.
 \end{itemize}
@@ -198,25 +199,25 @@ the system reliability function.
 
 ## Component Failure & Well-Designed Series Systems
 
-The **marginal probability** of component failure helps predict the cause of
-failure.
+We can use the joint distribution to calculate the probability of component
+cause of failure.
 
+- Helps predict the cause of failure.
 - **Derivation**: Marginalize the joint distribution over the system lifetime:
 $$
 \Pr\{K_i = j\} = E_{\v\theta} \biggl[ \frac{h_j(T_i;\v{\theta_j})} {h_{T_i}(T_i ; \v{\theta_l})} \biggr].
 $$
-
-**Well-Designed Series System**: Components exhibit comparable chances of
+- **Well-Designed Series System**: Components exhibit comparable chances of
 causing system failures.
-
 - **Relevance**: Our simulation study employs a (reasonably) well-designed
 series system.
 
 \note{
 \begin{itemize}
-\item We can use the \textbf{joint distribution} of the system lifetime and the failed component to calculate the \textbf{marginal} probability of component failure.
-\item When we do so, we find that it is the \textbf{expected value} of
-the ratio of component and system hazard functions.
+\item We can use the \textbf{joint distribution} of the system lifetime and the failed component to calculate the probability of each component causing the failure.
+\item This helps us \textbf{predict} the cause of failure.
+\item It is \textbf{derived} by marginalizing the joint distribution over the system lifetime.
+\item When we do so, we find that it is the \textbf{expected value} of the ratio of component and system hazard functions.
 \item We say that a series system is \textbf{well-designed} if each components has a \textbf{comparable} chance of failing.
 \item Our simulation study is \textbf{based} on a reasonably well-designed series system.
 \end{itemize}
@@ -235,6 +236,7 @@ Our model handles the following data:
 
 - **Right-Censored**: Experiment ends before failure (Event Indicator: $\delta_i = 0$).
   - Contribution is system reliability: $L_i(\v\theta) = R_{T_i}(\tau;\v\theta)$.
+    - Since we only know that it lasted longer than the right-censoring time $\tau$.
 - **Masked Failure**: Failure observed, but the failed component is masked by a
   *candidate set*. More on its contribution later.
 
@@ -247,11 +249,10 @@ System | Right-Censored Lifetime | Event Indicator | Candidate Set  |
 \begin{itemize}
 \item Let's talk about the \textbf{likelihood function}, which is a way of \textbf{measuring} how well our model explains the data.
 \item The \textbf{total likelihood} is the product of the likelihood contributions of each system.
-\item Our model deals with right-censoring and masked failures.
-\item \textbf{Right-censoring} occurs when the experiment ends before the system fails. Its contribution is just the system reliability,
-since the event indicator tells us if the system was right-censored.
+\item Our model deals two kinds of \textbf{contributions}, right-censoring and masked failures.
+\item \textbf{Right-censoring}, for instance, occurs when the experiment ends before the system fails. Its contribution is just the system reliability,
+since we only know that it lasted longer than the right-censoring time.
 \item \textbf{Masking} occurs when we observe a failure but we don't know which component failed. Instead, we see a set of components that mask the failure. More on this later.
-\item We show an \textbf{example} data set here. \textbf{System 1} failed and either component 1 or 2 caused it and \textbf{System 2} was right-censored.
 \end{itemize}
 }
 
@@ -340,25 +341,6 @@ $$
 \end{itemize}
 }
 
-## Methodology: Maximum Likelihood Estimation
-
-**Maximum Likelihood Estimation (MLE)**: Maximize the log-likelihood function:
-$$
-\hat{\v\theta} = \arg\max_{\v\theta} \log L(\v\theta).
-$$
-
-**Solution**: Numerically solved system of equations for $\hat{\v\theta}$:
-$$
-\nabla_{\v\theta} \log L(\hat{\v\theta}) = \v{0}.
-$$
-
-\note{
-\begin{itemize}
-\item We use the standard \textbf{maximum likelihood} approach.
-\item We find a parameter value that \textbf{maximizes} the likelihood function using numerical methods.
-\end{itemize}
-}
-
 ## Bootstrap Confidence Intervals (CIs)
 
 **Confidence Intervals (CI)** help capture the *uncertainty* in our estimate.
@@ -404,6 +386,7 @@ MLE on original data, but keep all resamples for the BCa CIs.
 
 \note{
 \begin{itemize}
+\item We use the standard \textbf{maximum likelihood approach} to estimate the parameters.
 \item Like any model, ours has its challenges. \textbf{Masking} and \textbf{censoring}, combined with small sample sizes, can cause flat likelihood regions, which can lead to convergence issues.
 \item For \textbf{small samples}, bootstrapping may not always capture
 the true variability in the data.
@@ -431,32 +414,22 @@ $$
   - $k_j = 1$: Indicates random failures (exponential distribution).
   - $k_j > 1$: Indicates wear-out failures.
 
-Weibull has well known *reliability* and *hazard* functions, so we won't
-reproduce them here. Recall that for a series system:
-
-- **Series Reliability** is the product of the component reliabilities.
-- **Hazard** is the sum of the component hazard functions.
-- **Likelihood**: $L(\v\theta) \propto \prod_{i=1}^n R_{T_i}(t_i;\v\theta) \left[\sum_{j \in c_i} h_j(t_i;\v{\theta_j})\right]^{\delta_i}$.
+Weibull has well known *reliability* and *hazard* functions.
 
 \note{
 \begin{itemize}
 \item In our \textbf{simulation study}, we analyze a series system with \textbf{Weibull} components.
 \item The Weibull has two parameters: the \textbf{scale} and \textbf{shape}.
 \item \textbf{Shape} parameter tells us a lot about the failure characteristics.
-\begin{itemize}
 \item When its \textbf{greater} than \textbf{one}, think of it as wearing-out over time.
 \item If it's \textbf{less} than one, that usually signals some early-life challenges.
-\end{itemize}
-\item For the Weibull, the \textbf{hazard} and \textbf{reliability} functions are well-known, so we won't reproduce them here.
-\item Recall that for a series system, the \textbf{reliability} is the product of the
-component reliabilities and the \textbf{hazard} function is the sum of the component hazard functions.
-\item The \textbf{formula} for the \textbf{likelihood function} for our data is the same as before, we've just reproduced it here as a reminder.
+\item If it's \textbf{equal} to one, it has random failures.
 \end{itemize}
 }
 
 ## Well-Designed Series System
 
-**Simulation study** centered around series system with Weibull components:
+**Simulation study** centered on a series system with these Weibull components:
 
 | Component | Shape | Scale  | $\Pr\{K_i\}$ |
 |-----------|-------|--------|--------------|
@@ -468,26 +441,26 @@ component reliabilities and the \textbf{hazard} function is the sum of the compo
 
 - Based on (Guo, Niu, and Szidarovszky 2013) study of 3 components.
   - We added components 4 and 5.
+  - **Shapes** greater than 1, indicating wear-outs.
 - **Probabilities** are comparable: it is *reasonably well-designed*.
   - **Reliability**: Components 1 and 3 *most* and *least* reliable, respectively.
   - **Simulation Study**: Only show estimates for these two components.
-- **Shapes** greater than 1, indicating wear-outs.
 
 \note{
 \begin{itemize}
 \item This study is \textbf{centered} around a series system with \textbf{five} Weibull components.
 \item It's \textbf{based} on a paper that studies a 3-component series system.
 \item We \textbf{added} components 4 and 5 to make it more complex.
-\item We show the \textbf{probability} of each component being the cause of failure.
-\item Since the probabilities are comparable, no weak links, it's reasonably \textbf{well-designed}.
-\item Component 1 is the \textbf{most} reliable and component 3 is the \textbf{least}.
-\item In our simulation study, we only show the estimates for these two components, as they will show the biggest differences.
 \item We show the \textbf{shape} and \textbf{scale} parameters for each component.
 \item We see that the \textbf{shape} parameters are \textbf{greater} than 1, which indicates \textbf{wear-out} failures.
+\item We also show the \textbf{probability} of each component being the cause of failure in the last column.
+\item Since the probabilities are \textbf{comparable}, no weak links, it's reasonably \textbf{well-designed}.
+\item Component 1 is the \textbf{most} reliable and component 3 is the \textbf{least} reliable.
+\item In our simulation study, we only show the estimates for these two components, as they will show the biggest differences.
 \end{itemize}
 }
 
-## Data Generation and Simulation Values
+## Synthetic Data and Simulation Values
 
 How is the data generated in our simulation study?
 
@@ -515,7 +488,7 @@ How is the data generated in our simulation study?
 \end{itemize}
 }
 
-## Data Generation: Satisfying Masking Conditions
+## Bernoulli Masking Model: Satisfying Masking Conditions
 
 The Bernoulli Masking Model *satisfies* the masking conditions:
 
@@ -618,13 +591,13 @@ knitr::include_graphics("../image/plot-q-vs-scale.3-mle.pdf")
 
 \note{
 \begin{itemize}
-\item Here, we show the impact of \textbf{right-censoring} on the MLE and
-confidence intervals for the \textbf{scale parameters}, the most reliable component on the \textbf{left} and the least reliable component on the \textbf{right}. 
+\item Here, we show two graphs for the \textbf{scale parameters} of the two components, the most reliable on the left and the least reliable on the right.
 \item In \textbf{light solid blue}, we show the dispersion of the MLE. We see that it improves with less censoring.
 \item We see that the \textbf{more reliable} component has more dispersion than the other component.
 \item This is \textbf{due} to more reliable components being more likely to be censored.
-\item In the \textbf{dashed red line}, we show the bias. The MLE is \textbf{positively} biased, but that bias decreases as censoring level is reduced.
-\item In the \textbf{dark blue} vertical lines, we show the \text{median} confidence intervals.
+\item In the \textbf{dashed red line}, we show the mean of the MLEs. In green, we show the true values.
+\item The MLEs are \textbf{positively} biased, but that bias decreases as censoring level is reduced.
+\item In the \textbf{dark blue} vertical lines, we show the \text{medians} of the confidence intervals.
 \item We see they they \textbf{track} the MLE's dispersion, which is good.
 \end{itemize}
 }
