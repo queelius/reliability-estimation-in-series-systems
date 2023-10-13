@@ -34,7 +34,8 @@ by its weakest link.
 
 - Derive techniques to interpret such ambiguous data.
 - Aim for precise and accurate reliability estimates for individual components
-  using maximum likelihood estimation (MLE) and confidence intervals (BCa).
+  using maximum likelihood estimation (MLE)
+- Quantify uncertainty in estimates with bootstrap confidence intervals (CIs).
 
 \note{
 \begin{itemize}
@@ -45,9 +46,8 @@ the \textbf{design} and \textbf{maintenance} of these systems.
 \item So, our \textbf{main goal} is to estimate the reliability of each component
 from failure data.
 \item But the \textbf{data} can pose \textbf{challenges}, like right-censoring or masked failures where we don't know which component failed.
-\item Our \textbf{goal} is to use this data to provide accurate reliability
-estimates for each component, including accurate confidence intervals to
-quantify the uncertainty in our estimate.
+\item Our \textbf{goal} is to use this data to estimate the reliability of each component,
+and quantify the uncertainty in our estimates with confidence intervals.
 \item To obtain good \textbf{coverage}, we bootstrap the confidence intervals using the \textbf{BCa method}.
 \end{itemize}
 }
@@ -128,18 +128,14 @@ $$
 R_{T_i}(t;\v\theta) = \prod_{j=1}^m R_j(t;\v{\theta_j}).
 $$
 
+- If any component has low reliability, it can impact the whole system.
 - Here, $R_{T_i}(t;\v\theta)$ and $R_j(t;\v{\theta_j})$ are the reliability
   functions for the system $i$ and component $j$, respectively.
 
-**Relevance**:
-
-  - Forms the foundation for most reliability studies.
-  - Integral to our likelihood model, e.g., right-censoring events.
-
 \note{
 \begin{itemize}
-\item The \textbf{reliability function} tells us the chance a component or system functions past a specific time.
-\item It's a \textbf{key metric} for longevity.
+\item The \textbf{reliability function} tells us the chance a component or system has a lifetime beyond a specified time.
+\item It's a \textbf{key metric} in reliability studies, as it helps us understand the longevity and dependability of a system.
 \item In a series system, the overall reliability is the \textbf{product} of its \text{component reliabilities}.
 \item So, even if \textbf{one component} has a low reliability, it can impact the whole system.
 \item For notation, we denote the reliability function for the system as $R_{T_i}$ and the reliability function for the $j$\textsuperscript{th} component as $R_j$.
@@ -154,7 +150,7 @@ assuming survival up to that moment.
 - Reveals how the risk of failure evolves over time.
 - Guides maintenance schedules and interventions.
 
-**Series System Hazard Function** is the sum of the hazard functions of its components:
+**Series System Hazard Function**: Sum of the component hazard functions:
 $$
 h_{T_i}(t;\v{\theta}) = \sum_{j=1}^m h_j(t;\v{\theta_j}).
 $$
@@ -163,12 +159,10 @@ $$
 
 \note{
 \begin{itemize}
-\item Let's shift focus to the hazard function.
-\item Essentially, it's a way to gauge the immediate risk of failure, especially if it's been
-functioning up until that point.
-\item For notation, we denote the hazard function for the system as $h_{T_i}$ and the hazard function for the $j$\textsuperscript{th} component as $h_j$.
+\item Moving into the hazard function, it measures the immediate risk of failure at a given time, assuming survival up to that moment.
 \item The hazard function for a series system is just the \text{sum} of the \textbf{component hazards}.
 \item We see that the component risks are \textbf{additive}.
+\item For notation, we denote the hazard function for the system as $h_{T_i}$ and the hazard function for the $j$\textsuperscript{th} component as $h_j$.
 \end{itemize}
 }
 
@@ -181,10 +175,7 @@ reliability function:
 $$
 f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) R_{T_i}(t;\v\theta).
 $$
-- **Single Point of Failure**: A series system fails due to one component's malfunction.
-- **Representation**: 
-  - $K_i$: Component causing the $i$\textsuperscript{th} system's failure.
-  - $h_j(t;\v{\theta_j})$: Hazard function for the $j$\textsuperscript{th} component.
+- Here, $K_i$ denotes component cause of $i$\textsuperscript{th} system's failure.
 
 \note{
 \begin{itemize}
@@ -192,12 +183,12 @@ $$
 a system's lifetime and the component that led to its failure is essential.
 \item It is the \textbf{product} of the failed component's hazard function and
 the system reliability function.
-\item Here, $K_i$ denotes \textbf{failed component}.
+\item Here, $K_i$ denotes the \textbf{failed component} of the $i$\textsuperscript{th} system.
 \end{itemize}
 }
 
 
-## Component Failure & Well-Designed Series Systems
+## Component Cause of Failure
 
 We can use the joint distribution to calculate the probability of component
 cause of failure.
@@ -223,38 +214,7 @@ series system.
 \end{itemize}
 }
 
-# Likelihood Function
-
-**Likelihood**: Measures how well model explains the data. Each system
-contributes to *total likelihood* via its *likelihood contribution*:
-$$
-L(\v\theta|\text{data}) = \prod_{i=1}^n L_i(\v\theta|\text{data}_i)
-$$
-where **data$_i$** $=$ data for $i$\textsuperscript{th} system and $L_i$ $=$ its contribution.
-
-Our model handles the following data:
-
-- **Right-Censored**: Experiment ends before failure (Event Indicator: $\delta_i = 0$).
-  - Contribution is system reliability: $L_i(\v\theta) = R_{T_i}(\tau;\v\theta)$.
-    - Since we only know that it lasted longer than the right-censoring time $\tau$.
-- **Masked Failure**: Failure observed, but the failed component is masked by a
-  *candidate set*. More on its contribution later.
-
-System | Right-Censored Lifetime | Event Indicator | Candidate Set  |
------- | ----------------------- | --------------- | -------------- |
-   1   | $1.1$                   | 1               | $\{1,2\}$      |
-   2   | $5$                     | 0               | $\emptyset$    |
-
-\note{
-\begin{itemize}
-\item Let's talk about the \textbf{likelihood function}, which is a way of \textbf{measuring} how well our model explains the data.
-\item The \textbf{total likelihood} is the product of the likelihood contributions of each system.
-\item Our model deals two kinds of \textbf{contributions}, right-censoring and masked failures.
-\item \textbf{Right-censoring}, for instance, occurs when the experiment ends before the system fails. Its contribution is just the system reliability,
-since we only know that it lasted longer than the right-censoring time.
-\item \textbf{Masking} occurs when we observe a failure but we don't know which component failed. Instead, we see a set of components that mask the failure. More on this later.
-\end{itemize}
-}
+# Likelihood Model
 
 ## Data Generating Process
 
@@ -273,35 +233,87 @@ The data generating process (DGP) is the underlying process that generates the d
 
 \note{
 \begin{itemize}
-\item Let's discuss the \textbf{data generating process} to motivate our model.
-\item Here's the graph: \textbf{green} is observed and \textbf{red} is latent.
-\item We don't get to see the red elements, but we can \textbf{infer} most of them
-from the green elements.
-\item So, let's focus on the \textbf{green} elements, the \textbf{observed} data.
-\item The \textbf{right-censored} time is the minimum of the system lifetime and the
-right-censoring time $\tau$.
-\item The \textbf{event} indicator is 1 if the system fails before the right-censoring time, 0 otherwise.
-\item The candidate set is related to the component lifetimes and many other factors.
-\item The candidate sets are difficult \textbf{difficult} to model, so we seek a simple model that is valid under certain assumptions, which we discuss next.
+\item Let's discuss the \textbf{data generating process} to motivate our likelihood model.
+\item Here's the graph: \textbf{green} elements are observed and \textbf{red} elements are latent.
+\item We don't get to see the red elements, but we can make \textbf{inferences} about them from information in the green elements.
+\item Let's focus on the \textbf{green} elements.
+\item \emph{Discuss graph.}
 \end{itemize}
 }
 
-## Likelihood Contribution: Masked Failure Conditions
 
-The candidate sets that **mask** the failed component are assumed to satisfy the following
-conditions:
+## Likelihood Function
 
-- **Candidate Set Contains Failed Component**: The candidate set includes the failed component.
+**Likelihood Function** measures how well model explains the data:
 
-- **Masking Probabilities Uniform Across Candidate Sets**: The probability of of the candidate set is constant across different components within it.
+- **Right-Censored** data ($\delta_i = 0$).
+- **Candidate Sets** or **Masked Failure** data ($\delta_i = 1$)
 
-- **Masking Probabilities Independent of Parameters**: The masking probabilities when conditioned on the system lifetime and the failed component aren't functions of the system parameter.
+System | Right-Censored Lifetime ($S_i$) | Event Indicator ($\delta_i$) | Candidate Set ($\mathcal{C}_i$) |
+------ | ----------------------- | --------------- | -------------- |
+   1   | $1.1$                   | 1               | $\{1,2\}$      |
+   2   | $5$                     | 0               | $\emptyset$    |
+
+Each system contributes to *total likelihood* via its *likelihood contribution*:
+$$
+L(\v\theta|\text{data}) = \prod_{i=1}^n L_i(\v\theta|\text{data}_i)
+$$
+where **data$_i$** is data for $i$\textsuperscript{th} system and $L_i$ is its contribution.
 
 \note{
 \begin{itemize}
-\item The right-censoring contribution is straightforward. The \textbf{masked failure contribution} is more complex.
-\item \textbf{Masking} occurs when a system fails but the precise failed component is masked by a candidate set.
-\item To make the problem \textbf{tractable}, we introduce certain conditions or assumptions about the candidate sets.
+\item Let's talk about the \textbf{likelihood function}, which is a way of \textbf{measuring} how well our model explains the data.
+\item Our model deals with boths kinds of \textbf{data} mentioned in our previous slide, right-censoring and masked failures or candidate sets.
+\item \emph{Discuss Table}
+\item We use the concept of a \textbf{total likelihood}, which is the product of the likelihood contributions of each type of data.
+\item The \textbf{total likelihood} is the product of these likelihood contributions.
+\item We're going to derive the likelihood contributions for each of these types of data.
+\end{itemize}
+}
+
+## Likelihood Contribution: Right-Censoring
+
+**Right-Censoring**: For the $i$\textsuperscript{th} system, if right-censored ($\delta_i = 0$)
+at duration $\tau$, its likelihood contribution is proportional to the system reliability function evaluated at $\tau$:
+$$
+L_i(\v\theta) \propto R_{T_i}(\tau;\v\theta).
+$$
+
+- We only know that a failure occurred after the right-censoring time.
+- This is captured by the system reliability function.
+
+**Key Assumptions**:
+
+- Censoring time ($\tau$) independent of parameters.
+- Event indicator ($\delta_i$) is observed.
+- **Reasonable** in many cases, e.g., right-censoring time $\tau$ predetermined by length of study.
+
+\note{
+\begin{itemize}
+\item When a system is \textbf{right-censored}, its likelihood contribution is proportional to the system reliability evaluated at the right-censoring time.
+\item This is because we only know that the system lasted longer than the right-censoring time.
+\item This information is \textbf{captured} by that function.
+\item In our model, we \textbf{assume} that the right-censoring time is independent of the system parameter and that the event indicator is observed.
+\item These are \textbf{reasonable} assumptions in many cases, like when the right-censoring time is predetermined by the length of a study.
+\end{itemize}
+}
+
+## Likelihood Contribution: Candidate Sets
+
+**Masking Component Failure**: If the $i$\textsuperscript{th} system fails ($\delta_i = 1$),
+it is masked by a candidate set $\mathcal{C}_i$. Its likelihood contribution is complex and
+we use simplifying assumptions to make it tractable.
+
+- **Condition 1**: The candidate set includes the failed component: $\Pr\{K_i \in \mathcal{C}_i\} = 1$.
+
+- **Condition 2**: The condition probability of a candidate set given a cause of failure and a system lifetime is constant across conditioning on different failure causes within the candidate set: $\Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\} = \Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j'\}$ for $j,j' \in c_i$.
+
+- **Condition 3**: The masking probabilities when conditioned on the system lifetime and the failed component aren't functions of the system parameter.
+
+\note{
+\begin{itemize}
+\item When a system is \textbf{masked} by a \textbf{candidate set}, its likelihood contribution is more complex.
+\item We use \textbf{3 conditions} to make the problem more tractable.
 \item In \textbf{Condition 1}, the candidate set always includes the failed component.
 \item In \textbf{Condition 2}, the probability of the candidate set is constant across different components within it.
 \item In \textbf{Condition 3}, the masking probabilities when conditioned on the system lifetime and the failed component aren't functions of the system parameter.
@@ -309,7 +321,7 @@ conditions:
 \end{itemize}
 }
 
-## Likelihood Contribution: Derivation for Masked Failures
+## Likelihood Contribution: Derivation for Candidate Sets
 
 Take the **joint distribution** of $T_i$, $K_i$, and $\mathcal{C}_i$ and marginalize over $K_i$:
 $$
@@ -337,7 +349,7 @@ $$
 \item We apply \textbf{condition 1} to get a \textbf{sum} over the \textbf{candidate set} instead.
 \item We apply \textbf{condition 2} to move the probability \textbf{outside} the sum.
 \item We apply \textbf{condition 3} to \textbf{remove} the probability's dependence on the system parameter.
-\item And we \textbf{end up} with a likelihood contribution proportional to the product of the system reliability and the sum of the component hazards in the candidate set.
+\item We \textbf{end up} with a likelihood contribution proportional to the product of the system reliability and the sum of the component hazards in the candidate set.
 \end{itemize}
 }
 
@@ -358,80 +370,47 @@ $$
 \item We need to measure the \textbf{uncertainty} in our estimate.
 \item \textbf{Confidence intervals} are a popular choice and help us pin down the likely range of values for our parameters.
 \item Due to masking and censoring, the \textbf{normal} approximation for constructing CIs may be inaccurate.
-\item So, we've chosen to \textbf{bootstrap} the intervals instead, which isn't as sensitive to these issues.
+\item We've chosen to \textbf{bootstrap} the intervals instead, which isn't as sensitive to these issues.
 \item \textbf{Coverage probability} is the probability the interval covers the true parameter value.
 \item Due to bias and skew in the MLE, the coverage probability may be too low/high, indicating over/under confidence.
 \item We use the \textbf{BCa method} to adjust the confidence intervals to counteract bias and skew.
 \end{itemize}
 }
 
-## Challenges with MLE on Masked Data
+## Challenges with Masked Data
 
-We discovered some challenges with the MLE.
+Like any model, ours has its challenges:
 
-- **Convergence Issues**: Flat likelihood regions observed.
-  - Ambiguity in masked data with small samples.
-  
-- **Bootstrap Issues**: Bootstrap relies on the Law of Large Numbers.
-  - It might not represent the true variability for small samples.
-  - Censoring and masking reduces effective sample size.
+- **Convergence Issues**: Nearly flat likelihood regions can occur.
+  - Ambiguity in masked, censored data
+  - Complexities of estimating latent parameters.
 
-- **Mitigation**: In simulation study, discard non-convergent samples for the
-MLE on original data, but keep all resamples for the BCa CIs.
+- **Bootstrap Issues**: Relies on the empirical sampling distribution.
+  - May not represent true variability for small samples.
+  - *Censoring* and *masking* compound issue by reducing the **effective** sample size.
 
-  - Helps ensure robustness of the results, while acknowledging the inherent
-    complexities introduced by masking and censoring.
-
-  - We report convergence rates in our simulation study.
+- **Mitigation**: In simulation, discard non-convergent samples for MLE on
+  original data but retain all resamples for CIs.
+  - More robust assessment at the cost of possible bias towards "well-behaved" data.  
+  - **Convergence Rates** reported to provide context.
 
 \note{
 \begin{itemize}
 \item We use the standard \textbf{maximum likelihood approach} to estimate the parameters.
-\item Like any model, ours has its challenges. \textbf{Masking} and \textbf{censoring}, combined with small sample sizes, can cause flat likelihood regions, which can lead to convergence issues.
-\item For \textbf{small samples}, bootstrapping may not always capture
-the true variability in the data.
-\item To \textbf{deal} with these issues in our simulation study, we \textbf{discard} samples that did not converge within 125 iterations
-for the MLE on original data.
-\item However, we \textbf{retain} all MLEs for the resampled data in the bootstrap for the confidence intervals.
-\item This helps ensure the \textbf{robustness} of our results while
-acknowledging the inherent complexities introduced by masking and censoring.
-\item We report the \textbf{convergence rate} in our simulation studies.
+\item But, like any model, ours has its challenges, such as nearly flat likelihood regions due to ambiguity in \textbf{masked data} and the complexities of estimating \textbf{latent} component parameters, complicating the convergence of the MLE.
+\item Also, for the confidence intervals, \textbf{bootstrapping} relies on empirical sampling, which may not capture the true variability in the data for small samples.
+\item However, we \textbf{keep} all the resamples for computing confidence intervals.
+\item To \textbf{deal} with these issues in the simulation study, we discard non-convergent samples for the \text{MLE} on the original synthetic data but retain all resamples for computing our confidence intervals.
+\item This offers a more \textbf{robust assessment} but at the cost of possible bias towards "well-behaved" data.
+\item Finally, we report \textbf{convergence rates} to provide context for the reliability of our estimates.
 \end{itemize}
 }
 
-# Simulation Study
+# Simulation Study: Series System with Weibull Components
 
-## Series System: Weibull Components
+**Series System Parameters**:
 
-The lifetime of the $j$\textsuperscript{th} component in the $i$\textsuperscript{th} system:
-$$
-    T_{i j} \sim \operatorname{Weibull}(k_j,\lambda_j)
-$$
-
-- $\lambda_j$ is the **scale** parameter 
-- $k_j$ is the **shape** parameter:
-  - $k_j < 1$: Indicates infant mortality.
-  - $k_j = 1$: Indicates random failures (exponential distribution).
-  - $k_j > 1$: Indicates wear-out failures.
-
-Weibull has well known *reliability* and *hazard* functions.
-
-\note{
-\begin{itemize}
-\item In our \textbf{simulation study}, we analyze a series system with \textbf{Weibull} components.
-\item The Weibull has two parameters: the \textbf{scale} and \textbf{shape}.
-\item \textbf{Shape} parameter tells us a lot about the failure characteristics.
-\item When its \textbf{greater} than \textbf{one}, think of it as wearing-out over time.
-\item If it's \textbf{less} than one, that usually signals some early-life challenges.
-\item If it's \textbf{equal} to one, it has random failures.
-\end{itemize}
-}
-
-## Well-Designed Series System
-
-**Simulation study** centered on a series system with these Weibull components:
-
-| Component | Shape | Scale  | $\Pr\{K_i\}$ |
+| Component | Shape $(k_j)$ | Scale ($\lambda_j$) | Failure Probability ($\Pr\{K_i\}$) |
 |-----------|-------|--------|--------------|
 | 1         | 1.26  | 994.37 | 0.17         |
 | 2         | 1.16  | 908.95 | 0.21         |
@@ -439,24 +418,25 @@ Weibull has well known *reliability* and *hazard* functions.
 | 4         | 1.18  | 940.13 | 0.20         |
 | 5         | 1.20  | 923.16 | 0.20         |
 
-- Based on (Guo, Niu, and Szidarovszky 2013) study of 3 components.
-  - We added components 4 and 5.
-  - **Shapes** greater than 1, indicating wear-outs.
-- **Probabilities** are comparable: it is *reasonably well-designed*.
-  - **Reliability**: Components 1 and 3 *most* and *least* reliable, respectively.
-  - **Simulation Study**: Only show estimates for these two components.
+**Lifetime** of $j$\textsuperscript{th} component of $i$\textsuperscript{th} system: $T_{i j} \sim \operatorname{Weibull}(k_j,\lambda_j)$.
+
+- Based on (Guo, Niu, and Szidarovszky 2013)
+- Extended to include components 4 and 5
+  - Shapes greater than 1 indicates wear-outs.
+  - Probabilities comparable: reasonably **well-designed**.
+- Focus on Components 1 and 3 (most and least reliable) in study.
 
 \note{
 \begin{itemize}
-\item This study is \textbf{centered} around a series system with \textbf{five} Weibull components.
-\item It's \textbf{based} on a paper that studies a 3-component series system.
-\item We \textbf{added} components 4 and 5 to make it more complex.
-\item We show the \textbf{shape} and \textbf{scale} parameters for each component.
-\item We see that the \textbf{shape} parameters are \textbf{greater} than 1, which indicates \textbf{wear-out} failures.
+\item This study is \textbf{centered} around the series system shown in the table.
+\item It's \textbf{based} on a 2013 study that analyzed a 3-component system.
+\item We \textbf{added} components 4 and 5 to introduce complexity.
+\item We chose the \textbf{Weibull} for the component lifetimes, which is characterized by \textbf{shape} and \textbf{scale} parameters.
+\item The table shows the \textbf{shape} and \textbf{scale} parameters for each component in the system.
+\item The \textbf{shape} parameters are \textbf{greater} than 1, which indicate \textbf{wearing-out}.
 \item We also show the \textbf{probability} of each component being the cause of failure in the last column.
-\item Since the probabilities are \textbf{comparable}, no weak links, it's reasonably \textbf{well-designed}.
-\item Component 1 is the \textbf{most} reliable and component 3 is the \textbf{least} reliable.
-\item In our simulation study, we only show the estimates for these two components, as they will show the biggest differences.
+\item The system is  \textbf{well-designed}, as evidenced by comparable probabilities.
+\item In our simulation, we pay special attention to components 1 and 3, the most and least reliable components, as they show the biggest differences.
 \end{itemize}
 }
 
@@ -554,7 +534,6 @@ Assess the impact of right-censoring on MLE and CIs.
   - Right censoring occurs with probability $1-q$: $40\%$ to $0\%$.
 - **Bernoulli Masking Probability**: Each component is a candidate with probability $p$ fixed at $21.5\%$.
   - Estimated from original study (Guo, Niu, and Szidarovszky 2013).  
-  - Chance of **no** masking: $\Pr\{\text{only failed component in $\mathcal{C}_i$}\} \approx 62\%$.
 - **Sample Size**: $n$ fixed at $90$.
   - Small enough to show impact of right-censoring.
 
@@ -563,7 +542,7 @@ Assess the impact of right-censoring on MLE and CIs.
 \item We assess the impact of \textbf{right-censoring} on the MLE and confidence intervals.
 \item We \textbf{vary} the probability of observing a failure from $60\%$ to $100\%$.
 \item We fix the masking probability at $21.5\%$, which is the probability that each component is a candidate.
-\item This masking probability is \textbf{based} on estimates from the original study.
+\item This masking probability is \textbf{based} on estimates from a 2013 study.
 \item We fix the \textbf{sample size} at 90, which was small enough to show the
 impact of right-censoring on the MLE, but large enough so that the convergence rate was reasonable.
 \end{itemize}
@@ -808,7 +787,7 @@ The BCa confidence intervals show good coverage:
 
 ## Scenario: Impact of Sample Size
 
-Assess the mitigating affects of sample size.
+Assess the mitigating affects of sample size on MLE and CIs.
 
 - **Sample Size**: We vary the same size $n$ from 50 to 500..
 - **Right-Censoring**: $q$ fixed at $82.5\%$
@@ -818,10 +797,10 @@ Assess the mitigating affects of sample size.
 
 \note{
 \begin{itemize}
-\item We assess the impact of the \textbf{sample size} on the MLE and confidence intervals.
-\item We want to see how will it mitigate the challenges from right-censoring and masking.
-\item We \textbf{vary} the sample sie from size 50 to size 500.
-\item We fix the masking probability at $21.5\%$ and the right-censoring probability at $17.5\%$.
+\item We want to see how will the \textbf{sample size} can mitigate the
+affects of right-censoring and masking previously discussed.
+\item We \textbf{vary} the samples from sizes 50 to 500.
+\item We fix the masking probability at $21.5\%$ and the right-censoring probability at $17.5\%$, same as before.
 \end{itemize}
 }
 
@@ -898,7 +877,7 @@ Sample size has a notable impact on the MLE:
 - **Precision**: Very precise for large samples ($n > 200$).
 - **Bias**: Diminishes to near zero for large samples.
 - **Coverage**: Correctly specified CIs for large samples.
-- **Convergence**: Total convergence for large samples.
+- **Convergence Rate**: Total convergence for large samples.
 
 ### **Summary** 
 Larger samples lead to more accurate, unbiased, and reliable estimations.
@@ -909,8 +888,7 @@ Larger samples lead to more accurate, unbiased, and reliable estimations.
 
 **Key Findings**:
 
-- Employed maximum likelihood techniques for component reliability estimation in series systems with masked failure data.
-- Methods were robust despite masking and right-censoring challenges.
+- MLE and confidence intervals were robust despite masking and right-censoring challenges.
 
 **MLE Performance**:
 
