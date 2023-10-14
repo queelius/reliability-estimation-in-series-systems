@@ -51,34 +51,6 @@ cause of failure. We parameterize the level of masking by the masking probabilit
 
 
 
-## Likelihood Contribution: Right-Censoring
-
-**Right-Censoring**: The likelihood contribution of the $i$\textsuperscript{th}
-system if it is right-censored ($\delta_i = 0$) is proportional to the system reliability:
-$$
-L_i(\v\theta) \propto \prod_{l=1}^m R_l(\tau;\v{\theta_l}).
-$$
-
-**Assumptions**: Right-censoring time ($\tau$) independent of component lifetimes
-and parameters.
-
-\note{
-\begin{itemize}
-\item \textbf{Right-Censored} Let's look at the likelihood contribution for
-right-censored systems.
-\item When a system is right-censored, the likelihood contribution is proportional to
-the system reliability.
-\item \textbf{Assumption} In our model, we assume that the right-censoring time
-is independent of the component lifetimes and parameters.
-\item This is a \textbf{reasonable} assumption in many cases.
-\end{itemize}
-}
-
-
-
-
-
-
 
 
 

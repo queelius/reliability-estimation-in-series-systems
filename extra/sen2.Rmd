@@ -1,4 +1,35 @@
-### Scenario #4: Assessing the Impact of Changing the Shape Parameter of a Component {#sec:shape-vs-mttf}
+---
+title: "Prediction Intervals in Series Systems with Masked Failure Causes"
+author: "Alex Towell"
+abstract: "..."
+output:
+    #bookdown::html_document2:
+    #bookdown::pdf_document2:
+    bookdown::gitbook:
+        df_print: kable
+        citation_package: natbib
+    bookdown::pdf_book:
+        toc: true
+        #toc_depth: 3
+        number_sections: true
+        #extra_dependencies: ["hyperref", "graphicx","amsthm","amsmath","natbib","tikz"]
+        extra_dependencies: ["tikz", "caption"]
+        df_print: kable
+        #keep_tex: true
+        citation_package: natbib
+indent: true
+header-includes:
+   - \usepackage{tikz}
+   - \usepackage{caption}
+   - \AtBeginDocument{\renewcommand{\v}[1]{\boldsymbol{#1}}}
+   - \AtBeginDocument{\newtheorem{condition}{Condition}}
+bibliography: refs.bib
+link-citations: true
+biblio-style: apalike
+---
+
+
+## Scenario: Assessing the Impact of Changing the Shape Parameter of a Component {#sec:shape-vs-mttf}
 
 When the shape parameters in a series system are approxiamtely equal, as is the case in our
 base series system defined in Table \ref{tab:series-sys}, then a larger scale parameter yields

@@ -1,0 +1,54 @@
+---
+title: "Bootstrapping statistics of the maximum likelihood estimator of components in a series systems from masked failure data"
+author: "Alex Towell"
+abstract: "We estimate the parameters of a series system with Weibull component lifetimes from relatively small samples consisting of right-censored system lifetimes and masked component cause of failure. Under a set of conditions that permit us to ignore how the component cause of failures are masked, we assess the bias and variance of the estimator. Then, we assess the accuracy of the boostrapped variance and calibration of the confidence intervals of the MLE under a variety of scenarios."
+output:
+    pdf_document:
+        toc: yes
+        toc_depth: 2
+        number_sections: true
+        extra_dependencies: ["graphicx","amsthm","amsmath","natbib","tikz"]
+        df_print: kable
+        keep_tex: true
+indent: true
+bibliography: refs.bib
+csl: the-annals-of-statistics.csl
+---
+
+
+# Appendix E: Parameter rescaling {-}
+When the parameters under investigation span different
+orders of magnitude, parameter rescaling can significantly improve the performance
+and reliability of optimization algorithms. Parameter rescaling gives an optimizer a
+sense of the typical size of each parameter, enabling it to adjust its steps
+accordingly. This is crucial in scenarios like ours, where shape and scale parametes
+are a few orders of magnitude apart. Without rescaling, the optimization routine may
+struggle, taking numerous small steps for larger parameters and overshooting for
+smaller ones. For more information, see \citep{nocedal2006numerical}.
+
+Speed of convergence was particularly important in our case, since in our simulation
+study, we employ the bootstrap method to estimate the sampling distribution of the
+MLE, which requires us to estimate the MLE for many data sets. We found that
+parameter rescaling significantly improved the speed of convergence, which allowed
+us to run our simulation study in a tractable amount of time.
+
+# Appendix F: Model Verification {-}
+
+To verify that our likelihood model is correct, we load the Table 2 data from
+[@Huairu-2013] and fit the Weibull series model to the data to see if we can
+recover the MLE they reported. When we fit the Weibull series model to this data by
+maximizing the likelihood function, we obtain the following fit for the shape and
+scale parameters given respectively by
+$$
+    \hat{k}_1 = `r theta["shape1"]`,
+    \hat{k}_2 = `r theta["shape2"]`,
+    \hat{k}_3 = `r theta["shape3"]`,
+$$
+and
+$$
+    \hat{\lambda}_1 = `r theta["scale1"]`,
+    \hat{\lambda}_2 = `r theta["scale2"]`,
+    \hat{\lambda}_3 = `r theta["scale3"]`,
+$$
+which is in agreement with the MLE they reported. Satisfied that our likelihood model
+is correct, we proceed with the simulation study.
