@@ -155,7 +155,7 @@ which is given by
 h_{T_i}(t) 
   &= -\lim_{\Delta t \to 0} \frac{R_{T_i}(t+\Delta t) - R_{T_i}(t)}{\Delta t}
     \frac{1}{R_{T_i}(t)}\\
-  &= \left(-\frac{d}{dt} R_{T_i}(t)\right) \frac{1}{R_{T_i}(t)} = \frac{f_{T_i}(t)}{R_{T_i}(t)}
+  &= \left(-\frac{d}{dt} R_{T_i}(t)\right) \frac{1}{R_{T_i}(t)} = \frac{f_{T_i}(t)}{R_{T_i}(t)}.
 \end{split}
 \end{equation}
 
@@ -340,9 +340,9 @@ The joint pdf of the component cause of failure $K_i$ and the series system life
 $T_i$ is given by
 \begin{equation}
 \label{eq:f-k-and-t}
-  f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) \prod_{l=1}^m R_l(t;\v\theta),
+  f_{K_i,T_i}(j,t;\v\theta) = h_j(t;\v{\theta_j}) \prod_{l=1}^m R_l(t;\v\theta_l),
 \end{equation}
-where $h_l(t;\v{\theta_j})$ and $R_l(t;\v{\theta_l})$ are respectively the hazard
+where $h_l(t;\v{\theta_l})$ and $R_l(t;\v{\theta_l})$ are respectively the hazard
 and reliability functions of the $l$\textsuperscript{th} component.
 :::
 
@@ -504,16 +504,16 @@ example is when a diagnostician is able to isolate the cause of failure to a
 subset of the components. We call this subset the *candidate set*.
 
 ##### Masked Data {-}
-In this paper, each system is put into operation and observed until either it
-fails or its failure is right-censored after some duration $\tau$, so we do not
+In this paper, each system $i$ is put into operation and observed until either it
+fails or its failure is right-censored after some duration $\tau_i$, so we do not
 directly observe the system lifetime but rather we observe the right-censored
 lifetime, $S_i$, which is given by
 \begin{equation}
-    S_i = \min\{\tau, T_i\}.
+    S_i = \min\{\tau_i, T_i\}.
 \end{equation}
 We also observe an event indicator, $\delta_i$, which is given by
 \begin{equation}
-    \delta_i = 1_{T_i < \tau},
+    \delta_i = 1_{T_i < \tau_i},
 \end{equation}
 where $1_{\text{condition}}$ is an indicator function that denotes $1$ if
 the condition is true and $0$ otherwise.
@@ -793,8 +793,8 @@ candidate set $c_i$, then its likelihood contribution is given by Equation
 ## Right-Censored Data
 
 As described in Section \@ref(like-model), we observe realizations of
-$(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{T_i,\tau\}$ is the
-right-censored system lifetime, $\delta_i = 1_{T_i < \tau}$ is
+$(S_i,\delta_i,\mathcal{C}_i)$ where $S_i = \min\{T_i,\tau_i\}$ is the
+right-censored system lifetime, $\delta_i = 1_{T_i < \tau_i}$ is
 the event indicator, and $\mathcal{C}_i$ is the candidate set.
 
 In the previous section, we discussed the likelihood contribution from an
@@ -811,8 +811,8 @@ L_i(\v\theta) = \prod_{l=1}^m R_l(s_i;\v{\theta_l}).
 :::
 
 ::: {.proof}
-When right-censoring occurs, then $S_i = \tau$, and we only know that
-$T_i > \tau$, and so we integrate over all possible values that it may have
+When right-censoring occurs, then $S_i = \tau_i = s_i$, and we only know that
+$T_i > s_i$, and so we integrate over all possible values that it may have
 obtained,
 $$
 L_i(\v\theta) = \Pr\!{}_{\v\theta}\{T_i > s_i\}.
@@ -820,7 +820,7 @@ $$
 By definition, this is just the survival or reliability function of the series system
 evaluated at $s_i$,
 $$
-L_i(\v\theta) = R_{T_i}(s_i;\v\theta) = \prod_{l=1}^m R_l(t_i;\v{\theta_l}).
+L_i(\v\theta) = R_{T_i}(s_i;\v\theta) = \prod_{l=1}^m R_l(s_i;\v{\theta_l}).
 $$
 :::
 
@@ -831,7 +831,7 @@ $$
 L_i(\v\theta) \propto
 \begin{cases}
     \prod_{l=1}^m R_l(s_i;\v{\theta_l})         &\text{ if } \delta_i = 0\\
-    \prod_{l=1}^m R_l(t_i;\v{\theta_l})
+    \prod_{l=1}^m R_l(s_i;\v{\theta_l})
         \sum_{j\in c_i} h_j(s_i;\v{\theta_j})   &\text{ if } \delta_i = 1.
 \end{cases}
 $$
@@ -1024,7 +1024,7 @@ with Weibull distributed lifetimes arranged in a series configuration,
 producing a specific form of the likelihood model described in Section \@ref(like-model),
 which deals with challenges such as right censoring and masked component cause of failure.
 
-The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
+The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} system has a
 lifetime distribution given by
 $$
     T_{i j} \sim \operatorname{Weibull}(k_j,\lambda_j) \qquad \text{for } i = 1,\ldots,n \text{ and } j = 1,\ldots,m,
@@ -1051,7 +1051,7 @@ components surviving for a much longer time.
 this might arise is a result of random shocks to the system, but otherwise
 the system is age-independent.[^4]
 - $k_j > 1$ indicates wear-out failures. An example of how this might arise is a
-result of components wearing as they age
+result of components wearing as they age.
 
 [^4]: The exponential distribution is a special case of the Weibull distribution
 when $k_j = 1$.
@@ -1118,11 +1118,11 @@ components, the MTTF of the $j$\textsuperscript{th} component is given by
 where $\Gamma$ is the gamma function. We mentioned that the MTTF can sometimes
 be a poor measure of reliability, e.g., the MTTF and the probability of failing
 early can *both* be large. The Weibull is a good example of this phenomenon.
-If $k_j > 1$, the $j$\textsuperscript{th} component is fat-tailed and it can
-exhibit both a large MTTF and a high probability of failing early. The
-probability of component failure given by Equation \@ref(eq:prob-k) is a
-particularly useful measure of component reliability relative to the other
-components in the system.
+If $k_j > 1$, the lifetime distribution of the $j$\textsuperscript{th} component
+is fat-tailed and it can exhibit both a large MTTF and a high probability of
+failing early. The probability of component failure given by Equation
+\@ref(eq:prob-k) is a particularly useful measure of component reliability
+relative to the other components in the system.
 
 ## Likelihood Model {#sys-weibull-like}
 In Section \@ref(like-model), we discussed two separate kinds of likelihood
@@ -1377,7 +1377,7 @@ component 3 being the least reliable.
 
 The reliability function, unlike the other two measures of reliability, is not
 a summary statistic of reliability, but is rather a function of time. Since most
-of our simulations has the right-censoring time set to the $82.5\%$ quantile of
+of our simulations have the right-censoring time set to the $82.5\%$ quantile of
 the series system, which we denote here by $\tau_{0.825}$, we can compare the
 reliability functions of the components at this time. We see that the
 reliability of the components at this right-censoring time are similar, with
@@ -1519,7 +1519,7 @@ the failure time $t_i$ of the system to the minimum of the component failure tim
 
 #### Right-Censoring Model {-}
 We employ a simple right-censoring model, where the right-censoring time
-$\tau$ is fixed at some known value, e.g., an experiment is run for a fixed
+is fixed at some known value, e.g., an experiment is run for a fixed
 amount of time $\tau$, and all systems that have not failed by the end of the
 experiment are right-censored. The censoring time $S_i$ of the
 $i$\textsuperscript{th} system is thus given by
@@ -1528,25 +1528,32 @@ $$
 $$
 So, after we generate the system failure time $T_i$, we generate the censoring
 time $S_i$ by taking the minimum of $T_i$ and $\tau$.
-In our simulation study, we parameterize the right-censoring time $\tau$ by the
-quantile $q = 0.825$ of the series system,
+
+In the simulation study, we parameterize instead by a right-censoring quantile
+$q$ for the series system, where $q$ is the proportion of systems that are
+expected to fail before the right-censoring time, denoted by $\tau_q$. This is
+given by
 $$
-    \tau = F_{T_i}^{-1}(q).
+    \tau_q = F_{T_i}^{-1}(q;\v\theta),
 $$
-This means that $82.5\%$ of the series systems are expected to fail before time $\tau$
-and $17.5\%$ of the series are expected to be right-censored. To solve for the $82.5\%$
-quantile of the series system, we define the function $g$ as
+where $F_{T_i}^{-1}$ is the inverse CDF of the series system. To solve for the
+right-censoring time $\tau_q$ of the series system, we define a function $g$ as
 $$
-g(\tau) = F_{T_i}(\tau;\v\theta) - q
+g(\tau_q) = F_{T_i}(\tau_q;\v\theta) - q
 $$
 and find its root using the Newton's method. See Appendix
 \@ref(app-series-quantile) for the R code that implements this procedure.
+
+For instance, if $q = 0.825$ (which is what we set it to in some of
+simulation scenarios), then $82.5\%$ of the series systems are expected to fail
+before the corresponding right-censoring time $\tau_q$ and $17.5\%$ of the systems are expected
+to be right-censored.
 
 #### Masking Model for Component Cause of Failure {-}
 
 We must generate data that satisfies the masking conditions described in
 Section \@ref(candmod).
-There are many ways to satisfying the masking conditions. We choose a simple
+There are many ways to satisfy the masking conditions. We choose a simple
 method, which we call the *Bernoulli masking model*. In this model, we
 satisfy Conditions \@ref(cond:c-contains-k), \@ref(cond:equal-prob-failure-cause),
 and \@ref(cond:masked-indept-theta) by generating a candidate set $c_i$ for
@@ -1602,7 +1609,7 @@ since the Bernoulli random variables are not a function of $\v\theta$.
   of the candidate set being equal to some set $c_i$ is the same for all
   components in that $c_i$ and for all system failure times $t_i$, e.g., if
   the probability that $c_i = \{1,2\}$ is $p(1-p)$ when we condition in either
-  compoent $1$ or component $2$ being the cause of failure, which satisfies
+  component $1$ or component $2$ being the cause of failure, which satisfies
   Condition \@ref(cond:equal-prob-failure-cause).
 
   There are many more ways to satisfy the masking conditions, but we choose
@@ -1656,13 +1663,20 @@ real-world applications.
 
 ## Scenario: Assessing the Impact of Right-Censoring {#effect-censoring}
 
-In this scenario, we use the well-designed series system described in Table \ref{tab:series-sys},
-and we vary the right-censoring quantile ($q$) from $60\%$ to $100\%$
-(no right-censoring), with a component cause of failure masking
-probability of $p = 21.5\%$ and sample size $n = 100$.
+In this scenario, we use the well-designed series system described in Table \ref{tab:series-sys}
+and we use the following simulation scenario values:
+
+- We vary the right-censoring quantile ($q$) from $60\%$ to $100\%$
+(no right-censoring). We denote the corresponding right-censoring time by $\tau_q$.
+- We fix the Bernoulli masking probability $p$ to $21.5\%$ based on estimates from
+masked data.[^88]
+- We fix the sample size $n$ to $90$, which is small enough to show the impact of
+right-censoring on the MLE, but large enough to obtain reasonable convergence
+rates.
+
+[^88]: See 'Table 2: Example Data for a Series System' in [@Huairu-2013] for details on the masked data.
 
 ```{r q-vs-stats, out.width='100%', fig.cap=c("Right-Censoring Quantile ($q$) vs MLE ($p = 0.215, n = 90$)","Right-Censoring Quantile ($q$) vs MLEs"), fig.align="center", echo = F}
-# knitr::include_graphics("image/tau/plot-q-vs-mle.pdf")
 knitr::include_graphics("image/5_system_tau_fig.pdf")
 ```
 
@@ -1683,15 +1697,15 @@ To increase $R_{T_i}(\tau)$, we move in the direction (gradient) of these partia
 The partial derivatives of $R_{T_i}(\tau)$
 are given by
 \begin{align*}
-\frac{\partial R_{T_i}(\tau)}{\partial \lambda_j} &= R_{T_i}(\tau;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \frac{k_j}{\lambda_j},\\
-\frac{\partial R_{T_i}(\tau)}{\partial k_j}       &= R_{T_i}(\tau;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \left(\log \lambda_j - \log \tau\right),
+\frac{\partial R_{T_i}(\tau_q)}{\partial \lambda_j} &= R_{T_i}(\tau_q;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \frac{k_j}{\lambda_j},\\
+\frac{\partial R_{T_i}(\tau_q)}{\partial k_j}       &= R_{T_i}(\tau_q;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \left(\log \lambda_j - \log \tau_q\right),
 \end{align*}
 for $j = 1, \ldots, m$. We see that these partial derivatives are related to the score of a right-censored likelihood contribution in
 Theorem \@ref(thm:weibull-score). Let us analyze the implications these
 partial derivatives have on the MLE:
 
 - **Effect of Increasing Right-Censoring Quantile**: As the right-censoring
-quantile $q$ increases ($\tau$ increases), $R_{T_i}(\tau;\v\theta)$ decreases,
+quantile $q$ increases ($\tau_q$ increases), $R_{T_i}(\tau_q;\v\theta)$ decreases,
 reducing the impact of right-censoring on the MLE. This behavior is evident in
 Figure \ref{fig:q-vs-stats}.
 
@@ -1703,11 +1717,11 @@ to the amount of right-censoring ($1-q$), as seen in Figure \ref{fig:q-vs-stats}
 
 - **Conditional Bias in Shape Parameters**: The partial derivative with respect
 to the shape parameter of the $j$\textsuperscript{th} component, $k_j$, is
-non-negative if $\lambda_j \geq \tau$ and otherwise negative. In our
+non-negative if $\lambda_j \geq \tau_q$ and otherwise negative. In our
 well-designed series system, the scale parameters are large compared to most of
-the right-censoring times for $\tau(q)$, so the MLE nudges the shape parameter
-estimates in a positive direction to increase the probability of a
-right-censoring event $R_{T_i}(\tau)$ at time $\tau$. We see this in Figure
+the right-censoring times $\tau_q$, so the MLE nudges the shape parameter
+estimates in a positive direction to increase the probability $R_{T_i}(\tau_q)$ of a
+right-censoring event at time $\tau_q$. We see this in Figure
 \ref{fig:q-vs-stats}, where the shape parameter estimates are positively biased
 for most of the quantiles $q$.
   
@@ -1727,16 +1741,16 @@ right-censoring quantiles, but the shape parameters are consistently less
 correctly specified, suggesting that the shape parameters are more difficult to
 estimate than the scale parameters.
 
-We also see that the coverage probabilities for $k_1$ and $\lambda_1$ are
-generally have worse coverage than the other parameters. This is likely due to
-the fact that component 1 is the most reliable component, and so it is less
-likely to fail before the right-censoring time $\tau$. This means that the
-likelihood contribution of component 1 is less informative than the other
-components. Conversely, we see that $k_3$ and $\lambda_3$ generally have
-better coverage than the other parameters. This is likely due to the fact that
-component 3 is the least reliable component, and so it is more likely to fail
-before the right-censoring time. This means that the likelihood contribution of
-component 3 is more informative than the other components in the presence of
+We also see that the coverage probabilities for $k_1$ and $\lambda_1$ generally
+have worse coverage than the other parameters. This is likely due to the fact
+that component 1 is the most reliable component, and so it is less likely to
+fail before the right-censoring time $\tau_q$. This means that the likelihood
+contribution of component 1 is less informative than the other components.
+Conversely, we see that $k_3$ and $\lambda_3$ generally have better coverage
+than the other parameters. This is likely due to the fact that component 3 is
+the least reliable component, and so it is more likely to fail before the
+right-censoring time. This means that the likelihood contribution of component
+3 is more informative than the other components in the presence of
 right-censoring.
 
 ##### Dispersion of MLEs {-}
@@ -1772,7 +1786,7 @@ reach zero, but this is potentially due to masking.
 
 The bias for the scale parameters is quite small and remains stable across
 different right-censoring quantiles, suggesting that the scale MLEs are
-reasonably unbiased. It could be the case that making or other factors are
+reasonably unbiased. It could be the case that masking or other factors are
 counteracting the bias due to right-censoring.
 
 Again, we see that the bias for $k_1$ and $\lambda_1$ is much greater than the
@@ -1805,12 +1819,21 @@ estimation and how these effects might be mitigated.
 
 ## Scenario: Assessing the Impact of Masking Probability for Component Cause of Failure {#p-vs-mttf}
 
-In this scenario, we use the well-designed series system described in
-Table \ref{tab:series-sys}. We fix the sample size to $n = 90$ (moderate sample
-size) and we fix the right-censoring quantile to $q = 0.825$ (moderate
-right-censoring), and we vary the masking probability $p$ from $0.1$
-(light masking of the component cause of failure) to $0.7$ (extreme masking of
-the component cause of failure).
+In this scenario, we use the well-designed series system described in Table \ref{tab:series-sys}
+and we use the following simulation scenario values:
+
+- We vary the Bernoulli masking probability $p$ from $10\%$ to $70\%$.[^99]
+- We fix the right-censoring quantile $q$ to $0.825$, which means the probability
+of a right-censoring event is $17.5\%$, which is less than the masking probability.
+- We fix the sample size to $n$ to $90$, which is small enough to show the impact of
+masking on the MLE, but large enough to obtain reasonable convergence rates.
+
+[^99]: The probability that the component cause of failure is masked is the
+probability that at least one functional component will be in the
+candidate set, which is given by $1 - (1 - p)^{m-1}$, where $m$ denotes the number
+of components in the system and $p$ is the Bernoulli masking probability. So, for
+$m = 5$ and $p$ ranges from $10\%$ to $70\%$, the probability that the component cause of
+failure is masked ranges from $34.4\%$ to $99.2\%$.
 
 In Figure \ref{fig:masking-prob-vs-stats}, we show the effect of the masking
 probability $p$ on the MLE for the shape and scale parameters. The top four
@@ -1820,7 +1843,6 @@ left plot shows the coverage probabilities for all parameters and the bottom
 right plot shows the convergence rate of the MLE.
 
 ```{r masking-prob-vs-stats, fig.cap="Component Cause of Failure Masking ($p$) vs MLE ($q = 0.825, n = 90$)", fig.align="center", echo = F}
-# knitr::include_graphics("image/p-vs-mle.pdf")
 knitr::include_graphics("image/5_system_prob_fig.pdf")
 ```
 
@@ -1911,14 +1933,17 @@ sample size can mitigate the effects of both right-censoring and masking.
 
 ## Scenario: Assessing the Impact of Sample Size {#effect-samp-size}
 
-In this scenario, we use the well-designed series system described in
-Table \ref{tab:series-sys}. We fix the masking probability to $p = 0.215$
-(moderate masking), we fix the right-censoring quantile to $q = 0.825$
-(moderate censoring), and we vary the sample size $n$ from $50$ (small sample
-size) to $500$ (large sample size).
+In this scenario, we want to assess how the sample size can mitigate the affects of
+right-censoring and masking previously discussed. We use the well-designed series
+system described in Table \ref{tab:series-sys} and we use the following
+simulation scenario values:
+
+- We vary the sample size $n$ from $50$ (small sample size) to $500$ (large sample size).
+- We fix the right-censoring quantile $q$ to $82.5\%$.
+- We fix the masking probability to $p = 21.5\%$.
+
 
 ```{r samp-size-n-vs-stats, out.width='100%', fig.cap="Sample Size ($n$) vs MLEs ($p = 0.215, q = 0.825$)", fig.align="center", echo = F}
-# knitr::include_graphics("image/n-vs-mles.pdf")
 knitr::include_graphics("image/5_system_samp_size_fig.pdf")
 ```
 
@@ -2162,7 +2187,7 @@ loglik_wei_series_md_c1_c2_c3 <- function(df, theta) {
   delta <- df[["delta"]]
   shapes <- theta[seq(1, length(theta), 2)]
   scales <- theta[seq(2, length(theta), 2)]
-  t <- df[[lifetime]]    
+  t <- df[[lifetime]]
   s <- 0
   for (i in 1:n) {
     s <- s - sum((t[i] / scales)^shapes)
@@ -2194,7 +2219,7 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
   C <- md_decode_matrix(df, "x")
   m <- ncol(C)
   delta <- df[["delta"]]
-  t <- df[[lifetime]]  
+  t <- df[[lifetime]]
   shapes <- theta[seq(1, length(theta), 2)]
   scales <- theta[seq(2, length(theta), 2)]
   shapes.scr <- scales.scr <- rep(0, m)
@@ -2276,7 +2301,7 @@ shape and scale parameters.
 ```{r, eval=FALSE}
 #' L-BFGS-B solver for the series system with Weibull component lifetimes
 #' given masked data.
-#' 
+#'
 #' @param df masked data frame
 #' @param theta0 initial guess
 #' @return MLE solution
@@ -2556,6 +2581,6 @@ Special acknowledgment goes to Dr. Beidi Qiang, whose teachings and feedback
 have been instrumental in my academic progress. I have benefited from her
 insights both in and out of the classroom over the years.
 
-I also thank Dr. Ed Sewell for his willingness to contribute to my committee.
+I also thank Dr. Edward Sewell for his willingness to contribute to my committee.
 His expertise in reviewing and providing feedback is an important component of
 this research.
