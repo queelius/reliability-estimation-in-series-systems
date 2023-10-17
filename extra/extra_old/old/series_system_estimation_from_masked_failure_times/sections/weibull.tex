@@ -1,0 +1,197 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Case study: Weibull}
+In our second case study, we analyze a series system in which the components have Weibull distributed lifetimes. Consider a component $j$ with a lifetime $\cv_j \sim \text{WEI}(\tparam{\alpha}_j, \tparam{\beta}_j)$.
+The random variable $\cv_j$ has reliability, density, and failure rate functions given by
+\begin{equation}
+\label{eq:weibull_reliability}
+\srv_j(t \given \alpha_j, \beta_j) =
+    \exp \left[-\left( \frac{t}{\alpha_j}\right)^{\beta_j} \right]\,,
+\end{equation}
+\begin{equation}
+\label{eq:weibull_pdf}
+\pdf_j(t \given \alpha_j, \beta_j) =
+    \frac{\beta_j}{\alpha_j}\left(\frac{t}{\alpha_j}\right)^{\beta_j-1} \exp \left [-\left(\frac{t}{\alpha_j}\right)^{\beta_j} \right ]\,,
+\end{equation}
+\begin{equation}
+\label{eq:weibull_failure}
+\haz_j(t \given \alpha_j, \beta_j) =
+    \frac{\beta_j}{\alpha_j}\left(\frac{t}{\alpha_j}\right)^{\beta_j-1}\,,
+\end{equation}
+where $t > 0$, $\alpha_j > 0$ is the scale parameter, and $\beta_j > 0$ is the shape parameter. See \cref{fig:weibull_series_functions} for a visualization of these functions.
+By \cref{eq:weibull_failure}, a component $j$ has a failure rate that increases with respect to time $t$ (e.g., wears out) if $\beta_j > 1$, decreases (e.g., burn-in period) if $0 < \beta_j < 1$, and remains constant if $\beta_j = 1$.
+\footnote{$\cv_j \sim \rm{WEI}\left(\alpha_j, \beta_j = 1\right) \iff \cv_j \sim \expdist\left(1/\alpha_j\right)$.}
+\begin{figure}
+    \pgfmathsetmacro{\alphaval}{2.0}
+    \pgfmathsetmacro{\betaval}{1.5}
+    \caption{Weibull}
+    \label{fig:weibull_series_functions}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}
+            [
+                xlabel={time $t$},
+                xmin=0, xmax=2,
+                ymin=0, ymax=1.6,
+                minor y tick num=1
+            ]
+            \addplot[solid, domain=0:2, samples=100]
+                {exp(-(\alphaval*x)^\betaval)};
+            \addlegendentry{$\srv_j\left(t \given \alpha_j = \alphaval, \beta_j = \betaval\right)$}
+            \addplot[dashed, domain=0:2, samples=100]
+                {\betaval*\alphaval^\betaval*x^(\betaval-1)*exp(-(\alphaval*x)^\betaval)};
+            \addlegendentry{$\pdf_j\left(t \given \alpha_j = \alphaval, \beta_j = \betaval\right)$}
+            \addplot[dotted, domain=0:2, samples=100]
+                {\betaval/\alphaval*(x/\alphaval)^(\betaval -1)};
+            \addlegendentry{$\haz_j\left(t \given \alpha_j = \alphaval, \beta_j = \betaval\right)$}
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+
+The lifetime of the series system composed of $m$ components with Weibull distributed lifetimes, $\cv_j \sim \text{WEI}(\tparam{\alpha}_j, \tparam{\beta}_j)$ for $j=1,\ldots,m$, has a true parameter value given by
+\begin{equation}
+    \tparam\sysparam =
+    \left(
+    \begin{matrix}
+        \tparam{\alpha}_1 & \tparam{\beta}_1\\
+        \vdots & \vdots\\
+        \tparam{\alpha}_m & \tparam{\beta}_m
+    \end{matrix}
+    \right)\,.
+\end{equation}
+where component $j$ has a true parameter value indexed by row $j$ of $\tparam\sysparam$, denoted by $\tparam{\sysparam}_j$. The system's reliability is given by
+\begin{equation}
+\label{eq:sys_weibull_reliability_function}
+    \srv_\sv \left(t \given \tparam\sysparam \right)
+    = \exp \left[-\sum_{j=1}^{m} \left( \frac{t}{\alpha_j}\right)^{\beta_j} \right]\,.
+\end{equation}
+\begin{proof}
+By \cref{thm:series_reliability_function},
+\begin{equation}
+    \srv_\sv \left(t \given \tparam\sysparam\right) = \prod_{j=1}^{m} \srv_j \left(t \given \tparam{\sysparam}_j \right)\,.
+\end{equation}
+Plugging in the component reliability functions as given by \cref{eq:weibull_reliability} results in
+\begin{equation}
+    \srv_\sv(t \given \tparam\sysparam) = \prod_{j=1}^{m} \exp \left [-\left(\frac{t}{\alpha_j}\right)^{\beta_j} \right ] = \exp \left[-\sum_{j=1}^{m} \left( \frac{t}{\alpha_j}\right)^{\beta_j} \right]\,.
+\end{equation}
+\end{proof}
+The system's failure rate is given by
+\begin{equation}
+\label{eq:sys_weibull_failure_rate_function}
+    \haz_{\sv}(t \given \tparam\sysparam) =
+        \sum_{j=1}^{m} \frac{\beta_j}{\alpha_j}\left(\frac{t}{\alpha_j}\right)^{\beta_j-1}\,,
+\end{equation}
+whose proof follows from \cref{thm:series_reliability_function}. The Weibull series system can have failure rates depicted by \cref{fig:weibull_series_failure_rate}.
+\begin{figure}
+    \caption{Failure rate monotonicity}
+    \label{fig:weibull_series_failure_rate}
+    \pgfplotsset{compat=1.5}
+    \pgfmathsetmacro{\alphaval}{0.5}
+    \pgfmathsetmacro{\betaAA}{.5}
+    \pgfmathsetmacro{\betaBA}{1.5}
+    \pgfmathsetmacro{\betaCA}{5}
+    \pgfmathsetmacro{\betaAB}{.7}
+    \pgfmathsetmacro{\betaBB}{.7}
+    \pgfmathsetmacro{\betaCB}{.7}
+    \pgfmathsetmacro{\betaAC}{1.5}
+    \pgfmathsetmacro{\betaBC}{1.5}
+    \pgfmathsetmacro{\betaCC}{1.5}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}
+            [
+                xlabel={time $t$ $\rightarrow$},
+                ylabel={failure rate $\haz(t)$ $\rightarrow$},
+                xmin=0, xmax=2,
+                ymin=0, ymax=3.5,
+                yticklabels={,,},
+                xticklabels={,,},
+                ytick style={draw=none},
+                xtick style={draw=none}
+            ]
+            \addplot[solid, domain = 0.001:2, samples = 200]
+            {
+                (\betaAA * \alphaval^(\betaAA) * x^(\betaAA - 1) +
+                \betaBA * \alphaval^(\betaBA) * x^(\betaBA - 1) +
+                \betaCA * \alphaval^(\betaCA) * x^(\betaCA - 1))
+            };
+            \addlegendentry{non-monotonic}
+            \addplot[dashed, domain = 0.001:2, samples = 200]
+            {
+                (\betaAB * \alphaval^(\betaAB) * x^(\betaAB - 1) +
+                \betaBB * \alphaval^(\betaBB) * x^(\betaBB - 1) +
+                \betaCB * \alphaval^(\betaCB) * x^(\betaCB - 1))
+            };
+            \addlegendentry{monotonically increasing}
+            \addplot[dotted, domain = 0.001:2, samples = 200]
+            {
+                (\betaAC * \alphaval^(\betaAC) * x^(\betaAC - 1) +
+                \betaBC * \alphaval^(\betaBC) * x^(\betaBC - 1) +
+                \betaCC * \alphaval^(\betaCC) * x^(\betaCC - 1))
+            };
+            \addlegendentry{monotonically decreasing}
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+
+By definition, the system's density is given by
+\begin{equation}
+\label{eq:sys_weibull_pdf_function}
+    \pdf_\sv( t \given \tparam\sysparam)
+        = \haz_{\sv}(t \given \tparam\sysparam)
+          \srv_\sv(t \given \tparam\sysparam)\,.
+\end{equation}
+where $\srv_\sv$ and $\haz_\sv$ are given respectively by \Cref{eq:weibull_reliability,eq:sys_weibull_failure_rate_function}.
+
+By \cref{dummyref}, the conditional probability that component $k$ is the cause of a system failure at time $t$ is given by
+\begin{equation}
+\label{eq:weibull_pmf_k_given_s}
+\pmf_{\RV{K} \given \sv}(k \given t, \tparam\sysparam) = \frac
+    {\haz_k(t \given \tparam\sysparam_k)}
+    {\haz_{\sv}(t \given \tparam\sysparam)}\,,
+\end{equation}
+where $\haz_k$ and $\haz_\sv$ are respectively given by \cref{eq:weibull_failure,eq:sys_weibull_pdf_function}.
+
+By definition, the joint density of $\RV{K}$ and $\sv$ is given by
+\begin{equation}
+\label{eq:weibull_joint_k_s}
+\pdf_{\RV{K}, \sv}( k, t \given \tparam\sysparam) =
+    \pmf_{\RV{K} \given \sv}(k \given t, \tparam\sysparam) \pdf_\sv(t \given \tparam\sysparam)\,,
+\end{equation}
+where conditional probability mass and the marginal probability are respectively given by \cref{eq:weibull_pmf_k_given_s,eq:sys_weibull_pdf}.
+
+By \cref{dummyref}, the joint density of $\rvcand$ and $\sv$ is given by
+\begin{equation}
+\label{eq:weibull_joint_cand_density}
+\pdf_{\rvcand, \sv}\left(\cand, t \given \tparam\sysparam \right) =
+    {{m-1} \choose {w-1}}^{-1} \sum_{k \in \cand} \pdf_{\RV{K}, \sv}( k, t \given \tparam\sysparam)\,.
+\end{equation}
+
+For subsequent material, we prefer to work with vectors rather than matrices. By \cref{def:vtopr}, $\sysparamvec \equiv \vtopr(\sysparam) = \Tuple{\alpha_1,\beta_1,\alpha_2,\beta_2,\ldots,\alpha_m,\beta_m}$.
+The joint likelihood $\likelihood$ for a masked system failure sample $\mfs$ is given by
+\begin{equation}
+\likelihood(\sysparamvec \given \mfs) =
+    \prod_{i=1}^{n} \pdf_{\rvcand, \sv}(\cand_i, t_i \given \sysparamvec)
+\end{equation}
+and the log-likelihood is given by
+\begin{equation}
+    \ell(\sysparamvec \given \mfs) =
+        \sum_{i=1}^{n} \ln \pdf_{\rvcand, \sv}(\cand_i, t_i \given \sysparamvec)\,.
+\end{equation}
+The score, the gradient of the log-likelihood $\ell$, is given by
+\begin{equation}
+    \score(\sysparamvec) = \nabla_{\sysparamvec} \ell(\sysparamvec \given \mfs) = \Tuple{
+        \ppderivative{\ell}{\alpha_1}\,,
+        \ppderivative{\ell}{\beta_1}\,,
+        \ldots\,,
+        \ppderivative{\ell}{\alpha_m}\,,
+        \ppderivative{\ell}{\beta_m}}\,.
+\end{equation}
+
+The Weibull series system has no closed form solution so instead we use the observed information matrix $\observed_n$,
+which computes the covariance of $\estimator{\sysparam}_n$ conditioned on an observed sample $\mfs = \mfso$,
+\begin{equation}
+\label{info_matrix_weibull}
+    \observed_n(\tparam\sysparam \given \mfso) = -\hessian\left(\ell\right)
+\end{equation}    
+\end{document}

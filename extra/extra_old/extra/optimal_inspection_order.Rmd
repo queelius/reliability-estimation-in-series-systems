@@ -1,0 +1,30 @@
+# Appendix D: Optimal node inspection order
+Consider order policy $o$, a one-to-one function that maps each
+inspection order $n \in \{1, \ldots, m\}$ to a unique component index
+$j \in \{1, \ldots, m\}$.
+In what follows, we demonstrate how to compute the utility of a particular
+order policy, where the utility is characterized by a utility function $u$.
+\begin{definition}
+The expected utility of order policy $o$ given a probability mass function $f(k;\v\theta|t)$ and a utility function $u$ is
+\begin{equation}
+\label{eq:expected_utility}
+    E[o] = \sum_{n=1}^{m} u(o(n), n) f(o(n);\v{\theta}|t)
+\end{equation}
+where $u$ is a utility function that takes as its first argument a component
+index and as its second argument an inspection order and returns the value of
+assigning the given inspection order to the given component index.
+\end{definition}
+The utility function $u$ can take on many different forms. For instance,
+components may have different inspection costs, and thus given two components,
+all things else being equal the component that is less costly to inspect should
+be inspected before the component that is more costly to inspect in order to
+minimize the expected utility cost.
+
+Let the optimal order policy $o^{*}$ be defined as the order policy that maximizes the expected utility.
+\begin{definition}
+The optimal order policy $o^{*}$ given utility function $u$ is
+\begin{equation}
+    o^{*} = \argmax_{o} E[o].
+\end{equation}
+\end{definition}
+

@@ -1,0 +1,237 @@
+
+
+
+### Bootstrap method
+Let $F$ denote the true distribution function such that $X_j \sim F$ for all $j$.
+Suppose we have some population parameter $\phi = t(F)$ and an estimator of
+$\phi$ given by $\hat\phi = s(\{X1,\ldots,X_n\})$. 
+
+If we wish to *estimate* $\phi$ when the distribution of
+the estimator $F$ is not known, we may use the Bootstrap method.
+We replace $F$ with the observed sample $\hat{F} = \{x_1,\ldots,x_n\}$, which is
+known as the empirical distribution.
+If we have some population parameter $\phi = t(F)$
+and an estimator of $\phi$ given by $\hat\phi = s(\{X_1,\ldots,X_n\})$, then
+in the Bootstrap method we estimate $\beta with
+$$
+\hat\phi = E_{\hat F}\bigl\{s(X^*)\bigr\},
+$$
+which has an estimated bias given by 
+$$
+\widehat{\bias}(\hat\phi) = \hat\phi - t(\hat F).
+$$
+where $X^*$ are bootstrap resamples from $\{X_1,\ldots,X_n\}$ each of
+size $n$.
+
+The procedure is relatively straightforward:
+
+1. Sample with replacement from the original data $\hat{F} = \{x_1,\ldots,x_n\}$, obtaining
+$R$ bootstrap resamples, $\{x_{1 j}^*,\ldots,x_{n j}\}$ for $j=1,\ldots,R$.
+
+2. Apply the estimator $s$ to each bootstrap resample, obtaining $R$ estimates of
+$\phi$, denoted by $\{\hat\phi_1^*,\ldots,\hat\phi_R^*\}$.
+
+3. Estimate the bias with
+$$
+\widehat{\operatorname{bias}}(\hat\phi) =
+    \frac{1}{R} \sum_{i=1}^R \hat\phi_i^* - \hat\phi.
+$$
+
+In the computation of the bias above, we see that we replace the sampling
+distribution $F$ of $\hat\phi$ with the empirical distribution
+$\hat{F} = \{\hat\theta_1^*,\ldots,\hat\theta_R^*\}$ and we replace $\phi$ with
+$\hat\phi$.
+
+```{r,eval=F}
+algebraic.mle::boot_estimate(x$x,algebraic.mle::mle_normal)
+```
+
+
+
+
+-> examine larger series systems
+-> look into general series system stuff
+-> use boot stuff, look at boot mse vs asymptotic mse for mle
+-> use P(K=k|C=c,T=t) decorators. then, use P(K=k|T=t) on new data without
+   that info
+-> use a non-bernoulli candidate model to generate non-unique mles.
+-> make appendix
+
+use `dweibull_series` and `dexp_series` plug in estimates, compare to
+density plot of observed data.
+
+
+
+
+use `pweibull_series` and `pexp_series` plug in estimates, compare to
+empirical cdf of observed data.
+
+
+---
+
+assess validity of solution:
+    verify that the hessian evaluated at the solution is negative definite
+    (fisher info matrix is positive definite) and well-conditioned.
+
+Wilks' theorem
+look into likelihood ratio tests
+
+D = 2 (loglike(Ha) - loglike(H0))
+D ~ X^2(df = df_a - df_0) under H0
+
+Ha is alternative model
+
+Example: let H0 be given by:
+
+    sup(theta) = { theta[1] < theta[2] and ... }
+
+or more simple ex: theta[1] = x, theta[2] = y, theta[3] = z...
+we can use true model for x, y, and z to examine goodness of fit.
+
+---
+AIC = 2k - 2 ln(L.hat)
+where L.hat is maximum value of likelihood function for the model.
+
+
+---
+https://en.wikipedia.org/wiki/Errors_and_residuals
+---
+cross-validiation
+
+how good is at predicting t[i] for validation data?
+
+how good is at predicting k[i] (say we know precisely) for
+validation data?
+
+how good is at predicting k[i] on training data, but during
+training we do not observe k[i]?
+
+
+MSE = (1/n) sum(t[i] - E[T.hat[i]])^2
+
+where T.hat ~ f(t[i];theta.hat)
+
+???
+
+---
+https://www.r-bloggers.com/2015/01/goodness-of-fit-test-in-r/
+
+
+Basically, the process of finding the right distribution for a
+set of data can be broken down into four steps:
+1. Visualization. plot the histogram of data
+2. Guess what distribution would fit to the data the best
+3. Use some statistical test for goodness of fit
+Repeat 2 and 3 if measure of goodness is not satisfactory
+
+```
+hist(md$t,breaks=50,include.lowest=F,right=F)
+```
+
+what's it look like? we can estimate say the exponential,
+and we'll see a good match even though component lifetimes
+may be a poor match, which we cannot observe.
+
+what if we had some data for k[i] for some small validation set?
+barplot(md.validation$k)?
+
+and now we use our estimated model Pr{K[i] = k[i] | T[i] = t[i]}.
+let's not condition on C[i].
+
+for a weibull series, both of the above may be quite telling.
+
+what about plotting hazard function? cdf? pdf? survival fn?
+
+The third task is to do some statistical testing to see if
+data is actually driven from the parametric distribution.
+These tests are called goodness of fit. There are three
+well-known and widely use goodness of fit tests that also
+have nice package in R.
+
+- Chi Square test
+- Kolmogorov–Smirnov test
+- Cramér–von Mises criterion
+
+All of the above tests are for statistical null hypothesis
+testing. For goodness of fit we have the following hypothesis:
+H0 = The data is consistent with a specified reference distribution.
+H1 = The data is NOT consistent with a specified reference distribution
+
+The ref distribution is the one we assume, i.e., a parametric function that
+uses theta.hat.
+
+the primary distribution is the actual distribution the data was
+sampled from. in practice, not known, although we do know it since
+we simulated it.
+
+
+
+## Chi-squared goodness-of-fit test
+```
+t <- md$t
+p.t <- hist(t,breaks=50, include.lowest=FALSE, right=FALSE
+x2 <- chisq.test(p.t$counts, p=null.probs, rescale.p=TRUE, simulate.p.value=TRUE)
+```
+tests whether p.t$counts is reasonably compatible with being drawn from
+null.probs (null distribution, the ref distr)
+
+we can also do:
+```
+k <- md$k # k is unobserved, but say we have a small validation set
+          # which is observed
+p.k <- hist(k,breaks=50, include.lowest=FALSE, right=FALSE
+x2 <- chisq.test(p.k$counts, p=null.probs, rescale.p=TRUE, simulate.p.value=TRUE)
+```
+
+how to get null.probs?
+For `t`:
+```
+library('zoo')
+breaks_cdf <- pweibull_series(p.t$breaks, shapes=shapes.hat, scales=scales.hat)
+null.probs <- rollapply(breaks_cdf, 2, function(x) x[2]-x[1])
+```
+
+for `k`:
+```
+null.probs[j] <- f.k_given_t(j,theta.hat)
+```
+
+## Cramér–von Mises criterion
+```
+t <- md$t
+n <- 10000
+t.hat <- pweibull_series(n,shapes=shapes.hat,scales=scales.hat)
+res <- CramerVonMisesTwoSamples(t,t.hat)
+p.value = 1/6*exp(-res)
+```
+
+## Kolmogorov–Smirnov test
+```
+n <- 10000
+t.hat <- pweibull_series(n,shapes=shapes.hat,scales=scales.hat)
+result = ks.test(t, t.hat)
+```
+
+
+```
+n <- 10000
+Fk.t <- function(j,t)
+{
+    sum <- 0
+    for (i in 1:j)
+        sum <- sum + h[[j]] / h(t)
+}
+k.hat <- ...
+(n,shapes=shapes.hat,scales=scales.hat)
+res <- ks.test(t, t.hat)
+```
+
+
+---
+we can see if a unique MLE is normally distributed with the parameters estimated
+by the MLE, i.e., cov = inv info at theta.hat, mu = theta.hat.
+
+---
+
+visualization: let's find a nice contour plot of MLE. we can do pair-wise, or
+even marginal, but marginal discards a lot of info.

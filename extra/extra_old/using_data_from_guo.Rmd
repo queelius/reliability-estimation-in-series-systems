@@ -1,0 +1,113 @@
+---
+title: "Guo Weibull data"
+author: "Alex Towell"
+#date: "3/5/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's assume that we have a series system with $m=3$ components, each of which has
+an Weibull distributed compoonent lifetimes,
+$$
+    T_{i j} \sim \operatorname{WEI}(k_j,\lambda_j)
+$$
+for $j=1,\ldots,m$ and $i=1,\ldots,n$ where
+$\boldsymbol{\theta} = (k_1,\lambda_1,\ldots,k_m,\lambda_m)$ is unknown.
+
+We replicate the masked data in Table 2 from the Guo paper:
+```{r}
+library(series.system.estimation.masked.data)
+print(guo_series_weibull_md)
+```
+
+
+We are using the likelihood function given by
+\begin{align*}
+L(\lambda_1,\lambda_2,\lambda_3)
+    &= \prod_{i=1}^n \sum_{j \in C_i} f_j(t_i;\theta_j) \prod_{\substack{p=1\\p \neq j}} R_p(t_i;\theta_p)\\
+    &= \prod_{i=1}^n \left[\left\{\prod_{j=1}^m R_j(t_i;\theta_j)\right\}
+    \left\{ \sum_{k \in C_i} h_k(t_i;\theta_k) \right\}\right]
+\end{align*}
+and the log-likelihood function given by
+$$
+l(\lambda_1,\lambda_2,\lambda_3) = \sum_{i=1}^n \sum_{j=1}^m \log R_j(t_i;\theta_j)
+    + \sum_{i=1}^n \log \left\{ \sum_{k \in C_i} h_k(t_i;\theta_k) \right\}.
+$$
+
+The component times-to-failure are exponentially distributed, and thus the
+hazard and survival functions are respectively given by
+$h_j(t;\lambda_j) = \lambda_j$ and $R_j(t;\lambda_j) = \exp(-\lambda_j t)$.
+Making this substitution into the likelihood function obtains the result
+\begin{equation}
+L(\lambda_1,\lambda_2,\lambda_3) = 
+  \prod_{i=1}^n \bigl(\sum_{j \in C_i} \lambda_j \bigr) e^{-\bigl(\sum_{j=1}^m \lambda_j\bigr) t_i}.
+\end{equation}
+and into the log-likelihood function obtains the result
+\begin{equation}
+\ell(\lambda_1,\lambda_2,\lambda_3) = 
+  \sum_{i=1}^n \log \bigl(\sum_{j \in C_i} \lambda_j \bigr) - 
+  \bigl(\sum_{j=1}^m \lambda_j\bigr) \bigl(\sum_{i=1}^n t_i\bigr).
+\end{equation}
+
+We model the log-likelihood function in R with:
+```{r}
+```
+
+
+
+Now, we try to solve the MLE using gradient ascent to solve for the zeros
+of the gradient of the log-likelihood function. We repeat the method many
+times, using random initial points, and choose the best one found:
+```{r,eval=T}
+mle <- function(l,
+                theta0,
+                eps=1e-3,
+                max_trials=100L,
+                r=.5,
+                sup=function(x) { all(x) > 0 },
+                min_cartesian=0,
+                max_cartesian=1000)
+{
+  n <- 1L
+  theta.hat <- theta0
+  l.theta.hat <- l(theta0)
+  m <- length(theta0)
+
+  repeat
+  {
+    theta.start <- NULL
+    repeat
+    {
+      theta.start <- runif(m,min_cartesian,max_cartesian)
+      #if (sup(theta.start)) break
+      
+    }
+    tryCatch(
+      {
+        theta.b <- mle.grad(l,theta.start,eps,r,sup)
+        l.theta.b <- l(theta.b)
+        if (l.theta.b > l.theta.hat)
+        {
+          l.theta.hat <- l.theta.b
+          theta.hat <- theta.b
+        }
+        n <- n + 1L
+      },
+      warning = function(w) {},
+      error = function(e) {})
+    
+    if (n == max_trials)
+      break
+  }
+  return(theta.hat)
+}
+
+theta.hat <- mle(l,c(1,1,1),1L)
+print(theta.hat)
+print(l(theta.hat))
+```
+
+So, we see that $\hat\theta = (0.0008579827,0.0009880395,0.0011126141)$.

@@ -1,0 +1,37 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Introduction}
+\label{sec:intro}
+Empirical modeling involves a blending of substantive subject matter and statistical information.
+In our case, the substantive information includes assumptions like a series system and the $\alpha$-masked candidate set models described later.
+Such information suggests the relevant variables and simplifies learning from data (in our case, maximum likelihood estimation).
+
+In contrast, statistical information stems from the chance regularities in data, which are statistical model attempts to ``adequately'' capture.
+
+
+Discuss latent or hidden variables.
+
+Draw a graph in prob. model section. What do we know, how we know it, etc.
+
+
+We consider series systems consisting of some fixed number of components with 
+uncertain lifetimes. We desire a mathematical model of the system that may be 
+used to predict the failure time of the system and its component cause. 
+However, since the system lifetime and the component cause of failure is 
+uncertain, we are interested in probabilistically modeling the system lifetime, 
+e.g., there is a $75\%$ chance that component $3$ will cause a system failure 
+in the next $3$ years.
+
+We assume the system belongs to some parametric family but whose true parameter 
+index is unknown. Furthermore, we also assume there is a sample of 
+\emph{masked system failure times} that carry information about the true 
+parameter index.
+
+Using the information in the sample, we employ the frequentist approach of 
+repeated experiments which induces a sampling distribution on the maximum 
+likelihood point estimator of the fixed but unknown true parameter index where 
+\emph{a priori} any value in the parameter space is equally likely. The point 
+estimator converges to a multivariate normal sampling distribution with a mean 
+given by the true parameter index and a variance that is inversely proportional 
+to sample size.
+\end{document}

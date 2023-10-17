@@ -1,0 +1,29 @@
+\chapter{Maximum likelihood estimator: Newton-Raphson}
+In \cref{appendix:numerical_solution}, we discussed the general MLE projection search function. Newton-Raphson is another popular way of choosing a direction $\vec{d}^{(i)}$. In this particular maximization problem, $\alpha^{(i)} \cdot \vec{d}^{(i)}$ is equivalent to $\observed^{-1}_{n}\left(\vec\theta^{(i)}\right) \cdot \nabla \ell \left(\vec\theta^{(i)}\right)$, where $\observed^{-1}_{n}\left(\vec\theta^{(i)}\right)$ denotes the inverse (or pseudoinverse) of the observed information matrix.
+
+This particular choice derives from the fact that it is generalization of Newton's method to higher dimensions. Consider the following proof.
+\begin{proof}
+At a local maximum, the gradient of $\ell(\vec\theta \given \mfs_n)$ is zero,
+\begin{equation*}
+\nabla \ell(\vec\theta \given \mfs_n) = \vec{0}.
+\end{equation*}
+Solutions satisfying this system of equations are known as the stationary points of the function $\ell$. To solve this system of equations, we first solve an easier linear system of equations that approximates $\nabla \ell(\vec\theta \given \mfs_n) = \vec{0}$. 
+Let the current solution be $\vec\theta^{i}$. Let $\operatorname{g}(\vec\theta)$ be the linear approximation of $\nabla \ell(\vec\theta \given \mfs_n)$ at $\vec\theta^{i}$,
+\begin{align*}
+    \operatorname{g}(\vec\theta \given \mfs_n)
+        &= \nabla^2 \ell \left(\vec\theta^{(i)} \given \mfs_n \right)\left(\vec\theta - \vec\theta^{(i)} \right) + \nabla \ell \left(\vec\theta^{(i)} \given \mfs_n \right)\\
+        &= \hessian \left ( \ell \left(\vec\theta^{(i)} \given \mfs_n \right) \right ) \left(\vec\theta - \vec\theta^{(i)} \right) + \nabla \ell \left(\vec\theta^{(i)} \given \mfs_n \right),
+\end{align*}
+which is a reasonable approximation of $\ell(\vec\theta \given \mfs_n)$ if $\vec\theta \approx \vec\theta^{(i)}$. Solving the roots of this linear equation,
+\begin{align*}
+    \vec{0} &= \hessian \left(\ell \left(\vec\theta^{(i)}\right)\right) \left(\vec\theta - \vec\theta^{(i)} \right) + \nabla \ell \left(\vec\theta^{(i)}\right)\\
+    \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta &= \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta^{(i)} - \nabla \ell \left(\vec\theta^{(i)}\right)\\
+    \hessian^{-1}\left ( \ell \left(\vec\theta^{(i)}\right) \right ) \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta &= \hessian^{-1} \left( \ell \left(\vec\theta^{(i)}\right) \right ) \big ( \hessian \left ( \ell \left(\vec\theta^{(i)}\right) \right ) \cdot \vec\theta^{(i)} - \nabla \ell \left(\vec\theta^{(i)}\right) \big )\\
+    \vec\theta &= \vec\theta^{(i)} - \hessian^{-1} \left( \ell \left(\vec\theta^{(i)}\right) \right ) \nabla \ell \left(\vec\theta^{(i)}\right)
+\end{align*}
+Notice that $\hessian^{-1} \left( \ell \left(\vec\theta^{(i)}\right) \right )$ is the observed information matrix evaluated at $\vec\theta^{(i)}$. Performing this substitution we arrive at
+\begin{equation*}
+    \vec\theta = \vec\theta^{(i)} + \observed^{-1}_n \left(\vec\theta^{(i)}\right ) \nabla \ell \left(\vec\theta^{(i)}\right)
+\end{equation*}
+where $\observed_n$ is the observed information matrix and $\nabla \ell$ is the gradient of $\ell$ with respect to $\vec\theta$. Thus, the direction $\alpha^{(i)} \cdot \vec{d}^{(i)}$ is a function of the gradient and the Hessian.
+\end{proof}

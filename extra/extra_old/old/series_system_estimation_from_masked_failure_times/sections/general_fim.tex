@@ -1,0 +1,379 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Likelihood and Fisher information}
+\label{sec:general_fisher_info}
+Given a random variable $\RV{X}$, the \emph{information content} of observing a particular realization $\RV{X} = x$ is defined as
+\begin{equation}
+\info_{\RV{X}}(x) \coloneqq -\log \pmf_{\RV{X}}(x)\,.
+\end{equation}
+Intuitively, the more likely the outcome $x$, the less information content of observing $x$, e.g., if $x$ is certain then observing $x$ conveys no information.
+
+The \emph{expected value} of the information content is given by the following definition.
+\begin{definition}
+The \emph{entropy} of discrete random $\RV{X}$ is a measure of uncertainty defined as
+\begin{equation}
+\entropy(\RV{X}) \coloneqq \Expect{\info_{\RV{X}}(\RV{X})} = \Expect{- \log \pmf_{\RV{X}}(\RV{X})}\,.
+\end{equation}
+\end{definition}
+
+The following example may provide some intuition about the basis of the entropy metric.
+\begin{example}
+\label{ex:entropy1}
+Assuming the only information diagnosticians have about a series system is provided by the distribution of $\RV{K}$, the lower-bound on average number of ``yes'' or ``no'' questions needed to determine the component cause of a failed system is given by $\entropy(\RV{K})$ (where the \emph{logarithm} is base-$2$).
+In the worst-case, $\RV{K}$ is uniformly distributed and $\entropy(\RV{K}) = \log_2 m$.
+\end{example}
+The expectation $\Expect{-\log \pdf_{\RV{X}(x)}}$ of a \emph{continuous} random variable $\RV{X}$ is called \emph{differential} entropy.
+Since \emph{negative} values are possible in this case, the previous example no longer applies but the metric is still useful.
+
+Suppose we are interested in the entropy of $\RV{X}$ given $\RV{Y} = y$,
+\begin{equation}
+\entropy(\RV{X} \Given \RV{Y} = y) \coloneqq \Expect{-\log \pdf_{\RV{X} \given \RV{Y}}(\RV{X} \given y)}\,.
+\end{equation}
+More information is never expected to increase the uncertainty, i.e., $\entropy(\RV{X} \Given \RV{Y} = y) \leq \entropy(\RV{X})$, and if $\RV{X}$ and $\RV{Y}$ are statistically dependent then $\entropy(\RV{X} \Given \RV{Y} = y) < \entropy(\RV{X})$.
+
+If the diagnosticians described in example~\ref{ex:entropy1} are provided with the additional information that the system failed at time $t$, then the lower-bound on the average number of questions required to isolate the component cause is given by $\entropy(\RV{K} \Given \sv = t) \leq \entropy(\RV{K})$.
+
+If we \emph{average} over all of the values $\RV{Y}$ may realize, we get the conditional entropy
+\begin{equation}
+	\entropy(\RV{X} \Given \RV{Y}) \coloneqq \Expect{-\log \pdf_{\RV{X} \given \RV{Y}}(\RV{X} \given \RV{Y})}\,.
+%&\coloneqq \sum_{y \in \Set{Y}} \pdf_{\RV{Y}}(y) \entropy(\RV{X} \Given \RV{Y} = y)\\
+%&= \!\! \sum_{ x \in \Set{X}, y \in \Set{Y}} \!\! \pdf_{\RV{X},\RV{Y}}(x,y) \log_2 \pdf_{\RV{X} \Given \RV{Y}}(x \Given y)\,.
+\end{equation}
+
+The joint entropy of $\RV{X}$ and $\RV{Y}$ is defined as
+\begin{equation}
+\entropy(\RV{X}, \RV{Y}) \coloneqq \Expect{- \log \pdf_{\RV{X},\RV{Y}}(\RV{X},\RV{Y})}
+\end{equation}
+which may also be computed by
+\begin{equation}
+	\entropy(\RV{X},\RV{Y}) = \entropy(\RV{X} \Given \RV{Y}) + \entropy(\RV{Y})\,.
+\end{equation}
+If $\RV{X}$ and $\RV{Y}$ are \emph{statistically independent}, then $\entropy(\RV{X} \Given \RV{Y}) = \entropy(\RV{X})$ and $\entropy(\RV{Y} \Given \RV{X}) = \entropy(\RV{Y})$.
+
+When we make an \emph{observation} of a random variable, the entropy is a measure of the \emph{expected information content} provided by the observation.
+The expected information provided by a sample of $n$ masked system failures is given by the following theorem.
+%\begin{definition}
+%\label{def:entropy}
+%\begin{equation}
+%\entropy(\rvcand, \sv \Given \RV{W} = w, \RV{A} = \alpha) = - \int_{0}^{\infty} \sum_{\cand \in \candsw{w}} \log_2 \PDF{\cand,t \Given w, \alpha, %\tparam\sysparam}[\rvcand,\sv \Given \RV{W}] \PDF{\cand,t \Given w, \alpha, \tparam\sysparam}[\rvcand,\sv \Given \RV{W}] \dif t
+%\end{equation}
+%\end{definition}
+\begin{theorem}
+Since $\sv$ is statistically independent of $\RV{W}$ and $\RV{A}$,
+\begin{equation}
+	\entropy(\rvcand, \sv \Given \RV{W} = w, \RV{A} = \alpha) = \entropy(\rvcand \Given \sv, \RV{W} = w, \RV{A} = \alpha) + \entropy(\sv)\,.
+\end{equation}
+\end{theorem}
+
+Given some distribution $\sv$, the \emph{maximum} entropy is when the failed component is in the candidate set by random chance, $\RV{A} = \frac{w}{m}$, as given by
+\begin{equation}
+\entropy(\rvcand, \sv \Given \RV{W}=w,\RV{A}=w/m) = \entropy(\sv) + \log_2 \! \binom{m}{w}
+\end{equation}
+and the \emph{minimum} entropy is when the failed component is \emph{certainly} in the candidate set, $\RV{A}=1$, as given by
+\begin{equation}
+	\entropy(\rvcand, \sv \Given \RV{W}=w,\RV{A}=1) = \entropy(\sv) + \entropy(\rvcand \Given \sv, \RV{W} = w, \RV{A} = 1)
+\end{equation}
+\begin{proof}
+The ...
+\end{proof}
+
+The rate of change of the entropy with respect to $\alpha$ is given by the following theorem.
+\begin{theorem}
+	test
+\end{theorem}
+
+
+
+In what follows, we frequently prefer to work with vectors rather than matrices.
+\begin{definition}
+\label{def:vtopr}
+Let $\vtopr \colon \mathbb{R}^{m \times q} \mapsto \mathbb{R}^{m \cdot q}$ denote the linear transformation of a matrix of $m$ rows and $q$ columns into a column vector of $m \cdot q$ elements, where consecutive matrix rows are placed side by side.
+Additionally, the \jth component of a vector $\vec{a}$ is denoted by $\left[\vec{a}\right]_j$ or $a_j$.
+\end{definition}
+\begin{notation}
+By \cref{def:vtopr}, $\tparam\sysparam$ has an equivalent representation denoted by $\tparam\sysparamvec \equiv \vtopr\!\left(\tparam\sysparam\right)$ and the \jth component of $\tparam\sysparamvec$ is denoted by $\tparam\paramv_j$.
+We use matrix and vector representations interchangeably.
+\end{notation}
+
+
+
+
+
+
+
+The likelihood of observing a particular realization $\mfs = \Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n}$ conditioned on $\RV{W} = w$ and $\RV{A} = \alpha$ is given by the following definition.
+\begin{definition}
+	\label{def:msft_joint_pdf}
+	A random sample of $n$ masked system failure times conditioned on candidate sets of cardinality $w$ has a joint probability density given by
+	\begin{equation}
+	\label{eq:msft_joint_pdf}
+	\PDF{\Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n} \Given w, \alpha, \tparam{\sysparam}}[\mfs \Given \RV{W}, \RV{A}] =
+	\prod_{i=1}^{n} \spdf(t_i \Given \tparam\sysparam) \cdot \PDF{\cand_i \Given t_i, w, \alpha, \tparam\sysparam}[\rvcand \Given \sv, \RV{W}, \RV{A}]\,,
+	\end{equation}
+	where $\spdf$ is the marginal density given by \cref{thm:series_pdf_function} and $\pdf_{\rvcand \Given \sv, \RV{W}, \RV{A}}$ is the conditional probability mass given by \cref{def:general_cond_cand_probability}.
+\end{definition}
+
+%The generative model of $\mfs$ conditioned on $\RV{W} = w$, which directly follows from \cref{eq:msft_joint_pdf}, is given by \cref{alg:Fn_generator}.
+%\begin{algorithm}[h]
+%	\DontPrintSemicolon
+%	\KwResult{a realization of a masked system failure time with $w$ candidates.}
+%	\KwIn{\\
+%		$\qquad\tparam\sysparam$, the true parameter value.\\
+%		$\qquad w$, the cardinality of the candidate sets.}
+%	\KwOut{\\
+%		$\qquad \mfo$, a realization of $\rvcand, \sv$ conditioned on $\RV{W} = w$.}
+%	\BlankLine
+%	\SetKwProg{func}{Model}{}{}
+%	\func{\genSampleFn{$w, \tparam\sysparam$}}
+%	{
+%		draw a system lifetime $t \sim \spdf(\;\cdot \Given \sysparam)$\;
+%		draw a candidate set $\cand \sim \pmf_{\rvcand \Given \sv, \RV{W}}(\; \cdot \Given t, w, \sysparam)$\;
+%		$\mfo \gets \Pair{t}{\cand}$\;
+%		\KwRet{$\mfo$}
+%	}
+%	\caption{Generative model of a masked system failure time with $w$ candidates.}
+%	\label{alg:Fn_generator}
+%\end{algorithm}
+
+A random variable is a measurable function from a probability space to a measurable space of values that the variable can take on.
+Such a space of values are is called a random variable.
+
+
+
+The subsequent material makes a few assumptions, denoted \emph{regularity conditions}, given by the following.
+\begin{assumption}
+\label{def:reg_cond}
+The following regularity conditions hold for the $\pfam$-family of the series system:
+\begin{enumerate}
+    \item $\tparam\sysparamvec$ is interior to the parameter support $\Omega$.
+    \item The log-likelihood $\Fun{\ell}$ is continuous, thrice differentiable, and bounded.
+    \item{
+        The true parameter value $\tparam\sysparamvec$ is identified, i.e.,
+        \begin{equation}
+            \tparam\sysparamvec = \argmax_{\sysparamvec \in \Omega} \Expect{\ln \pdf_{\rvcand,\sv \given \RV{W},\RV{A}}(\rvcand, \sv \given w, \alpha, \sysparamvec)}[\tparam\sysparamvec]\,.
+        \end{equation}
+    }
+\end{enumerate}
+\end{assumption}
+
+By \cref{def:msft_joint_pdf}, the probability density that $\mfs = \Tuple{\cand_1,t_1,\alpha},\ldots,\Tuple{\cand_n,t_n,\alpha}$ conditioned on $\RV{W} = w$ and $\RV{A} = \alpha$ is given by
+\begin{equation*}
+\begin{split}
+& \pdf_{\mfs \Given \RV{W}, \RV{A}}\!\left(\Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n} \Given w, \alpha, \tparam{\sysparamvec}\right) =\\
+    & \qquad \prod_{i=1}^{n} \pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand_i, t_i \Given w, \alpha, \tparam\sysparamvec)\,.
+\end{split}
+\tag{\ref{eq:msft_joint_pdf} revisited}
+\end{equation*}
+
+If we fix the sample of masked system failures and allow the parameter $\sysparamvec$ to change, we have the likelihood function.
+\begin{definition}
+\label{def:likelihood_func}
+The likelihood function represents the \emph{likelihood} of parameter index $\sysparamvec$ with $\mfs$ fixed at $\Tuple{\cand_1,t_1},\ldots,\Tuple{\cand_n,t_n}$ is given by
+\begin{equation}
+    \likelihood_n(\sysparamvec \Given w, \alpha) \coloneqq \prod_{i=1}^{n} \pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand_i, t_i \Given w, \alpha, \sysparamvec)\,.
+\end{equation}
+\end{definition}
+The likelihood is a measure of the extent to which the given sample provides support for particular values of a parameter in $\pfam$;
+its surface captures all the information there is about $\tparam\sysparamvec$ from the given sample.
+
+The log-likelihood plays a more central role than the likelihood for reasons that will be made clear later on.
+\begin{definition}
+\label{def:general_log_like}
+The log-likelihood with respect to $\sysparamvec$ given a particular $\mfs = \Tuple{\cand_1,t_1,\alpha},\ldots,\Tuple{\cand_n,t_n,\alpha}$ conditioned on $\RV{W} = w$ and $\RV{A} = \alpha$ is given by
+\begin{equation}
+\label{eq:log_like_mle}
+\Fun{\ell_n}(\sysparamvec \Given w, \alpha) = \sum_{i=1}^{n} \ln \pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand_i, t_i \Given w, \alpha, \sysparamvec)\,.
+\end{equation}
+\end{definition}
+
+
+
+
+
+
+In subsequent material, we need the gradient operator given by the following definition.
+\begin{definition}[Gradient operator]
+The gradient operator $\nabla \colon \left(\RealSet^q \mapsto \RealSet\right) \mapsto \left(\RealSet^q \mapsto \RealSet^q\right)$ is defined as
+\begin{equation}
+    \nabla \Fun{g} \coloneqq \left (
+        \pd{\Fun{g}}{x_1},\,
+        \ldots\,,
+        \pd{\Fun{g}}{x_q}
+    \right )^{\Transpose}\,.
+\end{equation}
+\end{definition}
+
+The score function is given by the following definition.
+\begin{definition}
+The Fisher's score function, denoted by $\Fun{s_n} \colon \RealSet^{m \cdot q} \mapsto \RealSet^{m \cdot q}$, is the gradient of the log-likelihood function given a sample of $n$ masked failure times,
+\begin{equation}
+\label{eq:score}
+    \Fun{s_n}(\sysparamvec \Given w, \alpha) \coloneqq \nabla \Fun{\ell_n}(\sysparamvec \Given w, \alpha)\,.
+\end{equation}
+\end{definition}
+
+The variance-covariance is given by the following definition.
+\begin{definition}
+A random vector $\RV{\vec{X}} \in \mathbb{R}^{p}$ has a variance-covariance given by
+\begin{equation}
+\label{eq:covariance_matrix_op}
+    \Var{\RV{\vec{X}}} \coloneqq \Expect{
+        \left(\RV{\vec{X}} - \Expect{\RV{\vec{X}}} \right)
+        \left(\RV{\vec{X}} - \Expect{\RV{\vec{X}}} \right)^\Transpose
+    }\,,
+\end{equation}
+which is a $p$-by-$p$ semi-positive definite matrix.
+\end{definition}
+
+The score function given a realization $\mfs = \Tuple{\cand_1,\ti_1,\alpha},\ldots,\Tuple{\cand_n,\ti_n,\alpha}$ given $\RV{W} = w$ and $\RV{A} = \alpha$ is a statistic.
+When we consider it as a function of a random sample, it is a random vector.
+When evaluated at the true parameter index $\tparam\sysparamvec$, it has a variance-covariance given by the following definition.
+\begin{definition}[Fisher information matrix]
+\label{def:info_matrix_var}
+The score as a function of a random sample $\mfs$ given $\RV{W} = w$ and $\RV{A} = \alpha$ has a variance-covariance known as the Fisher information matrix, a $(m \cdot q)$-by-$(m \cdot q)$ matrix denoted by
+\begin{equation}
+\label{eq:info_matrix_var}
+    \infomatrx_{\matrx{n}}(\tparam\sysparamvec \Given w, \alpha)
+        \coloneqq \Var{\Fun{s_n}(\tparam\sysparamvec \Given w, \alpha)}[\tparam\sysparamvec]\,.
+\end{equation}
+\end{definition}
+
+The Hessian is given by the following definition.
+\begin{definition}
+The Hessian operator $\hessian \colon (\RealSet^q \mapsto \RealSet) \mapsto (\RealSet^q \mapsto \RealSet^{q \times q}$ applied to $\Fun{g} \colon \RealSet^q \mapsto \RealSet$ is a $q$-by-$q$ matrix where the $(j,k)$-th element is defined as $\md{\Fun{g}}{2}{x_j}{}{x_k}{}$.
+\end{definition}
+
+
+This is somewhat related to the \emph{entropy}, except instead of the logarithm of the density we take the logarithm of the gradient of the density, i.e.,
+\begin{equation}
+\infomatrx(\tparam\sysparamvec \Given w, \alpha)
+= \Var{\left(\nabla_{\sysparamvec} \ln \pdf_{\rvcand,\sv \given \RV{W}, \RV{A}}(\rvcand,\sv \given w,\alpha,\sysparamvec)\right) \rvert_{\sysparamvec=\tparam\sysparamvec}}[\tparam\sysparamvec]\,.
+\end{equation}
+
+Under the regularity conditions, the information matrix may be computed from the Hessian and is given by the following definition.
+For clarity, the $(i,j)$-th element of the information matrix is given by the following definition.
+\begin{definition}
+The information matrix of $\tparam\sysparam$ given by the joint distribution of $\rvcand$ and $\sv$ conditoned on $\RV{W} = w$ and $\RV{A} = \alpha$ is gyven by the expectation of the negative of the Hessian of the log-likelihood function $\ell$ evaluated at $\tparam\sysparamvec$.
+The $(i,j)$-th element of $\infomatrx$ is given by
+\begin{equation}
+\begin{split}
+\label{eq:info_matrix_el}
+\infomatrx\!\left(\tparam\sysparamvec \Given w, \alpha\right)_{i\,j}
+= -\sum_{\cand \in \candsw{w}} \int_{0}^{\infty}
+{
+	\biggl[
+	\md{}{2}{\paramv_i}{}{\paramv_j}{}
+	\ln \pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand, t \Given w, \alpha, \sysparamvec)
+	\biggr]
+}
+\bigg \rvert_{\sysparamvec=\tparam\sysparamvec} \times\\
+\qquad \pdf_{\rvcand,\sv \Given \RV{W},\RV{A}}(\cand, t \Given w, \alpha, \tparam\sysparamvec) \dif t\,,
+\end{split}
+\end{equation}
+where $\candsw{w} \times (0,\infty)$ is the sample space.
+\end{definition}
+
+Observe that 
+
+\Cref{dummydef} may be difficult to compute.
+
+\begin{definition}
+The information matrix is given by the expectation of the negative of the Hessian of the log-likelihood function $\ell$ evaluated at $\tparam\sysparamvec$. That is,
+\begin{equation}
+\label{eq:info_matrix}
+    \infomatrxn\left(\tparam\sysparamvec\Given w\right) = -\operatorname{\mathlarger{\expectation}_{\tparam\sysparamvec}}\!\!
+    \left[
+        \eval
+        {
+            \hessian \left(
+                \ell_n\left(\sysparamvec \Given w \right)
+            \right)
+        }_{\sysparamvec=\tparam\sysparamvec} 
+    \right ]\,,
+\end{equation}
+where the expectation is taken with respect to $\tparam\sysparamvec$ and the Hessian is taken with respect to $\sysparamvec$ and then evaluated at $\tparam\sysparamvec$.
+\end{definition}
+
+\begin{notation}
+We denote the Fisher information matrix of $\tparam\sysparamvec$ given $\mfsi{1}$ by
+\begin{equation}
+   \infomatrx\!\left(\tparam\sysparamvec \Given w\right) \coloneqq \infomatrxni{1}\!\left(\tparam\sysparamvec \Given w\right)\,.
+\end{equation}
+\end{notation}
+
+The information matrix is a key quantity in large sample theory; it quantifies the \emph{expected} information (as a reduction of uncertainty) $\mfsw$ carries about $\tparam\sysparamvec$.
+For sufficiently large samples, the log-likelihood has a Taylor series approximation given by
+\begin{equation}
+    \ell_n\left(\sysparamvec \Given w\right) \approx -\frac{1}{2}\left(\sysparamvec - \tparam\sysparamvec\right)^\intercal \infomatrxn\left(\tparam\sysparamvec \Given w\right)\left(\sysparamvec - \tparam\sysparamvec\right)\,,
+\end{equation}
+which is maximized at $\tparam\sysparamvec$.
+Intuitively, the more ``peaked'' the log-likelihood is expected to be at $\tparam\sysparamvec$, the more information a random sample is expected to carry about $\tparam\sysparamvec$.
+
+The information independent samples have about about $\tparam\sysparamvec$ is \emph{additive} as given by the following postulate.
+\begin{postulate}
+\label{post:info_add}
+Algebraically, the Fisher information independent samples have about the true parameter index $\tparam\sysparamvec$  is additive such that
+\begin{equation}
+    \infomatrx_{\matrx{n_1} + \matrx{n_2}}\left(\tparam\sysparamvec \Given 
+    \cdot \; \right) = \infomatrx_{\matrx{n_1}}(\tparam\sysparamvec \Given 
+    \cdot \;) + \infomatrx_{\matrx{n_2}}(\tparam\sysparamvec \Given \cdot \;)\,.
+\end{equation}
+\end{postulate}
+By \cref{post:info_add}, the Fisher information of a random sample of $n$ masked system failure times drawn from $\mfs$ given $\RV{W} = w$ and $\RV{A} = \alpha$ is given by
+\begin{equation}
+    \infomatrx_{\matrx{n}}(\tparam\sysparamvec \Given w, \alpha) = n \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+\end{equation}
+
+
+
+%\begin{remark}
+%A model is a simplification of reality. The model denoted by $\mfs$ is an approximation of some (unknown) underlying generative model, e.g., $\RV{W}$ and %$\sv$ may not truly be independent. Since the \emph{expected} information matrix is an expectation with respect to the simplified model, the \emph{expected} %information is also a simplified approximation. The \emph{observed} information matrix, given by
+%\begin{equation}
+%    \observedn(\mleu \Given \mfso) = - \eval
+%    {
+%        \hessian \left(
+%            \ell\left(\sysparamvec \Given \mfso\right)
+%        \right)
+%    }_{\sysparamvec = \mleu}\,,
+%\end{equation}
+%is a statistic of a real sample and therefore makes less of a commitment to the simplified model. Generally, the \emph{observed} information matrix is %preferable but since we know (by prescription) the underlying generative model,
+%\begin{equation}
+%   \observedn\!\left(\mleu \Given \mfs\right) \xrightarrow{P} \infomatrxn\!\left(\tparam\sysparamvec\right)\,,
+%\end{equation}
+%and so we proceed with the \emph{expected} information matrix.
+%\end{remark}
+
+
+A \emph{masked system failure time} in which the cardinality of the candidate set is distributed according to $\RV{W}$, as described by \cref{dummyref}, has 
+a Fisher information matrix given by the following theorem.
+\begin{theorem}
+	The \emph{Fisher information} matrix of true parameter index $\tparam\sysparamvec$ with respect to a realization of jointly distributed random system lifetime $\sv$ and candidate set $\rvcand$ is given by
+	\begin{equation}
+	\infomatrx(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,,
+	\end{equation}
+	where $\pmf_{\RV{W}, \RV{A}}$ is the joint distribution of $\RV{W}$ and $\RV{A}$ with a support $\Set{W} \times \Set{A}$.
+\end{theorem}
+\begin{proof}
+	Suppose we have a random sample of $n$ masked system failure times.
+	By \cref{dummyref}, the expected number of sample points that have $w$ $\alpha$-masked candidate sets is given by
+	\begin{equation}
+	q \coloneqq n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha)\,.
+	\end{equation}
+	Thus, by the additive property of \emph{Fisher information} given by \cref{post:info_add}, the information matrix of $\tparam\sysparam$ conditioned on $q$ such observations is given by
+	\begin{equation}
+	\infomatrx_{\matrx{q}}(\tparam\sysparamvec \Given w, \alpha) = n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+	\end{equation}
+	When we sum over the entire support of $\RV{W}$ and $\RV{A}$, we arrive at the \emph{information matrix} of $\tparam\sysparam$ conditioned on $n$ masked candidate sets as given by
+	\begin{equation}
+	\infomatrx_{\matrx{n}}(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em n \cdot \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+	\end{equation}
+	When we set $n$ to $1$, we get the result
+	\begin{equation}
+	\infomatrx(\tparam\sysparamvec) = \kern-1em
+	\sum_{\Tuple{w,\alpha} \in \Set{W} \times \Set{A}} \kern-1em \pmf_{\RV{W},\RV{A}}(w,\alpha) \infomatrx(\tparam\sysparamvec \Given w, \alpha)\,.
+	\end{equation}
+\end{proof}
+
+\end{document}

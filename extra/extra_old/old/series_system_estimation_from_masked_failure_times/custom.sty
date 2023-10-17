@@ -1,0 +1,220 @@
+
+\definecolor{lightgray}{RGB}{2, 2, 2}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.13}
+
+\RequirePackage{matrixnotation}
+\RequirePackage{setnotation}
+\RequirePackage{xparse}
+\RequirePackage{bm}
+\RequirePackage{bbm}
+\RequirePackage{amssymb}
+\RequirePackage{mathtools}
+\RequirePackage{algorithm2e}
+
+\NewDocumentCommand{\Fun}{m}{%
+    \funstyle{#1}
+}
+
+
+
+\NewDocumentCommand{\FunctionFamily}{mmo}{%                    
+    \IfNoValueTF{#3}                                           
+        {\operatorname{#1}\FuncArgs*{#2}}                      
+        {\operatorname{#1}_{#3}\mkern-1mu\FuncArgs*{#2}}       
+}                                                              
+                                                               
+
+
+
+\numberwithin{equation}{chapter}
+
+\DeclareMathOperator{\likelihood}{\mathcal{L}}
+\DeclareMathOperator{\expectation}{\mathbb{E}}
+\DeclareMathOperator{\hessian}{\mathcal{H}}
+\DeclareMathOperator{\jacobian}{\mathcal{J}}
+\DeclareMathOperator{\infomatrx}{\matrx{\mathcal{I}}}
+\DeclareMathOperator{\infomatrxn}{\matrx{\mathcal{I}_n}}
+\DeclareMathOperator{\observed}{\matrx{\mathcal{J}}}
+\DeclareMathOperator{\observedn}{\matrx{\mathcal{J}_n}}
+\DeclareMathOperator{\orderfunc}{\pi}
+\DeclareMathOperator{\score}{\rm{s}}aa
+\DeclareMathOperator{\entropy}{H}
+\DeclareMathOperator{\info}{I}
+\DeclareMathOperator{\infi}{\rm{inf}}
+\DeclareMathOperator{\cov}{\mathlarger{\matrx{\Sigma_n}}}
+\DeclareMathOperator{\scalarstat}{g}
+
+\newcommand{\covn}[1]{\matrx{\Sigma_{#1}}}
+\newcommand{\pfam}{\mathcal{F}_{\sysparam}}
+\newcommand{\pfami}{\mathcal{F}_{\cparamv}}
+\newcommand{\infomatrxni}[1]{\operatorname{\matrx{\mathcal{I}_{#1}}}}
+\newcommand{\given}{{\,|\,}}
+\newcommand{\vtopr}{\operatorname{vec}}
+\newcommand{\vt}[1]{\vtopr\left(#1\right)}
+\newcommand{\vectomat}[1]{\operatorname{mat}(#1)}
+\newcommand{\biconditional}{\leftrightarrow}
+\newcommand{\cntsymb}{\boldsymbol{\hat\omega}}
+\newcommand{\cnt}[1]{\cntsymb_{\{#1\}}}
+\newcommand{\veclist}[1]{ \left (#1 \right )}
+\newcommand{\derivative}[1]{\frac {\mathrm{d}}{\mathrm{d}#1}}
+\newcommand{\pderivative}[1]{\frac {\mathrm{\partial}}{\mathrm{\partial}#1}}
+\newcommand{\ppderivative}[2]{\frac {\mathrm{\partial} #1}{\mathrm{\partial}#2}}
+\newcommand{\psecondderivative}[2]{\frac {\mathrm{\partial^2}}{\mathrm{\partial}#1\mathrm{\partial}#2}}
+\newcommand{\psecondderivativesame}[1]{\frac {\mathrm{\partial^2}}{\mathrm{\partial}#1^2}}
+\newcommand{\cdf}{F}
+\newcommand{\pdf}{f}
+\newcommand{\haz}{h}
+\newcommand{\srv}{R}
+\newcommand{\pmf}{p}
+\newcommand{\kth}{$k^{\text{th }}$}
+\newcommand{\jth}{$j^{\text{th }}$}
+\newcommand{\nth}{$n^{\text{th }}$}
+\newcommand{\rth}{$r^{\text{th }}$}
+\newcommand{\pth}{$p^{\text{th }}$}
+\newcommand{\estimator}[1]{\hat{#1}}
+\newcommand{\nonmleestimator}[1]{\bar{#1}} %\tidle{#1}
+\newcommand{\tparam}[1]{{#1}^{\star}}
+\newcommand{\vecstat}{\vec{\scalarstat}}
+
+\makeatletter
+\def\namedlabel#1#2{\begingroup
+    #2%
+    \def\@currentlabel{#2}%
+    \phantomsection\label{#1}\endgroup
+}
+\makeatother
+
+\newcommand{\param}{\Theta}
+\newcommand{\paramv}{\theta}
+\newcommand{\sysparam}{\matrx{\param}}
+\newcommand{\sysparamvec}{\vec{\paramv}}
+\newcommand{\mfswn}[2]{\vec{M}(#2,#1)}
+\newcommand{\mfsn}[1]{\vec{M_{#1}}}
+\newcommand{\mf}{\vec{M}}
+\newcommand{\mfo}{\vec{m}}
+\newcommand{\mfs}{\vec{M_n}}
+\newcommand{\mfsw}{\vec{M}(w,n)}
+
+\newcommand{\mfsi}[1]{\vec{M}(w,{#1})}
+\newcommand{\mfso}{\vec{m_n}}
+\newcommand{\mfsoi}[1]{\vec{m_{#1}}}
+\newcommand{\mfsoir}[2]{\vec{m_{#1}}^{#2}}
+
+\newcommand{\pointest}{\vec{\nonmleestimator\sysparamvec_{n}}}
+\newcommand{\pointesti}[1]{\vec{\nonmleestimator\sysparamvec_{n}^{(#1)}}}
+\newcommand{\sampdpt}{\RV{\vec{Y_n}}}
+
+\newcommand{\mleir}[2]{\vec{\estimator{\sysparamvec}}(#1 \given #2)}
+\newcommand{\mlei}[1]{\vec{\estimator{\sysparamvec}}^{(#1)}(n \given w)}
+\newcommand{\mleu}{\vec{\estimator{\sysparamvec}_{n}}}
+\newcommand{\mle}{\vec{\estimator{\sysparamvec}}(n \given w)}
+\newcommand{\mleui}[1]{\vec{\estimator{\sysparamvec}_{n}^{(#1)}}}
+
+\newcommand{\expomle}{\vec{\estimator{\vec\lambda}_n}}
+\newcommand{\expomlei}[2]{\vec{\estimator{\vec\lambda}_{#2}^{(#1)}}}
+
+\newcommand{\sampdu}{\RV{\vec{Y_{\!n}}}}
+\newcommand{\sampd}{\RV{\vec{Y}}(n \given w)}
+\newcommand{\sampdi}[1]{\RV{\vec{Y_{\!n}^{(#1)}}}}
+\newcommand{\sampdir}[3]{\RV{\vec{Y}}^{(#3)}(#1 \given #2)}
+\newcommand{\sampdexpo}{\RV{\vec{\Lambda_n}}}
+\newcommand{\sampdexpoi}[2]{\RV{\vec{\Lambda_{#2}}^{(#1)}}}
+
+\newcommand{\cands}{\PS{\Set{K}}}
+\newcommand{\candsw}[1]{\Set{W}_{#1}}
+\newcommand{\cand}{\Set{C}}
+\newcommand{\rvcand}{\RV{C}}
+\newcommand{\rvcandi}[1]{\RV{C}_{#1}}
+\newcommand{\cv}{\RV{T}}
+\newcommand{\sv}{\RV{S}}
+\newcommand{\ti}{\rm{t}}
+
+\newcommand{\harmonic}[2]{H_{#1,#2}}
+
+\newcommand{\spdf}{\pdf_{\sv}}
+\newcommand{\jointpdf}{\pdf_{\rvcand, \sv \given \RV{W}}}
+
+\SetKwFunction{findmle}{find\_mle}
+\SetKwFunction{proj}{project}
+\SetKwFunction{genSampleFn}{generate\_msft}
+\SetKwFunction{genSampleMLE}{generate\_mle}
+
+
+
+
+
+
+
+
+% probability notation
+
+
+\newcommand{\RV}[1]{\mathrm{#1}}
+
+\newcommand{\ProbFn}{\mathrm{P}}
+
+\newcommand{\Pdf}{\operatorname{f}}
+
+\NewDocumentCommand{\Prob}{mo}{%
+    \Bracket{\ProbFn}{#1}[#2]
+}
+
+\NewDocumentCommand{\Expect}{mo}{%
+    \Bracket{\mathrm{E}}{#1}[#2]
+}
+
+\NewDocumentCommand{\Var}{mo}{%
+    \Bracket{\mathrm{V}}{#1}[#2]
+}
+
+\NewDocumentCommand{\PDF}{mo}{%
+    \FunctionFamily{\Pdf}{#1}[#2]
+}
+
+\NewDocumentCommand{\CDF}{mo}{%
+    \FunctionFamily{F}{#1}[#2]
+}
+
+\NewDocumentCommand{\RDF}{mo}{%
+    \FunctionFamily{R}{#1}[#2]
+}
+
+\NewDocumentCommand{\Entropy}{mo}{%
+    \FunctionFamily{\mathcal{H}}{#1}[#2]
+}
+
+\NewDocumentCommand{\Likelihood}{mo}{%
+    \FunctionFamily{\mathcal{L}}{#1}[#2]
+}
+
+\NewDocumentCommand{\Bias}{mo}{%
+    \FunctionFamily{\mathrm{bias}}{#1}[#2]
+}
+
+\DeclareMathOperator{\MSE}{\mathrm{MSE}}
+
+\newcommand{\mvn}{\mathrm{MVN}}
+\newcommand{\unifdist}{\mathrm{UNIF}}
+\newcommand{\dudist}{\mathrm{DU}}
+\newcommand{\berdist}{\mathrm{BER}}
+\newcommand{\expdist}{\mathrm{EXP}}
+\newcommand{\geodist}{\mathrm{GEO}}
+\newcommand{\normdist}{\mathcal{N}}
+\newcommand{\bindist}{\mathrm{BIN}}
+\newcommand{\poidist}{\mathrm{POI}}
+\newcommand{\nbdist}{\mathrm{NB}}
+
+
+
+%\SetKwFunction{dudist}{DU}
+%\SetKwFunction{berdist}{BER}
+%\SetKwFunction{expdist}{EXP}
+%\SetKwFunction{geodist}{GEO}
+%\SetKwFunction{bindist}{BIN}
+
+\endinput
+
+
+
+

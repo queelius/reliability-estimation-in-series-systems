@@ -1,0 +1,190 @@
+---
+title: "Goodness of fit for series systems"
+author: "Alex Towell"
+#date: "1/22/2022"
+output:
+  #bookdown::pdf_document2:
+  #  extra_dependencies: ["amsthm","amsmath"]
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+    number_sections: true
+    extra_dependencies: ["graphicx","amsthm","amsmath","natbib","tikz"]
+bibliography: refs.bib
+csl: the-annals-of-statistics.csl
+---
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\newcommand{\T}{T}
+\newtheorem{condition}{Condition}[section]
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\numberwithin{equation}{section}
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(printr)
+options(digits=4)
+```
+
+
+In order to facilitate estimating the performance of the MLE when we do not
+know $\v\theta$, assuming the following condition simplifies our task.
+\begin{condition}
+\label{cond:cond_indep}
+The distribution of $C_i$ given $K_i$ is independent of $T_i$,
+\begin{equation}
+\Pr\{C_i = c_i | K_i = j\} = \Pr\{C_i = c_i | K_i = j, T_i = t_i\}.
+\end{equation}
+\end{condition}
+
+In this paper, we do not normally need to assume Condition \ref{cond:cond_indep}
+is met, but it is not an unreasonable condition to assume in many cases.
+For instance, suppose a series system is repaired by replacing a circuit board,
+where each circuit board consists of one or more components. If component
+indexed by $j$ fails, then *all* the components that reside on that circuit
+board are in the candidate set.
+
+Adding Condition \ref{cond:cond_indep} to the set of conditions allows us to
+derive the conditional distribution of $T_i$ given $C_i$ without
+knowing any more details about how $C_i$ is generated.
+
+The primary motivation of knowing the conditional distribution of $T_i$ given
+$C_i$ is that it alows us to assess the goodness of fit of our model with
+respect to a masked sample without needing to know $\v\theta$.\footnote{
+There are many other approaches to this problem, but they often venture into
+the subject of model selection, which is beyond the scope of this paper.}
+\begin{theorem}
+\label{thm:T_given_C}
+Assuming Conditions \ref{cond:c_contains_k}, \ref{cond:equal_prob_failure_cause},
+and \ref{cond:cond_indep}, the conditional pdf of $T_i$ given $C_i = c_i$ is
+given by
+\begin{equation}
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i) =
+    \frac{R(t_i;\v{\theta}) \sum_{j \in c_i} h_j(t_i;\v{\theta_j})}
+         {E_{\v\theta}\biggl[\sum_{l \in c_i} h_l(\T_i;\v{\theta_l}) /
+            h(\T_i;\v{\theta})\biggr]}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+The condition distribution of $T_i$ given $C_i = c_i$ may be rewritten as
+\begin{equation}
+\label{eq:proof_T_given_C_1}
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i) =
+    \frac{\sum_{j=1}^m f_{\T_i,K_i,C_i}(t_i,j,c_i;\v\theta)}
+         {\int_0^{\infty} \sum_{j=1}^m f_{\T_i,K_i,C_i}(t,j,c_i;\v\theta) dt}.
+\end{equation}
+We may rewrite $f_{\T_i,K_i,C_i}(t_i,j,c_i;\v\theta)$ as
+$$
+    \Pr\{C_i = c_i|T_i=t_i,K_i=j\} f_{\T_i,K_i}(t_i,j;\v\theta).
+$$
+Making this substitution in Equation \eqref{eq:proof_T_given_C_1} and applying
+Condition \ref{cond:c_contains_k} yields
+$$
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i) = 
+    \frac{\sum_{j \in c_i} \Pr\{C_i = c_i|T_i=t_i,K_i=j\} f_{\T_i,K_i}(t_i,j;\v\theta)}
+    {\int_0^{\infty} \sum_{j \in c_i} \Pr\{C_i = c_i|T_i=t,K_i=j\} f_{\T_i,K_i}(t,j;\v\theta) dt}.
+$$
+We may further simplify by applying Condition \ref{cond:equal_prob_failure_cause},
+yielding
+$$
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i) = 
+    \frac{\Pr\{C_i = c_i|T_i=t_i,K_i=j'\} \sum_{j \in c_i} f_{\T_i,K_i}(t_i,j;\v\theta)}
+    { \int_0^{\infty} \Pr\{C_i = c_i|T_i=t,K_i=j'\} \sum_{j \in c_i} f_{\T_i,K_i}(t,j;\v\theta) dt}.
+$$
+where $j' \in c_i$.
+Applying Condition \ref{cond:cond_indep}, we may rewrite the above as
+$$
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i)
+    = \frac{\Pr\{C_i = c_i|K_i=j'\} \sum_{j \in c_i} f_{\T_i,K_i}(t_i,j;\v\theta)}
+           {\Pr\{C_i = c_i|K_i=j'\} \int_0^{\infty} \sum_{j \in c_i} f_{\T_i,K_i}(t_i,j;\v\theta) dt}.
+$$
+where $j' \in c_i$.
+Canceling the common factors in the above yields the simplification
+$$
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i)
+    = \frac{\sum_{j \in c_i} f_{\T_i,K_i}(t_i,j;\v\theta)}
+    { \int_0^{\infty} \sum_{j \in c_i} f_{\T_i,K_i}(t,j;\v\theta) dt}.
+$$
+The joint pdf $f_{\T_i,K_i}(t,j|\v{\theta})$ may be written as
+$h_j(t;\v{\theta_j}) R(t;\v\theta)$.
+Performing this substitution yields
+$$
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i)
+    = \frac{R(t;\v\theta) \sum_{j \in c_i} h_j(t;\v{\theta_j})}
+    { \int_0^{\infty} R(t;\v\theta) \sum_{j \in c_i} h_j(t;\v{\theta_j}) dt}.
+$$
+Recall that $h(x) = f(x) / R(x)$, and thus $R(x) = f(x) / h(x)$. Making this
+substitution yields the result
+$$
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i)
+    = \frac{R(t;\v\theta) \sum_{j \in c_i} h_j(t;\v{\theta_j})}
+    { \int_0^{\infty} f(t;\v\theta) \sum_{j \in c_i} \frac{h_j(t;\v{\theta_j})}{h(t;\v\theta)} dt},
+$$
+where we note the denominator is an expectation, and thus
+$$
+f_{\T_i|C_i}(t_i;\v{\theta}|c_i)
+    = \frac{R(t;\v\theta) \sum_{j \in c_i} h_j(t;\v{\theta_j})}
+           {E_{\v\theta} \bigl\{
+             \sum_{j \in c_i} \frac{h_j(T_i;\v{\theta_j})}{h(T_i;\v\theta)}
+           \bigr\}}.
+$$
+\end{proof}
+
+An open real interval is a set of real numbers that contains all real numbers lying
+strictly between two particular real numbers, e.g., $a < x < b$ defines an
+interval denoted by $(a,b)$.
+
+The conditional distribution $T_i$ given $C_i$ may be used to assess
+the goodness-of-fit of MLE $\hat\theta$ for an observed masked data sample.
+In particular, we are interested in finding the set of minimum length intervals
+satisfying
+$$
+\biggl\{
+    (l_i,u_i) :
+    \bigl(b-a \geq u_i-l_i\bigr)
+    \text{ and }
+    \bigl(\Pr{}_{\!\theta}\{a < T_i < b\} = 1-\alpha\bigr)
+    \text{ for all } (a,b)
+\biggr\},
+$$
+which we call *prediction intervals*.
+
+For most conditional distributions of $T_i$ given $C_i$, there is only one
+prediction interval, e.g., when the component
+lifetimes are exponentially distributed, the prediction interval is given by
+$$
+(l,u) = \bigl( 0, F^{-1}_{T_i}(1-\alpha;\v{\theta})\bigr)
+$$
+for $i=1,\ldots,n$ where $F^{-1}_{T_i}$ is the quantile function. (Observe that
+in the case of exponentially distributed component lifetimes, $(l,u)$ is a constant,
+which we prove later.)
+
+To assess the goodness-of-fit of $\hat{\v\theta}$, we partition the masked data
+set into a *training set* and *test set*.
+We estimate $\v{\theta}$ using the MLE method on the training set, and then 
+we compute $(l_i,u_i)$ for each observation in the test set with respect to
+$\hat{\v\theta}$ to see how many of the observations fall outside the
+$(1-\alpha) \times 100 \%$ prediction intervals.
+
+If too many observations fall outside their respective prediction intervals,
+we have evidence that the estimated series system is not a good fit to the
+data.
+There are many reasons this could be the case, e.g., the candidate set conditions
+may not be sufficiently satisfied or the lifetime distribution of the components
+may not be a good fit.
+Of course, for any particular observation, there is a $\alpha \times 100 \%$
+chance that it will fall outside its prediction interval.\footnote{We could
+construct a $(1-\alpha) \% 100$ prediction band where we look to see if any
+observation falls outside the band.}
+
+We may do a similar analysis for right-censoring, e.g., if the $i$\textsuperscript{th}
+observation is right-censored, then if
+$$
+    \Pr{}_{\!\v\theta}(T_i > \tau_i | C_i = c_i) < \alpha
+$$
+for some sufficiently small $\alpha$, we may consider this, too, to be evidence
+of a lack of goodness of fit for the model.

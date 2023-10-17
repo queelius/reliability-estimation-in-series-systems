@@ -1,0 +1,77 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T,message=F,warning=F)
+library(printr)
+options(digits=4)
+library(series.system.estimation.masked.data)
+library(tidyverse)
+library(md.tools)
+library(algebraic.mle)
+```
+
+R package `series.system.estimation.masked.data` {-}
+====================================================
+
+The source code for the R package `series.system.estimation.masked.data` can be
+found at https://github.com/queelius/series_system_estimation_masked.data.
+There is built-in help on how to use the R package.
+For instance, to get help on `md_bernoulli_candidate_C1_C2_C2`, use the following R command:
+```{r}
+?md_bernoulli_candidate_C1_C2_C3
+```
+
+In what follows, we reproduce some of the R code found in the R package.
+For a deeper look, please look at the official documentation.
+
+`md_loglike_weibull_series_C1_C2_C3` generates the log-likelihood function for
+masked data with component lifetimes that are Weibull distributed and candidate
+sets that satisfy the conditions.
+
+Here is the documentation for `md_loglike_weibull_series_C1_C2_C3`:
+```{r,echo=F}
+?md_loglike_weibull_series_C1_C2_C3
+```
+
+Here is a reproduction of its R source code:
+```{r,echo=F}
+md_loglike_weibull_series_C1_C2_C3
+```
+
+R package `algebraic.mle` {-}
+=============================
+The source code for the R package `algebraic.mle` can be
+found at https://github.com/queelius/algebraic.mle.
+There is built-in help on how to use the R package.
+For instance, to get help on `confint.mle`, use the following R command
+(we have also produced its output):
+```{r}
+library(algebraic.mle)
+?confint.mle
+```
+
+We reproduce the R code for `mle_iterative`, the general iterative MLE method
+described in Section \ref{sec:iterative}.
+
+```{r}
+?mle_iterative
+```
+
+```{r}
+mle_iterative
+```
+
+
+R package `md.tools` {-}
+========================
+The source code for the R package `md.tools` can be
+found at https://github.com/queelius/md.tools.
+There is built-in help on how to use the R package.
+For instance, to get help on `md_decode_matrix`, use the following R command
+(we have also produced its output):
+```{r}
+library(md.tools)
+?md_decode_matrix
+```

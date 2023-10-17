@@ -1,0 +1,278 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Probabilistic model}
+\label{sec:general_series_system}
+%A probabilistic model is specified by equations involving random variables which make assumptions about how observable data about the system is generated. In %what follows, we describe our model and observable data.
+
+A probabilistic model describes how observable data about the system is generated.
+In what follows, we describe our model and observable data.
+
+A \emph{set} is an unordered collection of distinct elements.
+The set of all subsets of a set is called the \emph{powerset}.
+The powerset of $\Set{X}$ is denoted by $\PS{\Set{X}}$.
+An interval in $\PS{\RealSet}$ is a set of all the real numbers lying between two indicated real numbers, e.g.,
+\begin{equation}
+	(a,b] \coloneqq \SetBuilder{x \in \RealSet}{x \geq a \land x \leq b} \in \PS{\RealSet}\,.
+\end{equation}
+
+\begin{definition}
+A probability space $(\Omega, \FancySet{F}, \Fun{P})$, where $\Fun{P} \colon \PS{\Omega} \mapsto [0,1]$ is the probability set function, $\Omega$ is the \emph{sample space}, and $\FancySet{F}$ is the set of measurable events (subsets of $\Omega$).
+\end{definition}
+
+
+A random variable is a measurable function defined on a probability space.
+\begin{definition}
+Given a probability space $(\Omega, \FancySet{F}, \Fun{P})$, a random variable $\RV{X}$ is a function of type $\Omega \mapsto \Codom(\RV{X})$.
+\end{definition}
+The range (or image) of $\RV{X}$ is also called the space of $\RV{X}$.
+
+For a random variable $\RV{X}$, we use $\RV{X} = x$ to denote the subset containing all elements $e \in \Omega$ that $\RV{X}$ maps to the value of $x$.
+
+\section{Series system}
+The system consists of $m$ components. We make the following assumption about 
+the state of the components.
+\begin{assumption}
+\label{asm:binary_state}
+The \jth component is initially in a non-failed state and permanently enters a failed state at some uncertain time $t_j > 0$ for $j=1\,,\ldots\,,m$.
+\end{assumption}
+Components have uncertain lifetimes as given by the following definition.
+\begin{definition}
+The lifetime of the \jth component is given by the continuous random variable 
+$\cv_j \in \left(0\,,\infty\right)$ for $j=1,\ldots,m$.
+\end{definition}
+We make the following assumption about the joint distribution of the component lifetimes.
+\begin{assumption}
+\label{asm:indep}
+The random variables $\cv_1,\ldots,\cv_m$ are mutually independent.
+\end{assumption}
+
+The system is a series system.
+\begin{assumption}
+    The system is in a non-failed state if all $m$ components are in a non-failed state, otherwise the system is in a failed state.
+\end{assumption}
+A system in which at least $k$ of the components must be in a non-failed state for the system to be in a non-failed system is denoted a $k$-out-of-$m$ system, 
+thus a series system is an $m$-out-of-$m$ system.
+
+The uncertain lifetime of the system is given by the following definition.
+\begin{theorem}
+    \label{thm:series_system_lifetime}
+    The lifetime of the system is given by the random variable
+    \begin{equation}
+    \label{eq:series_system_lifetime}
+    \sv = \min{\!\left(\cv_1,\ldots,\cv_m\right)}
+    \end{equation}
+    with a sample space $\left(0, \infty\right)$, where $\cv_1,\ldots,\cv_m$ are the component lifetimes.
+\end{theorem}
+\begin{proof}
+    A series system fails whenever any component fails, therefore its lifetime is equal to the lifetime of the component with the minimum lifetime.
+\end{proof}
+
+\section{Probability distribution functions and parametric families}
+As random variables, it is not certain which values $\sv,\cv_1,\ldots,\cv_m$ 
+will realize. However, their respective probability distribution functions 
+quantify the uncertainty. The cumulative distribution function is given by the 
+following definition.
+\begin{definition}
+    \label{def:cdf_function}
+    Let $\RV{X}$ be some random variable. The probability that $\RV{X} \leq x$ 
+    is given by its cumulative distribution function, denoted by
+    \begin{equation}
+    \cdf_{\RV{X}}\!\left(x\right) = \Prob{\RV{X} \leq x}\,.
+    \end{equation}
+\end{definition}
+The probability density function is given by the following definition.
+\begin{definition}
+    \label{def:pdf}
+    Let $\RV{X}$ be some continuous random variable. The \emph{relative 
+        likelihood} that $\RV{X} = x$ is given by its probability density 
+    function, denoted by
+    \begin{equation}
+    \pdf_{\RV{X}}(x) = \derivative{t}\cdf_{\RV{X}}(t)\,.
+    \end{equation}
+\end{definition}
+By the Second Fundamental Theorem of Calculus, the probability that a 
+continuous random variable $\RV{X} \in \left(a,b\right]$, $a \leq b$, is given 
+by
+\begin{equation}
+\label{eq:prob_F_R_p}
+\Prob{a < \RV{X} \leq b} = \cdf_{\RV{X}}(b) - \cdf_{\RV{X}}(a) = \int_{a}^{b} 
+\pdf_{\RV{X}}(s) \mathrm{d}s\,.
+\end{equation}
+
+By these definitions, the relative likelihood that the system will fail at time 
+$t$ is $\spdf(t)$ and probability the \jth component will before time $t$ is 
+$\cdf_{\cv_j}(t)$.
+\begin{notation}
+We simplify the notation and let $\cdf_j$ denote $\cdf_{\cv_j}$ and $\pdf_j$ denote $\pdf_{\cv_j}$.
+Column vectors are denoted by boldface lower case letters, e.g., $\vec{x}$, and row vectors are denoted by the transpose of column vectors, e.g., $\vec{x}^\Transpose$.
+Matrices are denoted by boldface upper case greek letters, e.g., $\matrx{A}$.
+The \jth column of $\matrx{A}$ is denoted by $\matrx{A}_j$ (or $\left[\matrx{A}\right]_j$) and the $(j,k)$-th element of $\matrx{A}$ is denoted by $\matrx{A}_{j\,k}$ (or $\left[\matrx{A}\right]_{j\,k}$).
+\end{notation}
+
+We restrict our attention to parametrized families of probability distribution functions. The system lifetime has a probability density function that is a member of the following parametric family.
+\begin{definition}
+    \label{def:sysparametric}
+    The system lifetime has a probability density function that is a member of 
+    the parametric family of probability density functions denoted by
+    \begin{equation}
+    \label{eq:paramsys}
+    \pfam = \left \{ \spdf\left(\; \cdot \given \sysparam\right) \colon 
+    \sysparam \in \RealSet^{q \times m} \right \}\,,
+    \end{equation}
+    where $\sysparam_j \in \boldsymbol\Omega$ corresponds to the parameter 
+    index of the \jth component lifetime.
+\end{definition}
+Particular values of $\sysparam$ index particular probability density functions 
+within the $\pfam$-family. The true probability density function of the system 
+lifetime is given by the following definition.
+\begin{definition}
+    \label{def:true_param}
+    The distribution of the system lifetime has a true parameter index denoted 
+    by $\tparam\sysparam$, and we say that
+    \begin{equation}
+        \sv \sim \spdf\!\left(\;\cdot \given \tparam\sysparam\right)\,.
+    \end{equation}
+\end{definition}
+By these definitions, it follows that
+\begin{equation}
+    \cv_j \sim \pdf_j\!\left(\; \cdot \given \tparam\sysparam_j\right)\,.
+\end{equation}
+
+\section{$\alpha$-masked component failure}
+By \cref{thm:series_system_lifetime}, if a system failure occurs at time $\ti$, then one of the components failed at time $\ti$.\footnote{Only a single component can cause a system failure since two or more continuous random variables cannot realize the same value.}
+\begin{definition}
+\label{def:comp_cause}
+The discrete random variable indicating the component responsible for a system failure is denoted by $\RV{K}$ with a sample space $\Set{K} = \{1,\ldots,m\}$. That is, $\RV{K} = j$ indicates that $\cv_j < \cv_k$ for $k \in \SetDiff[\Set{K}][\{ j \}]$.
+\end{definition}
+
+We may not be certain about which component caused a system failure, but we may be able to narrow the component cause to some \emph{subset}.
+We denote these a \emph{masked} component failure as given by the following definition.
+\begin{definition}
+\label{def:random_candidate_set}
+Let $\rvcand$ denote the random masked component failure with a sample space $\PS{\Set{K}}$.
+\end{definition}
+
+We suppose there is some process that, informed by some degree of knowledge about the components, generates a masked component failure which \emph{plausibly}\footnote{The random masked component failures carry information about the true parameter index $\tparam\sysparam$ by being dependent in some way on the component lifetimes.} contains the failed component as depicted in \cref{fig:gen_model}.
+\begin{figure}
+	\caption{Graphical model of random variables where $\sv = \min\{\cv_1,\cv_2\ldots,\cv_m\}$ and masked component failure $\rvcand$ is generated by some process that is a function of $\tparam\sysparam$.}
+	\label{fig:gen_model}
+	\begin{center}
+		\input{img/graph_model.tex}
+	\end{center}
+\end{figure}
+
+A masked component failure represents the notion of a diagnostician who is able to, with varying degrees of success, isolate the failed component to some subset of the system.
+We consider a particular generative model given by the following definition.
+\begin{definition}
+\label{def:rv_A}
+An $\alpha$-masked component failure $\rvcand$ contains the failed component with probability $\alpha \cdot 100 \%$, where $\alpha$ is denoted its \emph{accuracy}.
+Let $\RV{A}$ denote the random accuracy of a masked component failure with a sample space $\Set{A} \subseteq [0,1]$.
+The distribution of a random masked component failure $\rvcand$ given $\RV{A} = \alpha$ is denoted a random $\alpha$-masked component failure.
+\end{definition}
+
+The accuracy of a masked component failure could theoretically convey information about the system.
+As a simplification, we make the following assumption.
+\begin{assumption}
+\label{asm:indep_A_S_K}
+The random accuracy $\RV{A}$ of masked component failures is independent of the random system lifetime $\sv$ and the random component cause $\RV{K}$ and therefore does not carry information about the true parameter index $\tparam\sysparam$.
+\end{assumption}
+
+A random masked component failure may have an uncertain cardinality.
+We model this uncertainty with the random variable given by the following definition.
+\begin{definition}
+\label{def:rv_W}
+Let $\RV{W} = \Card{\rvcand}$ denote the random cardinality of a random masked component failure with a sample space $\{1,\ldots,m-1\}$.
+$\RV{W}$ may never realize $m$ since that does not isolate a proper subset of the components and it may never realize $0$ since that does not estimate the component cause of failure.
+\end{definition}
+Note that if $\RV{W}=m$ were to be realized, contrary to the above definition, then a consistent point estimator for the lifetime distribution $\sv$ is possible but no consistent estimator of the component lifetimes $\cv_1,\ldots,\cv_m$ is possible.
+In \cref{dummy}, we provide a point estimator in such a situation that is inconsistent but minimizes the \emph{mean squared error}.
+
+The cardinality of a masked component failure could theoretically convey information about the system.
+As a simplification, we make the following assumption.
+\begin{assumption}
+\label{asm:indep_W_S}
+The random cardinality $\RV{W}$ of masked component failures is independent of the random system lifetime $\sv$ and the random component cause $\RV{K}$ and therefore does not carry information about the true parameter index $\tparam\sysparam$.
+\end{assumption}
+
+We make the following simplifying assumption.
+\begin{assumption}
+\label{asm:indep_C_given_K_S}
+The random masked component failure $\rvcand$ conditioned $\RV{K}$ is independent of $\sv$.
+\end{assumption}
+The $\alpha$-masked component model is somewhat naive since $\rvcand$ given $\RV{K}$ is conditionally independent of $\sv$.
+By \cref{asm:indep_C_given_K_S}, an $\alpha$-masked component failure carries information about $\tparam\sysparam$ through its dependency on $\RV{K}$.
+
+The indicator function and the $k$-subset functions are needed for subsequent material and are given by the following definitions.
+\begin{definition}[Indicator function]
+	Given a subset $\Set{A}$ of a set $\Set{B}$, the indicator function $\SetIndicator{\Set{A}} \colon \Set{B} \mapsto \{0,1\}$
+	is equal to $1$ if $x \in \Set{A}$ and $0$ otherwise.
+\end{definition}
+
+\begin{definition}
+	The subsets of $\Set{A}$ that are of cardinality $k$ is defined as
+	\begin{equation}
+	\left[\Set{A}\right]^k \coloneqq \SetBuilder{\Set{X} \in \Set{A}}{\Card{\Set{A}} = k}\,,
+	\end{equation}
+	which has a cardinality
+	\begin{equation}
+	\binom{\Card{\Set{A}}}{k}\,.
+	\end{equation}
+\end{definition}
+
+The distribution of candidate sets conditioned on a specific cardinality is given by the following definition.
+\begin{definition}
+	The random candidate set $\rvcand$ conditioned on $\RV{W} = w$ has a sample space given by
+	\begin{equation}
+	\candsw{w} = \left[\PS{\RV{K}}\right]^w\,.
+	\end{equation}
+\end{definition}
+By \cref{asm:indep_W_S,asm:indep_A_S_K}, the distributions of $\RV{W}$ and $\RV{A}$ is not dependent on the true parameter index $\tparam\sysparam$.
+Any inferences about the parametric model will be \emph{independent} of $\RV{W}$ and $\RV{A}$ except in the sense that conditioning on larger $\alpha$-masked component failures or less accurate accuracy $\alpha$ generates estimators with greater variance.
+This, of course, is quite important, but the fact that a particular $\RV{W}$ or $\RV{A}$ is realized says nothing by itself about $\tparam\sysparam$.
+
+%The \emph{probability space} of the model conditioned on $\RV{W} = w$ is given by the triple
+%\begin{equation}
+%	\left((0,\infty) \times \candsw{w}, \Set{B} \times \PS{\candsw{w}}, \Fun{P}\right)
+%\end{equation}
+%where $\Set{B}$ is the \emph{Borel space}, the set of half-open intervals, and $\Fun{P} \colon \Set{B} \times \PS{\candsw{w}} \mapsto [0,1]$ is the %probability measure.
+
+\begin{figure}
+	\label{fig:gen_model_alpha}
+	\caption{Graphical model of random variables where $\sv = \min\{\cv_1,\cv_2\ldots,\cv_m\}$, $\rvcand$ is a random $\alpha$-masked candidate set of cardinality $w$, $\RV{K}$ is the random component failure, $\RV{W}$ is the cardinality of random candidate sets, and $\RV{A}$ is the random $\alpha$.}
+	\begin{center}
+		\input{img/graph_model_alpha.tex}
+	\end{center}
+\end{figure}
+In general, a sample of masked system failures may have variable sized candidate sets. In \cref{dummyref}, we derive the sampling distribution of the maximum likelihood estimator of this kind of sample using the inverse-variance weighted mean.
+
+The \emph{primary} data point is the \emph{masked system failure} as given by the following definition.
+\begin{definition}
+An $\alpha$-\emph{masked system failure} consists of a system failure time $\ti$, a corresponding set of failed candidate components $\cand$, and an expected accuracy $\alpha$ of the $\cand$, denoted by $\Tuple{\ti,\cand,\alpha}$.
+\end{definition}
+\begin{assumption}
+\label{asm:cand_prob}
+A random $\alpha$-\emph{masked system failure} is a jointly distributed random system lifetime $\sv$, random failed candidate set $\rvcand$, and random $\alpha$-accuracy $\RV{A}$.
+\end{assumption}
+
+\begin{assumption}
+\label{def:msfs}
+A random sample of $n$ \emph{masked system failures}, denoted by
+\begin{equation}
+\mfs = \left( \Tuple{\sv_1,\rvcand_1,\RV{A}_1},\ldots,\Tuple{\sv_n,\rvcand_n,\RV{A}_n}\right)\,,
+\end{equation}
+consists of $n$ independent and identically jointly distributed pairs of system failure times and component sets.
+\end{assumption}
+
+\begin{assumption}
+The only information we have about the system and its true parameter index $\tparam\sysparam$ is given by observing a random sample of $n$ masked component failures,
+\begin{equation}
+    \left(
+    	\Tuple{\sv_1=\ti_1,\rvcand_1=\Set{C}[1], \RV{A}_1=\alpha_1}, \ldots, 
+    	\Tuple{\sv_n=\ti_n,\rvcand_n=\Set{C}[n], \RV{A}_n=\alpha_n}
+    \right)\,.
+\end{equation}
+\end{assumption}
+
+Given the assumed model, the object of statistical interest is the (unknown) true parameter index $\tparam\sysparam$.
+Provided an estimate of $\tparam\sysparam$, any characteristic that is a function of $\tparam\sysparam$ can be estimated as a result, thus the primary objective is to use the \emph{information} in a sample of $n$ masked system failures to estimate $\tparam\sysparam$ with some quantifiable uncertainty.
+\end{document}

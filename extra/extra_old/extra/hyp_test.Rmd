@@ -1,0 +1,72 @@
+---
+title: "Hypothesis testing"
+author: "Alex Towell"
+date: "2022-05-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Hypothesis testing
+
+### Likelihood ratio test
+\begin{align*}
+  H_0 : \theta \in \Omega_0\\
+  H_A : \theta \notin \Omega_0
+\end{align*}
+
+where $\hat\theta$ is the unconstrained MLE and $\hat\theta_R$ is in the
+constrained MLE (reduced model).
+
+## Confidence intervals of parameter values
+Of course, you may also construct confidence intervals and, if the MLE
+over $\theta^{F}$ is contained in the confidence interval, we say that
+the data is compatible with the null model.
+
+
+
+### Score test
+If we have the score function $s$ and Fisher information matrix $I$, we may
+construct the hypothesis
+\begin{align*}
+  H_0 : \theta \in \Omega_0\\
+  H_A : \theta \notin \Omega_0
+\end{align*}
+which can be tested with the Score test
+$$
+  S(\hat\theta_0) = s'(\hat\theta_0) I^{-1}(\hat\theta_0) s(\hat\theta_0).
+$$
+where $\hat\theta_0$ is the MLE over the restricted parameter space $\Omega_0$.
+
+Under the null hypothesis, $S(\hat\theta_0)$ is asymptotically distributed
+$\chi^2$ with $k$ degrees of freedom, where $k$ is the number of constraints
+imposed by the null hypothesis.
+
+
+For instance, suppose we wish to test the hypothesis in a exponential series
+system, the failure rate of component $1$ is twice that of component $2$.
+Then, we find the MLE over the reduced model
+$$
+  \theta^{R} = (2 \lambda_2, \lambda_2,\lambda_3)
+$$
+and compare that to the MLE over the full model
+$$
+  \theta^{F} = (\lambda_1, \lambda_2,\lambda_3).
+$$
+
+
+```{r}
+library(masked.data)
+
+loglik.F <- masked.data::md_kloglike_exp_series_m0(exp_series_data_1)
+loglik.R <- function(theta.R)
+{
+  loglik.F(c(2*theta.R[2],theta.R[2],theta.R[3]))
+}
+# 
+
+# should i allow a parameter function to be specified? use the existing
+# log-likelihood, but expose the interface.
+```

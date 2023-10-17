@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+docs
+inst/doc
+/doc/
+/Meta/
+*.log
+*.toc
+*.aux
+/paper_files/
+/paper_cache/

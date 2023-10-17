@@ -1,0 +1,129 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Sampling distribution of functions of parameters}
+\label{sec:app}
+Suppose we have a characteristic of interest $\vecstat \colon \mathbb{R}^{m \cdot q} \mapsto \mathbb{R}^{p}$ that is a function of the parametric model.
+The \emph{true} value of the characteristic is given by $\vecstat(\tparam\sysparamvec)$.
+By the invariance property of maximum likelihood estimators, if $\mleu$ is the maximum likelihood estimator of $\tparam\sysparamvec$ then $\vecstat(\mleu)$ is the maximum likelihood estimator of $\vecstat(\tparam\sysparamvec)$.
+
+By \cref{def:converge_in_dist}, $\sampdu$ is a random vector drawn from a multivariate normal distribution,
+\begin{equation*}
+    \sampdu \sim \mvn\left(\tparam\sysparamvec, \var\left[\sampdu\right]\right)\,,
+    \tag{\text{\ref{eq:converge_in_dist_weighted} revisited}}
+\end{equation*}
+therefore $\vecstat\left(\sampdu\right)$ is a random vector. Under the regularity conditions (see \cref{def:reg_cond}), $\vecstat\left(\sampdu\right)$ is asymptotically normally distributed with a mean given by $\vecstat(\tparam\sysparamvec)$ and a variance-covariance given by $\var\left[\vecstat(\sampdu)\right]$, written
+\begin{equation}
+\vecstat\left(\sampdu\right) \xrightarrow{d} \mvn\left(\vecstat\left(\tparam\sysparamvec\right), \var\left[\vecstat(\sampdu)\right]\right)\,.
+\end{equation}
+
+\section{Confidence intervals}
+\label{sec:app:conf_interval}
+A property of multivariate normal distributions is that the marginal of any subset of the components is given by dropping the irrelevant components from the mean vector $\tparam\sysparamvec$ and the variance-covariance $\var\left[\sampdu\right]$.
+
+If we are interested in the asymptotic marginal distribution of the \jth component, we drop all of the other components, resulting in the univariate normal distribution given by
+\begin{equation}
+\label{eq:normal_marg}
+    \left[\sampdu\right]_j \sim \mathcal{N}\left(\tparam\paramv_j, \frac{\sigma^2}{n}\right)\,,
+\end{equation}
+where $\sigma^2 = \left[\infomatrx^{-1}\left(\tparam\sysparamvec\right)\right]_{j j}$.
+
+Asymptotically, the random variable $\left[\sampdu\right]_j$ realizes a value less than any constant $a$ with a probability given by
+\begin{equation}
+    \Prob{\left[\sampdu\right]_j < a } = \operatorname{\Phi}\!\left(\frac{a - \tparam\param_j}{\sigma_j}\right)\,,
+\end{equation}
+where $\Phi$ is the cumulative distribution function of the standard normal.
+
+The smallest interval in which $\left[\sampdu\right]_j$ is realized with probability $p$ is given by
+\begin{equation}
+\label{eq:prob_interval}
+     \tparam\paramv_j \, \raisebox{.2ex}{$\scriptstyle\pm$} \, \sigma_j \operatorname{\Phi^{-1}}\!\left(p/2\right)\,,
+\end{equation}
+where $\Phi^{-1}$ is the inverse cumulative distribution function of the standard normal.
+
+By the invariance property of maximum likelihood estimators, a maximum likelihood estimator of \cref{eq:prob_interval} is the confidence interval given by the following definition.
+\begin{definition}
+\label{def:conf_interval}
+An asymptotic $(1 - \alpha) \cdot 100 \%$ confidence interval for the \jth component of the true parameter index $\tparam\paramv$ is given by
+\begin{equation}
+\label{eq:conf_interval}
+    \estimator\paramv_j \, \raisebox{.2ex}{$\scriptstyle\pm$} \, \estimator{\sigma}_j \, \operatorname{\Phi^{-1}}\!\left(1-\alpha/2\right)\,,
+\end{equation}
+where $\estimator\paramv_j$ is the \jth component of $\mleu$ and $\estimator{\sigma}_j$ is the \jth diagonal element of $\estimator{\var}\left[\sampdu\right]$.
+\end{definition}
+Note that the confidence interval given by \cref{eq:conf_interval} is a realization of a random interval since $\estimator\paramv_j$ is a realization of the normal distribution given by \cref{eq:normal_marg} and $\estimator{\sigma}_j$ is a function $\estimator\paramv_j$, where it is expected that $(1-\alpha/2) \cdot 100 \%$ of the random intervals generated contain the true parameter index $\tparam\paramv_j$.
+
+\section{Hypothesis testing}
+\label{sec:app:conf_region}
+The intervals discussed in \cref{sec:app:conf_interval} ignore correlations between the components of $\sampdu$. Asymptotically, $\sampdu$ has a probability $p$ of occurring within the hyper-ellipsoid (the smallest hyper-volume with probability $p$) centered around $\tparam\sysparamvec$ given by
+\begin{equation}
+\label{eq:conf_region}
+    \left(\sampdu - \tparam\sysparamvec\right)^\intercal \infomatrxn\left(\tparam\sysparamvec\right)\left(\sampdu - \tparam\sysparamvec\right) \;\leq\; \chi_{m \cdot q}^{2}(p)\,,
+\end{equation}
+where $\chi_{m \cdot q}^2(p)$ is the $p$ quantile of the chi-square distribution with $m \cdot q$ degrees of freedom. 
+
+By the invariance property of maximum likelihood estimators, a maximum likelihood estimator of \cref{eq:conf_region} is given by the confidence region.
+\begin{definition}
+Suppose we have a maximum likelihood estimate $\mleu$ and hypothesize that the true parameter index is given by $\sysparamvec$. At significance level $\alpha$ we fail to reject the null hypothesis $H_0 \colon \tparam\sysparamvec = \sysparamvec$ versus the alternative hypothesis $H_a \colon \tparam\sysparamvec \neq \sysparamvec$ if
+\begin{equation}
+\label{eq:hypothesis_test_mean}
+    \left(\sysparamvec - \mleu\right)^\intercal \infomatrxn\left(\mleu\right) \left(\sysparamvec - \mleu\right) \;\leq\; \chi_{m \cdot q}^{2} \left(1-\alpha\right)\,,
+\end{equation}
+where $\chi_{m \cdot q}^2(1 - \alpha)$ is the $(1 - \alpha)$ quantile of the chi-square distribution with $m \cdot q$ degrees of freedom.
+\end{definition}
+
+Applying \cref{eq:hypothesis_test_mean} to the marginal of 
+$\left[\sampd\right]_j$ generates the confidence interval described in 
+\cref{dummyref}.
+
+\section{Monte-carlo simulation}
+\label{sec:app:monte_carlo}
+The generative model of the sampling distribution of $\sampdu$, as described in 
+\cref{alg:samp_du_gen_model}, is asymptotically equivalent to generating 
+samples from the multivariate normal distribution given by \cref{dummyref}. 
+However, generating samples from the multivariate normal is much less 
+computationally demanding than the non-asymptotic model.
+
+The generative model may be used to generate samples of any statistic that is a function of the true parameter index $\tparam\sysparamvec$. A sample drawn from $\vecstat(\sampd)$ may be generated by drawing $r$ maximum likelihood estimates from the sampling distribution
+\begin{equation}
+    \mleui{1}, \ldots, \mleui{r}\,,
+\end{equation}
+and applying $\vecstat$ to each, resulting in the sample
+\begin{equation}
+\label{eq:phi_sample}
+    \vecstat\left(\mleui{1}\right),
+    \ldots,
+    \vecstat\left(\mleui{r}\right)\,.
+\end{equation}
+An estimate of the variance-covariance $\var\left[\vecstat(\sampdu\right]$ is given by the sample covariance
+\begin{equation}
+\begin{split}
+    \estimator{\var}\left[\vecstat\left(\sampdu\right)\right] &=\\
+    & \!\!\!\! \frac{1}{r} \sum_{i=1}^{r}
+            \left(\vecstat\left(\mleui{i}\right) - \vecstat(\mleu)\right)
+            \left(\vecstat\left(\mleui{i}\right) - \vecstat(\mleu)\right)^\intercal\,.
+\end{split}
+\end{equation}
+Thus,
+\begin{equation}
+    \vecstat\left(\sampdu\right) \sim \mvn\left(\vecstat\left(\mleu\right), \estimator{\var}\left[\sampdu\right] \right)\,.
+\end{equation}
+
+In what follows, we explore a couple of characteristics of interest about the series system.
+\subsection{Mean time to failure of components}
+The \emph{mean time to failure} of component $j$ is given by
+\begin{equation}
+    \scalarstat(\tparam\sysparamvec) = \expectation_{\tparam\sysparamvec}\!\! \left[\cv_j\right]\,.
+\end{equation}
+Suppose $\scalarstat(\tparam\sysparamvec) \in \mathbb{R}^{m \cdot q}$, then the variance-covariance of 
+\begin{equation}
+    \jacobian\left(\scalarstat(\tparam\sysparamvec)\right) \infomatrxn^{-1}\left(\tparam\sysparamvec\right) \jacobian\left(\scalarstat(\tparam\sysparamvec)\right)^\intercal\,,
+\end{equation}
+where $\jacobian\left(\,\cdot\,\right) \in \mathbb{R}^{?}$ is the Jacobian as 
+given by \cref{dummyref}.
+
+The maximum likelihood estimator of $\tparam\sysparamvec$ is given by $\scalarstat(\mleu)$ and is approximately normally distributed,
+\begin{equation}
+\scalarstat(\sampdu) \xrightarrow{d} \mathcal{N}\left(\scalarstat\left(\mleu\right), \estimator{\sigma}^2\right)\,.
+\end{equation}
+where $\estimator{\sigma}^2$ is the sample variance.
+\end{document}

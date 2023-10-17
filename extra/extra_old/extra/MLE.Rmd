@@ -1,0 +1,232 @@
+---
+title: "MLE"
+author: "Alex Towell"
+date: "2022-05-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## MLE
+
+A general strategy for solving the maximum likelihood equation
+$$
+  \hat\theta = \operatorname{argmax}_{\theta \in \Omega} \ell(\theta)
+$$
+is given by the iterative search strategy that tries to maximize
+the log-likelihood by, when at at some point $\theta^{(i)}$, moving in a
+direction $d_i$,
+$$
+  \theta^{(i+1)} = \theta^{(i)} + \alpha_i d_i,
+$$
+where $\alpha_i$ scales the magnitude of the $i$\textsuperscript{th} step size,
+such that $\ell(\theta^{(i+1)}) > \ell(\theta^{(i)})$.
+
+Starting at $\theta^{(0)}$, it is hoped that the method produces a sequence
+of values $\theta^{(0)},\theta^{(1)},\ldots,\theta^{(n)}$ such that
+as $n \to \infty$,
+$$
+  \theta^{(n)} \to \operatorname{argmax}_{\theta \in \Omega} \ell(\theta).
+$$
+
+However, note that, as a local search method, there are several issues to
+consider. The method may:
+
+1. converge to a local maximum,
+
+2. converge to a saddle point,
+
+3. try to step outside of the parameter's support set,
+
+4. exhibit extremely slow convergence, or
+
+5. fail to converge, e.g., maximum is at or near a boundary.
+
+In non-linear optimization, there is no general off-the-shelf solution to
+avoiding these outcomes.
+However, a general mitigation strategy, potentially at the cost of convergence
+rate, is the introduction of randomness into the local search process.
+For instance, in stochastic gradient ascent, we do not (always) move in the
+direction of the gradient. We may random perturb the direction in some way from
+the gradient, in order to try to jump over, say, local maxima.
+Or, we may use random restarts, i.e., starting over with a randomly chosen
+starting point $\theta_0$, and choosing the best solution found.
+
+We capture the notion of convergence through a *stopping condition*, which is
+(normally) some heuristic that evaluates the sufficiency of the current
+iteration.
+We model stopping conditions as a Boolean function of the formal parameters of
+the maximum likelihood solver.
+
+Stopping conditions are normally parameterized by a norm $\lVert \cdot \rVert$
+and a $\epsilon$ such that if $\lVert \theta_1-\theta_0 \rVert < \epsilon$, the stopping
+condition has been met.
+
+We model $\lVert \cdot \rVert_1$, $\lVert \cdot \rVert_2$, and
+$\lVert \cdot \rVert_\infty$ by the R functions respectively given by:
+```{r}
+l1_norm <- function(theta0,theta1,...) sum((abs(theta0-theta1)))
+l2_norm <- function(theta0,theta1,...) sqrt(sum((theta0-theta1)^2))
+inf_norm <- function(theta0,theta1,...) max(abs(theta0-theta1))
+```
+
+We model the stopping condition $\lVert$ `args` $\rVert <$ `eps`, that takes
+a `norm`, such as one of the ones defined above, and an `eps`, by the R
+function given by:
+```{r}
+eps_stop_cond <- function(eps=1e-3,norm=inf_norm)
+  function(theta1,theta2,...) norm(theta1,theta2,...) < eps
+```
+
+
+```{r}
+stop_cond_max_iter <- function(stop_cond,max_iter=1000,...)
+  function(iter) ifelse (iter > max_iter, TRUE, stop_cond(...))
+
+eps_stop_cond <- function(eps=1e-3,norm=inf_norm)
+  function(theta1,theta2,...) norm(theta1,theta2) < eps
+```
+
+
+In R, we implement this algorithm as a function that has the formal parameters
+given by Table ?.
+
+Parameter   | Description
+----------- | -----------------------------------------------------------------
+`theta0`    | Initial starting point.
+`loglike`   | A function that models the log-likelihood function. Note that if the formal parameters of the stopping condition are not a function of the log-likelihood, this may be set to `NULL`.
+`direction` | A function that models the direction function.
+`stop_cond` | Stopping condition, a function that maps its arguments to a `Boolean`. If `stop_cond` is `NULL`, we set it to $\lVert \theta_1-\theta_0 \rVert_{\infty} < 1.0e^{-5}$.
+`ls`        | Line search function. If `ls` is `NULL`, we set it to output the constant $1$. An example of `ls` Golden section search.
+
+```{r,eval=F}
+mle_solver <- function(theta0,
+                       direction,
+                       stop_cond = stop_cond_max_iter(eps_stop_cond(),...),
+                       loglike = NULL,
+                       ls = NULL,
+                       ...)
+{
+  if (is.null(stop_cond)
+    stop_cond <- eps_stop_cond(1e-5,...)
+  if (is.null(ls))
+    ls <- function(...) 1
+
+  iter <- 1L
+  theta1 <- NULL
+  repeat
+  {
+    d <- direction(theta0,...)
+    alpha <- ls(d,theta0,loglike,...)
+    theta1 <- theta0 + alpha * d
+    if (stop_cond(theta1,theta0,loglike,score,info,alpha,iter,...))
+      break
+    theta0 <- theta1
+    iter <- iter + 1L
+  }
+  
+  list(theta.hat=theta1,iter=iter)
+}
+```
+
+We consider two well-known search strategies, gradient ascent and Newton-Raphson.
+In gradient ascent, the direction is given by the gradient.
+In particular, to find the maximum, we find the point at which the gradient
+of $\ell$ is zero by solving the first-order approximation $f(\theta) = 0$
+where $f(\theta) = \nabla \ell(\theta_0)$
+
+
+In Newton-Raphson, the direction is given by the 
+If the Newton-Raphson search uses the inverse of the *expected* Fisher
+information matrix, then this is known as *Fisher scoring*.
+
+### Gradient ascent
+Gradient ascent is a local iterative method for finding a value that maximizes
+the log-likelihood by finding a point where the gradient is approximately $0$.
+
+The score function $s$ is defined as $s(\theta) = \nabla \ell \bigr|_{\theta}$.
+Starting at some point $\theta^{(i)}$, the method searches in the direction
+of the gradient of the log-likelihood,
+$$
+  \theta^{(i+1)} = \theta^{(i)} + \alpha_i s(\theta^{(i)}),
+$$
+where $\alpha_i$ scales the magnitude of the $i$\textsuperscript{th} step size
+such that $\ell(\theta^{(i+1)}) > \ell(\theta^{(i)})$.
+
+In R, we implement this algorithm as a function that has the formal parameters
+given by Table.
+
+Parameter   | Description
+----------- | -----------------------------------------------------------------
+`loglike`   | A function that models the log-likelihood function. Note that depending upon the other arguments to the formal parameters, this may not be needed.
+`score`     | A function that models the score function for the likelihood function. If `score` is `NULL`, we numerically approximate it from `loglike`.
+`stop_cond` | Stopping condition, a function that maps its arguments to a `Boolean`. If `stop_cond` is `NULL`, we set it to $\lVert \theta_1-\theta_0 \rVert_{\infty} < 1.0e^{-5}$.
+`max_iter`  | Specifies the maximum number of iterations.
+
+```{r,eval=F}
+gradient_ascent <- function(theta0,
+                            loglike = NULL,
+                            score = NULL,
+                            stop_cond = NULL,
+                            max_iter = NULL)
+{
+  if (is.null(score))
+    score <- function(theta) { numDeriv::grad(loglike,theta) }
+  
+  function(theta,d)
+  {
+    d <- score(theta)
+    function(alpha) loglike(theta - alpha * d)
+  }
+  
+  mle_solver(theta0,loglike,score,stop_cond,ls,max_iter)
+}
+```
+
+### Fisher scoring algorithm
+Fisher scoring, like gradient ascent, is a local iterative method
+except it uses both the Hessian and the gradient to choose a direction that
+tends to converge faster to a solution.
+
+Starting at some point $\theta^{(i)}$, it finds a new point that is in the
+direction of the gradient of the log-likelihood,
+$$
+  \theta^{(i+1)} = \theta^{(i)} + \alpha_i H^{-1}\!\left(\theta^{(i)}\right) s(\theta^{(i)}).
+$$
+where $\alpha_i$ scales the magnitude of the $i$\textsuperscript{th} step size
+such that $\ell(\theta^{(i+1)}) > \ell(\theta^{(i)})$.
+
+In R, we implement this algorithm as a function that has the formal parameters
+given by Table.
+
+Parameter   | Description
+----------- | -----------------------------------------------------------------
+`loglike`   | A function that models the log-likelihood function. Note that depending upon the other arguments to the formal parameters, this may not be needed.
+`info`      | A function that models the Fisher information matrix for the likelihood function. If `info` is `NULL`, we numerically approximate it from `loglike` or `score`.
+`score`     | A function that models the score function for the likelihood function. If `score` is `NULL`, we numerically approximate it from `loglike`.
+`stop_cond` | Stopping condition, a function that maps its arguments to a `Boolean`. If `stop_cond` is `NULL`, we set it to $\lVert \theta_1-\theta_0 \rVert_{\infty} < 1.0e^{-5}$.
+`ls`        | Line search function. If `ls` is `NULL`, we set it to output the constant $1$. A good choice for linear search is, say, Golden section search.
+`max_iter`  | Specifies the maximum number of iterations.
+
+
+```{r,eval=F}
+fisher_scoring <- function(theta0,
+                           loglike = NULL,
+                           info = NULL,
+                           score = NULL,
+                           stop_cond = NULL,
+                           max_iter = NULL)
+{
+  if (is.null(score))
+    score <- function(theta) { numDeriv::grad(loglike,theta) }
+  if (is.null(info))
+    info <- ifelse(is.null(score),
+                   function(theta) { -numDeriv::hessian(loglike,theta) },
+                   function(theta) { -numDeriv::jacobian(score,theta) }
+
+  d <- function(theta) { matlib::inv(info(theta)) %*% score(theta) }
+  mle_solver(theta0,loglike,d,stop_cond,ls,max_iter)
+}
+```

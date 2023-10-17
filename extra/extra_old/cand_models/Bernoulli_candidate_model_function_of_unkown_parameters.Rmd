@@ -1,0 +1,89 @@
+---
+title: "Bernoulli candidate sets that are functions of the unkown parameters masked data"
+author: "Alex Towell"
+date: "1/22/2022"
+output:
+  #bookdown::pdf_document2:
+  #  extra_dependencies: ["amsthm","amsmath"]
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+    number_sections: true
+    extra_dependencies: ["amsthm","amsmath","natbib"]
+bibliography: refs.bib
+csl: the-annals-of-statistics.csl
+---
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\newcommand{\T}{T}
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Choices for $p_1,\ldots,p_m$ that are functions of $\theta$ and other observables
+In many cases, the failure rate increases as the lifetime of the system
+increases.
+Thus, a reasonable choice for $p_j$ may be of the form
+$$
+  p_j(s) = 1-\exp(-\beta_j s),
+$$
+which is the cdf of an exponential distribution with rate parameter $\beta_j$.
+As $s \to \infty$, $p_j(s) \to 1$.
+
+\begin{equation}
+\begin{split}
+    f(x_1,\ldots,x_m,s|\theta) =& \frac{f(s|\theta)}{\sum_{j=1}^m h_j(s|\theta_j)}
+      \sum_{k=1}^m \Biggl\{ h_k(s|\theta_k) \prod_{j=1}^m
+        (1-\exp(-\beta_j s))^{x_j}
+        \exp(-\beta_j s)^{1-x_j}
+      \Biggr\}.
+\end{split}
+\end{equation}
+
+A possibly more interesting choice is, say, $p_j(s|\theta_j) = F_j(s|\theta_j)$,
+the cdf of $X_j$, so that a random sample $X_1,\ldots,X_m$ stores more
+information about $\theta$.
+
+A potentially even more interesting choice is given by
+$$
+  p_j(s|\theta_j) = f_{K|S}(j|s,\theta).
+$$
+
+
+##### Estimating $p$
+Under the maximum entropy model, $p$ has a straightforward method of moments
+estimator given by
+$$
+  \hat p = \frac{\overline{|C|} - 1}{m-1},
+$$
+where $\overline{|C|} = \sum_{i=1}^{n} |C_i|/n$.
+\begin{proof}
+\begin{align*}
+  E(|C|) &= E\!\left(\sum_{j=1}^m 1_{\{j=k\}} + 1_{\{j\neq k\}} X_j\right)\\
+         &=  1 + E\!\left(\sum_{\substack{j=1\\j \neq k}} X_j\right).
+\end{align*}
+Since $X_1,\ldots,X_m$ are independent, this simplifies to
+\begin{align*}
+  E(|C|) &= 1 + \sum_{\substack{j=1\\j\neq k}}^m E(X_j)\\
+         &= 1 + \sum_{\substack{j=1\\j\neq k}}^m p\\
+         &= 1 + (m-1)p.
+\end{align*}
+
+We may estimate $E(|C|)$ with the sample average
+$\overline{|C|} = \sum_{i=1}^n |C_i|/n$ and we may estimate $p$ with $\hat p$,
+$$
+  \overline{|C|} = 1 + (m-1)\hat p.
+$$
+Solving for $\hat p$, we obtain the result
+$$
+  \hat p = \frac{\overline{|C|} - 1}{m-1}.
+$$
+\end{proof}
+
+Under different models, where $p_1,\ldots,p_m$ are functions or not all the
+same constant value, the likelihood approach may be used to estimate them.
+
+

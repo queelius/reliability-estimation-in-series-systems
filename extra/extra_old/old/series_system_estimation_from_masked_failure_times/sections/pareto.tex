@@ -1,0 +1,256 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\chapter{Case study: Lomax (Pareto Type II)}
+In our second case study, we have chosen to analyze series systems in which the component lifetimes are members of the Lomax family. Lomax distributions are heavy-tailed and thus are compatible with assigning relatively high probabilities to the occurrence of rare events. Its heavy-tail makes it an appropriate model if one is concerned about \emph{Black Swan} events, rare events with disproportionate effects such as large asteroid impacts.
+
+Consider a component $j$ with a lifetime $\cv_j \sim \text{LOMAX}(\tparam{\lambda}_j, \tparam{\alpha}_j)$.
+\begin{definition}
+\label{def:pareto_lifetime_functions}
+The random variable $\cv_j$ has reliability, density, and failure rate functions given by
+\begin{equation}
+\srv{R_j} \left (t \given \tparam{\lambda}_j, \tparam{\alpha}_j \right ) =
+    \left (1 + \frac{t}{\tparam{\lambda}_j} \right )^{-\tparam{\alpha}_j}\,,
+\end{equation}
+\begin{equation}
+\pdf{f_j} \left ( t \given \tparam{\lambda}_j, \tparam{\alpha}_j \right ) =
+    \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j} \left (1 + \frac{t}{\tparam{\lambda}_j} \right )^{-(\tparam{\alpha}_j + 1)}\,,
+\end{equation}
+\begin{equation}
+\lambda_j \left ( t \given \tparam{\lambda}_j, \tparam{\alpha}_j \right ) =
+    \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j + t}\,,
+\end{equation}
+where $t > 0$, $\tparam{\lambda}_j > 0$ is the scale parameter, and $\tparam{\alpha}_j > 0$ is the shape parameter.
+\end{definition}
+
+Consider a series system composed of $m$ components with Lomax distributed lifetimes, $\cv_j \sim \text{LOMAX}(\tparam{\lambda}_j, \tparam{\alpha}_j)$ for $j=1,\ldots,m$. The system has a random lifetime denoted by the random variable $\sv$ with reliability, density, and failure rate functions given by
+\begin{equation}
+\label{eq:sys_pareto_reliability_function}
+\srv{R_{\sv}} \left ( t \given \tparam{\vec\theta} \right ) =
+    \prod_{p=1}^{m} \left (1 + \frac{t}{\tparam{\lambda}_p} \right )^{-\tparam{\alpha}_p}\,,
+\end{equation}
+\begin{equation}
+\label{eq:sys_pareto_pdf_function}
+\pdf{f_{\sv}} \left ( t \given \tparam{\vec\theta} \right ) =
+    \left [ \prod_{p=1}^{m} \left (1 + \frac{t}{\tparam{\lambda}_p} \right )^{-\tparam{\alpha}_p} \right ]
+    \left [ \sum_{p=1}^{m} \frac{\tparam{\alpha}_p}{\tparam{\lambda}_p + t} \right ]\,,
+\end{equation}
+\begin{equation}
+\label{eq:sys_pareto_failure_rate_function}
+\lambda_{\sv} \left ( t \given \tparam{\vec\theta} \right ) = 
+    \sum_{p=1}^{m} \frac{\tparam{\alpha}_p}{\tparam{\lambda}_p + t}\,,
+\end{equation}
+where $\tparam{\vec\theta} = \veclist{\tparam{\lambda}_1, \tparam{\alpha}_1, \ldots, \tparam{\lambda}_m, \tparam{\alpha}_m}$ is the true parameter value. The proofs of \Cref{eq:sys_pareto_reliability_function,eq:sys_pareto_pdf_function,eq:sys_pareto_failure_rate_function} follow from \Cref{eq:series_reliability_function,eq:series_pdf_function,eq:series_failure_rate_function}.
+
+In what follows, given a masked failure sample $\mfs_n$, we derive the requisite material necessary to find the MLE $\estimator{\vec\theta}_n$ of the true parameter value $\tparam{\vec\theta}$ and its covariance matrix $\covmatrix_n$. 
+
+To solve the MLE $\estimator{\vec\theta}_n$ as described in \Cref{appendix:numerical_solution}, first we need the joint density of $\rv{K}$ and $\sv$,
+\begin{equation}
+\pdf{f_{\rv{K}, \sv}}(k, t \given \tparam{\vec\theta}) =
+    \left [
+        \prod_{p=1}^{m}
+        \left (
+            1 + \frac{t}{\tparam{\lambda}_p}
+        \right )^{-\tparam{\alpha}_p}
+    \right ]
+    \left [
+        \frac{\tparam{\alpha}_k}{\tparam{\lambda}_k + t}
+    \right ]\,.
+\end{equation}
+Therefore, the joint density of $\rvcand$ and $\sv$ is given by
+\begin{equation}
+\label{eq:par_joint_cand_density}
+\pdf{f_{\rvcand, \sv}}(\cand, t \given \vec\theta) =
+    \left [ {{m-1} \choose {w-1}} \right ]^{-1}
+    \left [
+        \prod_{p=1}^{m}
+        \left (
+            1 + \frac{t}{\tparam{\lambda}_p}
+        \right )^{-\tparam{\alpha}_p}
+    \right ]
+    \left [
+        \sum_{j \in \cand} \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j + t}
+    \right ]\,.
+\end{equation}
+Using \Cref{eq:par_joint_cand_density}, we can derive the joint likelihood $\likelihood$ for a masked system failure sample $\mfs_n$,
+\begin{equation}
+\likelihood(\vec\theta \given \mfs_n) =
+    \left [ {{m-1} \choose {w-1}} \right ]^{-n}
+    \prod_{i=1}^{n}
+    \left \{
+        \left [
+            \prod_{p=1}^{m}
+            \left (
+                1 + \frac{t_i}{\tparam{\theta}_p}
+            \right )^{-\tparam{\alpha}_p}
+        \right ]
+        \left [
+            \sum_{j \in \cand} \frac{\tparam{\alpha}_j}{\tparam{\lambda}_j + t}
+        \right ]
+    \right \}\,.
+\end{equation}
+Thus, the log-likelihood $\ell$ is given by
+\begin{equation}
+\begin{split}
+    \ell(\vec{\theta} \given \mfs_n) &=
+        -n \log {{m-1} \choose {w-1}}
+        -\sum_{i=1}^{n} \sum_{p=1}^{m} \alpha_p \log(\lambda_p + t_i)\\
+        &\qquad + n \sum_{p=1}^{m} \alpha_p \log \lambda_p
+        + \sum_{i=1}^{n} \log \left ( \sum_{j \in \cand_i}
+        \frac{\alpha_j}{\lambda_j + t_i} \right )\,.
+\end{split}
+\end{equation}
+
+In our implementation of the MLE solver, we use a variation of gradient ascent as described in \Cref{appendix:numerical_solution}. Thus, we will need the gradient of the log-likelihood $\ell$.
+\begin{corollary*}
+\label{cor:par_log_like_grad}
+The gradient of the $\mfs_n$ log-likelihood function $\ell$ is given by
+\begin{equation}
+    \nabla_{\vec\theta} \ell(\vec\theta) = \left (
+        \ppderivative{\ell}{\lambda_1},
+        \ppderivative{\ell}{\alpha_1},
+        \ldots,
+        \ppderivative{\ell}{\lambda_m},
+        \ppderivative{\ell}{\alpha_m}
+    \right )
+\end{equation}
+where
+\begin{align}
+    \ppderivative{\ell}{\alpha_r} &=
+        n \log \lambda_r -
+        \sum_{i=1}^{n} \log(\lambda_r + t_i) +
+        \sum_{i \in \mathrm{R}} \left [
+            \frac{1}{\lambda_r + t_i} 
+            \left (
+                \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+            \right )^{-1}
+        \right ]\,,\\
+    \ppderivative{\ell}{\lambda_r} &=
+        \frac{n \alpha_r}{\lambda_r} -
+        \sum_{i=1}^{n} \frac{\alpha_r}{\lambda_r + t_i} -
+        \sum_{i \in \mathrm{R}} \left [
+            \frac{\alpha_r}{(\lambda_r + t_i)^2}
+            \left (
+                \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+            \right)^{-1}
+        \right ]\,,
+\end{align}
+and $\mathrm{R} = \left \{ k : k \in \{1, \ldots, n \} \wedge r \in \cand_k \right \}$ is the set of indexed observations in the $\mfs_n$ sample in which the corresponding candidate sets contain component index $r$.
+\end{corollary*}
+
+As discussed in \Cref{sec:covariance}, to estimate the accuracy of the MLE $\estimator{\vec\theta}_n$, we may either estimate the covariance matrix $\covmatrix$ with respect to the information matrix or the bootstrap sample covariance matrix.
+
+First, we consider the information matrix approach. As described in \Cref{}, we could construct the information matrix $\infomatrx$ by taking the proper expectation, but unlike the series system with exponentially distributed components, there is no simple closed form solution. Rather, we would need to estimate the expectation using numerical techniques. Since this may be an expensive operation, instead we resort to the observed information matrix $\observed_n$, which computes the covariance of $\estimator{\vec\theta}_n$ conditioned on an observed $\mfs_n$ sample. It is given by
+\begin{equation}
+\label{info_matrix_lom}
+    \observed_n(\tparam{\vec\theta} \given \mfs_n) = -
+    \begin{bmatrix}
+        \frac{\partial^2} {\partial \lambda_1^2} &
+        \frac{\partial^2} {\partial \lambda_1 \partial \alpha_1 } &
+        \cdots &
+        \frac{\partial^2} {\partial \lambda_1 \partial \lambda_m } &
+        \frac{\partial^2} {\partial \lambda_1 \partial \alpha_m }\\
+        \frac{\partial^2} {\partial \alpha_1 \partial \lambda_1 } &
+        \frac{\partial^2} {\partial \alpha_1^2} &
+        \cdots &
+        \frac{\partial^2} {\partial \alpha_1 \partial \lambda_m } &
+        \frac{\partial^2} {\partial \alpha_1 \partial \alpha_m }\\
+        \vdots &    \vdots &    \vdots &    \vdots &    \vdots\\
+        \frac{\partial^2} {\partial \lambda_m \partial \lambda_1 } &
+        \frac{\partial^2} {\partial \lambda_m \partial \alpha_1 } &
+        \cdots &
+        \frac{\partial^2} {\partial \lambda_m^2} &
+        \frac{\partial^2} {\partial \lambda_m \partial \alpha_m}\\
+        \frac{\partial^2} {\partial \alpha_m \partial \lambda_1 } &
+        \frac{\partial^2} {\partial \alpha_m \partial \alpha_1 } &
+        \cdots &
+        \frac{\partial^2} {\partial \alpha_m \partial \lambda_m} &
+        \frac{\partial^2} {\partial \alpha_m^2}
+    \end{bmatrix} \ell(\tparam{\vec\theta} \given \mfs_n)\,,
+\end{equation}
+where
+\begin{align}
+    \frac{\partial^2 \ell} {\partial \lambda_r^2} &=
+        - \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i} 
+        \right )^{-2}
+        \frac{\alpha_r^2}{(\lambda_r+t_i)^4}\\&\qquad+
+        \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i} 
+        \right )^{-1}
+        \frac{2 \alpha_r}{(\lambda_r+t_i)^3}\\&\qquad+
+        \sum_{i=1}^{n} \frac{\alpha_r}{(\lambda_r + t_i)^2} -
+        \frac{n \alpha_r}{\lambda_r^2}\,,\\
+    \frac{\partial^2 \ell} {\partial \lambda_s \partial \lambda_r} =
+        \frac{\partial^2 \ell} {\partial \lambda_r \partial \lambda_s} &=
+        -\sum_{i \in \mathrm{R} \cap \mathrm{S}} \left (
+        \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i} \right )^{-2}
+        \frac{\alpha_r \alpha_s}{(\lambda_r + t_i)^2 (\lambda_s + t_i)^2}\,,\\
+    \frac{\partial^2 \ell} {\partial \alpha_r^2} &=
+        -\sum_{i \in \mathrm{R}} \left ( \sum_{j \in \cand_i}
+        \frac{\alpha_j}{\lambda_j + t_i} \right )^{-2} \frac{1}{(\lambda_r + t_i)^2}\,,\\
+    \frac{\partial^2 \ell} {\partial \alpha_s \partial \alpha_r} = \frac{\partial^2 \ell} {\partial \alpha_r \partial \alpha_s} &=
+        -\sum_{i \in \mathrm{R} \cap \mathrm{S}} \left ( \sum_{j \in \cand_i}
+        \frac{\alpha_j}{\lambda_j + t_i} \right )^{-2} \frac{1}{(\lambda_r + t_i)(\lambda_s + t_i)}\,,\\
+    \frac{\partial^2 \ell} {\partial \lambda_s \partial \alpha_r} = \frac{\partial^2 \ell} {\partial \alpha_r \partial \lambda_s} &=
+        \sum_{i \in \mathrm{R} \cap \mathrm{S}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+        \right )^{-2}
+        \frac{\alpha_s}{(\lambda_s + t_i)^2 (\lambda_r + t_i)}\,,\\
+    \frac{\partial^2 \ell} {\partial \lambda_r \partial \alpha_r} = \frac{\partial^2 \ell} {\partial \alpha_r \partial \lambda_r} &=
+        \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+        \right )^{-2}
+        \frac{1}{(\lambda_r + t_i)^2}\\&\qquad-
+        \sum_{i \in \mathrm{R}}
+        \left (
+            \sum_{j \in \cand_i} \frac{\alpha_j}{\lambda_j + t_i}
+        \right )^{-1}
+        \frac{\alpha_r}{(\lambda_r + t_i)^3}\\&\qquad-
+        \sum_{i=1}^{n}
+        \left (
+            {\lambda_r + t_i}
+        \right )^{-1} -
+        \frac{n}{\lambda_r}\,,
+\end{align}
+$\ell$ is the log-likelihood for an $\mfs_n$ sample, $\mathrm{R} = \left \{ k : k \in \{1, \ldots, n \} \wedge r \in \cand_k \right \}$, and $\mathrm{S} = \left \{ k : k \in \{1, \ldots, n \} \wedge s \in \cand_k \right \}$.
+
+The parametric bootstrap sampling covariance matrix approach is quite a bit more straightforward but computationally more demanding. To perform the parametric bootstrap, we need to generate samples of size $n$ from $\pdf{f_{\rvcand_1, \ldots, \rvcand_n, \sv_1, \ldots, \sv_n}}(\cdot \given \tparam{\vec\theta})$, which means we need to explicitly define the generative model.
+
+The conditional probability that component $j$ is the cause of ae system failure at time $t$ is given by
+\begin{equation}
+\label{eq:pareto_cond_prob}
+    \pmf_{\rv{K} \given \sv}(k \given t, \tparam{\vec\theta}) =
+    \frac{ \tparam{\alpha}_k }{ \tparam{\lambda}_k + t }
+    \left [
+        \sum_{j=1}^{m} \frac{ \tparam{\alpha}_j }{ \tparam{\lambda}_j + t }
+    \right ]^{-1}
+    \,,
+\end{equation}
+where $\tparam{\vec\theta}$ is the true parameter value of the $m$-out-of-$m$ system. The proof follows from \Cref{eq:general_cond_prob_failure_rate}.
+
+\begin{equation}
+\label{eq:pareto_cond_cand_prob}
+    \pmf_{\rvcand \given \sv}(\cand \given t, \tparam{\vec\theta}) =
+    \sum_{j \in \cand} \frac{ \tparam{\alpha}_j }{ \tparam{\lambda}_j + t }
+    \left [
+        {{m-1} \choose {w-1}}
+        \sum_{j=1}^{m} \frac{ \tparam{\alpha}_j }{ \tparam{\lambda}_j + t }
+    \right ]^{-1}
+    \,,
+\end{equation}
+where $\tparam{\vec\theta}$ is the true parameter value of the $m$-out-of-$m$ system.
+The proof follows from Bayes law, in which
+\begin{equation}
+    \pmf_{\rvcand \given \sv}(\cand \given t, \tparam{\vec\theta}) =
+    \frac{\pdf{f_{\rvcand, \sv}}(\cand, t \given \tparam{\vec\theta})}
+    { \pdf{f_{\sv}}(t \given \vec\theta)}\,.
+\end{equation}
+
+To find the sample covariance matrix, we need to find the MLE $\estimator{\vec\theta}_n$ of a sample, and then use that estimate to generate $r$ $\mfs_n$ samples from $(\rvcand, \sv) \sim \pdf{f_{\rvcand, \sv}}(\cand, t \given \e\vec\theta)$, as described in \Cref{sec:covariance} on the bootstrap. For each such sample, we may then find the MLE $\estimator{\vec\theta}_n^{i}$ for $i=1,\ldots,r$, and then compute its sample covariances.
+
+[I am thinking about using this approach instead, since the covariance matrix using the inverse of the information matrix is giving me negative values along the diagonal, i.e., it's not semi-positive definite. Maybe I'm just not finding good MLE solutions -- my hand-coded routines may be failing. I have another solution for this coded up, but I have yet to apply it. I'll continue to work on this.]
+\end{document}

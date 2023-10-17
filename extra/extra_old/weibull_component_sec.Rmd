@@ -1,0 +1,494 @@
+---
+title: "Components with weibull distributed lifetimes"
+output:
+    bookdown::pdf_document2:
+        toc: false
+        number_sections: true
+        keep_tex: true
+        latex_engine: xelatex
+        citation_package: natbib
+date: "2023-04-29"
+---
+
+
+\newcommand{\T}{T}
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\numberwithin{equation}{section}
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+Components with Weibull distributed lifetimes {#sec:weibull}
+=============================================
+Consider a series system in which the components have Weibull distributed
+lifetimes.
+The $j$\textsuperscript{th} component of the $i$\textsuperscript{th} has a
+lifetime distribution given by
+$$
+    T_{i j} \sim \operatorname{WEI}(\v{\theta_j})
+$$
+where $\v{\theta_j} = (k_j, \lambda_j)$ for $j=1,\ldots,m$.
+Thus, $\v\theta = (\v{\theta_1},\ldots,\v{\theta_m})' = \bigl(k_1,\lambda_1,\ldots,k_m,\lambda_m\bigr)$.
+The random variable $T_{i j}$ has a reliability function, pdf, and hazard function
+given respectively by
+\begin{align}
+    R_j(t;\lambda_j,k_j)
+        &= \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\},\\
+    f_j(t;\lambda_j,k_j)
+        &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
+        \exp\biggl\{-\left(\frac{t}{\lambda_j}\right)^{k_j} \biggr\},\\
+    h_j(t;\lambda_j,k_j) \label{eq:weibull_haz}
+        &= \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1}
+\end{align}
+where $t > 0$, $\lambda_j > 0$ is the scale parameter and $k_j > 0$ is the
+shape parameter.
+
+```{r echo=F, message=F, warning=F}
+library(ggplot2)
+library(dplyr)
+shape1 <- 3
+scale1 <- 30
+shape2 <- 1
+scale2 <- 50
+shape3 <- 2.5
+scale3 <- 15
+shape4 <- 5
+scale4 <- 20
+shape5 <- 0.25
+scale5 <- 50
+
+ts <- seq(0,100,by=.1)
+h.wei1 <- Vectorize(function(t) (shape1/scale1)*(t/scale1)^(shape1-1))
+h.wei2 <- Vectorize(function(t) (shape2/scale2)*(t/scale2)^(shape2-1))
+h.wei3 <- Vectorize(function(t) (shape3/scale3)*(t/scale3)^(shape3-1))
+h.wei4 <- Vectorize(function(t) (shape4/scale4)*(t/scale4)^(shape4-1))
+h.wei5 <- Vectorize(function(t) (shape5/scale5)*(t/scale5)^(shape5-1))
+
+df.haz <- data.frame(
+    t=ts,
+    y=c(h.wei1(ts),h.wei2(ts),h.wei3(ts),h.wei4(ts),h.wei5(ts)),
+    fun=rep(c("WEI(3,30)","WEI(1,50)","WEI(2.5,15)","WEI(5,20)","WEI(0.25,50)"),
+        each=length(ts)))
+```
+
+
+
+```{r exp_weib_haz, fig.align="center", fig.cap="Hazard plots"}
+ggplot(df.haz, aes(x=t, y=y, color=fun)) +
+    geom_line() +
+    labs(y="hazard") +
+    ylim(0,100)
+```
+
+The shape parameter $k$ may be understood in the following way:
+
+- If $k < 1$, then the hazard function decreases with respect to time, which may
+occur if defective items fail early and are weeded out.
+- If $k > 1$, then the hazard function is increases with respect
+to time, which may occur as a result of an aging process.
+- If $k = 1$, then the failure rate is constant, which means it is exponentially
+distributed.
+
+The lifetime of the series system composed of $m$ Weibull components
+has a reliability function given by
+\begin{equation}
+\label{eq:sys_weibull_reliability_function}
+R(t;\v\theta) = \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+\end{equation}
+\begin{proof}
+By Theorem \ref{thm:sys_reliability_function},
+$$
+R(t;\v\theta) = \prod_{j=1}^{m} R_j(t;\lambda_j,k_j).
+$$
+Plugging in the Weibull component reliability functions obtains the result
+\begin{align*}
+R(t;\v\theta)
+    &= \prod_{j=1}^{m} \exp\biggl\{-\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}\\
+    &= \exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+\end{align*}
+\end{proof}
+
+```{r exp_weib_pdf, cache=T, fig.cap="Density plots", echo=F, fig.width=5,fig.asp=0.8, message=F, warning=F, eval=F}
+R.wei1 <- Vectorize(function(t) exp(-(t/scale1)^shape1))
+f.wei1 <- Vectorize(function(t) shape1/scale1*(t/scale1)^(shape1-1)*
+    exp(-(t/scale1)^shape1))
+R.wei2 <- Vectorize(function(t) exp(-(t/scale2)^shape2))
+f.wei2 <- Vectorize(function(t) shape2/scale2*(t/scale2)^(shape2-1)*
+    exp(-(t/scale2)^shape2))
+R.wei3 <- Vectorize(function(t) exp(-(t/scale3)^shape3))
+f.wei3 <- Vectorize(function(t) shape3/scale3*(t/scale3)^(shape3-1)*
+    exp(-(t/scale3)^shape3))
+R.wei4 <- Vectorize(function(t) exp(-(t/scale4)^shape4))
+f.wei4 <- Vectorize(function(t) shape4/scale4*(t/scale4)^(shape4-1)*
+    exp(-(t/scale4)^shape4))
+R.wei5 <- Vectorize(function(t) exp(-(t/scale5)^shape5))
+f.wei5 <- Vectorize(function(t) shape5/scale5*(t/scale5)^(shape5-1)*
+    exp(-(t/scale5)^shape5))
+df <- data.frame(
+    t=ts,
+    y=c(f.exp(ts),f.wei(ts),f.wei2(ts)),
+    fun=rep(c("WEI(3,30)","WEI(1,50)","WEI(2.5,15)","WEI(5,20)","WEI(0.25,50)"),
+        each=length(ts)))
+
+ggplot(df,aes(x=t, y=y, color=fun)) +
+    geom_line() +
+    labs(y="density") +
+    ylim(0,10)
+```
+
+The Weibull series system's hazard function is given by
+\begin{equation}
+\label{eq:sys_weibull_failure_rate_function}
+h(t;\v\theta) =
+    \sum_{j=1}^{m} \frac{k_j}{\lambda_j}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j-1},
+\end{equation}
+whose proof follows from Theorem \ref{thm:sys_failure_rate}.
+
+In Figure \@ref(series_haz), we plot the hazard function of the Weibull series
+system with the component lifetime parameters considered earlier,
+\begin{align*}
+T_{i 1} &\sim \operatorname{WEI}(3,30)\\
+T_{i 2} &\sim \operatorname{WEI}(2,50)\\
+T_{i 3} &\sim \operatorname{WEI}(0.5,15)\\
+T_{i 4} &\sim \operatorname{WEI}(5,20)\\
+T_{i 5} &\sim \operatorname{WEI}(0.25,50)\\
+\end{align*}
+for $i=1,\ldots,n$.
+
+```{r series_haz, fig.cap="Weibull series system hazard function plot.",fig.width=4,fig.asp=0.8,echo=F,warning=F,message=F}
+h.series <- Vectorize(function(t) sum(h.wei1(t),h.wei2(t),h.wei3(t),
+    h.wei4(t),h.wei5(t)))
+df.series.haz <- data.frame(
+    t=ts,
+    y=h.series(ts))
+ggplot(df.series.haz,aes(x=t, y=y)) +
+    geom_line() +
+    labs(y="hazard") +
+    ylim(0,10)
+```
+
+The hazard function of a Weibull series system with the parameters for the
+Weibull component lifetimes considered earlier is initially decreasing, then at
+around $t=0.25$ it starts increasing (almost linearly).
+This is a pattern we see in nature:
+
+- High "infant mortality" rate.
+
+- Wears out over time, an aging process.
+
+The pdf of the series system is given by
+\begin{equation}
+\label{eq:sys_weibull_pdf}
+f(t;\v\theta) =
+\biggl\{
+    \sum_{j=1}^m \frac{k_j}{\lambda_j}\left(\frac{t}{\lambda_j}\right)^{k_j-1}
+\biggr\}
+\exp
+\biggl\{
+    -\sum_{j=1}^m \bigl(\frac{t}{\lambda_j}\bigr)^{k_j}
+\biggr\}.
+\end{equation}
+\begin{proof}
+By definition,
+$$
+f(t;\v\theta) = h(t;\v\theta) R(t;\v\theta).
+$$
+Plugging in the failure rate and reliability functions given respectively by
+Equations \eqref{eq:sys_weibull_reliability_function} and
+\eqref{eq:sys_weibull_failure_rate_function} completes the proof.
+\end{proof}
+
+The conditional pmf of $K_i$ given $\T_i$ is given by
+\begin{equation}
+\label{eq:weibull_pmf_k_given_s}
+f(k;\v\theta|t) = \frac{\frac{k_k}{\lambda_k}\bigl(\frac{t}{\lambda_k}\bigr)^{k_k-1}}
+    {\sum_{j=1}^m \frac{k_j}{\lambda_j}\bigl(\frac{t}{\lambda_j}\bigr)^{k_j-1}}.
+\end{equation}
+\begin{proof}
+By Theorem \ref{thm:f_given_s_form_2},
+$$
+f(k;\v\theta|t) = \frac{h_k(t;\v{\theta_k})}{\sum_{j=1}^m h_j(t;\v{\theta_j})}
+$$
+where $h_1,\ldots,h_m$ are the failure rate functions of the $m$ Weibull
+component lifetimes.
+\end{proof}
+
+The joint pdf of $K_i$ and $\T_i$ is given by
+\begin{equation}
+\label{eq:weibull_joint_k_s}
+f(k,t;\v\theta) = \frac{k_k}{\lambda_j}\biggl(\frac{t}{\lambda_k}\biggr)^{k_k-1}
+\exp\biggl\{-\sum_{j=1}^{m}\biggl(\frac{t}{\lambda_j}\biggr)^{k_j}\biggr\}.
+\end{equation}
+\begin{proof}
+Plugging in the conditional probability and the marginal probability given
+respectively by Equations \eqref{eq:expo_prob_K_given_S} and
+\eqref{eq:expo_sys_pdf} completes the proof.
+
+By Theorem \ref{thm:f_k_and_t}, the joint pdf of $K_i$ and $\T_i$ is given by
+$$
+f(k,t;\v\theta) = h_k(t;\v{\theta_k}) R_{\T_i}(t;\v\theta)
+$$
+where $R_{T_i}(t;\v\theta)$ is given by Equation
+\eqref{eq:sys_weibull_reliability_function} and $h_k$ is the failure rate
+function of the $k$\textsuperscript{th} Weibull component.
+\end{proof}
+
+## Maximum likelihood estimation
+The log-likelihood for our masked data model when we assume Conditions
+\ref{cond:c_contains_k}, \ref{cond:equal_prob_failure_cause}, and
+\ref{cond:masked_indept_theta} is given by
+\begin{equation}
+\ell(\v\theta) = \sum_{i=1}^n
+\biggl\{
+    \sum_{j=1}^m
+    \bigl(\frac{s_i}{\lambda_j}\bigr)^{k_j}
+\biggr\} +
+\sum_{i=1}^n (1-\delta_i) \log
+\Biggl\{
+    \sum_{j \in c_i} \frac{k_j}{\lambda_j}\biggl(\frac{s_i}{\lambda_j}\biggr)^{k_j-1}
+\Biggr\}.
+\end{equation}
+\begin{proof}
+By Equation \eqref{eq:loglike}, 
+$$
+\ell(\v\theta) = \sum_{i=1}^n \log R(s_i;\v\theta) + \sum_{i=1}^n (1-\delta_i)
+    \log \biggl\{ \sum_{k\in c_i} h_k(s_i;\v{\theta_k}) \biggr\}.
+$$
+Plugging in the component hazard system reliability functions given
+respectively by Equations \eqref{eq:weibull_haz} and
+\eqref{eq:sys_weibull_reliability_function} and simplifying completes the proof.
+\end{proof}
+
+We may find an MLE by solving the maximum likelihood equation \eqref{eq:mle_eq},
+i.e., a  point $\v{\hat\theta} = (k_1,\lambda_1,\ldots,k_m,\lambda_m)$ satisfying
+$$
+\frac{\partial \ell}{\partial k_j}\Biggr|_{\hat{k}_j} = 0
+$$
+and
+$$
+\frac{\partial \ell}{\partial \lambda_j}\Biggr|_{\hat\lambda_j} = 0
+$$
+for $j=1,\ldots,m$ where
+$\v{\hat\theta} = (\hat{k}_1,\hat\lambda_1,\ldots,\hat{k}_m,\hat\lambda_m)$.
+
+
+
+$$
+\frac{\partial \ell}{\partial \lambda_l} =
+    \frac{k_l}{\lambda_l} \sum_{i=1}^n \biggl(\frac{s_i}{\lambda_l}\biggr)^{k_l} -
+    \biggl(\frac{k_l}{\lambda_l}\biggr)^2 \sum_{i=1}^n 1_{\{l \in c_i\}}
+    \biggl(\frac{s_i}{\lambda_l}\biggr)^{k_l-1}
+    \Biggl\{\sum_{j \in c_i} \frac{k_j}{\lambda_j}\biggl(\frac{s_i}{\lambda_j}\biggr)^{k_j-1}\Biggr\}.
+$$
+
+
+
+
+$$
+\frac{\partial \ell}{\partial k_l} =
+    \frac{k_l}{\lambda_l} \sum_{i=1}^n \biggl(\frac{s_i}{\lambda_l}\biggr)^{k_l} -
+    \biggl(\frac{k_l}{\lambda_l}\biggr)^2 \sum_{i=1}^n 1_{\{l \in c_i\}}
+    \biggl(\frac{s_i}{\lambda_l}\biggr)^{k_l-1}
+    \Biggl\{\sum_{j \in c_i} \frac{k_j}{\lambda_j}\biggl(\frac{s_i}{\lambda_j}\biggr)^{k_j-1}\Biggr\}.
+$$
+
+
+
+However, there is no closed-form solution for these equations, and so we
+use the Newton-Raphson method described in Section \ref{sec:iterative},
+where we also numerically approximate the gradient and Hessian using a finite
+difference method.
+
+## Real-world data set
+As a trial run, we find the MLE on the masked data set provided by [@Huairu-2013].
+See Appendix C to view the data.
+
+This data set does not have right-censoring, but it does mask the component
+cause of failure.
+We do not know how any of this data was generated, but it is believed that
+the component lifetimes can be adequately modeled by the Weibull distribution
+and the candidate sets reasonable satisfy conditions $C_1$, $C_2$, and $C_3$.
+
+We find the MLE and show its $95\%$-confidence interval with the following R code:
+```{r eval=F}
+guo.loglike <- md_loglike_weibull_series_C1_C2_C3(guo_weibull_series_md)
+guo.theta.hat <- mle_newton_raphson(l=guo.loglike,theta0=rep(1,6))
+point <- point(guo.theta.hat)
+colnames(point) <- c("MLE")
+cbind(point,confint(guo.theta.hat))
+```
+
+In Figure 5, we show a plot of the estimated parametric distribution of the series system
+overlaid with a kernel density estimate of the observed lifetimes.
+
+```{r density-plots, cache=T, fig.cap = "Estimated parametric pdf versus the kernel density plot of the observed lifetimes",echo=F,eval=F}
+scales <- point(guo.theta.hat)[c(T,F,T,F,T,F)]
+shapes <- point(guo.theta.hat)[c(F,T,F,T,F,T)]
+t.pdf = function(t) dweibull_series(t,scales=scales,shapes=shapes)
+lifetimes <- data.frame(t=guo_weibull_series_md$t)
+ggplot(data.frame(t=lifetimes),aes(x=t)) +
+    geom_density(aes(color="Kernel density estimate")) +
+    geom_function(fun=t.pdf,aes(color="Theoretical density estimate")) +
+    labs(x="t", y="density", color="Legend") +
+    scale_color_manual(name="Type",
+                       breaks=c('Kernel density estimate', 'Theoretical density estimate'),
+                       values=c('Kernel density estimate'='blue', 'Theoretical density estimate'='green'))
+```
+
+These seem like a reasonable match. However, we can perform a hypothesis test
+with
+$$
+    H_0 : \text{observed data is sampled from the estimated Weibull series system}.
+$$
+As we explained in Section \ref{sec:fit}, we use the Cramér-von Mises
+goodness-of-fit test.
+
+```{r,echo=F}
+#library(goftest)
+#gof <- cvm.test(x=guo_weibull_series_md$t,null=function(t) pweibull_series(t,scales=scales,shapes=shapes),estimated=T)
+#p.value <- gof$p.value
+p.value <- 1
+```
+
+Performing the test, we obtain a $p$-value of $`r p.value`$.
+At the $95\%$ significance level, we conclude that the observed lifetimes
+are compatible with the estimated Weibull series system.
+
+## Simulation
+
+Now, we wish to simulate a masked data set that meets Conditions
+\ref{cond:c_contains_k}, \ref{cond:equal_prob_failure_cause}, and
+\ref{cond:masked_indept_theta} by using the Bernoulli candidate model
+with an appropriate choice of parameters.
+
+We setup the parameters of this simulation with the following R code:
+```{r}
+# sample size
+n <- 500
+
+# m components in series system
+m <- 3
+
+# true parameter value of series system
+theta <- c(2,40,      # lambda_1, k_1
+           3,10,      # lambda_2, k_2
+           2,30)      # lambda_3, k_3
+
+# bernoulli candidate model parameter
+
+# right censoring times
+tau <- rep(2.05,n)
+```
+
+We generate a masked data sample of size $n=`r n`$, $m=`r m`$, $\tau_i=`r tau[1]`$,
+$\v\theta=(`r theta`)'$, and using the simple Bernoulli candidate model 
+consistent with conditions $C_1$, $C_2$, and $C_3$ with:
+```{r,message=F,warning=F,eval=F}
+md <- tibble(t1=stats::rweibull(n,shape=theta[2],scale=theta[1]),
+             t2=stats::rweibull(n,shape=theta[4],scale=theta[3]),
+             t3=stats::rweibull(n,shape=theta[6],scale=theta[5])) %>%
+    md_series_lifetime() %>%
+    md_series_lifetime_right_censoring(tau) %>%
+    md_bernoulli_candidate_C1_C2_C3(m)
+```
+
+See Appendix A for more information about the `md_*` functions in the above
+code.
+The above code produces a data frame `md` whose first $6$ rows are given by
+Table 2.
+
+```{r echo=F,eval=F}
+# "Simulated masked data for Weibull component lifetimes"
+md.tmp <- md
+md.tmp$x1 <- as.integer(md.tmp$x1)
+md.tmp$x2 <- as.integer(md.tmp$x2)
+md.tmp$x3 <- as.integer(md.tmp$x3)
+md.tmp$delta <- as.integer(md.tmp$delta)
+head(round(md.tmp,digits=3))
+```
+
+Now, we find the MLE with the following R code:
+```{r eval=F}
+loglike.weibull <- md_loglike_weibull_series_C1_C2_C3(md)
+theta.hat <- mle_newton_raphson(
+    l=loglike.weibull,
+    theta0=theta)
+
+points <- cbind(point(theta.hat),as.matrix(theta))
+colnames(points) <- c("MLE","Parameter")
+cbind(points,confint(theta.hat))
+```
+
+We see that they are reasonable estimates.
+
+See Appendix B for more information about the `mle_newton_raphson` function in
+the above code.
+
+
+### Candidate set that generates a non-unique MLE
+
+```{r eval=F}
+md_block_candidate_m3 <- function(md)
+{
+    block <- function(k)
+    {
+        if (k == 1)
+            return(c(T,T,F))
+        if (k == 2)
+            return(c(T,T,F))
+        if (k == 3)
+        {
+            if (runif(1) < 0.1)
+                return(c(T,T,T))
+            else
+                return(c(F,F,T))
+        }
+    }
+
+    n <- nrow(md)
+    x <- matrix(nrow=n,ncol=3)
+    for (i in 1:n)
+        x[i,] <- block(md$k[i])
+
+    x <- tibble::as_tibble(x)
+    colnames(x) <- paste0("x",1:3)
+    md %>% dplyr::bind_cols(x)
+}
+```
+
+```{r eval=F}
+md.nu <- tibble(t1=stats::rweibull(n,shape=theta[2],scale=theta[1]),
+                t2=stats::rweibull(n,shape=theta[4],scale=theta[3]),
+                t3=stats::rweibull(n,shape=theta[6],scale=theta[5])) %>%
+    md_series_lifetime() %>%
+    md_series_lifetime_right_censoring(tau) %>%
+    md_block_candidate_m3()
+```
+
+
+```{r eval=F,echo=F}
+# Simulated masked data for Weibull component lifetimes
+md.nu.tmp <- md.nu
+md.nu.tmp$x1 <- as.integer(md.nu.tmp$x1)
+md.nu.tmp$x2 <- as.integer(md.nu.tmp$x2)
+md.nu.tmp$x3 <- as.integer(md.nu.tmp$x3)
+md.nu.tmp$delta <- as.integer(md.nu.tmp$delta)
+head(round(md.nu.tmp,digits=3),n=15)
+```
+
+Now, we find the MLE with the following R code:
+```{r eval=F}
+loglike.nu.weibull <- md_loglike_weibull_series_C1_C2_C3(md.nu)
+theta.nu.hat <- mle_newton_raphson(
+    l=loglike.nu.weibull,
+    theta0=theta)
+
+points.nu <- cbind(point(theta.nu.hat),as.matrix(theta))
+colnames(points.nu) <- c("MLE","Parameter")
+cbind(points.nu,confint(theta.nu.hat))
+```
+

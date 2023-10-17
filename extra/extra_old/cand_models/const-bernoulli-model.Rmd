@@ -1,0 +1,98 @@
+---
+title: "Constant Bernoulli model"
+author: "Alex Towell"
+date: "2/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Constant probability model {#sec:const_prob}
+The simplest model is given by $p_1,\ldots,p_m$ being constants, each between
+$0$ and $1$, as described by the following theorem.
+\begin{theorem}
+\label{thm:const_ber}
+Under the constant probability model, the joint distribution of
+$X_1,\ldots,X_m,S$ has a joint pdf given by
+\begin{equation}
+\label{eq:const_ber}
+f(x_1,\ldots,x_m,s;\theta,p_1,\ldots,p_m) =
+    f(s;\theta) \left\{\prod_{j=1}^m p_j^{x_j} (1-p_j)^{1-x_j}\right\}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+By Theorem \ref{thm:joint_f},
+$$
+f(x_1,\ldots,x_m,s;\theta,p_1,\ldots,p_m) =
+    R(s;\theta) \sum_{k=1}^m \left\{ h_k(s;\theta_k)
+    \prod_{j=1}^m \left(p_j(k)\right)^{x_j}
+    \left(1-p_j(k)\right)^{1-x_j}\right\}.
+$$
+Since $p_1,\ldots,p_m$ are constant and thus independent of $k$, they are
+constant with respect to the summation over $k$.
+Thus, we may pull them outside of the summation, obtaining
+$$
+f(x_1,\ldots,x_m,s;\theta,p_1,\ldots,p_m)
+    = R(s;\theta) \left\{\sum_{k=1}^m h_k(s;\theta_k)\right\}
+      \left\{\prod_{j=1}^m p_j^{x_j} (1-p_j)^{1-x_j}\right\}.
+$$
+By Theorem \ref{thm:sys_failure_rate},
+$$
+h(s;\theta) = \sum_{k=1}^m h_k(s;\theta_k)
+$$
+and by definition
+$$
+f(s;\theta) = R(s;\theta) h(s;\theta).
+$$
+Making these substitutions and simplifying obtains the result
+$$
+f(x_1,\ldots,x_m,s;\theta,p_1,\ldots,p_m) =
+    f(s;\theta) \left\{\prod_{j=1}^m p_j^{x_j} (1-p_j)^{1-x_j}\right\}.
+$$
+\end{proof}
+
+Observe that $f(x_1,\ldots,x_m,s;\theta,p_1,\ldots,p_m)$ is proportional to
+$f(s;\theta)$ and thus the candidate set defined by the constant probability
+model does not have any *additional* information about $\theta$.
+
+If we let $p_1 = \cdots = p_m = 1/2$, then $f(C,s;\theta) = 2^{-m} f(s;\theta)$
+where $C = \left\{ j \in \{1,\ldots,m\} : (x_j=1) \right\}$.
+However, it will be interesting to explore the effect of different probabilities
+$p_1,\ldots,p_m$ on the maximum likelihood estimator, particular for the
+component cause of failure model described next.
+
+
+In the i.i.d. candidate model, where the $j$\textsuperscript{th} component is in
+the candidate set with a constant probability $p_j$, for the candidate sets to
+contain information about $\theta$, $p_j$ must be a function of $\theta$, i.e.,
+$X_j \sim \operatorname{BER}(p_j(\theta))$.
+That is, $p_1,\ldots,p_m$ are fixed but unknown parameters that are
+a function of $\theta$.
+
+Now, we would need to find an estimator of $p_1,\ldots,p_m$ and
+use those estimates to estimate $\theta$. We can do this estimate with or
+without observing times-to-failure of the systems, but of course the more
+information we have the better.
+
+## Method of moments estimator
+
+Estimating $p_1,\ldots,p_m$ in the constant probability model is trivial,
+e.g., $E(X_j) = n p_j(\theta)$.
+Thus, $\hat{p}_j = \bar{X}$.
+Suppose $p_j(\theta) = f_K(j;\theta)$, then we may use the 
+estimate $\hat{p}_j$ to estimate $\theta$.
+For instance, in exponential series case, if $p_j(\theta) = f_K(j;\theta)$, then
+$p_j(\theta) = \lambda_k/(\lambda_1 + \cdots + \lambda_m)$.
+Thus, $\hat{p}_j = \bar{X}_j/n$ and
+$\lambda_j/(\lambda_1+\cdots+\lambda_m) = \hat{p}_j$ for $j=1,...,m$.
+We have $m$ unknowns and $m$ equations, and thus we may solve for the
+unknowns to estimate $\lambda_1,\cdots,\lambda_m$.
+
+This is a method of moments estimator. If we're also given system
+times-to-failure in our sample, and not just candidate sets, we would want
+use that information to provide a more accurate estimators of $\theta$.
+
+In general, we would set up the likelihood function and find its MLE.
+The MLE has many nice asymptotic properties.

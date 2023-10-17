@@ -1,0 +1,96 @@
+---
+title: "Estimating series systems from masked data"
+author: "Alex Towell"
+#date: "1/22/2022"
+output:
+  #bookdown::pdf_document2:
+  #  extra_dependencies: ["amsthm","amsmath"]
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+    number_sections: true
+    extra_dependencies: ["amsthm","amsmath","natbib","tikz"]
+bibliography: refs.bib
+csl: the-annals-of-statistics.csl
+---
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\newcommand{\T}{T}
+\newtheorem{condition}{Condition}[section]
+\renewcommand{\v}[1]{\boldsymbol{#1}}
+\numberwithin{equation}{section}
+
+
+
+z
+===================================================
+
+Another characteristic we may wish to estimate is the probability that a
+particular component in an observation caused the system failure.
+We wish to use as much information as possible to do this estimation.
+In what follows, we consider three cases.
+
+## Case 1: Both $C_i$ and $T_i$ are observed
+We have an observed candidate set $c_i$ and an observed system failure time
+$t_i$ and we are interested in the probability that a particular component
+is the cause of the observed system failure.
+\begin{theorem}
+Assuming Conditions \ref{cond:c_contains_k} and \ref{cond:equal_prob_failure_cause},
+the conditional probability that $K_i = j$ given $C_i = c_i$ and $T_i = t_i$ is
+given by
+\begin{equation}
+\Pr\{K_i = j|T_i=t_i,C_i=c_i\} =
+ \frac{h_j(t_i|\v{\theta_j})}{\sum_{l \in c_i} h_l(t_i|\v{\theta_l})}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Assuming Conditions 1 and 2, the conditional probability
+$\Pr\{K_i = j|T_i=t_i,C_i=c_i\}$ may be rewritten as
+\begin{align*}
+\Pr\{K_i = j|T_i=t_i,C_i=c_i\}
+    &= \frac{\Pr\{K_i = j,T_i=t_i,C_i=c_i\}}{\Pr\{C_i=c_i,T_i=t_i\}}\\
+    &= \frac{\Pr\{C_=c_i|K_i = j,T_i=t_i\} \Pr\{K_i=j,T_i=t_i\}}{\Pr\{C_i=c_i,T_i=t_i\}}\\
+    &= \frac{\Pr\{C_=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v{\theta_j}) R_{\T_i}(t_i;\v{\theta})}
+        {\sum_{l=1}^m \Pr\{C_=c_i|K_i = j,T_i=t_i\} h_l(t_i;\v{\theta_l}) R_{\T_i}(t_i;\v{\theta})}\\
+    &= \frac{\Pr\{C_=c_i|K_i = j,T_i=t_i\} h_j(t_i;\v{\theta_j})}
+        {\sum_{l \in c_i} \Pr\{C_=c_i|K_i = j,T_i=t_i\} h_l(t_i;\v{\theta_l})}\\
+    &= \frac{\Pr\{C_=c_i|K_i = j',T_i=t_i\} h_j(t_i;\v{\theta_j})}
+       {\Pr\{C_=c_i|K_i = j',T_i=t_i\} {\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}}\\
+    &= \frac{h_j(t_i;\v{\theta_j})}{\sum_{l \in c_i} h_l(t_i;\v{\theta_l})}.
+\end{align*}
+\end{proof}
+
+## Case 2: Only $T_i$ is observed
+We have an observed system failure time $t_i$ (but we do not have a candidate
+set) and we are interested in the probability that a particular component is the
+cause of the observed system failure.
+
+The probability that $K_i = j$ given $T_i = t_i$ is given by Equation \eqref{eq:cond},
+$$
+\Pr\{K_i = j|T_i = t_i\} =
+  \frac{h_j(t_i|\v{\theta_j})}{\sum_{l=1}^m h_l(t_i|\v{\theta_l})}.
+$$
+
+## Case 3: Neither $T_i$ nor $C_i$ are observed
+We observe nothing but are interested in the probability that a particular
+component *will* be the cause of the system failure.
+
+The unconditional probability that $K_i = j$ is given by
+\begin{equation}
+\Pr\{K_i = j\} = \int_{0}^{\infty} f_{K_i,T_i}(j,t;\v{\theta}) dt.
+\end{equation}
+
+## The maximum likelihood estimates of the probabilities
+By the invariance property of the MLE, in each of the component failure
+probabilities described previously, we may substitute $\v{\theta}$ with an MLE
+$\hat{\v\theta}$ to obtain the MLEs of these probabilities.
+
+Moreover, assuming the regularity conditions, we also have an approximation of the
+sampling distribution of $\hat{\v\theta}$, as described in Section \ref{sec:mle},
+and thus in this case we can estimate the confidence intervals for these
+probabilities.
+

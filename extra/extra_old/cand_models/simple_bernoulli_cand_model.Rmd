@@ -1,0 +1,262 @@
+---
+#title: "Simple Bernoulli candidate model"
+#author: "Alex Towell"
+#date: "3/5/2022"
+output: pdf_document
+---
+
+I construct the joint pdf of $C$ and $T$ by first constructing the joint
+pdf of $C$, $T$, and $K$. And, then, since $K$ is masked (unobserved or latent),
+I sum over it to get the joint distribution of $C$ and $T$, i.e.,
+$$
+f(C,t) = \sum_{k=1}^m f(k,C,t).
+$$
+
+> I remind you that $j \in C$ if $X_j = 1$ and $j \notin C$ if $X_j = 0$. So,
+> I use $C$ and $(X_1,\ldots,X_m)$ interchangeably.
+
+Next we provide the code for the various functions needed, using the results
+in the previous draft I sent you two weeks ago. I'm not trying to prove those
+theorems here, only simulating based on the results in an earlier draft.
+I'm also only using exponentially distributed component lifetimes and no
+right-censoring. We can revisit Weibull and right-censoring when and if we
+can get on the same page.
+
+```{r}
+# in this, components have exponentially distributed time-to-failures,
+# producing (t_{i 1},...,t_{i m}) for i=1,...,n.
+# n is the sample size.
+# theta is the parameter vector theta=(lambda_1,...,lambda_m).
+component_ttf <- function(n,theta)
+{
+    m <- length(theta)
+    ttfs <- matrix(nrow=n,ncol=m)
+    for (j in 1:m)
+        ttfs[,j] <- stats::rexp(n,theta[j])
+    return(ttfs)
+}
+
+# series system time-to-failures as a function of component times-to-failures
+series_ttf <- function(comp_ttfs)
+    apply(comp_ttfs, 1, function(x) min(x))
+
+# this is our Bernoulli candidate model when the component cause of failure
+# is always in the candidate set.
+#
+# p is the probability vector, i.e., p[1] means that if 1 is not the component
+# cause of failure, it is in the candidate set with probability p[1].
+bernoulli_cand_k <- function(p,k)
+{
+  m <- length(p)
+  u <- runif(n=m,min=0,max=1)
+  x <- rep(F,m)
+  x[k] <- T
+  for (j in 1:m)
+  {
+    if (k != j)
+    {
+      if (u[j] < p[j])
+        x[j] <- T
+    }
+  }
+  return(x)
+}
+
+# generate log-likelihood function with variable p_1,...,p_m
+# (note: in a bit, we show how to easily estimate p_1,...,p_m in case it is not known,
+# which is the more realistic case.)
+#
+# ttfs is series system times to failure
+#
+# candidates is the bernoulli candidate sets described previously, where the
+# component cause of failure is always in the candidate set
+#
+# p is the probability vector as previously described.
+loglike.exp.k <- function(ttfs,candidates,p)
+{
+  n <- length(ttfs)
+  m <- ncol(candidates)
+  function(theta)
+  {
+    res <- 0
+    for (i in 1:n)
+    {
+      s <- 0
+      for (k in 1:m)
+      {
+        if (candidates[i,k]==1)
+        {
+          tmp <- theta[k]
+          for (j in 1:m)
+          {
+            if (j!=k)
+            {
+              if (candidates[i,j]==1)
+                tmp <- tmp * p[j]
+              else
+                tmp <- tmp * (1-p[j])
+            }
+          }
+          s <- s + tmp
+        }
+      }
+      res <- res + log(s)
+    }
+    return(res - sum(theta) * sum(ttfs))
+  }
+}
+```
+
+Let's run the simulations for generating masked data and finding the MLE:
+```{r}
+# setup simulation parameters
+n <- 2000
+theta <- c(3,5,4)
+# bernoulli probabilities. we choose to use .5 for all to make it as simple
+# as possible. later, we'll see what happens when we change these.
+p <- c(.3,.7,.5)
+m <- length(p)
+
+# generate masked data
+# --------------------
+# compoent times-to-failures
+comp_ttfs <- component_ttf(n,theta)
+
+# generate labels for component cause of failures
+k <- apply(comp_ttfs,1,which.min)
+
+# generate candidate sets that contain component cause of failure
+cand.k <- matrix(nrow=n,ncol=m)
+for (i in 1:n)
+  cand.k[i,] <- bernoulli_cand_k(p,k[i])
+
+# series system time to failure as a function of comp_ttfs
+ttfs <- series_ttf(comp_ttfs)
+
+# generate log-likelihood function for the masked data when p is known
+l.k <- loglike.exp.k(ttfs,cand.k,p)
+```
+
+Let's find the MLE by numerically solving the MLE with the Newton-Raphson method:
+```{r}
+library(MASS)
+# l is log-likehood
+# theta0 is initial estimate of theta
+# eps is stopping condition for infinity norm
+mle.newton <- function(l,theta0,eps=1e-3)
+{
+    repeat
+    {
+        theta1 <- theta0 - MASS::ginv(numDeriv::hessian(l,theta0)) %*%
+            numDeriv::grad(l,theta0)
+        if (abs(sum(theta1-theta0)) < eps)
+            return(theta1)
+        theta0 <- theta1
+    }
+}
+theta.newton <- mle.newton(l.k,theta)
+theta.newton
+```
+This is what we expected, we get
+$\hat\theta = (`r theta.newton[1]`,`r theta.newton[2]`,`r theta.newton[3]`)$.
+
+Let's see what happens when we provide a different vector $p$ to the
+likelihood/log-likelihood function:
+```{r}
+# l is log-likehood
+# theta0 is initial estimate of theta
+# eps is stopping condition for infinity norm
+mle.grad <- function(l,theta0,eps=1e-3)
+{
+    m <- length(theta0)
+    repeat
+    {
+        # we use backtracking for an approximate line search
+        alpha <- 1
+        theta1 <- NULL
+        repeat {
+            theta1 <- theta0 + alpha * numDeriv::grad(l,theta0)
+            for (i in 1:m)
+                if (theta1[i] < 0) theta1[i] <- 1e-3
+            if (l(theta1) > l(theta0))
+                break
+            alpha <- alpha/2
+        }
+        
+        # infinity norm
+        if (abs(sum(theta1-theta0)) < eps)
+            return(theta1)
+        theta0 <- theta1
+    }
+}
+
+p.wrong <- c(.5,.5,.5)
+l.k.wrong <- loglike.exp.k(ttfs,cand.k,p.wrong)
+# we use mle.grad because mle.newton failed on it due to singularities
+theta.grad.wrong <- mle.grad(l.k.wrong,theta)
+theta.grad.wrong
+```
+
+$`theta.grad.wrong` = (`r theta.grad.wrong`)$  is not a good estimate.
+The likelihood function isn't modeling how the data was generated.
+
+Of course, we may not know the probabilities in vector $p$. So, we can estimate
+both the vector $\theta$ and the vector $p$ using MLE:
+```{r}
+# theta_p is a parameter vector for both vector theta and vector p.
+loglike.exp.k.p <- function(ttfs,candidates)
+{
+  m <- ncol(candidates)
+  function(theta_p)
+  {
+    l <- length(theta_p)
+    theta <- theta_p[1:(l-m)]
+    p <- theta_p[(l-m+1):l]
+    return(loglike.exp.k(ttfs,candidates,p)(theta))
+  }
+}
+
+l.k.p <- loglike.exp.k.p(ttfs,cand.k)
+theta.p.newton <- mle.newton(l.k.p,c(theta,p))
+theta.p.newton
+```
+
+This is pretty good. The first $3$ elements of `theta.p.newton` are for $\hat\theta$
+and the last $3$ elements are $\hat p$. In our simulation, we set $\theta = (`r theta`)$ and
+$p = (`r p`)$, so these are pretty good estimates. We don't actually care that much
+about $\hat p$, but they need to be estimated (if not known) in order to estimate
+$\hat\theta$.
+
+What's the variance of $\hat\theta$ when $p$ is not known? 
+```{r}
+diag(-MASS::ginv(numDeriv::hessian(l.k.p,theta.p.newton))[1:3,1:3])
+```
+
+What about when it's known?
+```{r}
+diag(-MASS::ginv(numDeriv::hessian(l.k,theta.newton)))
+```
+We see that knowing $p$ produces an estimator with much less sampling variance
+for a given sample size.
+The asymptotic MSE for $\hat\theta$ when $p$ is known is
+`r diag(-MASS::ginv(numDeriv::hessian(l.k,theta.newton)))` and for when $p$
+is not known is
+`r diag(-MASS::ginv(numDeriv::hessian(l.k.p,theta.p.newton))[1:3,1:3])`.
+
+Other things we can do is see how the choice of probabilities in $p$ effect
+the sampling variance of the estimator.
+Let's plot the profile of the log-likelihood with $\lambda_1 = 3$. $\lambda_2 = 5$,
+and vector $p$ known:
+```{r}
+l.k.prof <- function(x) l.k(c(theta[1],theta[2],x))
+x <- seq(theta[3]-2,theta[3]+2,length.out=1000)
+y <- numeric(length(x))
+for (i in 1:length(x))
+{
+  y[i] <- l.k.prof(x[i])
+}
+plot(x,y,xlab="lambda3",ylab="loglike",main="profile of likelihood with\nonly lambda3 not known")
+```
+
+This is what we hoped for, $\hat\lambda_3 \approx 4$, which is what we specified
+it as in the simulation parameters.

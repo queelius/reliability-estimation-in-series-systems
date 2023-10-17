@@ -1,0 +1,445 @@
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+\label{sec:distribution_functions}
+\chapter{Derivation of parametric probability distribution functions}
+\Cref{sec:general_series_system} described the probabilistic model. In what follows, we derive the parametric functions that are entailed by the model.
+
+\section{System lifetime}
+The complement of the cumulative distribution function is the reliability 
+function and is given by the following definition.
+\begin{definition}
+    \label{def:rel_function}
+    Let $\RV{X}$ be some random variable. The probability that $\RV{X} > x$ is 
+    given by its reliability function, denoted by
+    \begin{equation}
+    \label{eq:rel_function}
+    \srv_{\RV{X}}\!\left(x\right) = \Prob{\RV{X} > x} = 1 - 
+    \cdf_{\RV{X}}\!\left(x\right)\,.
+    \end{equation}
+\end{definition}
+
+The reliability function of the system lifetime is given by the following 
+theorem.
+\begin{theorem}
+\label{thm:series_reliability_function}
+The system lifetime has a reliability function given by
+\begin{equation}
+\label{eq:series_reliability_function}
+    \srv_{\sv}\left(\ti \Given \tparam\sysparam\right) = \prod_{j=1}^{m} \srv_j\left(\ti \Given \tparam\sysparam_j\right)\,,
+\end{equation}
+where $\srv_j$ is the reliability function of the \jth component.
+\end{theorem}
+\begin{proof}
+By \cref{def:rel_function}, the reliability function is given by
+\begin{equation}
+    \srv_{\sv}\left(\ti \Given \tparam\sysparam\right) = \Prob{\sv > \ti}\,.
+\end{equation}
+By \cref{eq:series_system_lifetime}, $\sv = \min(\cv_1,\,,\ldots\,,\cv_m)$. Performing this substitution yields
+\begin{align}
+    \srv_{\sv}(\ti \Given \tparam{\sysparam}) = \Prob{\min(\cv_1,\,,\ldots\,, \cv_m) > \ti}\,.
+\end{align}
+For the minimum to be larger than $\ti$, every component must be larger than $t$, leading to the equivalent equation
+\begin{equation}
+    \srv_{\sv}(\ti \Given \tparam{\sysparam}) = \Prob{\cv_1 > \ti, \ldots, \cv_m > \ti}\,.
+\end{equation}
+By \cref{asm:indep}, the component lifetimes are independent, thus by the axioms of probability
+\begin{equation}
+    \srv_{\sv}\left(\ti \Given \tparam{\sysparam}\right) = \Prob{\cv_1 > \ti} \cdots \Prob{\cv_m > \ti}\,.
+\end{equation}
+By \cref{def:general_reliability_function}, the probability that $\cv_j > \ti$ is equivalent to the reliability function of the \jth component lifetime evaluated at $\ti$. Performing these substitutions results in
+\begin{equation}
+    \srv_{\sv}\left(t \Given \tparam{\sysparam}\right) = \prod_{j=1}^{m} \srv_j(t \Given \tparam{\sysparam}_j)\,.
+\end{equation}
+\end{proof}
+The probability density function of the system's lifetime is given by the following theorem.
+\begin{theorem}
+\label{thm:series_pdf_function}
+The lifetime of the $m$-out-of-$m$ system has a probability density function given by
+\begin{equation}
+\label{eq:series_pdf_function}
+    \spdf(t \Given \tparam\sysparam) = \sum_{j=1}^{m} \left(\pdf_j(t \Given \tparam{\sysparam}_j)
+    \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k(t \Given \tparam{\sysparam}_k)\right )\,,
+\end{equation}
+where $\srv_k$ and $\pdf_k$ are respectively the reliability and probability 
+density functions of the \kth component.
+\end{theorem}
+\begin{proof}
+By \cref{eq:f_and_R_related},
+\begin{equation}
+    \spdf\left(t \Given \tparam\sysparam\right) = -\derivative{t} \srv_{\sv}\left(t \Given \tparam\sysparam\right)\,.
+\end{equation}
+By \cref{thm:series_reliability_function}, this is equivalent to
+\begin{equation}
+    \spdf\left(t \Given \tparam\sysparam\right) = -\derivative{t} \prod_{j=1}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{equation}
+By the product rule, this is equivalent to
+\begin{equation}
+\begin{split}
+    \spdf(t) &= \derivative{t} \srv_1\left(t\Given \tparam{\sysparam}_1\right) \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad - \srv_1\left(t \Given \tparam{\sysparam}_1\right) \derivative{t} \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{split}
+\end{equation}
+By \cref{eq:f_and_R_related}, we can substitute $-\derivative{t} \srv_1\left(t \Given \tparam{\sysparam}_1\right)$ with $\pdf_1\left(t \Given \tparam{\sysparam}_1\right)$, resulting in
+\begin{equation}
+\begin{split}
+    \spdf(t) &= \pdf_1(t) \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad - \srv_1\left(t \Given \tparam{\sysparam}_1\right) \derivative{t} \prod_{j=2}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{split}
+\end{equation}
+
+Applying the product rule again results in
+\begin{equation}
+\begin{split}
+    \spdf(t \Given \tparam\sysparam) &= \pdf_1\left(t \Given \tparam{\sysparam}_1\right) \prod_{\substack{j=2}}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad + \pdf_2\left(t \Given \tparam{\sysparam}_2\right) \prod_{\substack{j=1\\j \neq 2}}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\\
+    & \qquad - \srv_1\left(t \Given \tparam{\sysparam}_1\right) \srv_2\left(t \Given \tparam{\sysparam}_2\right) \derivative{t} \prod_{j=3}^{m} \srv_j\left(t \Given \tparam{\sysparam}_j\right)\,.
+\end{split}
+\end{equation}
+We see a pattern emerge. Applying the product rule $m-1$ times results in
+\begin{align}
+\begin{split}
+    \spdf\left(t \Given \tparam\sysparam\right)
+        &= \sum_{j=1}^{m-1} \pdf_j\left(t \Given \tparam{\sysparam}_j\right) \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k\left(t \Given \tparam{\sysparam}_k \right)\\
+        & \qquad - \prod_{j=1}^{m-1} \srv_j\left(t \Given \tparam{\sysparam}_j\right) \derivative{t} \srv_m\left(t \Given \tparam{\sysparam}_m\right)\\
+        &= \sum_{j=1}^{m} \pdf_j\left(t \Given \tparam{\sysparam}_j\right) \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k\left(t \Given \tparam{\sysparam}_k\right)\,.
+\end{split}
+\end{align}
+\end{proof}
+
+The failure rate function simplifies some of the subsequent material and is given by the following definition.
+\begin{definition}
+\label{def:failure_rate}
+A random variable $\RV{X}$ with a probability density function $\pdf_{\RV{X}}$ 
+and reliability function $\srv_{\RV{X}}$ has a failure rate function given by
+\begin{equation}
+\label{eq:def_failure_rate}
+    \haz_{\RV{X}}(t) = \frac{\pdf_{\RV{X}}(t)}{\srv_{\RV{X}}(t)}\,.
+\end{equation}
+\end{definition}
+
+The failure rate function of the system lifetime is given by the following theorem.
+\begin{theorem}
+\label{thm:series_failure_rate_function}
+The system lifetime has a failure rate function given by
+\begin{equation}
+\label{eq:series_failure_rate_function}
+    \haz_{\sv}(t \Given \tparam\sysparam) =
+        \sum_{j=1}^{m}
+            \haz_j(t \Given \tparam{\sysparam}_j)
+\end{equation}
+where $\haz_j$ is the failure rate function of the \jth component lifetime.
+\end{theorem}
+\begin{proof}
+By \cref{eq:def_failure_rate}, the failure rate function for the system is given by
+\begin{equation}
+     \haz_{\sv}(t \Given \tparam\sysparam) = \frac{\spdf(t \Given \tparam\sysparam)}{\srv_{\sv}(t \Given \tparam\sysparam)}\,.
+\end{equation}
+Plugging in these parametric functions results in
+\begin{equation}
+\haz_{\sv}(t \Given \tparam{\sysparam}) = \frac{\sum_{j=1}^{m} \left(\pdf_j(t \Given \tparam{\sysparam}_j) \prod_{\substack{k=1\\k \neq j}}^{m} \srv_k(t \Given \tparam{\sysparam}_k)\right )}{\prod_{j=1}^{m} \srv_j(t \Given \tparam{\sysparam}_j)}\,,
+\end{equation}
+which can be simplified to
+\begin{align}
+\haz_{\sv}(t \Given \tparam{\sysparam})
+    &= \sum_{j=1}^{m} \pdf_j(t \Given \tparam{\sysparam}_j) / \srv_j(t \Given \tparam{\sysparam}_j)\\
+    &= \sum_{j=1}^{m} \haz_j(t \Given \tparam{\sysparam}_j)\,.
+\end{align}
+\end{proof}
+
+\section{Component cause of system failure}
+\label{sec:joint_dist}
+According to \cref{def:comp_cause}, the component responsible for a system failure is given by the discrete random variable $\RV{K}$. The joint likelihood that component $k$ is the cause of a system failure occurring at time $t$ is given by the following theorem.
+\begin{theorem}
+\label{thm:general_joint_density}
+The joint probability density function of random variable $\RV{K}$ and random system lifetime $\sv$ is given by
+\begin{equation}
+\label{eq:general_joint_density}
+    \pdf_{\RV{K}, \sv}(k, t \Given \tparam{\sysparam}) = \pdf_k(t \Given \tparam\sysparam) \prod_{\substack{j=1\\j \neq k}}^{m} \srv_j(t \Given \tparam\sysparam)\,,
+\end{equation}
+where $\pdf_k$ and $\srv_k$ are respectively the probability density and 
+reliability functions of the \kth component.
+\end{theorem}
+\begin{proof}
+See \cref{appendix:alternative_joint_proof} for a detailed proof. However, a 
+quick justification follows. The likelihood that component $k$ is the cause of 
+a system failure at time $t$ is equivalent to the likelihood that component $k$ 
+fails at time $t$ and the other components do not fail before time $t$. 
+According to \cref{asm:indep}, the random variables $\cv_1, \ldots, \cv_m$ are 
+mutually independent, therefore the likelihood is the product of the 
+probability density function $\pdf_k(t \Given \tparam{\sysparam}_k)$ and the 
+reliability functions $\srv_j(t \Given \tparam{\sysparam}_j)$ for $j \in 
+\SetDiff[\Set{K}][\{ k \}]$.
+\end{proof}
+
+By \cref{def:comp_cause}, if a system failure occurs at time $t$, then each component has a particular probability of being the cause as given by the following theorem.
+\begin{theorem}
+\label{def:general_cond_prob}
+The conditional probability mass function $\pmf_{\RV{K} \Given \sv}$ maps each component $k \in \Set{K}$ to the probability that 
+component $k$ is the cause of the system failure at time $t$ and is given by
+\begin{equation}
+\label{eq:general_cond_prob_failure_rate}
+    \pmf_{\RV{K} \Given \sv}\left(k \Given t, \tparam{\sysparam}\right) = \frac{\haz_k\left(t \Given \tparam{\sysparam}_k\right)}{\haz_{\sv}\left(t \Given \tparam{\sysparam}\right)}\,,
+\end{equation}
+where $\haz_j$ and $\haz_{\sv}$ are respectively the failure rate functions of 
+the \jth component and the system.
+\end{theorem}
+\begin{proof}
+By the axioms of probability,
+\begin{equation}
+    \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam\sysparam) =
+    \frac { \pdf_{\RV{K}, \sv}(k, t \Given \tparam{\sysparam}) }
+    { \spdf(t \Given \tparam{\sysparam}) }\,,
+\end{equation}
+thus we wish to show that
+\begin{equation}
+\label{eq:proof_cor_K_given_S_failure_rate}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} =
+    \frac   { \pdf_{\RV{K}, \sv}(k, t \Given \tparam{\sysparam}) }
+            { \spdf(t \Given \tparam{\sysparam}) }\,.
+\end{equation}
+By \cref{thm:series_failure_rate_function}, the system's failure rate function is given by
+\begin{equation*}
+\haz_{\sv}(t \Given \tparam\sysparam) = \sum_{j=1}^{m} \haz_j(t \Given \tparam{\sysparam}_j)\,.
+\tag{\ref{eq:series_failure_rate_function} revisited}
+\end{equation*}
+Performing this substitution results in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} = \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\sum_{j=1}^{m} \haz_j(t \Given \tparam{\sysparam}_j) }\,.
+\end{equation}
+By \cref{def:failure_rate}, the failure rate function of the \pth component is given by
+\begin{equation}
+    \haz_p(t \Given \tparam{\sysparam}_p) = \frac{\pdf_p(t \Given \tparam{\sysparam}_p)}{\srv_p(t \Given \tparam{\sysparam}_p)}\,.
+\end{equation}
+Performing this substitution results in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} = \frac{\pdf_k(t \Given \tparam{\sysparam}_k)}{\srv_k(t \Given \tparam{\sysparam}_k)} \cdot
+    \left [
+        \underbrace{
+            \frac{\pdf_1(t \Given \tparam{\sysparam}_1)}{\srv_1(t \Given \tparam{\sysparam}_1)} + \cdots + \frac{\pdf_m(t \Given \tparam{\sysparam}_m)}{\srv_m(t \Given \tparam{\sysparam}_m)}
+        }_{A}
+    \right ]^{-1}\,.
+\end{equation}
+To combine the fractions labeled $A$ in the above equation, we make their respective denominators the same, resulting in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam\sysparam)} =
+    \frac{\pdf_k(t \Given \tparam{\sysparam}_k)}{\underbrace{\srv_k(t \Given \tparam{\sysparam}_k)}_{B}} \cdot
+    \frac{\overbrace{\prod_{j=1}^{m} \srv_j(t \Given \tparam{\sysparam})}^{C} }{\sum_{j=1}^{m} \left [ \prod_{\substack{p=1\\p \neq j}}^{m} \srv_p(t \Given \tparam{\sysparam}_p) \right ] \pdf_j(t \Given \tparam{\sysparam}_j)}\,.
+\end{equation}
+Dividing the part of the above equation labeled $C$ in the numerator by the part labeled $B$ in the denominator results in
+\begin{equation}
+    \frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam{\sysparam})} = \frac{\pdf_k(t \Given \tparam{\sysparam}_k) \prod_{\substack{j=1\\j \neq k}}^{m} \srv_j(t \Given \tparam{\sysparam}_j)} {\sum_{j=1}^{m} \pdf_j(t \Given \tparam{\sysparam}_j) \prod_{\substack{p=1\\p \neq j}}^{m} \srv_p(t \Given \tparam{\sysparam}_p)}\,.
+\end{equation}
+By \cref{eq:series_pdf_function}, the denominator in the above equation is the density $\spdf(t \Given \tparam\sysparam)$ and, by \cref{eq:general_joint_density}, the numerator is the joint density $\pdf_{\RV{K}, \sv}(k, t \Given \tparam\sysparam)$. Performing these substitutions results in
+\begin{equation}
+\frac{\haz_k(t \Given \tparam{\sysparam}_k)}{\haz_{\sv}(t \Given \tparam\sysparam)} = \frac{\pdf_{\RV{K}, \sv}(k, t \Given \tparam\sysparam)}{\spdf(t \Given \tparam\sysparam)}\,.
+\end{equation}
+\end{proof}
+\begin{corollary}
+The joint probability density function of random variable $\RV{K}$ and random system lifetime $\sv$ is given by
+\begin{equation}
+\label{eq:k_s_haz}
+    \pdf_{\RV{K}, \sv}(k, t\Given \tparam\sysparam) = \haz_k(t \Given \tparam{\sysparam}_k) \srv_{\sv}(t \Given \tparam\sysparam)\,.
+\end{equation}
+\end{corollary}
+The proof of \cref{eq:k_s_haz} immediately follows from \cref{eq:general_joint_density,eq:general_cond_prob_failure_rate}.
+
+\section{$\alpha$-masked component failures}
+\label{sec:cand_sel}
+The series system consists of $m$ components with random lifetimes $\cv_1,\ldots,\cv_m$.
+These random variables are \emph{latent} (unobservable) and thus, for instance, we cannot know with certainty from a sample of masked system failures which component failed.
+
+The $\alpha$-candidate sets have a conditional probability distribution given by the following theorem.
+\begin{theorem}
+The random $\alpha$-candidate set $\rvcand$ conditioned on $\RV{W}$, $\RV{K}$, and $\RV{A}$ has a probability distribution given by
+\begin{equation}
+\label{eq:rvcand_given_k_w_a}
+	\pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) = \frac{\alpha}{\binom{m-1}{w-1}} \SetIndicator{\cand}(k) + \frac{1-\alpha}{\binom{m-1}{w}} \SetIndicator{\SetComplement[\cand]}(k)
+\end{equation}
+with a sample space $\candsw{w}$.
+\end{theorem}
+\begin{proof}
+	Suppose we condition on $\RV{K}=k$, i.e., the \kth-component failed.
+	By \cref{def:}, a random $\alpha$-candidate set $\rvcand$ contains $k$ with probability $\alpha$ and does \emph{not} contain $k$ with probability $1-\alpha$.	
+	
+	We partition the sample space $\candsw{w} \coloneqq \left[\Set{K}\right]^w$ into the set of sets containing $k$ and its complement.
+	There are $^{m-1}C_{w-1}$ candidate sets that contain $k$ since we may place $k$ in the ``first'' position and of the remaining $w-1$ positions uniformly choosing any of the remaining $m-1$ components.
+	There are $^{m-1}C_w$ candidate sets that do not contain $k$ since, by removing $k$ from the set of $m$ choices, uniformly choosing $w$ of the remaining $m-1$ components.
+
+	By definition, the outcomes in the partition containing $k$ occur with probability $\alpha$ and we assign uniform probability $(^{m-1}C_{w-1})^{-1}$ to any such outcome.
+	By the product rule the joint probability that a random $\alpha$-candidate set contains $k$ is
+	\begin{equation}
+		\frac{\alpha}{\binom{m-1}{w-1}}\,.
+	\end{equation}
+	
+	Similarly, the outcomes in the partition not containing $k$ occur with probability $1-\alpha$ and we assign uniform probability $(^{m-1}C_w)^{-1}$ to any such outcome.
+	By the product rule the joint probability that a random $\alpha$-candidate set does not contain $k$ is
+	\begin{equation}
+		\frac{1-\alpha}{\binom{m-1}{w}}\,.
+	\end{equation}
+\end{proof}
+
+\begin{remark}
+The $\alpha$-candidate set model is somewhat naive since if $\SetIndicator{\cand_1}(k) = \SetIndicator{\cand_2}(k)$ then
+\begin{equation}
+\pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand_1 \Given k, t_1, w, \alpha) = \pmf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand_2 \Given k, t_2, w, \alpha)\,.
+\end{equation}
+That is, $\alpha$-masked component failures that include the failed component are equally likely to be chosen and $\rvcand$ given $\RV{K}$ is conditionally independent of the system failure time $\sv$.
+A more informative generative model of masked component failures may preferentially include components that are more likely to fail at the given system failure time.
+\end{remark}
+
+The random variable $\RV{K}$ is \emph{latent}.
+In a masked system failure sample, the only observable is the candidate set, the system failure time, and the expected accuracy $\alpha$ of the $\alpha$-masked candidate set.
+The joint probability density function of $\rvcand$ and $\sv$ conditioned on $\RV{W}$ and $\RV{A}$ is given by the following theorem.
+\begin{theorem}
+The conditional joint probability density function of random variable $\rvcand$ and random system lifetime $\sv$ given $\RV{W} = w$ is given by
+\begin{equation}
+\label{eq:joint_alpha}
+\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam) =
+	\sum_{k=1}^{m} \pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)
+\end{equation}
+with a sample space $\candsw{w} \times (0,\infty)$.
+\Cref{eq:joint_alpha} may be rewritten as
+\begin{equation}
+\label{eq:joint_alpha_2}
+\mathsmaller{\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam) =
+\frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}
+\left(
+	(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - \left(1-\alpha \frac{m}{w}\right) \sum_{k \in \cand} \haz_k(t \Given \tparam\sysparam_k)
+\right)}\,.
+\end{equation}
+\end{theorem}
+\begin{proof}
+By the laws of probability, the joint distribution of $\rvcand$, $\RV{K}$ and $\sv$ conditioned on $\RV{W}$ and $\RV{A}$ may be written as
+\begin{equation}
+	\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pdf_{\rvcand \Given \RV{K}, \sv, \RV{W}, \RV{A}}(\cand \Given k, t, w, \alpha, \tparam\sysparam) \pdf_{\RV{K},\sv \Given \RV{W}, \RV{A}}(k,t \Given w, \alpha, \tparam\sysparam)\,.
+\end{equation}
+
+We observe that $\rvcand$ conditioned on $\RV{K}$, $\RV{W}$, and $\RV{A}$ is independent of $\sv$ and the true parameter index $\tparam\sysparam$ and the joint distribution of $\sv$ and $\RV{K}$ is independent of $\RV{W}$ and $\RV{A}$.
+Thus, we simplify the joint probability density function to
+\begin{equation}
+\pdf_{\rvcand,\RV{K},\sv \Given \RV{W}, \RV{A}}(\cand,k,t \Given w, \alpha, \tparam\sysparam) = \pmf_{\rvcand \Given \RV{K}, \RV{W}, \RV{A}}(\cand \Given k, w, \alpha) \pdf_{\RV{K},\sv}(k,t \Given \tparam\sysparam)\,.
+\end{equation}
+
+The marginal joint distribution of $\rvcand$ and $\sv$ given $\RV{W}$ is calculated by summing the joint probability distribution over $\RV{K}$ which has a sample space $\{1,\ldots,m\}$.
+\end{proof}
+
+
+The \emph{optimal} case is provided by the $1$-masked candidate set as given by the following corollary.
+\begin{corollary}
+	\label{thm:general_joint_likelihood_cand}
+	The joint probability density of $\rvcand$ and $\sv$ conditioned on $\RV{W} = w$ and $\alpha=1$ is given by
+	\begin{equation}
+	\label{eq:general_joint_likelihood_cand}
+	\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha=1,\tparam\sysparam) = \frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w-1}}	
+	\sum_{k \in \cand} \haz_k\!\left(t \Given \tparam\sysparam\right)
+	\end{equation}
+	with a sample space $\candsw{w} \times (0,\infty)$.
+\end{corollary}
+
+Suppose the candidate sets are chosen \emph{randomly}, which is equivalent to the $\frac{w}{m}$-masked candidate set model.
+\begin{corollary}
+The joint probability density of $\rvcand$ and $\sv$ conditioned on $\RV{W} = w$ and $\alpha=\frac{w}{m}$ is given by
+\begin{equation}
+	\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha=w/m,\tparam\sysparam) = \frac{\spdf(t \Given \tparam\sysparam)}{\binom{m}{w}}	
+\end{equation}
+with a sample space $\candsw{w} \times (0,\infty)$.
+\end{corollary}
+\begin{proof}
+Intuitively, since random candidate sets of $w$ components (out of $m$) are randomly chosen, any of the $\binom{m}{w}$ subsets of size $w$ are equally likely and thus the probability mass of each candidate set is just $\binom{m}{w}^{-1}$.
+Taking the product of the density for the system lifetime $\sv$ and $\binom{m}{w}^{-1}$ yields the result.
+However, a more rigorous proof is given by substituting $\alpha$ with $\frac{w}{m}$ in \cref{eq:joint_alpha_2} and simplying, yielding the intermediate result
+\begin{align}
+\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand,t \Given w, \alpha, \tparam\sysparam)
+	&= \frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m-1}{w}}
+		\frac{m-w}{m} \haz_{\sv}(t \Given \tparam\sysparam)\\
+	&= \frac{\srv_{\sv}(t \Given \tparam\sysparam)}{\binom{m}{w}}
+	\haz_{\sv}(t \Given \tparam\sysparam)\,.
+\end{align}
+By \cref{dummy}, $\spdf(t \Given \tparam\sysparam) = \srv_{\sv}(t \Given \tparam\sysparam) \haz_{\sv}(t \Given \tparam\sysparam)$.
+Making this substitution yields the result.
+\end{proof}
+
+As intuition suggests, candidate sets that are randomly chosen carry no information about the true parameter index.
+Therefore, the set of informative $\alpha$-masked candidate set models for estimating $\tparam\sysparam$ is indexed by the interval $\frac{w}{m} < \alpha \leq 1$.
+\begin{remark}
+Conversely, suppose we have an \emph{adversarial} diagnostician who generates $\alpha$-masked candidate sets where $\alpha < \frac{w}{m}$.
+Then, the random candidate sets serve as \emph{misinformation}.
+If it is known or estimated that the candidate sets are misinforming, then we may estimate the answer to a related but different question, ''What is $\tparam\sysparam$ not likely to be?''
+While not nearly as informative, the only case in which no information about $\tparam\sysparam$ is conveyed is when candidate sets are randomly selected, i.e., $\alpha = \frac{w}{m}$.
+\end{remark}
+
+
+\begin{corollary}
+	\label{def:general_cond_cand_probability_alpha}
+	The conditional probability mass function $\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}$ maps each candidate set $\cand$ to the probability that the given candidate set contains the component responsible for the system failure at time $t$.
+	By the axioms of probability,
+	\begin{equation}
+	\begin{split}
+	\label{eq:general_cond_cand_probability_alpha}
+	\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) =
+	\frac{(1-\alpha) \haz_{\sv}(t \Given \tparam\sysparam) - (1-\alpha\frac{m}{w}) \sum_{j \in \cand} \haz_j(t \Given \tparam\sysparam_j)}{\binom{m-1}{w} \haz_{\sv}(t \Given \tparam\sysparam)}
+	\SetIndicator{\candsw{w}}(\cand)\,,
+	\end{split}
+	\end{equation}
+	where $\haz_{\sv}$ and $\haz_j$ are the failure rate functions of the system 
+	and the \jth component respectively.
+\end{corollary}
+\begin{proof}
+Suppose it is given that $\RV{W} = w$ and $\RV{A} = \alpha$.
+By \cref{asm:indep_W_S, asm:indep_A_S} and the axioms of probability, we may rewrite the joint distribution of $\rvcand$ and $\sv$ as
+\begin{equation}
+%\label{eq:general_joint_cond_w_cand_likelihood}
+\pdf_{\rvcand,\sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha, \tparam\sysparam) =
+\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) \spdf(t \Given \tparam\sysparam)\,,
+\end{equation}
+which may be rearranged to
+\begin{equation}
+\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) = \frac
+{
+	\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}(\cand, t \Given w, \alpha, \tparam\sysparam)
+}
+{
+	\spdf(t \Given \tparam\sysparam)
+}\,,
+\end{equation}
+where $\pdf_{\rvcand, \sv \Given \RV{W}, \RV{A}}$ is the joint probability density function given by \cref{thm:general_joint_likelihood_cand}.
+Making this substitution and further simplifying yields the result.
+\end{proof}
+
+By \cref{asm:indep_W_S}, the random lifetime $\sv$ and the cardinality of the random candidate set $\RV{W} = \Card{\rvcand}$ are independent, thus by the axioms of probability the joint density of $\rvcand$, $\sv$, and $\RV{W}$ is given by
+\begin{equation}
+\pdf_{\rvcand, \sv, \RV{W} \Given \RV{A}}(\cand, t, w \Given \alpha, \tparam\sysparam) = \pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha, \tparam\sysparam) \pmf_{\RV{W} \Given \RV{A}}(w \Given \alpha) \spdf(t \Given \tparam\sysparam)\,.
+\end{equation}
+
+\begin{corollary}
+\label{def:general_cond_cand_probability}
+When $\alpha=1$, $\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}$ simplifies to 
+\begin{equation}
+\label{eq:general_cond_cand_probability}
+\pmf_{\rvcand \Given \sv, \RV{W}, \RV{A}}(\cand \Given t, w, \alpha=1, \tparam\sysparam) =
+\frac{\SetIndicator{\candsw{w}}(\cand)}{\binom{m-1}{w-1}}
+\frac
+{
+	\sum_{j \in \cand} \haz_j\left(t \Given \tparam\sysparam_j\right)
+}
+{
+	\haz_{\sv}\left(t \Given \tparam\sysparam\right)
+}\,,
+\end{equation}
+where $\haz_{\sv}$ and $\haz_j$ are the failure rate functions of the system 
+and the \jth component respectively.
+\end{corollary}
+
+
+
+
+\begin{corollary}
+\label{cor:K_given_S_indep_W_A_C}
+The random component failure $\RV{K}$ given $\sv$ is conditionally independent of $\rvcand$, $\RV{W}$, and $\RV{A}$, i.e.,
+\begin{equation}
+	\pmf_{\RV{K} \Given \rvcand, \sv, \RV{W}, \RV{A}}(k \Given \cand, t, w, \alpha, \tparam\sysparam) = \pmf_{\RV{K} \Given \sv}(k \Given t, \tparam\sysparam)\,.
+\end{equation}
+\end{corollary}
+See \cref{app:K_given_S_indep_W_A_C} for a proof.
+
+\end{document}

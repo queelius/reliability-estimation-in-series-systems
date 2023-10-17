@@ -1,0 +1,121 @@
+\documentclass[
+    11pt,
+    extrafontsizes,
+    article,
+    oldfontcommands,
+    final,
+    oneside,
+    openany,
+    hidelinks]{memoir}
+\pagestyle{headings}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,
+spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\microtypecontext{spacing=nonfrench}
+\usepackage{graphicx}
+
+%code\usepackage{nomencl}
+%\makenomenclature
+\usepackage{commath}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{esvect}
+\usepackage{graphicx}
+\usepackage[numbers]{natbib}
+\usepackage{bbm}
+\usepackage{mathtools}
+\usepackage{etoolbox}
+\usepackage{pgfplots}
+\usepackage[linesnumbered,lined,ruled]{algorithm2e}
+\usepackage{subfiles}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{mathdots}
+\usepackage{appendix}
+\usepackage{fancyhdr}
+
+\usepackage[fancy]{setnotation}
+\usepackage{relationnotation}
+\usepackage{envnotation}
+\usepackage{matrixnotation}
+\usepackage{probabilitynotation}
+\usepackage{custom}
+
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+
+\graphicspath{{images/}{../images/},{../../images/}}
+
+\setlrmarginsandblock{1in}{1in}{*}
+\setulmarginsandblock{1in}{1in}{*}
+\checkandfixthelayout 
+
+\hypersetup{
+    %bookmarks=true,                             % show bookmarks bar?
+    pdftitle={Estimating the sampling distribution of the maximum likelihood 
+    estimator of the parameters of a series system given a sample of masked 
+    system failure times},  % title
+    pdfauthor={Alexander Towell},               % author
+    pdfsubject={statistical inference},                    % subject of the 
+    %document
+    pdfkeywords={maximum likelihood estimation,
+        information matrix,
+        covariance matrix,
+        multivariate normal,
+        sampling distribution,
+        statistical models,
+        statistical inference,
+        parameter estimation,
+        parametric bootstrap,
+        entropy,
+        maximum entropy distribution,
+        series systems,
+        m-out-of-m system,
+        exponential distribution,
+        masked system failure time},           % keywords
+    colorlinks=true,                            % false: boxed links; true: 
+    %colored links
+    linkcolor=blue,                             % color of internal links
+    citecolor=green,                            % color of links to bibliography
+    filecolor=magenta,                          % color of file links
+    urlcolor=green                              % color of external links
+}
+
+
+
+%\include{nom}
+
+\title{Estimating the sampling distribution of the maximum likelihood estimator of the parameters of a series system given a sample of masked system failures}
+\author{Alexander Towell\\\texttt{atowell@siue.edu}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+First, the \emph{parametric family} of an abstract \emph{series system} is derived. Then, the \emph{asymptotic sampling distribution} (\emph{multivariate normal}) of a \emph{maximum likelihood estimator} of the true parameter is derived conditioned on the \emph{information} given by a random sample of \emph{masked system failure times}. The asymptotic sampling distributions of statistics that are functions of the parameter follow as a result. Finally, these results are applied to series systems in which component lifetimes are \emph{exponentially} distributed, which lead to closed formulas on a set of \emph{minimally sufficient statistics}.
+\end{abstract}
+
+\tableofcontents
+%\listoffigures
+%\listofalgorithms
+%\printnomenclature
+
+\subfile{sections/intro}
+%\subfile{sections/general_model}
+%\subfile{sections/general_distribution_functions}
+%\subfile{sections/general_fim}
+\subfile{sections/general_sampling_distribution}
+%\subfile{sections/extra/general_applications}
+%\subfile{sections/exponential}
+%\subfile{sections/extra/weibull}
+%\subfile{sections/extra/pareto}
+\bibliographystyle{plainnat}
+\bibliography{references}
+%\subfile{sections/appendix}
+\end{document}
