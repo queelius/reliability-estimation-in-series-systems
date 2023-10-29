@@ -1,8 +1,13 @@
 ---
 title: "Reliability Estimation in Series Systems"
 subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
-author: Alex Towell
+author: Alex Towell (lex@metafunctor.com)
+date: "2023-09-30"
 output:
+  ioslides_presentation:
+    theme: bootstrap
+    slide_level: 2
+    css: custom.css
   beamer_presentation:
     theme: Boadilla
     slide_level: 2
@@ -12,7 +17,7 @@ header-includes:
 - \usepackage{amsthm}
 - \usepackage{xcolor}
 - \renewcommand{\v}[1]{\boldsymbol{#1}}
-- \setbeameroption{show notes on second screen=right}
+#- \setbeameroption{show notes on second screen=right}
 #bibliography: ../refs.bib
 ---
 
@@ -22,7 +27,7 @@ header-includes:
 by its weakest link.
 
 - Essential for system design and maintenance.
-
+ 
 **Main Goal**: Estimate individual component reliability from *failure data*.
 
 **Challenges**:
@@ -86,10 +91,11 @@ and quantify the uncertainty in our estimates with confidence intervals.
 
 # Series System
 
-\begin{figure}
-\centering
-\resizebox{0.7\textwidth}{!}{\input{../image/series.tex}}
-\end{figure}
+## What Is A Series System?
+
+```{r, out.width='70%', fig.align='center', echo=FALSE}
+knitr::include_graphics("../image/series.png")
+```
 
 **Critical Components**: Complex systems often comprise *critical* components.
 If any component fails, the entire system fails.
@@ -226,10 +232,12 @@ The data generating process (DGP) is the underlying process that generates the d
 - **Candidate Set**: $\mathcal{C}_i$ related to components ($T_{i j})$
   and other unknowns.
 
-\begin{figure}
-\centering
-\resizebox{0.67\textwidth}{!}{\input{../image/dep_model.tex}}
-\end{figure}
+
+```{r, echo=FALSE, out.height='67%', fig.align='center'}
+knitr::include_graphics("../image/dep_model.png")
+```
+
+
 
 \note{
 \begin{itemize}
@@ -408,7 +416,7 @@ Like any model, ours has its challenges:
 
 # Simulation Study: Series System with Weibull Components
 
-**Series System Parameters**:
+## Series System Parameters
 
 | Component | Shape $(k_j)$ | Scale ($\lambda_j$) | Failure Probability ($\Pr\{K_i\}$) |
 |-----------|-------|--------|--------------|
@@ -550,18 +558,9 @@ impact of right-censoring on the MLE, but large enough so that the convergence r
 
 ## Scale Parameters
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-scale-tau-1, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-q-vs-scale.1-mle.pdf")
+```{r fig-scale-tau, echo=F, out.width="60%", fig.align="center"}
+knitr::include_graphics("../image/pres/impact_right_censoring_scale_pres.png")
 ```
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-```{r fig-scale-tau-3, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-q-vs-scale.3-mle.pdf")
-```
-\end{minipage}
-\end{figure}
 
 - **Dispersion**: Less censoring improves MLE precision.
   - Most reliable component more affected by censoring.
@@ -580,6 +579,7 @@ knitr::include_graphics("../image/plot-q-vs-scale.3-mle.pdf")
 \item We see they they \textbf{track} the MLE's dispersion, which is good.
 \end{itemize}
 }
+
 
 ## Shape Parameters
 
@@ -884,11 +884,9 @@ Larger samples lead to more accurate, unbiased, and reliable estimations.
 
   - Mitigates the effects of right-censoring and masking.
 
-# Overall Conclusion
+# Conclusion
 
-**Key Findings**:
-
-- MLE and confidence intervals were robust despite masking and right-censoring challenges.
+## Key Findings
 
 **MLE Performance**:
 
@@ -901,8 +899,11 @@ Larger samples lead to more accurate, unbiased, and reliable estimations.
 
 - Width of CIs tracked MLE dispersion.
 - Good empirical coverage in most scenarios.
+
+### Big Picture
+MLE and CIs robust despite masking and right-censoring challenges.
   
-## Future Work and Discussion
+## Future Work
 
 Directions to enhance learning from masked data:
 
@@ -913,3 +914,4 @@ Directions to enhance learning from masked data:
 - **Regularization**: Data augmentation and penalized likelihood methods.
 - **Additional Likelihood Contributions**: Predictors, etc.
 
+ # Discussion

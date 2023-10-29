@@ -1,0 +1,9 @@
+slide {
+  font-size: smaller;
+}
+
+slides > slide {
+  width: 1280px;
+  height: 720px;
+}
+

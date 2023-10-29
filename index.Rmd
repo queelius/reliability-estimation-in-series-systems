@@ -1,5 +1,6 @@
 ---
-title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
+title: "Reliability Estimation in Series Systems"
+subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
 author: |
   \texorpdfstring{
     \Large{Alex Towell} \\
@@ -615,11 +616,10 @@ component cause of failure $(\delta_i = 1)$.
 When a system failure occurs, two types of data are observed in our data model:
 the system's lifetime and a candidate set that is indicative of
 the component cause of failure without necessarily precisely identifying the
-failed component. For instance, suppose we have a failed electronic device and
-a diagnostician is only able to identity that a circuit board in the device has
-failed but is unable to identify the precise component that failed on the board.
-In this case, any of the components on the board may be the cause of failure.
-The cause of failure is said to be *masked* by the other components on the board.
+failed component. This kind of masking of the true cause of failure is
+especially prevalent in industrial settings. We will revisit this idea with a
+real-world example to demonstrate its significance after introducing some
+specific theoretical conditions.
 
 The key goal of our analysis is to estimate the parameter $\v{\theta}$, which 
 maximizes the likelihood of the observed data, and to estimate the precision and
@@ -726,9 +726,7 @@ $$
 $$
 for all $j, j' \in c_i$.
 \end{condition}
-According to [@Fran-1991], in many industrial problems, masking generally
-occurred due to time constraints and the expense of failure analysis. In this
-setting, Condition \ref{cond:equal-prob-failure-cause} generally holds.
+
 Assuming Conditions \ref{cond:c-contains-k} and
 \ref{cond:equal-prob-failure-cause},
 $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j\}$ may be factored out of the
@@ -745,7 +743,7 @@ If $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\}$ is a function of
 $\v{\theta}$, the MLEs are still dependent on the unknown
 $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\}$.
 This is a more tractable problem, but we are primarily interested in the
-situation where we do not need to know (nor estimate)
+situation where we do not need to know or estimate
 $\Pr{}_{\!\v\theta}\{\mathcal{C}_i=c_i|T_i=t_i,K_i=j'\}$ to find an MLE of
 $\v{\theta}$. The last condition we assume achieves this result.
 \begin{condition}
@@ -759,6 +757,52 @@ $$
 where $\beta_i$ is not a function of $\v\theta$.
 \end{condition}
 
+### Real-World Relevance {-}
+According to [@Fran-1991], many industrial problems feature masking due to time
+constraints and the high costs associated with failure analysis. Crucially,
+these industrial scenarios often fulfill Conditions \ref{cond:c-contains-k},
+\ref{cond:equal-prob-failure-cause}, and \ref{cond:masked-indept-theta},
+reinforcing the applicability of the results presented in this paper.
+
+To elucidate, let's consider a diagnostic tool used for identifying failed components in an electronic device comprising three critical components
+arranged in a series configuration. Two are on a common circuit board (labeled $1$ and
+$2$), while the third (labeled $3$) is separate.
+Our diagnostic tool isolates the failure to either the circuit board or
+the individual component but does not differentiate between components $1$ and $2$
+if the failure is on the shared board. In this case, we have the following
+conditional probabilities for candidate sets:
+$$
+\Pr\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\}
+\begin{cases}
+  1 & \text{if $c_i = \{1,2\}$ and $j = 1$ or $j = 2$,}\\
+  1 & \text{if $c_i = \{3\}$   and $j = 3$,}\\
+  0 & \text{otherwise.}
+\end{cases}
+$$
+
+Our diagnostic tool satisfies the conditions as follows:
+
+- \textbf{Condition \ref{cond:c-contains-k}}: The candidate set $c_i$ always
+contains the failed component $j$. Our diagnostic tool is able to isolate the
+failure to either the circuit board or the individual component, and so the
+candidate set always contains the failed component.
+
+- \textbf{Condition \ref{cond:equal-prob-failure-cause}}: As we vary the cause of
+failure $j$, we see that the conditional probability of the given candidate set $c_i$ is the
+same for all $j \in c_i$. Our diagnostic tool cannot distinguish between
+components $1$ and $2$ if the shared circuit board is the cause of failure, and
+therefore the probability of the candidate set is the same when we condition on
+either component $1$ or $2$ being the cause of failure.
+
+- \textbf{Condition \ref{cond:masked-indept-theta}}: The probabilities associated
+with our diagnostic tool are fixed and do not depend on the system parameter
+$\v\theta$.
+
+By emphasizing that these conditions hold both in a general industrial context
+and a specific real-world example, the paper enhances its applicability and
+relevance to both theoreticians and practitioners.
+
+### Likelihood Contribution {-}
 When Conditions \ref{cond:c-contains-k}, \ref{cond:equal-prob-failure-cause},
 and \ref{cond:masked-indept-theta} are satisfied, the joint pdf of $T_i$ and
 $\mathcal{C}_i$ is given by
@@ -1693,9 +1737,8 @@ When a right-censoring event occurs, in order to increase the likelihood of the 
 is nudged in a direction that increases the probability of a right-censoring event at time $\tau$,
 which is given by $R_{T_i}(t;\v\theta)$, representing a source of bias in the estimate.
 
-To increase $R_{T_i}(\tau)$, we move in the direction (gradient) of these partial derivatives.
-The partial derivatives of $R_{T_i}(\tau)$
-are given by
+To increase $R_{T_i}(\tau_q)$, we move in the direction (gradient) of these partial derivatives.
+The partial derivatives of $R_{T_i}(\tau_q)$ are given by
 \begin{align*}
 \frac{\partial R_{T_i}(\tau_q)}{\partial \lambda_j} &= R_{T_i}(\tau_q;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \frac{k_j}{\lambda_j},\\
 \frac{\partial R_{T_i}(\tau_q)}{\partial k_j}       &= R_{T_i}(\tau_q;\v\theta) \left(\frac{\tau}{\lambda_j}\right)^{k_j} \left(\log \lambda_j - \log \tau_q\right),
@@ -1823,8 +1866,9 @@ In this scenario, we use the well-designed series system described in Table \ref
 and we use the following simulation scenario values:
 
 - We vary the Bernoulli masking probability $p$ from $10\%$ to $70\%$.[^99]
-- We fix the right-censoring quantile $q$ to $0.825$, which means the probability
-of a right-censoring event is $17.5\%$, which is less than the masking probability.
+- We fix the right-censoring quantile $q$ to $82.5\%$, which means the probability
+of a right-censoring event is $17.5\%$. This is less than the masking probability,
+making the masking probability the dominant source of uncertainty.
 - We fix the sample size to $n$ to $90$, which is small enough to show the impact of
 masking on the MLE, but large enough to obtain reasonable convergence rates.
 
@@ -1940,7 +1984,7 @@ simulation scenario values:
 
 - We vary the sample size $n$ from $50$ (small sample size) to $500$ (large sample size).
 - We fix the right-censoring quantile $q$ to $82.5\%$.
-- We fix the masking probability to $p = 21.5\%$.
+- We fix the masking probability $p$ to $21.5\%$.
 
 
 ```{r samp-size-n-vs-stats, out.width='100%', fig.cap="Sample Size ($n$) vs MLEs ($p = 0.215, q = 0.825$)", fig.align="center", echo = F}
@@ -2248,8 +2292,8 @@ score_wei_series_md_c1_c2_c3 <- function(df, theta) {
   }
 
   scr <- rep(0, length(theta))
-  scr[seq(1, length(theta), 2)] <- shapes.scrs
-  scr[seq(2, length(theta), 2)] <- scales.scrs
+  scr[seq(1, length(theta), 2)] <- shapes.scr
+  scr[seq(2, length(theta), 2)] <- scales.scr
   return(scr)
 }
 ```
