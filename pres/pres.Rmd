@@ -224,16 +224,16 @@ series system.
 
 ## Data Generating Process
 
-The data generating process (DGP) is the underlying process that generates the data:
+The data generating process (DGP) is the underlying process that generates the data.
+*Green* elements are observed, *red* elements are latent:
 
-- *\textcolor{green}{Green}* elements are observed, *\textcolor{red}{Red}* elements are latent.
-- **Right-Censored** lifetime: $S_i = \min(T_i, \tau)$.
-- **Event Indicator**: $\delta_i = 1_{\{T_i < \tau\}}$.
+- **Right-Censored** lifetime: $S_i = \min(T_i, \tau_i)$.
+- **Event Indicator**: $\delta_i = 1_{\{T_i < \tau_i\}}$.
 - **Candidate Set**: $\mathcal{C}_i$ related to components ($T_{i j})$
   and other unknowns.
 
 
-```{r, echo=FALSE, out.height='67%', fig.align='center'}
+```{r graph-model, echo=FALSE, fig.align='center', out.width='50%'}
 knitr::include_graphics("../image/dep_model.png")
 ```
 
@@ -558,8 +558,9 @@ impact of right-censoring on the MLE, but large enough so that the convergence r
 
 ## Scale Parameters
 
-```{r fig-scale-tau, echo=F, out.width="60%", fig.align="center"}
-knitr::include_graphics("../image/pres/impact_right_censoring_scale_pres.png")
+```{r fig-scale-tau, echo=F, out.width="100%", fig.align="center"}
+knitr::include_graphics("../image/pres/plot-q-vs-scale.1-mle_plot-q-vs-scale.3-mle.png")
+
 ```
 
 - **Dispersion**: Less censoring improves MLE precision.
@@ -583,18 +584,9 @@ knitr::include_graphics("../image/pres/impact_right_censoring_scale_pres.png")
 
 ## Shape Parameters
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-shape-tau-1, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-q-vs-shape.1-mle.pdf")
+```{r fig-shape-tau, echo=F, out.width="100%", fig.align="center"}
+knitr::include_graphics("../image/pres/plot-q-vs-shape.1-mle_plot-q-vs-shape.3-mle.png")
 ```
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-```{r fig-shape-tau-3, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-q-vs-shape.3-mle.pdf")
-```
-\end{minipage}
-\end{figure}
 
 - Show a similar pattern as scale parameters.
 
@@ -687,18 +679,11 @@ impact of masking on the MLE, but large enough so that the convergence rate was 
 
 ## Shape Parameters
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-shape-p-1, echo=F, out.width="0.95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-p-vs-shape.1-mle.pdf")
+
+```{r fig-shape-mask, echo=F, out.width="100%", fig.align="center"}
+knitr::include_graphics("../image/pres/plot-p-vs-shape.1-mle_plot-p-vs-shape.3-mle.png")
 ```
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-```{r fig-shape-p-3, echo=F, out.width="0.95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-p-vs-shape.3-mle.pdf")
-```
-\end{minipage}
-\end{figure}
+
 
 - **Dispersion**: Precision decreases with masking level ($p$).
 - **Bias**: MLE *positively* biased and increases with masking level.
@@ -720,18 +705,9 @@ confidence intervals, this time for the \textbf{shape parameters}.
 
 ## Scale Parameters
 
-\begin{figure}
-\begin{minipage}{.45\textwidth}
-```{r fig-scale-p-1, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-p-vs-scale.1-mle.pdf")
+```{r fig-scale-mask, echo=F, out.width="100%", fig.align="center"}
+knitr::include_graphics("../image/pres/plot-p-vs-scale.1-mle_plot-p-vs-scale.3-mle.png")
 ```
-\end{minipage}%
-\begin{minipage}{.45\textwidth}
-```{r fig-scale-p-3, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-p-vs-scale.3-mle.pdf")
-```
-\end{minipage}
-\end{figure}
 
 - These graphs resemble the last ones for shape parameters.
 
