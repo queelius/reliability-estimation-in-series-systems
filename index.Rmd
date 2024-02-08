@@ -9,6 +9,13 @@ author: |
 date: "2023-09-30"
 abstract: "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields correctly specified confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data."
 output:
+    bookdown::pdf_document2:
+        keep_tex: true
+        toc: true
+        df_print: kable
+        citation_package: natbib
+        number_sections: true
+        toc_depth: 2
     bookdown::gitbook:
         split_by: none
         config:
@@ -539,21 +546,13 @@ $D = \{D_1, \ldots, D_n\}$, where each $D_i$ contains the following elements:
 - $\mathcal{C}_i$ is the set of candidate component causes of failure for the
 $i$\textsuperscript{th} system.
 
-The masked data generation process is illustrated in Figure \ref{fig:figureone}.
+The masked data generation process is illustrated in Figure 1.
 
-\begin{figure}[h]
-\centering{
-\resizebox{0.5\textwidth}{!}{\input{./image/dep_model.tex}}}
-\caption{This figure showcases a dependency graph of the generative model for
-$D_i = (S_i,\delta_i,\mathcal{C}_i)$. The elements in green are observed in the sample,
-while the elements in red are unobserved (latent). We see that $\mathcal{C}_i$ is
-related to both the unobserved component lifetimes $T_{i 1},\ldots,T_{i m}$ and
-other unknown and unobserved covariates, like ambient temperature or the
-particular diagnostician who generated the candidate set. These two complications
-for $\mathcal{C}_i$ are why we seek a way to construct a reduced likelihood function
-in later sections that does not need to model the distribution of $\mathcal{C}_i$.}
-\label{fig:figureone}
-\end{figure}
+```{r, echo=FALSE}
+knitr::include_graphics(if (knitr::is_latex_output()) "./image/dep_model_standalone.pdf" else "./image/dep_model_standalone.png")
+```
+
+Figure 1: This figure showcases a dependency graph of the generative model for \(D_i = (S_i, \delta_i, \mathcal{C}_i)\). The elements in green are observed in the sample, while the elements in red are unobserved (latent). We see that \(\mathcal{C}_i\) is related to both the unobserved component lifetimes \(T_{i1},\ldots,T_{im}\) and other unknown and unobserved covariates, like ambient temperature or the particular diagnostician who generated the candidate set. These two complications for \(\mathcal{C}_i\) are why we seek a way to construct a reduced likelihood function in later sections that does not need to model the distribution of \(\mathcal{C}_i\).
 
 An example of masked data $D$ with a right-censoring time $\tau = 5$ can be seen in Table 1
 for a series system with $3$ components.
