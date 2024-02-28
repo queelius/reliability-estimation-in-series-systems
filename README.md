@@ -1,22 +1,16 @@
----
-title: "Reliability Estimation in Series Systems"
-subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
-author: Alex Towell (lex@metafunctor.com)
-abstract: "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields correctly specified confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data."
-keywords: "reliability, series systems, maximum likelihood estimation, right-censoring, masked failure data, Weibull distribution, bootstrap confidence intervals"
-date: "2023-09-30"
-marp: true
-theme: default
-math: mathjax
----
-
 ## Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data
 
 Alex Towell
 Email: [lex@metafunctor.com](mailto:lex@metafunctor.com)
 GitHub: [github.com/queelius](https://github.com/queelius)
 
+Keywords: reliability, series systems, maximum likelihood estimation, right-censoring, masked failure data, Weibull distribution, bootstrap confidence intervals
+
 ---
+## Abstract
+
+This paper investigates maximum likelihood techniques to estimate component reliability from masked ailure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields correctly specified confidence intervals even for small sample sizes. Together, the modeling framework and simulation studies provide rigorous validation of statistical learning from masked reliability data.
+
 ## Context & Motivation
 
 **Reliability** in **Series Systems** is like a chain's strength -- determined
