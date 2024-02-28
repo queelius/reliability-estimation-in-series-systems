@@ -2,7 +2,7 @@
 title: "Reliability Estimation in Series Systems"
 subtitle: "Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
 author: Alex Towell (lex@metafunctor.com)
-date: "2023-09-30"
+date: "2023-10-13"
 output:
   ioslides_presentation:
     theme: bootstrap
@@ -20,6 +20,12 @@ header-includes:
 #- \setbeameroption{show notes on second screen=right}
 #bibliography: ../refs.bib
 ---
+
+##
+
+```{r title-image, echo=FALSE, out.width='40%', fig.align='center'}
+knitr::include_graphics("title.png")
+```
 
 ## Context & Motivation
 
@@ -73,9 +79,11 @@ and quantify the uncertainty in our estimates with confidence intervals.
 - Components with *Weibull* lifetimes.
 - Evaluate MLE and confidence intervals under different scenarios.
 
-**R Library**: Methods available on GitHub.
+**GitHub**:
 
-- See: [www.github.com/queelius/wei.series.md.c1.c2.c3](https://github.com/queelius/wei.series.md.c1.c2.c3)
+- Project: [https://github.com/queelius/reliability-estimation-in-series-systems](https://github.com/queelius/reliability-estimation-in-series-systems)
+- R Library: [www.github.com/queelius/wei.series.md.c1.c2.c3](https://github.com/queelius/wei.series.md.c1.c2.c3)
+
 
 \note{
 \begin{itemize}
@@ -94,7 +102,7 @@ and quantify the uncertainty in our estimates with confidence intervals.
 ## What Is A Series System?
 
 ```{r, out.width='70%', fig.align='center', echo=FALSE}
-knitr::include_graphics("../image/series.png")
+knitr::include_graphics("series.png")
 ```
 
 **Critical Components**: Complex systems often comprise *critical* components.
@@ -234,7 +242,7 @@ The data generating process (DGP) is the underlying process that generates the d
 
 
 ```{r graph-model, echo=FALSE, fig.align='center', out.width='50%'}
-knitr::include_graphics("../image/dep_model.png")
+knitr::include_graphics("dep_model.png")
 ```
 
 
@@ -339,6 +347,18 @@ Apply **Condition 1** to get a sum over candidate set:
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = \sum_{j \in c_i} f_{T_i,K_i}(t_i,j;\v\theta)\Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j\}.
 $$
+
+\note{
+\begin{itemize}
+\item Here, we \textbf{derive} the likelihood contribution for masked failures.
+\item To start, we use the \textbf{joint distribution} of the system lifetime, the failed component, and the candidate set.
+\item Then, we \textbf{marginalize} over the failed component, since we don't know which component failed.
+\item We apply \textbf{condition 1} to get a \textbf{sum} over the \textbf{candidate set} instead.
+\end{itemize}
+}
+
+## Likelihood Contribution: Derivation for Candidate Sets #2
+
 Apply **Condition 2** to move probability outside the sum:
 $$
 f_{T_i,\mathcal{C}_i}(t_i,c_i;\v{\theta}) = \Pr{}_{\!\v\theta}\{\mathcal{C}_i = c_i | T_i = t_i, K_i = j'\} \sum_{j \in c_i} f_{T_i,K_i}(t_i,j;\v\theta).
@@ -351,10 +371,6 @@ $$
 
 \note{
 \begin{itemize}
-\item Here, we \textbf{derive} the likelihood contribution for masked failures.
-\item To start, we use the \textbf{joint distribution} of the system lifetime, the failed component, and the candidate set.
-\item Then, we \textbf{marginalize} over the failed component, since we don't know which component failed.
-\item We apply \textbf{condition 1} to get a \textbf{sum} over the \textbf{candidate set} instead.
 \item We apply \textbf{condition 2} to move the probability \textbf{outside} the sum.
 \item We apply \textbf{condition 3} to \textbf{remove} the probability's dependence on the system parameter.
 \item We \textbf{end up} with a likelihood contribution proportional to the product of the system reliability and the sum of the component hazards in the candidate set.
@@ -558,8 +574,8 @@ impact of right-censoring on the MLE, but large enough so that the convergence r
 
 ## Scale Parameters
 
-```{r fig-scale-tau, echo=F, out.width="100%", fig.align="center"}
-knitr::include_graphics("../image/pres/plot-q-vs-scale.1-mle_plot-q-vs-scale.3-mle.png")
+```{r fig-scale-tau, echo=F, out.width="60%", fig.align="center"}
+knitr::include_graphics("plot-q-vs-scale.1-mle_plot-q-vs-scale.3-mle.png")
 
 ```
 
@@ -584,8 +600,8 @@ knitr::include_graphics("../image/pres/plot-q-vs-scale.1-mle_plot-q-vs-scale.3-m
 
 ## Shape Parameters
 
-```{r fig-shape-tau, echo=F, out.width="100%", fig.align="center"}
-knitr::include_graphics("../image/pres/plot-q-vs-shape.1-mle_plot-q-vs-shape.3-mle.png")
+```{r fig-shape-tau, echo=F, out.width="75%", fig.align="center"}
+knitr::include_graphics("plot-q-vs-shape.1-mle_plot-q-vs-shape.3-mle.png")
 ```
 
 - Show a similar pattern as scale parameters.
@@ -600,18 +616,9 @@ knitr::include_graphics("../image/pres/plot-q-vs-shape.1-mle_plot-q-vs-shape.3-m
 
 ## Coverage Probability and Convergence Rate
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-tau-cp, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-q-vs-cp.pdf")
+```{r fig-tau-cp, echo=F, out.width="55%", fig.align="center"}
+knitr::include_graphics("plot-q-vs-cp_q_vs_convergence.png")
 ```
-\end{minipage}%
-\begin{minipage}{.4\textwidth}
-```{r fig-tau-conv, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/q_vs_convergence.pdf")
-```
-\end{minipage}
-\end{figure}
 
 - **Coverage** (left figure): CIs show good empirical coverage.
   - Scale parameters *correctly specified* (CP $\approx 95\%$)
@@ -680,8 +687,8 @@ impact of masking on the MLE, but large enough so that the convergence rate was 
 ## Shape Parameters
 
 
-```{r fig-shape-mask, echo=F, out.width="100%", fig.align="center"}
-knitr::include_graphics("../image/pres/plot-p-vs-shape.1-mle_plot-p-vs-shape.3-mle.png")
+```{r fig-shape-mask, echo=F, out.width="60%", fig.align="center"}
+knitr::include_graphics("plot-p-vs-shape.1-mle_plot-p-vs-shape.3-mle.png")
 ```
 
 
@@ -705,8 +712,8 @@ confidence intervals, this time for the \textbf{shape parameters}.
 
 ## Scale Parameters
 
-```{r fig-scale-mask, echo=F, out.width="100%", fig.align="center"}
-knitr::include_graphics("../image/pres/plot-p-vs-scale.1-mle_plot-p-vs-scale.3-mle.png")
+```{r fig-scale-mask, echo=F, out.width="75%", fig.align="center"}
+knitr::include_graphics("plot-p-vs-scale.1-mle_plot-p-vs-scale.3-mle.png")
 ```
 
 - These graphs resemble the last ones for shape parameters.
@@ -721,19 +728,9 @@ knitr::include_graphics("../image/pres/plot-p-vs-scale.1-mle_plot-p-vs-scale.3-m
 
 ## Coverage Probability and Convergence Rate
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-p-cp, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-p-vs-cp.pdf")
+```{r fig-mask-cp, echo=F, out.width="55%", fig.align="center"}
+knitr::include_graphics("plot-p-vs-cp_p_vs_convergence.png")
 ```
-\end{minipage}%
-\begin{minipage}{.4\textwidth}
-```{r fig-p-conv, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/p_vs_convergence.pdf")
-```
-\end{minipage}
-\end{figure}
-
 
 - **Coverage**: Caution advised for severe masking with small samples.
   - Scale parameter CIs show acceptable coverage across all masking levels.
@@ -741,13 +738,11 @@ knitr::include_graphics("../image/p_vs_convergence.pdf")
 - **Convergence Rate**: Increases with less masking.
   - \textbf{Caution}: Dips under $95\%$ when $p > 0.4$ (consistent with CP behavior).
 
-
 ## Key Takeaways: Masking
 
 The masking level of component failures profoundly affects the MLE:
 
-- **MLE Precision**:
-  - Decreases with more masking.
+- **MLE Precision**: Decreases with more masking.
 - **MLE Bias**:
   - Positive bias is amplified with increased masking.
   - Masking exhibits a right-censoring-like effect.
@@ -782,18 +777,9 @@ affects of right-censoring and masking previously discussed.
 
 ## Scale Parameters
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-scale-n-1, echo=F, out.width=".95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-n-vs-scale.1-mle.pdf")
+```{r fig-shape-n-vs-scale, echo=F, out.width="55%", fig.align="center"}
+knitr::include_graphics("plot-n-vs-scale.1-mle_plot-n-vs-scale.3-mle.png")
 ```
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-```{r fig-scale-n-3, echo=F, out.width=".95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-n-vs-scale.3-mle.pdf")
-```
-\end{minipage}
-\end{figure}
 
 - **Dispersion**: Increasing sample size improves MLE precision.
   - Extremely precise for $n \geq 250$.
@@ -801,21 +787,11 @@ knitr::include_graphics("../image/plot-n-vs-scale.3-mle.pdf")
   - Large samples counteract right-censoring and masking effects.
 - **Median CIs**: Track MLE dispersion. Very tight for $n \geq 250$.
 
-
 ## Shape Parameters
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-shape-n-1, echo=F, out.width=".95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-n-vs-shape.1-mle.pdf")
+```{r fig-shape-n-vs-shape, echo=F, out.width="80%", fig.align="center"}
+knitr::include_graphics("plot-n-vs-shape.1-mle_plot-n-vs-shape.3-mle.png")
 ```
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-```{r fig-shape-n-3, echo=F, out.width=".95\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-n-vs-shape.3-mle.pdf")
-```
-\end{minipage}
-\end{figure}
 
 - These graphs resemble the last ones for scale parameters.
 
@@ -827,18 +803,9 @@ knitr::include_graphics("../image/plot-n-vs-shape.3-mle.pdf")
 
 ## Coverage Probability and Convergence Rate
 
-\begin{figure}
-\begin{minipage}{.5\textwidth}
-```{r fig-n-cp, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/plot-n-vs-cp.pdf")
+```{r fig-n-vs-cp, echo=F, out.width="60%", fig.align="center"}
+knitr::include_graphics("plot-n-vs-cp_n_vs_convergence.png")
 ```
-\end{minipage}%
-\begin{minipage}{.4\textwidth}
-```{r fig-n-conv, echo=F, out.width="\\linewidth", fig.align="center"}
-knitr::include_graphics("../image/n_vs_convergence.pdf")
-```
-\end{minipage}
-\end{figure}
 
 - **Coverage**: Good empirical coverage.
   - Correctly specified CIs for $n > 250$.
@@ -879,7 +846,7 @@ Larger samples lead to more accurate, unbiased, and reliable estimations.
 ### Big Picture
 MLE and CIs robust despite masking and right-censoring challenges.
   
-## Future Work
+## Future Work and Discussion
 
 Directions to enhance learning from masked data:
 
@@ -890,4 +857,3 @@ Directions to enhance learning from masked data:
 - **Regularization**: Data augmentation and penalized likelihood methods.
 - **Additional Likelihood Contributions**: Predictors, etc.
 
- # Discussion
