@@ -1,8 +1,21 @@
+## LaTeX build artifacts
+*.fdb_latexmk
+*.out
+*.toc
+*.blg
+*.fls
+*.gz
+*.bbl
+*.aux
+*.log
+
+## R / RStudio
 .Rproj.user
+
+## Bookdown build artifacts
 /doc/
 /Meta/
 /_bookdown*
-*.log
 wei_series_md.tex
 wei_series_md_files
 _main*
@@ -15,3 +28,15 @@ _main*
 !_main.rtf
 !_main.odt
 !_main.epub
+
+## rmarkdown build output
+rmarkdown/pdf/
+rmarkdown/image/
+rmarkdown/refs.bib
+
+## Generated figures in results (keep source scripts/data, ignore outputs)
+results/*/figure/*.pdf
+results/*/figure/*.png
+
+## Presentation build artifacts
+rmarkdown/pres/template.pdf

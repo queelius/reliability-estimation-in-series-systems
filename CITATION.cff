@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: article
+title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data"
+authors:
+  - family-names: Towell
+    given-names: Alexander
+    orcid: "https://orcid.org/0000-0001-6443-9897"
+    affiliation: "Southern Illinois University Edwardsville"
+    email: lex@metafunctor.com
+abstract: >-
+  This paper investigates maximum likelihood techniques to estimate component
+  reliability from masked failure data in series systems. A likelihood model
+  accounts for right-censoring and candidate sets indicative of masked failure
+  causes. Extensive simulation studies assess the accuracy and precision of
+  maximum likelihood estimates under varying sample size, masking probability,
+  and right-censoring time for components with Weibull lifetimes. The studies
+  specifically examine the accuracy and precision of estimates, along with the
+  coverage probability and width of BCa confidence intervals. Despite significant
+  masking and censoring, the maximum likelihood estimator demonstrates good
+  overall performance. The bootstrap yields correctly specified confidence
+  intervals even for small sample sizes.
+keywords:
+  - reliability
+  - maximum likelihood estimation
+  - series systems
+  - Weibull distribution
+  - masked failure data
+  - right-censored data
+  - confidence intervals
+  - bootstrap
+date-released: "2023-09-30"
+doi: "10.5281/zenodo.18615562"
+license: CC-BY-4.0
+url: "https://github.com/queelius/reliability-estimation-in-series-systems"
+repository-code: "https://github.com/queelius/reliability-estimation-in-series-systems"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.18615562"
+    description: "Zenodo deposit"
+references:
+  - type: software
+    title: "wei.series.md.c1.c2.c3: Estimating Reliability of Weibull Components in Series from Masked Data"
+    authors:
+      - family-names: Towell
+        given-names: Alexander
+    url: "https://github.com/queelius/wei.series.md.c1.c2.c3"
+    repository-code: "https://github.com/queelius/wei.series.md.c1.c2.c3"

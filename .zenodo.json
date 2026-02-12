@@ -1,0 +1,38 @@
+{
+  "title": "Reliability Estimation in Series Systems: Maximum Likelihood Techniques for Right-Censored and Masked Failure Data",
+  "upload_type": "publication",
+  "publication_type": "article",
+  "description": "This paper investigates maximum likelihood techniques to estimate component reliability from masked failure data in series systems. A likelihood model accounts for right-censoring and candidate sets indicative of masked failure causes. Extensive simulation studies assess the accuracy and precision of maximum likelihood estimates under varying sample size, masking probability, and right-censoring time for components with Weibull lifetimes. The studies specifically examine the accuracy and precision of estimates, along with the coverage probability and width of BCa confidence intervals. Despite significant masking and censoring, the maximum likelihood estimator demonstrates good overall performance. The bootstrap yields correctly specified confidence intervals even for small sample sizes. Companion R package: https://github.com/queelius/wei.series.md.c1.c2.c3",
+  "creators": [
+    {
+      "name": "Towell, Alexander",
+      "orcid": "0000-0001-6443-9897",
+      "affiliation": "Southern Illinois University Edwardsville"
+    }
+  ],
+  "keywords": [
+    "reliability",
+    "maximum likelihood estimation",
+    "series systems",
+    "Weibull distribution",
+    "masked failure data",
+    "right-censored data",
+    "confidence intervals",
+    "bootstrap"
+  ],
+  "license": {
+    "id": "CC-BY-4.0"
+  },
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/queelius/wei.series.md.c1.c2.c3",
+      "relation": "isSupplementedBy",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://queelius.r-universe.dev/wei.series.md.c1.c2.c3",
+      "relation": "isSupplementedBy",
+      "scheme": "url"
+    }
+  ]
+}
