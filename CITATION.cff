@@ -30,13 +30,13 @@ keywords:
   - confidence intervals
   - bootstrap
 date-released: "2023-09-30"
-doi: "10.5281/zenodo.18615562"
+doi: "10.5281/zenodo.18615871"
 license: CC-BY-4.0
 url: "https://github.com/queelius/reliability-estimation-in-series-systems"
 repository-code: "https://github.com/queelius/reliability-estimation-in-series-systems"
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.18615562"
+    value: "10.5281/zenodo.18615871"
     description: "Zenodo deposit"
 references:
   - type: software
