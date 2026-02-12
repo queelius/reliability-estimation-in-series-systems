@@ -5,6 +5,7 @@ title: "Reliability Estimation in Series Systems: Maximum Likelihood Techniques 
 authors:
   - family-names: Towell
     given-names: Alexander
+    alias: "Alex Towell"
     orcid: "https://orcid.org/0000-0001-6443-9897"
     affiliation: "Southern Illinois University Edwardsville"
     email: lex@metafunctor.com
@@ -44,5 +45,6 @@ references:
     authors:
       - family-names: Towell
         given-names: Alexander
+    doi: "10.5281/zenodo.18615922"
     url: "https://github.com/queelius/wei.series.md.c1.c2.c3"
     repository-code: "https://github.com/queelius/wei.series.md.c1.c2.c3"
