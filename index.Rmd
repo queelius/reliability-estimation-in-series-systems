@@ -1721,7 +1721,7 @@ rates.
 [^88]: See 'Table 2: Example Data for a Series System' in [@Huairu-2013] for details on the masked data.
 
 ```{r q-vs-stats, out.width='100%', fig.cap=c("Right-Censoring Quantile ($q$) vs MLE ($p = 0.215, n = 90$)","Right-Censoring Quantile ($q$) vs MLEs"), fig.align="center", echo = F}
-knitr::include_graphics("image/5_system_tau_fig.pdf")
+knitr::include_graphics(paste0("image/5_system_tau_fig.", if (knitr::is_latex_output()) "pdf" else "png"))
 ```
 
 In Figure \ref{fig:q-vs-stats}, we show the effect of right-censoring on the
@@ -1887,7 +1887,7 @@ left plot shows the coverage probabilities for all parameters and the bottom
 right plot shows the convergence rate of the MLE.
 
 ```{r masking-prob-vs-stats, fig.cap="Component Cause of Failure Masking ($p$) vs MLE ($q = 0.825, n = 90$)", fig.align="center", echo = F}
-knitr::include_graphics("image/5_system_prob_fig.pdf")
+knitr::include_graphics(paste0("image/5_system_prob_fig.", if (knitr::is_latex_output()) "pdf" else "png"))
 ```
 
 ### Background
@@ -1988,7 +1988,7 @@ simulation scenario values:
 
 
 ```{r samp-size-n-vs-stats, out.width='100%', fig.cap="Sample Size ($n$) vs MLEs ($p = 0.215, q = 0.825$)", fig.align="center", echo = F}
-knitr::include_graphics("image/5_system_samp_size_fig.pdf")
+knitr::include_graphics(paste0("image/5_system_samp_size_fig.", if (knitr::is_latex_output()) "pdf" else "png"))
 ```
 
 In Figure \ref{fig:samp-size-n-vs-stats}, we show the effect of the sample size
